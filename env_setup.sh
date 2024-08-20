@@ -5,7 +5,7 @@ if [ ! $1 ]; then
 	exit 1;
 fi
 
-cp $1/.env ./srcs/
+cp $1/env ./srcs/.env
 mkdir -p ./srcs/requirements/nginx/certs/
 mkdir -p ./srcs/requirements/django/certs/
 cp $1/django.crt ./srcs/requirements/nginx/certs/
