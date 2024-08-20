@@ -1,5 +1,9 @@
 all :
 	@bash setup_user.sh
+	@if [ ! -f ./srcs/.env ] || [ ! -d ./srcs/requirements/nginx/certs ] || [ ! -d ./srcs/requirements/django/certs/ ] ; then \
+		echo "Could not find necessary files that are kept out of version control.Did you run env_setup.sh ?";\
+		false;\
+	fi
 	docker compose -f ./srcs/docker-compose.yml up -d --build
 
 down :
