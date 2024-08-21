@@ -3,3 +3,5 @@ djangoEnv
 docker-compose.yml
 *.crt
 *.key
+staticRoot/
+__pycache__/
