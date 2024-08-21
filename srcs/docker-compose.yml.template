@@ -4,8 +4,9 @@ services:
     container_name: 'transcendance_nginx'
     networks:
       - transcendance
-    depends_on:
+    depends_on: 
       - django
+      - frontend
     build :
       context: requirements/nginx
       dockerfile: Dockerfile
@@ -21,8 +22,25 @@ services:
       - data_django:/code
     networks:
       - transcendance
+    depends_on:
+      - postgresql 
     build:
       context: requirements/django
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '8443'
+    restart: on-failure
+
+  frontend:
+    image: transcendance_frontend
+    container_name: 'transcendance_frontend'
+    volumes:
+      - data_frontend:/var/www/myfront
+    networks:
+      - transcendance
+    build:
+      context: requirements/frontend
       dockerfile: Dockerfile
     env_file: .env
     ports:
@@ -51,6 +69,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/django
+  data_frontend:
+    name: data_frontend
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/frontend
 
 
 networks:

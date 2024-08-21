@@ -5,4 +5,7 @@ pip install -r requirements.txt --no-input
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
-exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} --certfile=/certs/django.crt --keyfile=/certs/django.key transcendance.wsgi
+exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} --certfile=/certs/django.crt \
+							--keyfile=/certs/django.key --cert-reqs=2 \
+							--ca-certs=/certs/nginx_client.crt \
+							--do-handshake-on-connect transcendance.wsgi
