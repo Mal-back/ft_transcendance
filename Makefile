@@ -10,7 +10,7 @@ compose :
 	fi
 
 env :
-	@if [ ! -f ./srcs/.env ] || [ ! -d ./srcs/requirements/nginx/certs ] || [ ! -d ./srcs/requirements/django/certs/ ] ; then \
+	@if [ ! -f ./srcs/.env ]; then \
 		echo "Could not find necessary files that are kept out of version control. Did you run env_setup.sh ?";\
 		false;\
 	fi

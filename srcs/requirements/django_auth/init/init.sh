@@ -11,8 +11,8 @@ fi
 if [ "$DUMP_DATA" == "True" ]; then
 	exec python3 gunicornWrapper.py
 else
-	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} --certfile=/certs/django.crt \
-		--keyfile=/certs/django.key --cert-reqs=2 \
+	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} --certfile=/certs/auth.crt \
+		--keyfile=/certs/auth.key --cert-reqs=2 \
 		--ca-certs=/certs/nginx_client.crt \
-		--do-handshake-on-connect transcendance.wsgi
+		--do-handshake-on-connect auth.wsgi
 fi

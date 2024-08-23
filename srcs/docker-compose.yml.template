@@ -5,7 +5,7 @@ services:
     networks:
       - transcendance
     depends_on: 
-      - django
+      - auth
       - frontend
     build :
       context: requirements/nginx
@@ -15,17 +15,17 @@ services:
       - '8080:8080'
     restart: on-failure
 
-  django:
-    image: transcendance_django
-    container_name: 'transcendance_django'
+  auth:
+    image: transcendance_django_auth
+    container_name: 'transcendance_django_auth'
     volumes:
-      - data_django:/code
+      - data_django_auth:/code
     networks:
       - transcendance
     depends_on:
-      - postgresql 
+      - postgresql_auth 
     build:
-      context: requirements/django
+      context: requirements/django_auth
       dockerfile: Dockerfile
     env_file: .env
     ports:
@@ -47,13 +47,13 @@ services:
       - '8443'
     restart: on-failure
 
-  postgresql:
-    image: transcendance_postgresql
-    container_name: 'transcendance_postgresql'
+  postgresql_auth:
+    image: transcendance_postgresql_auth
+    container_name: 'transcendance_postgresql_auth'
     networks:
       - transcendance
     build:
-      context: requirements/postgreSQL
+      context: requirements/postgreSQL_auth
       dockerfile: Dockerfile
     env_file: .env
     ports:
@@ -62,13 +62,13 @@ services:
 
 
 volumes:
-  data_django:
-    name: data_django
+  data_django_auth:
+    name: data_django_auth
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: placeholder/srcs/volumes/django
+      device: placeholder/srcs/volumes/auth
   data_frontend:
     name: data_frontend
     driver: local

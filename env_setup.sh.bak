@@ -1,0 +1,28 @@
+#!/bin/bash
+
+DJANGO_AUTH=./srcs/requirements/django_auth/certs
+NGINX=./srcs/requirements/nginx/certs
+PGSQL_AUTH=./srcs/requirements/postgreSQL_auth/certs
+FRONTEND=./srcs/requirements/frontend/certs
+
+# if [ ! $1 ]; then
+# 	echo "This script should be call with the absolute path where env files are stored";
+# 	exit 1;
+# fi
+
+mkdir -p $DJANGO_AUTH
+mkdir -p $NGINX
+mkdir -p $PGSQL_AUTH
+mkdir -p $FRONTEND
+openssl req -nodes -x509 -sha256 -out $DJANGO_AUTH/auth.crt -keyout $DJANGO_AUTH/auth.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=auth/UID=vlevy" 
+openssl req -nodes -x509 -sha256 -out $NGINX/nginx_client.crt -keyout $NGINX/nginx_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=nginx_client/UID=vlevy" 
+openssl req -nodes -x509 -sha256 -out $DJANGO_AUTH/auth_client.crt -keyout $DJANGO_AUTH/auth_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=auth_client/UID=vlevy" 
+openssl req -nodes -x509 -sha256 -out $PGSQL_AUTH/pgsql_auth.crt -keyout $PGSQL_AUTH/pgsql_auth.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=pgsql/UID=vlevy" 
+openssl req -nodes -x509 -sha256 -out $FRONTEND/frontend.crt -keyout $FRONTEND/frontend.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=frontend/UID=vlevy" 
+cp $DJANGO_AUTH/auth.crt $NGINX/auth.crt
+cp $NGINX/nginx_client.crt $DJANGO_AUTH/nginx_client.crt
+cp $NGINX/nginx_client.crt $FRONTEND/nginx_client.crt
+cp $DJANGO_AUTH/auth_client.crt $PGSQL_AUTH/auth_client.crt
+cp $PGSQL_AUTH/pgsql_auth.crt $DJANGO_AUTH/pgsql_auth.crt
+cp $FRONTEND/frontend.crt $NGINX/frontend.crt
+# cp $1/env ./srcs/.env
