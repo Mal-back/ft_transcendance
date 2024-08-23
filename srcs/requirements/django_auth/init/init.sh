@@ -13,6 +13,6 @@ if [ "$DUMP_DATA" == "True" ]; then
 else
 	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} --certfile=/certs/auth.crt \
 		--keyfile=/certs/auth.key --cert-reqs=2 \
-		--ca-certs=/certs/nginx_client.crt \
+		--ca-certs=/certs/ca.crt \
 		--do-handshake-on-connect auth.wsgi
 fi

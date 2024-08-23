@@ -86,7 +86,7 @@ DATABASES = {
             'sslmode' : 'require',
             'sslcert' : '/certs/auth_client.crt',
             'sslkey' : '/certs/auth_client.key',
-            'sslrootcert' : '/certs/psql_auth.cert',
+            'sslrootcert' : '/certs/ca.crt',
             }
     }
 }
