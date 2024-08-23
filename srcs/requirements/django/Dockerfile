@@ -4,8 +4,11 @@ ENV PYTHONUNBUFFERED=1
 
 RUN mkdir -p /code
 RUN mkdir -p /certs
+RUN mkdir -p /init
+
 COPY certs/* /certs
+COPY init/* /init
 
 WORKDIR /code
 
-ENTRYPOINT ["bash", "init.sh"]
+ENTRYPOINT ["bash", "/init/init.sh"]
