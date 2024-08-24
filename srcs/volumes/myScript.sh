@@ -4,4 +4,6 @@ if [ ! -d ./djangoEnv ]; then
 fi
 source ./djangoEnv/bin/activate
 pip3 install --upgrade pip
-pip3 install -r requirements.txt
+if [ -f requirements.txt ]; then
+	pip3 install -r requirements.txt
+fi
