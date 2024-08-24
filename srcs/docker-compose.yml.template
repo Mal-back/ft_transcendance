@@ -2,6 +2,8 @@ services:
   nginx:
     image: transcendance_nginx
     container_name: 'transcendance_nginx'
+    volumes:
+      - data_static:/var/www/static
     networks:
       - transcendance
     depends_on: 
@@ -76,6 +78,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/frontend
+  data_static:
+    name: data_static
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/auth/staticRoot
 
 
 networks:
