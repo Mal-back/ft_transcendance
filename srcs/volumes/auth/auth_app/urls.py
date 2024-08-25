@@ -10,4 +10,6 @@ urlpatterns = [
         path('login', TokenObtainPairView.as_view(), name='auth-login'),
         path('refresh', TokenRefreshView.as_view() , name='auth-refresh'),
         path('logout', TokenBlacklistView.as_view(), name='auth-logout'),
+        path('delete/<int:pk>', views.UserDeleteView.as_view(), name='auth-delete'),
+        path('update/<int:pk>', views.UserUpdateView.as_view(), name='auth-update'),
 ]
