@@ -13,7 +13,7 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
     overall_win_rate = serializers.SerializerMethodField()
     class Meta:
         model = PublicUser
-        fields =  ['username','profilePic' ,'is_online', 'account_creation', 'last_seen_online',
+        fields =  ['id','username','profilePic' ,'is_online', 'account_creation', 'last_seen_online',
                    'single_games_won', 'single_games_lost', 'tournament_games_won',
                    'tournament_games_lost', 'tournaments_won', 'tournaments_lost',
                    'total_games', 'total_tournaments',
