@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('DJANGO_USERS_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['users']
+ALLOWED_HOSTS = ['users', 'localhost']
 
 
 # Application definition
@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users_app.middleware.SetRequestHostMiddleware'
 ]
 
 ROOT_URLCONF = 'users.urls'
