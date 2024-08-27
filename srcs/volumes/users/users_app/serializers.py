@@ -1,5 +1,7 @@
+from datetime import timedelta
 from rest_framework import serializers
 from .models import PublicUser
+from django.utils.timezone import now
 
 class PublicUserDetailSerializer(serializers.ModelSerializer):
     total_games = serializers.SerializerMethodField()
@@ -11,12 +13,14 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
     single_games_win_rate = serializers.SerializerMethodField()
     tournament_games_win_rate = serializers.SerializerMethodField()
     overall_win_rate = serializers.SerializerMethodField()
+    is_online = serializers.SerializerMethodField()
+    is_your_friend = serializers.SerializerMethodField()
     class Meta:
         model = PublicUser
-        fields =  ['id','username','profilePic' ,'is_online', 'account_creation', 'last_seen_online',
+        fields =  ['username','profilePic', 'account_creation', 'is_online',
                    'single_games_won', 'single_games_lost', 'tournament_games_won',
                    'tournament_games_lost', 'tournaments_won', 'tournaments_lost',
-                   'total_games', 'total_tournaments',
+                   'total_games', 'total_tournaments', 'is_your_friend',
                   'total_single_games', 'overall_wins', 'overall_losts',
                   'tournament_win_rate', 'single_games_win_rate',
                   'tournament_games_win_rate', 'overall_win_rate',
@@ -57,12 +61,55 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
             return 0
         return self.get_overall_wins(obj) / self.get_overall_losts(obj) if self.get_overall_losts(obj) != 0 else 100
 
+    def get_is_online(self, obj):
+        if obj.last_seen_online == None or now() - obj.last_seen_online > timedelta(minutes=5):
+            return False 
+        return True
+
+    def get_is_your_friend(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            if obj.id == request.user.id:
+                return None
+            try:
+                user = PublicUser.objects.get(pk=request.user.id)
+            except PublicUser.DoesNotExist:
+                return None
+            if user.friends.filter(id=obj.pk).exists():
+                return True
+            return False
+        else :
+            return None
+
+
 
 class PublicUserListSerializer(serializers.ModelSerializer):
+    is_your_friend = serializers.SerializerMethodField()
+    is_online = serializers.SerializerMethodField()
     full_profile = serializers.HyperlinkedIdentityField(
             view_name='user-detail',
-            lookup_field='pk'
+            lookup_field='username'
             )
     class Meta:
         model = PublicUser
-        fields = ['username', 'profilePic', 'is_online', 'full_profile']
+        fields = ['username', 'profilePic', 'is_online', 'full_profile', 'is_your_friend']
+
+    def get_is_online(self, obj): 
+        if obj.last_seen_online == None or now() - obj.last_seen_online > timedelta(minutes=5):
+            return False 
+        return True
+
+    def get_is_your_friend(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            if obj.id == request.user.id:
+                return None
+            try:
+                user = PublicUser.objects.get(pk=request.user.id)
+            except PublicUser.DoesNotExist:
+                return None
+            if user.friends.filter(id=obj.pk).exists():
+                return True
+            return False
+        else :
+            return None

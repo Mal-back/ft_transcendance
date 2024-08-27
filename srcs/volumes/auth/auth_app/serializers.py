@@ -11,7 +11,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
     two_fa_active = serializers.BooleanField(default=False)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'password2', 'is_staff', 'is_active', 'groups', 'two_fa_active']
+        fields = ['username', 'email', 'password', 'password2', 'is_staff', 'is_active', 'groups', 'two_fa_active']
         extra_kwargs = {
                     'password': {'write_only': True, 'style': {'input_type': 'password'}},
                     'password2': {'write_only': True, 'style': {'input_type': 'password'}},
@@ -30,6 +30,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email is already taken.Already have an account ? Sign in")
         return value
+
+    def validate_username(self, value):
+        forbidden_usernames = [
+                'create',
+                'update',
+                'delete',
+                'login',
+                'logout',
+                'refresh',
+                'increment',
+                'admin',
+                ]
+        if value.lower() in forbidden_usernames:
+            raise ValidationError('Forbidden user name')
+        if 'israel' in value.lower():
+            raise ValidationError("You can't choose a non-existing country as username. Free Palestine !")
 
     def validate(self, data):
         if data.get('password') != data.get('password2') :
