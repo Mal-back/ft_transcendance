@@ -8,10 +8,10 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class UserRegistrationSerializer(serializers.ModelSerializer) :
     password2 = serializers.CharField(max_length=128, write_only=True, style={'input_type': 'password'}, required=True)
     email = serializers.EmailField(required=True)
-    two_fa_active = serializers.BooleanField(default=False)
+    # two_fa_active = serializers.BooleanField(default=False)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'password2', 'is_staff', 'is_active', 'groups', 'two_fa_active']
+        fields = ['id', 'username', 'email', 'password', 'password2', 'is_staff', 'is_active', 'groups']
         extra_kwargs = {
                     'password': {'write_only': True, 'style': {'input_type': 'password'}},
                     'password2': {'write_only': True, 'style': {'input_type': 'password'}},
