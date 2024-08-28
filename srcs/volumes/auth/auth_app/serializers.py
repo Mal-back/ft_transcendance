@@ -1,22 +1,20 @@
 from datetime import timedelta
 from django.forms import ValidationError
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import CustomUser
 
 class UserRegistrationSerializer(serializers.ModelSerializer) :
     password2 = serializers.CharField(max_length=128, write_only=True, style={'input_type': 'password'}, required=True)
     email = serializers.EmailField(required=True)
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'password2', 'is_active']
+        model = CustomUser
+        fields = ['username', 'email', 'password', 'password2', 'is_active', 'two_fa_enabled']
         extra_kwargs = {
                     'password': {'write_only': True, 'style': {'input_type': 'password'}},
                     'password2': {'write_only': True, 'style': {'input_type': 'password'}},
-                    'is_staff': {'read_only' : True},
                     'is_active': {'read_only' : True},
-                    'groups': {'read_only' : True},
                 }
 
     def __init__(self, *args, **kwargs):
@@ -26,7 +24,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
     
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
+        if CustomUser.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email is already taken.Already have an account ? Sign in")
         return value
 
@@ -56,7 +54,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
     def create(self, validated_data):
         validated_data.pop('password2', None)
         validated_data['password'] = make_password(validated_data['password'])
-        user = User.objects.create(**validated_data)
+        user = CustomUser.objects.create(**validated_data)
         return user
 
 class UserLoginSerializer(serializers.Serializer):

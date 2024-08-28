@@ -1,28 +1,28 @@
 from rest_framework import generics
-from django.contrib.auth.models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from .permissions import IsOwner
+from .models import CustomUser
 # Create your views here.
 
 class UserDetailView(generics.RetrieveAPIView) :
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
 
 class UserDeleteView(generics.DestroyAPIView) :
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
 
 class UserCreateView(generics.ListCreateAPIView) :
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
 
 class UserUpdateView(generics.UpdateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
