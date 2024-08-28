@@ -27,8 +27,9 @@ SECRET_KEY = os.getenv('DJANGO_AUTH_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['auth']
+ALLOWED_HOSTS = ['auth', 'localhost']
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 
 # Application definition
 
@@ -39,12 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'auth_app.apps.AuthAppConfig'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,6 +57,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'x-csrftoken',
+    'authorization',
+    'accept',
+    'origin',
+    'user-agent',
+    'x-requested-with',
+]
 ROOT_URLCONF = 'auth.urls'
 
 TEMPLATES = [

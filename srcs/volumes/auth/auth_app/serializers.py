@@ -1,9 +1,12 @@
 from datetime import timedelta
 from django.forms import ValidationError
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import CustomUser
+from .models import CustomUser, Service
+import jwt
+from django.conf import settings
+from datetime import datetime, timedelta
 
 class UserRegistrationSerializer(serializers.ModelSerializer) :
     password2 = serializers.CharField(max_length=128, write_only=True, style={'input_type': 'password'}, required=True)
@@ -75,3 +78,34 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             token.set_exp(lifetime=timedelta(hours=6), claim='refresh')
 
         return token
+
+class ServiceObtainTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['serviceName', 'password']
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        serviceName = attrs.get('serviceName')
+        print(serviceName)
+        print(make_password(password))
+        try :
+            service = Service.objects.get(serviceName=serviceName)
+        except Service.DoesNotExist:
+            raise ValidationError('Invalid Credentials')
+
+        if not check_password(password, service.password) :
+            raise ValidationError('Invalid Credentials')
+
+        token = create_service_token(service)
+        return {'token': token}
+
+#
+def create_service_token(service):
+    payload = {
+        'service_name': str(service.serviceName),
+        'exp': datetime.utcnow() + timedelta(hours=12),
+        'iat': datetime.utcnow(),
+    }
+    token = jwt.encode(payload, settings.SIMPLE_JWT['SIGNING_KEY'], algorithm='RS512')
+    return token

@@ -9,6 +9,12 @@ RUN mkdir -p /init
 COPY certs/* /certs
 COPY init/* /init
 
+RUN mkdir -p /usr/local/share/ca-certificates
+
+RUN cp /certs/ca.crt /usr/local/share/ca-certificates/ca.crt
+
+RUN update-ca-certificates
+
 WORKDIR /code
 
 ENTRYPOINT ["bash", "/init/init.sh"]

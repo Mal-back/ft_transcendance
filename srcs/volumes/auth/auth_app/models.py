@@ -5,3 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
    two_fa_enabled = models.BooleanField(default=False) 
+
+class Service(models.Model):
+    serviceName = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
