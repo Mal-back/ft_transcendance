@@ -7,18 +7,22 @@ from .permissions import IsOwner
 class UserDetailView(generics.RetrieveAPIView) :
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
+    lookup_field = 'username'
     permission_classes = [IsOwner]
 
 class UserDeleteView(generics.DestroyAPIView) :
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
+    lookup_field = 'username'
     permission_classes = [IsOwner]
 
 class UserCreateView(generics.ListCreateAPIView) :
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
+    lookup_field = 'username'
 
 class UserUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
+    lookup_field = 'username'
     permission_classes = [IsOwner]
