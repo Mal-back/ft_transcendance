@@ -11,8 +11,5 @@ fi
 if [ "$DUMP_DATA" == "True" ]; then
 	exec python3 gunicornWrapper.py
 else
-	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} --certfile=/certs/users.crt \
-		--keyfile=/certs/users.key --cert-reqs=2 \
-		--ca-certs=/certs/ca.crt \
-		--do-handshake-on-connect users.wsgi
+	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD}  users.wsgi
 fi

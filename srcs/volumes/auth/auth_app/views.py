@@ -26,10 +26,10 @@ class UserCreateView(generics.ListCreateAPIView) :
 
     def perform_create(self, serializer):
         user = serializer.save()
-        service_url = 'http://localhost:8080/api/users/create/'
+        service_url = 'http://users:8443/api/users/create/'
         response = requests.post(service_url, json={'username': user.username})
         if response.status_code != 200:
-            print('fuck')
+            print(f'fuck, {response.status_code}, {response.json()}')
         return user
         
 
