@@ -10,6 +10,7 @@ const routes = {
 	"/" : "pages/home.html",
 	"/game" : "/pages/game.html",
 	"/profile" : "/pages/profile.html",
+	"/createUSer" : "/CreateUser.js",
 };
 
 const handleLocation = async () => {
