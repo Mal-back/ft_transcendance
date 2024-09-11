@@ -22,14 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_AUTH_KEY')
+SECRET_KEY = os.getenv('DJANGO_USERS_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['auth', 'localhost']
+ALLOWED_HOSTS = ['users', 'localhost', 'auth']
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # Application definition
 
@@ -40,10 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'auth_app.apps.AuthAppConfig'
+    'users_app.apps.UsersAppConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users_app.middleware.SetRequestHostMiddleware',
+    'users_app.middleware.UpdateLastUserActivityMiddleware'
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -68,7 +71,8 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-requested-with',
 ]
-ROOT_URLCONF = 'auth.urls'
+
+ROOT_URLCONF = 'users.urls'
 
 TEMPLATES = [
     {
@@ -95,15 +99,15 @@ WSGI_APPLICATION = 'auth.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('AUTH_DB_NAME'),
-        'USER': os.getenv('AUTH_DB_USER'),
-        'PASSWORD': os.getenv('AUTH_DB_PASSWORD'),
-        'HOST': os.getenv('AUTH_DB_HOST'),
-        'PORT': os.getenv('AUTH_DB_PORT'),
+        'NAME': os.getenv('USERS_DB_NAME'),
+        'USER': os.getenv('USERS_DB_USER'),
+        'PASSWORD': os.getenv('USERS_DB_PASSWORD'),
+        'HOST': os.getenv('USERS_DB_HOST'),
+        'PORT': os.getenv('USERS_DB_PORT'),
         'OPTIONS' : {
             'sslmode' : 'require',
-            'sslcert' : '/certs/auth_client.crt',
-            'sslkey' : '/certs/auth_client.key',
+            'sslcert' : '/certs/users_client.crt',
+            'sslkey' : '/certs/users_client.key',
             'sslrootcert' : '/certs/ca.crt',
             }
     }
@@ -112,8 +116,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
-AUTH_USER_MODEL = 'auth_app.CustomUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -132,8 +134,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'auth_app.authentication.CustomJWTAuth',
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
             ),
+        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+        'PAGE_SIZE': 10,
         }
 
 def get_jwt_keys(key): 
@@ -148,8 +152,7 @@ SIMPLE_JWT = {
             "UPDATE_LAST_LOGIN": False,
 
             "ALGORITHM": "RS512",
-            "SIGNING_KEY": get_jwt_keys('/certs/jwt_private.pem'),
-            "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
+            # "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
             "AUDIENCE": None,
             "ISSUER": None,
             "JSON_ENCODER": None,
@@ -193,3 +196,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

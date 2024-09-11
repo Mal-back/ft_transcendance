@@ -10,11 +10,11 @@ COPY certs/* /certs
 COPY init/* /init
 
 RUN mkdir -p /usr/local/share/ca-certificates
+
 RUN cp /certs/ca.crt /usr/local/share/ca-certificates/ca.crt
 
 RUN update-ca-certificates
+
 WORKDIR /code
-RUN cat /certs/ca.crt >>/etc/ssl/certs/ca-certificates.crt
-ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 ENTRYPOINT ["bash", "/init/init.sh"]
