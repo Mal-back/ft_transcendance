@@ -128,46 +128,46 @@ export default class extends AbstractView {
   addEventListeners() {
     const button = document.querySelector("#formButton");
     if (button) {
-      button.addEventListener("click", () => {
+      button.addEventListener("click", async (ev) => {
+        ev.preventDefault();
         console.debug("Submit button clicked!");
-        await submitAuthForm("moi", "moi@google.com", "toi");
+        await this.submitAuthForm("moi", "moi@google.com", "toi");
       });
     }
   }
 }
 
-async function submitAuthForm(username, email, password) {
-  const url = "/api/auth/"; // Your API endpoint
-
-  // Create the request body
-  const body = {
-    username: username,
-    email: email,
-    password: password,
-  };
-  console.log(body);
-  try {
-    // Make the POST request
-    const response = await fetch(url, {
-      method: "POST", // The HTTP method
-      headers: {
-        "Content-Type": "application/json", // Setting the content type to JSON
-      },
-      body: JSON.stringify(body), // Convert the body object to a JSON string
-    });
-    console.log("fetch successful");
-    // Check if the response is successful
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    // Parse and return the response as JSON (if successful)
-    const result = await response.json();
-    console.log("Success:", result);
-    return result;
-  } catch (error) {
-    // Handle errors
-    console.error("Error submitting form:", error);
-  }
-}
-
+// async function submitAuthForm(username, email, password) {
+//   const url = "/api/auth/"; // Your API endpoint
+//
+//   // Create the request body
+//   const body = {
+//     username: username,
+//     email: email,
+//     password: password,
+//   };
+//   console.log(body);
+//   try {
+//     // Make the POST request
+//     const response = await fetch(url, {
+//       method: "POST", // The HTTP method
+//       headers: {
+//         "Content-Type": "application/json", // Setting the content type to JSON
+//       },
+//       body: JSON.stringify(body), // Convert the body object to a JSON string
+//     });
+//     console.log("fetch successful");
+//     // Check if the response is successful
+//     if (!response.ok) {
+//       throw new Error(`Error: ${response.status}`);
+//     }
+//
+//     // Parse and return the response as JSON (if successful)
+//     const result = await response.json();
+//     console.log("Success:", result);
+//     return result;
+//   } catch (error) {
+//     // Handle errors
+//     console.error("Error submitting form:", error);
+//   }
+// }
