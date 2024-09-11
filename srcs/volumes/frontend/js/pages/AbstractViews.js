@@ -8,4 +8,8 @@ export default class {
   async getHtml() {
     return "";
   }
+
+  async addEventListeners() {
+    // Intentionally left blank, to be optionally overridden by derived classes
+  }
 }
