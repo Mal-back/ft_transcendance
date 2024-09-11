@@ -1,10 +1,12 @@
 import requests
 from django.utils.decorators import method_decorator
 from rest_framework import generics, status
+from rest_framework.response import Serializer
 from rest_framework.views import APIView, Response, csrf_exempt
-from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer
+from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, createServiceToken
 from .permissions import IsOwner
-from .models import CustomUser
+from .models import CustomUser, Service
+from auth.auth_app import serializers
 # Create your views here.
 
 class UserDetailView(generics.RetrieveAPIView) :
@@ -25,11 +27,15 @@ class UserCreateView(generics.ListCreateAPIView) :
     lookup_field = 'username'
 
     def perform_create(self, serializer):
-        user = serializer.save()
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data.get('username')
+        token = createServiceToken(Service.objects.get(serviceName='auth'))
+        headers = {'Authorization' : f'Bearer {token}'}
         service_url = 'http://users:8443/api/users/create/'
-        response = requests.post(service_url, json={'username': user.username})
+        response = requests.post(service_url, json={'username': username}, headers=headers)
         if response.status_code != 200:
-            print(f'fuck, {response.status_code}, {response.json()}')
+            raise serializers.ValidationError('Invalid data sent to users ms')
+        user = serializer.save()
         return user
         
 

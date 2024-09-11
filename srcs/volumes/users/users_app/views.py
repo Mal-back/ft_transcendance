@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
+from .permissions import isAuth
+from .authentification import CustomAuthentication
 
 # Create your views here.
 
@@ -37,6 +39,7 @@ class PublicUserRetrieveDetail(generics.RetrieveAPIView):
     lookup_field = 'username'
 
 class PublicUserCreate(generics.CreateAPIView) :
+    permission_classes = [isAuth]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
 
