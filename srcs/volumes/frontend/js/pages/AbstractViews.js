@@ -9,7 +9,7 @@ export default class {
     return "";
   }
 
-  async addEventListeners() {
+  addEventListeners() {
     // Intentionally left blank, to be optionally overridden by derived classes
   }
 }
