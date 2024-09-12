@@ -13,6 +13,8 @@ export default class extends AbstractView {
       <input type="email" name="email" required>
       <label for="password">Password: </label>
       <input type="password" name="password" required>
+      <label for="password">Password: </label>
+      <input type="password" name="password2" required>
       <br>
       <button id="formButton" type="submit">
     </form>
@@ -22,28 +24,29 @@ export default class extends AbstractView {
 
   async submitNewUser() {
     const createUser = document.querySelector("#createUser");
-    const formData = new FormData(createUser);
-    const formObject = Object.fromEntries(formData.entries());
-    console.debug("Form Data:", formObject);
+    const username = createUser.querySelector("input[name='username']").value;
+    const email = createUser.querySelector("input[name='email']").value;
+    const password = createUser.querySelector("input[name='password']").value;
+    const password2 = createUser.querySelector("input[name='password2']").value;
     console.debug("trying fetch");
     try {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
       const Body = JSON.stringify({
-        username: "moi",
-        password: "toi",
-        password2: "toi",
-        email: "moi@google.com",
+        username: username,
+        password: password,
+        password2: password2,
+        email: email,
         two_fa_enable: false,
       });
 
       const request = new Request("/api/auth/", {
         method: "POST",
         body: JSON.stringify({
-          username: "moi2",
-          password: "toi",
-          password2: "toi",
-          email: "moi2@google.com",
+          username: username,
+          password: password,
+          password2: password2,
+          email: email,
           two_fa_enable: false,
         }),
         headers: myHeaders,
