@@ -10,7 +10,7 @@ User :
 - two_fa_enable(boolean)
 
 Done : 
-- '' : Create an account allowed method: POST. Expect as payload : username, password, email, two_fa_enable 
+- '' : Create an account allowed method: POST. Expect as payload : username, password, password2, email, two_fa_enable 
 
 - '<str:username>' : Send back account information. Allowed Method: GET. Permissions : Only the owner of the account can access their details. 
 
