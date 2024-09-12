@@ -9,7 +9,5 @@ export default class {
     return "";
   }
 
-  addEventListeners() {
-    // Intentionally left blank, to be optionally overridden by derived classes
-  }
+  addEventListeners() {}
 }

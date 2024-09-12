@@ -83,7 +83,7 @@ const view = new match.route.view();
 //   }
 //
 //   const view = new match.route.view(getParams(match));
-
+  
   document.querySelector("#app").innerHTML = await view.getHtml();
   view.addEventListeners();
 };

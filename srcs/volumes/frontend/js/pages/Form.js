@@ -55,21 +55,14 @@ export default class extends AbstractView {
       console.debug("Mode:", request.mode); // 'cors', 'no-cors', 'same-origin'
       console.debug("Credentials:", request.credentials); // 'omit', 'same-origin', or 'include'
       console.debug("Redirect:", request.redirect); // 'follow', 'manual', or 'error'
-      // console.debug(Request.toString()); /
+
       const response = await fetch(request);
 
-      // const response = await fetch("https://127.0.0.1:8443/api/auth/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: formData,
-      // });
       if (response.ok) {
         const result = await response.json(); // Parse the JSON response (if it's JSON)
         document.getElementById("result").innerHTML = `
           Form submitted successfully!;
-          user = $`  
+          user = $`;
         console.debug("Server response:", result);
       } else {
         document.getElementById("result").innerHTML = "Error submitting form.";
@@ -78,45 +71,6 @@ export default class extends AbstractView {
       console.error("Error submitting form:", error);
     }
   }
-
-  // async submitAuthForm(username, email, password) {
-  //   const url = "/api/auth/"; // Your API endpoint
-  //
-  //   // Create the request body
-  //   const body = {
-  //     username: username,
-  //     email: email,
-  //     password: password,
-  //     password2: password,
-  //   };
-  //   console.log(body);
-  //   try {
-  //     // Make the POST request
-  //     const response = await fetch(url, {
-  //       method: "POST", // The HTTP method
-  //       headers: {
-  //         "Content-Type": "application/json", // Setting the content type to JSON
-  //       },
-  //       body: JSON.stringify(body), // Convert the body object to a JSON string
-  //     });
-  //     console.log("fetch successful");
-  //     // Check if the response is successful
-  //     if (!response.ok) {
-  //       throw new Error(`Error: ${response.status}`);
-  //     }
-  //
-  //     // Parse and return the response as JSON (if successful)
-  //     const result = await response.json();
-  //     console.log("Success:", result);
-  //     return result;
-  //   } catch (error) {
-  //     // Handle errors
-  //     console.error("Error submitting form:", error);
-  //   }
-  // }
-  //
-  // Example usage:
-  // submitAuthForm("john_doe", "john.doe@example.com", "supersecretpassword");
 
   addEventListeners() {
     const button = document.querySelector("#formButton");
