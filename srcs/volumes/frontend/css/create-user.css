@@ -1,0 +1,19 @@
+.create-user-title {
+    font-size: 4.0vmin;
+
+}
+
+.create-user-form {
+    font-size: 2.0vmin;
+    margin: 2%;
+}
+
+.login42-create {
+    font-size: 2.0vmin;
+}
+
+.login42-create:hover {
+    font-size: 2.0vmin;
+    background-color: royalblue;
+    color: white;
+}

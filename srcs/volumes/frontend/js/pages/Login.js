@@ -3,23 +3,45 @@ import AbstractView from "./AbstractViews.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Form");
+    this.setTitle("Login");
   }
   async getHtml() {
-    return `<form id="login">
-      <label for="username">Username: </label>
-      <input type="text" name="username" required>
-      <label for="password">Password: </label>
-      <input type="password" name="password" required>
-      <br>
-      <button id="formButton" type="submit">
-    </form>
-    <div id="result"></div>
-  `;
+    return `
+        <div class="p-5 bg-*">
+            <div class="black-txt bg-form login-form p-4">
+                <h1 class="mb-3 text-center login-title text-decoration-underline">Login</h1>
+                <form id="login">
+                    <div class="form-group">
+                        <label for="Username">Username:</label>
+                        <input class="form-control" name="Username" type="text">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="Password">Password</label>
+                        <input class="form-control" name="Password" type="password">
+                    </div>
+                    <br>
+                    <button id="loginbutton" type="submit" class="btn bg-silver">Login</button>
+                    <br>
+                    <br>
+                </form>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <button type="button" class="btn bg-blue login42 white-txt">42 Connect</button>
+            </div>
+        </div>`;
   }
 
-  addEventListeners() {
-    const button = document.querySelector("#formButton");
+  async loadCss() {
+    const linkElement = document.createElement("link");
+    linkElement.rel = "stylesheet";
+    linkElement.href = "../css/login.css";
+    linkElement.classList.add("page-css");
+    document.head.appendChild(linkElement);
+  }
+
+  async addEventListeners() {
+    const button = document.querySelector("#loginButton");
     if (button) {
       button.addEventListener("click", async (ev) => {
         ev.preventDefault();
@@ -44,24 +66,25 @@ export default class extends AbstractView {
 
   async login() {
     const loginForm = document.querySelector("#login");
-    const username = loginForm.querySelector("input[name='username']").value;
-    const password = loginForm.querySelector("input[name='password']").value;
+    const username = loginForm.querySelector("input[name='Username']").value;
+    const password = loginForm.querySelector("input[name='Password']").value;
 
-    console.debug("username = " + username);
+    const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
+    if (!whitelist.test(username)) {
+      alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
+      return;
+    }
     try {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
-      const body = JSON.stringify({
+      const myBody = JSON.stringify({
         username: username,
         password: password,
       });
 
       const request = new Request("/api/auth/login", {
         method: "POST",
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
+        body: myBody,
         headers: myHeaders,
       });
       const response = await fetch(request);

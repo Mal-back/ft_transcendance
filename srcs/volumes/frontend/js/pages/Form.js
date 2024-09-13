@@ -22,10 +22,17 @@ export default class extends AbstractView {
   `;
   }
 
+
   async submitNewUser() {
     const createUser = document.querySelector("#createUser");
+
     const username = createUser.querySelector("input[name='username']").value;
+    const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     const email = createUser.querySelector("input[name='email']").value;
+    if (!whitelist.test(username) || !whitelist.test(email)){
+      alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
+      return;
+    }
     const password = createUser.querySelector("input[name='password']").value;
     const password2 = createUser.querySelector("input[name='password2']").value;
     console.debug("trying fetch");
@@ -64,8 +71,7 @@ export default class extends AbstractView {
       if (response.ok) {
         const result = await response.json(); // Parse the JSON response (if it's JSON)
         document.getElementById("result").innerHTML = `
-          Form submitted successfully!;
-          user = $`;
+          Form submitted successfully!`;
         console.debug("Server response:", result);
       } else {
         document.getElementById("result").innerHTML = "Error submitting form.";

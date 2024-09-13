@@ -8,6 +8,6 @@ export default class {
   async getHtml() {
     return "";
   }
-
-  addEventListeners() {}
+  async loadCss(){}
+  async addEventListeners() {}
 }
