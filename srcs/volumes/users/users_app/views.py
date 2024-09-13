@@ -1,4 +1,5 @@
 from os.path import exists
+import requests
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import status
@@ -37,6 +38,7 @@ class PublicUserRetrieveDetail(generics.RetrieveAPIView):
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
+
 
 class PublicUserCreate(generics.CreateAPIView) :
     permission_classes = [isAuth]

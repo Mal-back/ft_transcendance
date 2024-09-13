@@ -33,7 +33,7 @@ Url available for frontend :
 	'<str:username>/friend/add/<str:friendusername>' : Add a friend to the user. Method: Patch. Permission : User should be authenticated
 	'<str:username>/friend/delete/<str:friendusername>' : Delete a friend from user friend list. Method: Delete. Permission: User should be authenticated
 
-Url Available for other users:
+Url Available for other microservices only:
  	'create/' -> Create a user. Method: Post. Permission: Only Auth
  	'<str:username>/update' -> Update Username. Method: Patch. Permission: Only Auth
  	'<str:username>/delete' -> Delete User. Method: Patch. Permission: Only Auth
