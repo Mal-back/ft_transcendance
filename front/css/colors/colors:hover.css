@@ -1,214 +1,212 @@
 /* css for font color */
-@import url(./colors-bg.css);
-
-.white-txt {
+.white-txt:hover {
     color: white;
 }
 
-.black-txt {
+.black-txt:hover {
     color: black;
 }
 
-.green-txt {
+.green-txt:hover {
     color: green;
 }
 
-.purple-txt {
+.purple-txt:hover {
     color: purple;
 }
 
-.orange-txt {
+.orange-txt:hover {
     color: orange;
 }
 
-.pink-txt {
+.pink-txt:hover {
     color: pink;
 }
 
-.gray-txt {
+.gray-txt:hover {
     color: gray;
 }
 
-.brown-txt {
+.brown-txt:hover {
     color: brown;
 }
 
-.cyan-txt {
+.cyan-txt:hover {
     color: cyan;
 }
 
-.magenta-txt {
+.magenta-txt:hover {
     color: magenta;
 }
 
-.lightblue-txt {
+.lightblue-txt:hover {
     color: lightblue;
 }
 
-.lightgreen-txt {
+.lightgreen-txt:hover {
     color: lightgreen;
 }
 
-.lightyellow-txt {
+.lightyellow-txt:hover {
     color: lightyellow;
 }
 
-.lightgray-txt {
+.lightgray-txt:hover {
     color: lightgray;
 }
 
-.lightpink-txt {
+.lightpink-txt:hover {
     color: lightpink;
 }
 
-.lightcoral-txt {
+.lightcoral-txt:hover {
     color: lightcoral;
 }
 
-.darkblue-txt {
+.darkblue-txt:hover {
     color: darkblue;
 }
 
-.darkgreen-txt {
+.darkgreen-txt:hover {
     color: darkgreen;
 }
 
-.darkred-txt {
+.darkred-txt:hover {
     color: darkred;
 }
 
-.darkgray-txt {
+.darkgray-txt:hover {
     color: darkgray;
 }
 
-.darkorange-txt {
+.darkorange-txt:hover {
     color: darkorange;
 }
 
-.darkviolet-txt {
+.darkviolet-txt:hover {
     color: darkviolet;
 }
 
-.skyblue-txt {
+.skyblue-txt:hover {
     color: skyblue;
 }
 
-.seagreen-txt {
+.seagreen-txt:hover {
     color: seagreen;
 }
 
-.slategray-txt {
+.slategray-txt:hover {
     color: slategray;
 }
 
-.olive-txt {
+.olive-txt:hover {
     color: olive;
 }
 
-.teal-txt {
+.teal-txt:hover {
     color: teal;
 }
 
-.tomato-txt {
+.tomato-txt:hover {
     color: tomato;
 }
 
-.gold-txt {
+.gold-txt:hover {
     color: gold;
 }
 
-.silver-txt {
+.silver-txt:hover {
     color: silver;
 }
 
-.aqua-txt {
+.aqua-txt:hover {
     color: aqua;
 }
 
-.azure-txt {
+.azure-txt:hover {
     color: azure;
 }
 
-.beige-txt {
+.beige-txt:hover {
     color: beige;
 }
 
-.chocolate-txt {
+.chocolate-txt:hover {
     color: chocolate;
 }
 
-.coral-txt {
+.coral-txt:hover {
     color: coral;
 }
 
-.indigo-txt {
+.indigo-txt:hover {
     color: indigo;
 }
 
-.lavender-txt {
+.lavender-txt:hover {
     color: lavender;
 }
 
-.lime-txt {
+.lime-txt:hover {
     color: lime;
 }
 
-.maroon-txt {
+.maroon-txt:hover {
     color: maroon;
 }
 
-.navy-txt {
+.navy-txt:hover {
     color: navy;
 }
 
-.orchid-txt {
+.orchid-txt:hover {
     color: orchid;
 }
 
-.plum-txt {
+.plum-txt:hover {
     color: plum;
 }
 
-.salmon-txt {
+.salmon-txt:hover {
     color: salmon;
 }
 
-.turquoise-txt {
+.turquoise-txt:hover {
     color: turquoise;
 }
 
-.violet-txt {
+.violet-txt:hover {
     color: violet;
 }
 
-.midnightblue-txt {
+.midnightblue-txt:hover {
     color: midnightblue;
 }
 
-.sienna-txt {
+.sienna-txt:hover {
     color: sienna;
 }
 
-.peachpuff-txt {
+.peachpuff-txt:hover {
     color: peachpuff;
 }
 
-.rosybrown-txt {
+.rosybrown-txt:hover {
     color: rosybrown;
 }
 
-.moccasin-txt {
+.moccasin-txt:hover {
     color: moccasin;
 }
 
-.papayawhip-txt {
+.papayawhip-txt:hover {
     color: papayawhip;
 }
 
-.lightsalmon-txt {
+.lightsalmon-txt:hover {
     color: lightsalmon;
 }
 
-.hotpink-txt {
+.hotpink-txt:hover {
     color: hotpink;
 }
