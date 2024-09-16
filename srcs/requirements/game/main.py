@@ -47,7 +47,7 @@ screen.onkeypress(myGame.player2.pad.moveDown, "Down")
 
 while True:
     screen.update()
-    time.sleep(0.02)
+    time.sleep(0.001)
     myGame.ball.move()
     screen.ball.speed(500)
     screen.leftPad.goto(myGame.player1.pad.x, myGame.player1.pad.y)
