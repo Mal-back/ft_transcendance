@@ -49,15 +49,39 @@ class Game():
               + "\n\tDx Ball : " + str(self.ball.dx)
               + "\n\tDy Ball : " + str(self.ball.dy))
         
+    
     def resetBallPosition(self):
         self.ball.x = 0
         self.ball.y = 0
         
-    def start(self):
-        while True:
-            continue
-
-bob = Player(1, "Bob", 0, Pad(Const.MIN_X.value + Const.PAD_DISTANCE.value, 0))
-patrick = Player(2, "Patrick", 0, Pad(Const.MAX_X.value - Const.PAD_DISTANCE.value, 0))
-game = Game(bob, patrick)
-game.printInfo()
+    def checkPoint(self):
+        if self.ball.x == Const.MIN_X.value:
+            self.player2.score += 1
+            self.resetBallPosition()
+            return True
+        elif self.ball.x == Const.MAX_X.value:
+            self.player1.score += 1
+            self.resetBallPosition()
+            return True
+        if (self.player1.score == Const.MAX_SCORE.value or
+        self.player2.score == Const.MAX_SCORE.value):
+            return False
+    
+    def checkHitFrontPad(self):
+        if (self.ball.x == Const.LEFT_PAD_FRONT_X.value and
+		self.ball.y in self.player1.pad.frontRange()):
+            self.ball.hitPad()
+        elif (self.ball.x == Const.RIGHT_PAD_FRONT_X.value and
+		self.ball.y in self.player2.pad.frontRange()):
+            self.ball.hitPad()
+            
+    # def checkHitSidePad(self):
+    #     if ((self.ball.y == self.player1.pad.y + int(Const.PAD_HEIGHT.value / 2) and self.ball.x in self.player1.pad.sideRange())
+    #     or (self.ball.y == self.player1.pad.y - int(Const.PAD_HEIGHT.value / 2) and self.ball.x in self.player1.pad.sideRange())):
+    #         self.ball.hitPad()
+            
+            
+    def checkCollisions(self):
+        self.checkHitFrontPad()
+        # self.checkHitSidePad()
+        return self.checkPoint()
