@@ -48,26 +48,32 @@ export default class extends AbstractView {
             <div class="d-flex justify-content-center mt-3">
                 <button type="button" class="btn bg-blue login42-create white-txt">42 Connect</button>
             </div>
+        <div id="createUserResult"></div>
         </div>
             `;
   }
 
-async submitNewUser() {
+  async submitNewUser() {
     const createUser = document.querySelector("#createUser");
 
     const username = createUser.querySelector("input[name='Username']").value;
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     const email = createUser.querySelector("input[name='Mail']").value;
-    if (!whitelist.test(username) || !whitelist.test(email)){
+    const password = createUser.querySelector("input[name='Password']").value;
+    const password2 = createUser.querySelector(
+      "input[name='Password-2']",
+    ).value;
+
+    if (!whitelist.test(username) || !whitelist.test(email)) {
       alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
       return;
     }
-    const password = createUser.querySelector("input[name='Password']").value;
-    const password2 = createUser.querySelector("input[name='Password-2']").value;
+
     console.debug("trying fetch");
     try {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
+
       const myBody = JSON.stringify({
         username: username,
         password: password,
@@ -81,31 +87,40 @@ async submitNewUser() {
         body: myBody,
         headers: myHeaders,
       });
-      console.debug("Method:", request.method); // GET, POST, etc.
-      console.debug("URL:", request.url); // The request URL
-      console.debug("Headers:", Array.from(request.headers.entries())); // All headers
-      console.debug("Body:", myBody); // Whether the body has been read yet
-      console.debug("Mode:", request.mode); // 'cors', 'no-cors', 'same-origin'
-      console.debug("Credentials:", request.credentials); // 'omit', 'same-origin', or 'include'
-      console.debug("Redirect:", request.redirect); // 'follow', 'manual', or 'error'
+
+      // console.debug("Method:", request.method); // GET, POST, etc.
+      // console.debug("URL:", request.url); // The request URL
+      // console.debug("Headers:", Array.from(request.headers.entries())); // All headers
+      // console.debug("Body:", myBody); // Whether the body has been read yet
+      // console.debug("Mode:", request.mode); // 'cors', 'no-cors', 'same-origin'
+      // console.debug("Credentials:", request.credentials); // 'omit', 'same-origin', or 'include'
+      // console.debug("Redirect:", request.redirect); // 'follow', 'manual', or 'error'
 
       const response = await fetch(request);
 
       if (response.ok) {
         const result = await response.json(); // Parse the JSON response (if it's JSON)
-        document.getElementById("result").innerHTML = `
-          Form submitted successfully!`;
+        document.getElementById("createUserResult").innerHTML =
+          `<p class="success-msg">Form submitted successfully!</p>`;
         console.debug("Server response:", result);
       } else {
-        document.getElementById("result").innerHTML = "Error submitting form.";
+        const errorData = await response.json();
+        // const errorMessages = Object.entries(errorData).map(([field, messages]) => `${field}: ${messages.join()}`)
+        const errorMessages = Object.entries(errorData)
+          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+          .join("<br>");
+        document.getElementById("createUserResult").innerHTML =
+          `<p class="error-msg background white-txt">Error: ${errorMessages || "Submission failed."}</p>`;
+        console.debug("Server response:", errorData);
       }
     } catch (error) {
+      document.getElementById("createUserResult").innerHTML = `
+        <p class="error-msg background white-txt">Error: Unable to submit form. Please try again later.</p>`;
       console.error("Error submitting form:", error);
     }
   }
 
-
- async addEventListeners() {
+  async addEventListeners() {
     const button = document.querySelector("#createUserButton");
     if (button) {
       button.addEventListener("click", async (ev) => {
@@ -115,5 +130,4 @@ async submitNewUser() {
       });
     }
   }
-
- }
+}

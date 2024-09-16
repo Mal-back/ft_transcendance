@@ -6,13 +6,16 @@ import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
 import Matchmaking from "./pages/Matchmaking.js";
 
-const navigateTo = (url) => {
+export const navigateTo = (url) => {
+  console.info("navigateTo : " + url);
   history.pushState(null, null, url);
   router();
 };
 
+let view = null;
+
 const router = async () => {
-  console.log("Router is on");
+  console.info("Router is on");
   const routes = [
     { path: "/", view: Home },
     { path: "/game", view: Game },
@@ -34,21 +37,23 @@ const router = async () => {
     (potentialMatches) => potentialMatches.isMatch,
   );
   if (!match) {
-    console.log("default");
+    console.info("default");
     match = {
       route: routes[0],
       isMatch: true,
     };
   }
-  console.debug("route = " + match.route.path);
+  console.info("route = " + match.route.path);
 
-  // console.log("match = " + match.route.path);
-  // document.querySelectorAll(".page-css").forEach((e) => {
-  //   console.log("removing: ", e);
-  //   e.remove();
-  // });
+  let previousView = null;
+  if (view) {
+    previousView = view;
+  }
+  view = new match.route.view();
 
-  const view = new match.route.view();
+  if (previousView) {
+    previousView.destroy();
+  }
 
   // view.loadCss();
 
@@ -100,15 +105,17 @@ const router = async () => {
   //
   //   const view = new match.route.view(getParams(match));
 
+  view.loadCss();
   document.querySelector("#app").innerHTML = await view.getHtml();
   view.addEventListeners();
+
 };
 
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", async () => {
   document.body.addEventListener("click", (e) => {
-    console.log("Event");
+    console.info("Event");
     if (e.target.matches("[data-link]")) {
       e.preventDefault();
       navigateTo(e.target.href);
