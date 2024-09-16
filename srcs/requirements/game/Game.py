@@ -75,10 +75,10 @@ class Game():
 		self.ball.y in self.player2.pad.frontRange()):
             self.ball.hitPad()
             
-    # def checkHitSidePad(self):
-    #     if ((self.ball.y == self.player1.pad.y + int(Const.PAD_HEIGHT.value / 2) and self.ball.x in self.player1.pad.sideRange())
-    #     or (self.ball.y == self.player1.pad.y - int(Const.PAD_HEIGHT.value / 2) and self.ball.x in self.player1.pad.sideRange())):
-    #         self.ball.hitPad()
+    def checkHitSidePad(self):
+        if ((self.ball.y == self.player1.pad.y + int(Const.PAD_HEIGHT.value / 2) and self.ball.x in self.player1.pad.sideRange())
+        or (self.ball.y == self.player1.pad.y - int(Const.PAD_HEIGHT.value / 2) and self.ball.x in self.player1.pad.sideRange())):
+            self.ball.hitPad()
             
             
     def checkCollisions(self):

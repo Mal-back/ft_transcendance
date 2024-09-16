@@ -1,7 +1,7 @@
 from Const import Const
 
 class Ball():
-	def __init__(self, pos_x : int = 0, pos_y : int = 0, dx : int = -1, dy : int = 6):
+	def __init__(self, pos_x : int = 0, pos_y : int = 0, dx : int = -10, dy : int = 10):
 		self.x = int(pos_x)
 		self.y = int(pos_y)
 		self.dx = int(dx)
