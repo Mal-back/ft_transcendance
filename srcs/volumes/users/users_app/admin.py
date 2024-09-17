@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-# from users_app.models import PublicUser
-# admin.site.register(PublicUser)
-# class PublicUserInLine(admin.TabularInline):
-#     model = PublicUser
+from users_app.models import PublicUser
+admin.site.register(PublicUser)
+class PublicUserInLine(admin.TabularInline):
+    model = PublicUser
 
 # @admin.register(PublicUser)
 # class PublicUserAdmin(admin.ModelAdmin):
