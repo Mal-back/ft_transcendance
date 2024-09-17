@@ -16,13 +16,13 @@ export default class extends AbstractView {
   async getHtml() {
     return `
         <div class="custom-container d-flex flex-column justify-content-center align-items-center">
-            <button type="button" class="btn btn-primary btn-lg bg-midnightblue  custom-button">NORMAL MODE</button>
+            <a type="button" class="btn btn-primary btn-lg bg-midnightblue  custom-button">NORMAL MODE</a>
             <br>
             <br>
-            <button type="button" class="btn btn-danger btn-lg bg-purple custom-button">EPIC MODE</button>
+            <a type="button" class="btn btn-danger btn-lg bg-purple custom-button">EPIC MODE</a>
             <br>
             <br>
-            <button type="button" class="btn btn-warning btn-lg bg-darkyellow custom-button">TOURNAMENT</button>
+            <a type="button" class="btn btn-warning btn-lg bg-darkyellow custom-button">TOURNAMENT</a>
         </div>
           `;
   }

@@ -5,6 +5,7 @@ import Authentification from "./pages/Authentification.js";
 import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
 import Matchmaking from "./pages/Matchmaking.js";
+import EpicMode from "./pages/epicMode.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -24,6 +25,7 @@ const router = async () => {
     { path: "/createUser", view: CreateUser },
     { path: "/login", view: Login },
     { path: "/matchmaking", view: Matchmaking },
+    { path: "/epic-mode", view: EpicMode},
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -108,6 +110,20 @@ const router = async () => {
   view.loadCss();
   document.querySelector("#app").innerHTML = await view.getHtml();
   view.addEventListeners();
+  // Function to print all CSS links on the page
+function printAllCssLinks() {
+  // Select all <link> elements with rel="stylesheet"
+  const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+  
+  // Loop through each <link> element
+  cssLinks.forEach((link) => {
+    // Print the href attribute (URL of the stylesheet) to the console
+    console.log(link.href);
+  });
+}
+
+// Call the function to print all CSS links
+
 
 };
 

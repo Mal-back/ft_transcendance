@@ -1,3 +1,4 @@
+import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 
 export default class extends AbstractView {
@@ -103,14 +104,16 @@ export default class extends AbstractView {
         document.getElementById("createUserResult").innerHTML =
           `<p class="success-msg">Form submitted successfully!</p>`;
         console.debug("Server response:", result);
+        navigateTo("/login");
       } else {
         const errorData = await response.json();
         // const errorMessages = Object.entries(errorData).map(([field, messages]) => `${field}: ${messages.join()}`)
         const errorMessages = Object.entries(errorData)
           .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
           .join("<br>");
-        document.getElementById("createUserResult").innerHTML =
-          `<p class="error-msg background white-txt">Error: ${errorMessages || "Submission failed."}</p>`;
+        alert(`Error: ${errorMessages || "Submission failed."}`);
+        // document.getElementById("createUserResult").innerHTML =
+          // `<p class="error-msg background white-txt">Error: ${errorMessages || "Submission failed."}</p>`;
         console.debug("Server response:", errorData);
       }
     } catch (error) {
