@@ -1,3 +1,4 @@
+import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 
 export default class extends AbstractView {
@@ -123,7 +124,8 @@ export default class extends AbstractView {
         localStorage.setItem("username", username);
         document.getElementById("loginResult").innerHTML = "Successful login";
         console.debug("Successful login");
-        await this.log();
+        // await this.log();
+        navigateTo("/");
       } else {
         document.getElementById("result").innerHTML =
           "Invalid Login, please try again";

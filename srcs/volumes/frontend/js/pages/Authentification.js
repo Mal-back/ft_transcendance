@@ -18,11 +18,11 @@ export default class extends AbstractView {
         <div class="line-up d-flex justify-content-between align-items-center">
             <div class="left-half d-flex justify-content-center">
                 <a id="createNewProfile" type="button" class="btn black-txt bg-semi-t-white" href="/createUser"
-                    data-link="view">Create New Profile</button>
+                    data-link="view">Create New Profile</a>
             </div>
             <div id="login" class="right-half d-flex justify-content-center">
                 <a type="button" class="btn black-txt bg-semi-t-white" href="/login"
-                    data-link="view">Login</button>
+                    data-link="view">Login</a>
             </div>
         </div>
           `;

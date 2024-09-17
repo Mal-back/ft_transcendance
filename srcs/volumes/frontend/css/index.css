@@ -1,19 +1,9 @@
 @import url("./navbar.css");
+@import url("./text-size.css");
 
 /* main bg which is a gif that resizes to the window size */
 html,
 body {
     height: 100%;
-    /* min-width: 100vw; */
     margin: 0;
-}
-
-.background {
-    background-image: url("../img/pong.gif");
-    /* height: 100%; */
-    width: 100%;
-    min-height: 100vh;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
 }
