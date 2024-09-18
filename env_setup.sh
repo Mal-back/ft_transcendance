@@ -76,3 +76,4 @@ rm ./ca.crt ./ca.key
 openssl genpkey -algorithm RSA -out $DJANGO_AUTH/jwt_private.pem -pkeyopt rsa_keygen_bits:4096
 openssl rsa -pubout -in $DJANGO_AUTH/jwt_private.pem -out $DJANGO_AUTH/jwt_public.pem
 cp $DJANGO_AUTH/jwt_public.pem $DJANGO_USERS/jwt_public.pem
+cp $DJANGO_AUTH/jwt_public.pem $DJANGO_GAME/jwt_public.pem
