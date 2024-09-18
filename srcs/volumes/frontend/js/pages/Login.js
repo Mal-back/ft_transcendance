@@ -7,6 +7,7 @@ export default class extends AbstractView {
     this.setTitle("Login");
   }
   async getHtml() {
+    console.log("html login");
     return `
         <div class="p-5 bg-*">
             <div class="black-txt bg-form login-form p-4">
@@ -40,6 +41,7 @@ export default class extends AbstractView {
     linkElement.href = "../css/login.css";
     linkElement.classList.add("page-css");
     document.head.appendChild(linkElement);
+    console.log("adding login.css");
   }
 
   async addEventListeners() {
@@ -51,16 +53,14 @@ export default class extends AbstractView {
         console.debug("Submit button clicked!");
         await this.login();
       });
-    } else {
-      console.error("fail to get event");
     }
   }
 
   async log() {
-    const username = localStorage.getItem("username");
+    const username = sessionStorage.getItem("username_transcendance");
     console.log("trying to get info on " + username);
 
-    const authToken = localStorage.getItem("accessJWT");
+    const authToken = sessionStorage.getItem("accessJWT_transcendance");
     console.debug("Auth token from cookie:", authToken);
 
     try {
@@ -75,14 +75,15 @@ export default class extends AbstractView {
       console.log("Successful fetch");
       if (response.ok) {
         console.log("response: ", response);
-        const data = response.json();
-        conole.log("data: ", data);
+        const data = response.text();
+        console.log("data: ", data);
       } else {
-        const errorData = await response.json();
+        const errorData = await response.test();
         console.log("error in response: ", errorData);
       }
-    } catch {
+    } catch (error) {
       console.error("Error logging, fetch on /api/auth/" + username);
+      console.error(error.message);
     }
   }
 
@@ -118,16 +119,16 @@ export default class extends AbstractView {
         const data = await response.json();
 
         const tokenAccess = data.access;
-        localStorage.setItem("accessJWT", tokenAccess);
+        sessionStorage.setItem("accessJWT_transcendance", tokenAccess);
         const tokenRefresh = data.refresh;
-        localStorage.setItem("refreshJWT", tokenRefresh);
-        localStorage.setItem("username", username);
+        sessionStorage.setItem("refreshJWT_transcendance", tokenRefresh);
+        sessionStorage.setItem("username", username);
         document.getElementById("loginResult").innerHTML = "Successful login";
         console.debug("Successful login");
-        // await this.log();
+        await this.log();
         navigateTo("/");
       } else {
-        document.getElementById("result").innerHTML =
+        document.getElementById("loginResult").innerHTML =
           "Invalid Login, please try again";
       }
     } catch (error) {

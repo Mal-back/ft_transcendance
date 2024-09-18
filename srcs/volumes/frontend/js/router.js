@@ -51,6 +51,7 @@ const router = async () => {
   if (view) {
     previousView = view;
   }
+  view = null;
   view = new match.route.view();
 
   if (previousView) {
@@ -108,19 +109,29 @@ const router = async () => {
   //   const view = new match.route.view(getParams(match));
 
   view.loadCss();
+  try {
   document.querySelector("#app").innerHTML = await view.getHtml();
+  } catch (error){
+    if (error.message.split(' ')[0] === "Redirect")
+      console.log(error.message);
+    else {
+      console.error("Error in get Html():", error.message);
+      navigateTo("/");
+    }
+  }
+
   view.addEventListeners();
   // Function to print all CSS links on the page
-function printAllCssLinks() {
-  // Select all <link> elements with rel="stylesheet"
-  const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-  
-  // Loop through each <link> element
-  cssLinks.forEach((link) => {
-    // Print the href attribute (URL of the stylesheet) to the console
-    console.log(link.href);
-  });
-}
+// function printAllCssLinks() {
+//   // Select all <link> elements with rel="stylesheet"
+//   const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+//   
+//   // Loop through each <link> element
+//   cssLinks.forEach((link) => {
+//     // Print the href attribute (URL of the stylesheet) to the console
+//     console.log(link.href);
+//   });
+// }
 
 // Call the function to print all CSS links
 

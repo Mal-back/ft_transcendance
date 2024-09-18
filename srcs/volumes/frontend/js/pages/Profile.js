@@ -39,12 +39,32 @@ export default class extends AbstractView {
     this.removeCss();
   }
 
+  async loadUserData() {
+    // const authToken = localStorage.getItem("accessJWT_transcendance");
+    // const username = localStorage.getItem("username");
+    // if (!authToken) {
+    //   this.destroy();
+    //   navigateTo("/login");
+    //   throw new Error("Redirect to login, User is not authentified");
+    // }
+    // try {
+    //   const myHeaders = new Headers();
+    //   myHeaders.append("Authorization", "Bearer " + authToken);
+    //   const request = new Request("/api/users/" + username, {
+    //
+    //   });
+    // }
+  }
+
   async getHtml() {
-    const authToken = localStorage.getItem("accessJWT");
-    if (!authToken) {
-      navigateTo("/login");
-      return;
+    const tokenProfile = await this.getToken();
+    if (tokenProfile == null) {
+      console.log("token = ", tokenProfile);
+      throw new Error("Redirect to login");
     }
+    // const userData = await this.loadUserData();
+
+    console.log("token", tokenProfile);
     return `
         <div class="Profile container">
             <div class="d-flex justify-content-center w-100">
@@ -65,21 +85,11 @@ export default class extends AbstractView {
             <div class="border p-3" style="height: 300px; overflow-y: auto;">
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet accumsan urna. Cras
                     ultricies scelerisque magna, vitae tempus nulla finibus sit amet. Aenean et pharetra odio. Phasellus
-                    faucibus, orci non vestibulum faucibus, velit justo lacinia metus, non egestas turpis nunc a risus.
-                    Quisque non magna at est ultricies bibendum.</p>
-                <p>Morbi nec orci lorem. In finibus urna vel magna aliquam viverra. Vivamus consequat magna orci, sed
-                    sollicitudin odio blandit id. Pellentesque at ipsum dapibus, pulvinar ligula non, finibus felis. Nam
-                    vitae magna eros.</p>
-                <p>Curabitur id pharetra risus, vitae vestibulum ex. Nam ornare tempor neque, nec laoreet nisi lobortis
-                    id. Integer dignissim eros ac arcu pulvinar, nec fermentum turpis volutpat.</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet accumsan urna. Cras
-                    ultricies scelerisque magna, vitae tempus nulla finibus sit amet.</p>
-                <p>Phasellus faucibus, orci non vestibulum faucibus, velit justo lacinia metus, non egestas turpis nunc
-                    a risus. Quisque non magna at est ultricies bibendum.</p>
+                   </p>
             </div>
             <br>
             <div class="align-items-right mt-3 w-100">
-                <button type="button" class="btn bg-lightgray">Settings</button>
+                <a type="button" class="btn bg-lightgray">Settings</a>
             </div>
         </div>
           `;
