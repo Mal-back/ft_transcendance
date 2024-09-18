@@ -8,10 +8,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class UserRegistrationSerializer(serializers.ModelSerializer) :
     password2 = serializers.CharField(max_length=128, write_only=True, style={'input_type': 'password'}, required=True)
     email = serializers.EmailField(required=True)
-    two_fa_active = serializers.BooleanField(default=False)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'password2', 'is_staff', 'is_active', 'groups', 'two_fa_active']
+        fields = ['username', 'email', 'password', 'password2', 'is_staff', 'is_active']
         extra_kwargs = {
                     'password': {'write_only': True, 'style': {'input_type': 'password'}},
                     'password2': {'write_only': True, 'style': {'input_type': 'password'}},
@@ -29,6 +28,24 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email is already taken.Already have an account ? Sign in")
+        return value
+
+    def validate_username(self, value):
+        forbidden_usernames = [
+                'create',
+                'update',
+                'delete',
+                'login',
+                'logout',
+                'refresh',
+                'increment',
+                'add',
+                'admin',
+                ]
+        if value.lower() in forbidden_usernames:
+            raise ValidationError('Forbidden user name')
+        if 'israel' in value.lower():
+            raise ValidationError("You can't choose a non-existing country as username. Free Palestine !")
         return value
 
     def validate(self, data):
@@ -50,7 +67,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token['name'] = user.username
+        token['username'] = user.username
+        del token['user_id']
         if user.groups.filter(name='service').exists():
             token.set_exp(lifetime=timedelta(hours=12))
             token.set_exp(lifetime=timedelta(days=3), claim='refresh')
