@@ -4,9 +4,11 @@
 
 DJANGO_AUTH=./srcs/requirements/django_auth/certs
 DJANGO_USERS=./srcs/requirements/django_users/certs
+DJANGO_GAME=./srcs/requirements/django_game/certs
 NGINX=./srcs/requirements/nginx/certs
 PGSQL_AUTH=./srcs/requirements/postgreSQL_auth/certs
 PGSQL_USERS=./srcs/requirements/postgreSQL_users/certs
+PGSQL_GAME=./srcs/requirements/postgreSQL_game/certs
 FRONTEND=./srcs/requirements/frontend/certs
 GEN_CSR="openssl req -new -newkey rsa:4096 -nodes -out"
 GEN_CRT="openssl x509 -req -days 365000 -in"
@@ -20,10 +22,12 @@ openssl req -new -x509 -nodes -days 365000 -key ca.key -out ca.crt -subj "/C=FR/
 
 mkdir -p $DJANGO_AUTH
 mkdir -p $DJANGO_USERS
+mkdir -p $DJANGO_GAME
 mkdir -p $NGINX
 mkdir -p $PGSQL_AUTH
 mkdir -p $FRONTEND
 mkdir -p $PGSQL_USERS
+mkdir -p $PGSQL_GAME
 
 $GEN_CSR $NGINX/nginx_client.csr -keyout $NGINX/nginx_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=nginx_client/UID=vlevy" 
 $GEN_CRT $NGINX/nginx_client.csr -out $NGINX/nginx_client.crt -CA ca.crt -CAkey ca.key
@@ -46,14 +50,22 @@ $GEN_CRT $DJANGO_USERS/users.csr -out $DJANGO_USERS/users.crt -CA ./ca.crt -CAke
 $GEN_CSR $DJANGO_USERS/users_client.csr -keyout $DJANGO_USERS/users_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=users_client/UID=vlevy" 
 $GEN_CRT $DJANGO_USERS/users_client.csr -out $DJANGO_USERS/users_client.crt -CA ca.crt -CAkey ca.key
 
+$GEN_CSR $DJANGO_GAME/game_client.csr -keyout $DJANGO_GAME/game_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=game_client/UID=vlevy"
+$GEN_CRT $DJANGO_GAME/game_client.csr -out $DJANGO_GAME/game_client.crt -CA ca.crt -CAkey ca.key
+
 $GEN_CSR $PGSQL_USERS/pgsql_users.csr -keyout $PGSQL_USERS/pgsql_users.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=pgsql/UID=vlevy" 
 $GEN_CRT $PGSQL_USERS/pgsql_users.csr -out $PGSQL_USERS/pgsql_users.crt -CA ca.crt -CAkey ca.key
 
+$GEN_CSR $PGSQL_GAME/pgsql_game.csr -keyout $PGSQL_GAME/pgsql_game.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=pgsql/UID=vlevy" 
+$GEN_CRT $PGSQL_GAME/pgsql_game.csr -out $PGSQL_GAME/pgsql_game.crt -CA ca.crt -CAkey ca.key
+
 cp ./ca.crt $DJANGO_AUTH/ca.crt
+cp ./ca.crt $DJANGO_GAME/ca.crt
 cp ./ca.crt $NGINX/ca.crt
 cp ./ca.crt $FRONTEND/ca.crt
 cp ./ca.crt $PGSQL_AUTH/ca.crt
 cp ./ca.crt $PGSQL_USERS/ca.crt
+cp ./ca.crt $PGSQL_GAME/ca.crt
 cp ./ca.crt $DJANGO_USERS/ca.crt
 rm ./ca.crt ./ca.key
 
