@@ -50,6 +50,9 @@ $GEN_CRT $DJANGO_USERS/users.csr -out $DJANGO_USERS/users.crt -CA ./ca.crt -CAke
 $GEN_CSR $DJANGO_USERS/users_client.csr -keyout $DJANGO_USERS/users_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=users_client/UID=vlevy" 
 $GEN_CRT $DJANGO_USERS/users_client.csr -out $DJANGO_USERS/users_client.crt -CA ca.crt -CAkey ca.key
 
+$GEN_CSR $DJANGO_GAME/game.csr -keyout $DJANGO_GAME/game.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=game/UID=vlevy" 
+$GEN_CRT $DJANGO_GAME/game.csr -out $DJANGO_GAME/game.crt -CA ./ca.crt -CAkey ./ca.key
+
 $GEN_CSR $DJANGO_GAME/game_client.csr -keyout $DJANGO_GAME/game_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=game_client/UID=vlevy"
 $GEN_CRT $DJANGO_GAME/game_client.csr -out $DJANGO_GAME/game_client.crt -CA ca.crt -CAkey ca.key
 
