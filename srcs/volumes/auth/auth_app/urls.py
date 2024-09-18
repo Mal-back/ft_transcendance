@@ -12,4 +12,5 @@ urlpatterns = [
         path('delete/<str:username>', views.UserDeleteView.as_view(), name='auth-delete'),
         path('update/<str:username>', views.UserUpdateView.as_view(), name='auth-update'),
         path("<str:username>", views.UserDetailView.as_view(), name='auth-detail'),
+        path('internal/auth', views.ServiceJWTObtainPair.as_view(), name='service-auth'),
 ]

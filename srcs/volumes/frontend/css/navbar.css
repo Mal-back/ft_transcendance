@@ -1,0 +1,16 @@
+/* navbar magin and align center */
+.navbar {
+    margin: 0 5px;
+    align-self: center;
+}
+
+/* add transparency to navbar bg */
+.navbar-bg {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* change letter color to white + font size modified */
+.nav-link {
+    color: white;
+    font-size: 4.5vmin;
+}

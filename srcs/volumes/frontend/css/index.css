@@ -1,0 +1,9 @@
+@import url("./navbar.css");
+@import url("./text-size.css");
+
+/* main bg which is a gif that resizes to the window size */
+html,
+body {
+    height: 100%;
+    margin: 0;
+}

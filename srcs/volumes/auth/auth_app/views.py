@@ -1,28 +1,48 @@
-from rest_framework import generics
-from django.contrib.auth.models import User
-from .serializers import UserRegistrationSerializer, UserLoginSerializer
+import requests
+from django.utils.decorators import method_decorator
+from rest_framework import generics, status
+from rest_framework.views import APIView, Response, csrf_exempt
+from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer
 from .permissions import IsOwner
+from .models import CustomUser
 # Create your views here.
 
 class UserDetailView(generics.RetrieveAPIView) :
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
 
 class UserDeleteView(generics.DestroyAPIView) :
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
 
 class UserCreateView(generics.ListCreateAPIView) :
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        service_url = 'http://users:8443/api/users/create/'
+        response = requests.post(service_url, json={'username': user.username})
+        if response.status_code != 200:
+            print(f'fuck, {response.status_code}, {response.json()}')
+        return user
+        
+
 class UserUpdateView(generics.UpdateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
+
+class ServiceJWTObtainPair(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request, *args, **kwargs):
+        serializer = ServiceObtainTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
