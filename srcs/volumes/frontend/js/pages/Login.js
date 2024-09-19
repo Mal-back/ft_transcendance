@@ -1,5 +1,7 @@
 import { navigateTo } from "../router.js";
+import { removeSessionStorage, setSessionStorage } from "/sessionStorageUtils";
 import AbstractView from "./AbstractViews.js";
+import FetchApi from "./FetchApi.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -134,5 +136,32 @@ export default class extends AbstractView {
     } catch (error) {
       console.error("Error submitting from login: ", error);
     }
+  }
+  async login() {
+    console.log("login");
+    const loginForm = document.querySelector("#login");
+    const usernameForm = loginForm.querySelector(
+      "input[name='Username']",
+    ).value;
+    const passwordForm = loginForm.querySelector(
+      "input[name='Password']",
+    ).value;
+
+    const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
+    if (!whitelist.test(username)) {
+      alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
+      return;
+    }
+    const api = new FetchApi();
+    try {
+      const response = await api.makeRequest("/api/auth/login", "POST", {
+        username: usernameForm,
+        password: passwordForm,
+      });
+      if (response.ok) {
+        const data = await response.JSON();
+        setSessionStorage(data);
+      }
+    } catch {}
   }
 }

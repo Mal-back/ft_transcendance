@@ -1,4 +1,5 @@
 import { navigateTo } from "../router";
+import { removeSessionStorage, setSessionStorage } from "/sessionStorageUtils";
 
 export default class {
   constructor() { }
@@ -49,6 +50,7 @@ export default class {
     sessionStorage.removeItem("refreshJWT_transcendance");
     sessionStorage.removeItem("username_transcendance");
   }
+
   async getToken() {
     const authToken = sessionStorage.getItem("accessJWT_transcendance");
     if (!authToken) {
