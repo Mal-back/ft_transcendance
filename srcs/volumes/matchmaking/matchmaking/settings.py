@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k9+154x_#=gk*)4^mq&=n3m+s9n_utzfp@-%99&rpc&t!qnb4b'
+SECRET_KEY = os.getenv('DJANGO_USERS_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['users', 'localhost', 'auth']
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -37,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+    'matchmaking_app.apps.MatchmakingAppConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +54,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'x-csrftoken',
+    'authorization',
+    'Authorization',
+    'accept',
+    'origin',
+    'user-agent',
+    'x-requested-with',
 ]
 
 ROOT_URLCONF = 'matchmaking.urls'
@@ -75,8 +95,18 @@ WSGI_APPLICATION = 'matchmaking.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('MATCHMAKING_DB_NAME'),
+        'USER': os.getenv('MATCHMAKING_DB_USER'),
+        'PASSWORD': os.getenv('MATCHMAKING_DB_PASSWORD'),
+        'HOST': os.getenv('MATCHMAKING_DB_HOST'),
+        'PORT': os.getenv('MATCHMAKING_DB_PORT'),
+        'OPTIONS' : {
+            'sslmode' : 'require',
+            'sslcert' : '/certs/matchmaking_client.crt',
+            'sslkey' : '/certs/matchmaking_client.key',
+            'sslrootcert' : '/certs/ca.crt',
+            }
     }
 }
 
@@ -99,6 +129,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'users_app.authentification.CustomAuthentication',
+            ),
+        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+        'PAGE_SIZE': 10,
+        }
+
+def get_jwt_keys(key): 
+    with open(key, 'r') as keyfile :
+        return keyfile.read()
+
+SIMPLE_JWT = {
+            "ALGORITHM": "RS512",
+            "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
+            "AUTH_HEADER_TYPES": ("Bearer",),
+        }
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
