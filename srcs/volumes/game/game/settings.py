@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    # 'game_app.apps.GameAppConfig',
+    'game_app.apps.GameAppConfig',
     'corsheaders'
 ]
 

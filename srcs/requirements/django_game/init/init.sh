@@ -12,5 +12,5 @@ fi
 if ["$DUMP_DATA" == "True" ] ; then
 	exec python3 gunicornWrapper.py
 else
-	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} auth.wsgi
+	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} game.wsgi
 fi

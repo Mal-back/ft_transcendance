@@ -9,7 +9,7 @@ def sig_handler(sig, frame):
     stopme = True
 
 signal.signal(signal.SIGTERM, sig_handler)
-proc = subprocess.Popen(['gunicorn', '--bind', '0.0.0.0:8443', '--reload','auth.wsgi'])
+proc = subprocess.Popen(['gunicorn', '--bind', '0.0.0.0:8443', '--reload','game.wsgi'])
 while (stopme == False) :
     pass
 proc.terminate()
