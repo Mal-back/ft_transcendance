@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/colors/colors.css">
+    <link rel="stylesheet" href="../../css/profile.css">
+    <link rel="stylesheet" href="../../css/background-basic.css">
+    <link rel="stylesheet" href="../../css/background-profile.css">
+    <link rel="stylesheet" href="../../css/buttons.css">
+    <title>Settings</title>
+    <div style="background-color: gray;">
+        <div class="container d-flex justify-content-center" style="font-size: 3.5vh; height: 5vh; width: 1vw;">
+            <div class="text-black">
+                FT_TRANSCENDENCE
+            </div>
+        </div>
+    </div>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-2 bg-dark text-white vh-100 d-flex flex-column bar-size-max">
+                <div class="nav flex-column">
+                    <a class="nav-link text-white my-4" href="/" data-link>HOME</a>
+                    <a class="nav-link text-white my-4" href="/game" data-link>Game</a>
+                    <a class="nav-link text-white my-4" href="/profile" data-link>Profile</a>
+                    <a class="nav-link text-white my-4" href="/authentification" data-link>Login</a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-10 d-flex justify-content-center">
+                <div class="background">
+                    <div class="Profile container">
+                        <div class="container mt-4">
+                            <h1>Settings</h1>
+                            <form>
+
+                                <!-- USERNAME -->
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" value="CurrentUsername">
+                                    <button type="button" class="btn btn-success custom-button">Save Username</button>
+                                </div>
+
+
+                                <!-- MAIL HANDLER -->
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <br>
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#handleEmail">Handle Email</button>
+                                </div>
+                                <div class="modal fade" id="handleEmail" tabindex="-1"
+                                    aria-labelledby="handleEmailLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="handleEmailLabel">Change Mail</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">Old Email</label>
+                                                        <input type="email" class="form-control" id="email"
+                                                            value="old-email@google.com">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">New Email</label>
+                                                        <input type="email" class="form-control" id="email"
+                                                            value="new-email@google.com">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">Confirm New Email</label>
+                                                        <input type="email" class="form-control" id="email"
+                                                            value="new-email@google.com">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-success"
+                                                    id="confirm-changes-email-btn">Confirm
+                                                    Changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- PASSWORD -->
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <br>
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#handlePassword">Handle
+                                        Password</button>
+                                </div>
+                                <div class="modal fade" id="handlePassword" tabindex="-1"
+                                    aria-labelledby="handlePasswordLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="handlePasswordLabel">Change password</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label for="password" class="form-label">Old Password</label>
+                                                        <input type="password" class="form-control"
+                                                            id="old-password-settings">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="password" class="form-label">New Password</label>
+                                                        <input type="password" class="form-control"
+                                                            id="new-password-settings">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="password" class="form-label">Confirm New
+                                                            Password</label>
+                                                        <input type="password" class="form-control"
+                                                            id="new-password-settings">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-success"
+                                                    id="confirm-changes-password-btn">Confirm
+                                                    Changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- LANGUAGE -->
+                                <div class="mb-3">
+                                    <label for="language" class="form-label">Language</label>
+                                    <select class="form-select" id="language">
+                                        <option selected>English</option>
+                                        <option value="1">Spanish</option>
+                                        <option value="2">French</option>
+                                    </select>
+                                    <button type="button" class="btn btn-success custom-button">Save Language</button>
+                                </div>
+
+
+                                <!-- DATA HANDLER -->
+                                <!-- <br> -->
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-info white-txt" data-bs-toggle="modal"
+                                        data-bs-target="#handleData">Handle Data</button>
+                                </div>
+                                <!-- <br> -->
+                                <button type="button" class="btn btn-success">Save All Changes</button>
+                                <div class="modal fade" id="handleData" tabindex="-1" aria-labelledby="handleDataLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="handleDataLabel">Handle Data</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <button type="button" class="btn btn-success">Send All
+                                                            Data</button>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <button type="button" class="btn btn-warning">Delete
+                                                            Account</button>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <button type="button" class="btn btn-danger">Delete All
+                                                            Data</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

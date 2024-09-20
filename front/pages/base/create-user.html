@@ -11,10 +11,69 @@
     <link rel="stylesheet" href="../../css/create-user.css">
     <link rel="stylesheet" href="../../css/background-basic.css">
     <title>Create User</title>
+    <div style="background-color: gray;">
+        <div class="container d-flex justify-content-center" style="font-size: 3.5vh; height: 5vh; width: 1vw;">
+            <div class="text-black">
+                FT_TRANSCENDENCE
+            </div>
+        </div>
+    </div>
 </head>
 
 <body>
-    <div class="background">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-2 bg-dark text-white vh-100 d-flex flex-column bar-size-max">
+                <div class="nav flex-column">
+                    <a class="nav-link text-white my-4" href="/" data-link>HOME</a>
+                    <a class="nav-link text-white my-4" href="/game" data-link>Game</a>
+                    <a class="nav-link text-white my-4" href="/profile" data-link>Profile</a>
+                    <a class="nav-link text-white my-4" href="/authentification" data-link>Login</a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-10 d-flex justify-content-center">
+                <div class="background">
+                    <div class="p-5 bg-*">
+                        <div class="black-txt bg-form create-user-form p-4">
+                            <h1 class="mb-3 text-center create-user-title text-decoration-underline">Create User</h1>
+                            <form>
+                                <div class="form-group">
+                                    <label for="Username">Username:</label>
+                                    <input class="form-control" id="Username" type="text">
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="Mail">Mail:</label>
+                                    <input class="form-control" id="Mail" type="text">
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="Password">Password</label>
+                                    <input class="form-control" id="Password" type="password">
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="Password-2">Password 2</label>
+                                    <input class="form-control" id="Password-2" type="password">
+                                </div>
+                                <br>
+                                <button type="submit" class="btn bg-silver">Create New Profile</button>
+                                <br>
+                                <br>
+                            </form>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <button type="button" class="btn bg-blue login42-create white-txt">42 Connect</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="background">
         <div class="container d-flex flex-column">
             <nav class="navbar navbar-expand-lg navbar-dark navbar-bg">
                 <ul class="navbar-nav mr-auto justify-content-center">
@@ -66,7 +125,7 @@
                 <button type="button" class="btn bg-blue login42-create white-txt">42 Connect</button>
             </div>
         </div>
-    </div>
+    </div> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>

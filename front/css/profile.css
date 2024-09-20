@@ -47,3 +47,8 @@
 .align-items-right {
     text-align: right;
 }
+
+.bd {
+    height: 300px;
+    overflow-y: auto;
+}
