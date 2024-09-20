@@ -20,4 +20,3 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f'User "{serviceName}" created'))
             else:
                 self.stdout.write(self.style.WARNING(f'User "{serviceName}" already exists'))
-
