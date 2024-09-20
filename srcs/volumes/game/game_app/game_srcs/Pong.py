@@ -1,12 +1,12 @@
 # coding: utf-8
 
-from Const import Const
-from Pad import Pad
-from Player import Player
-from Ball import Ball
+from .Const import Const
+from .Pad import Pad
+from .Player import Player
+from .Ball import Ball
 import time
   
-class Game():
+class Pong():
     def __init__(self, player1 : Player, player2 : Player):
         self.player1 = player1
         self.player2 = player2

@@ -4,7 +4,7 @@ from rest_framework import generics
 from rest_framework import status
 from .serializers import GameDetailSerializer, GameListSerializer
 from .models import Game
-from .Const import Const
+from .game_srcs.Const import Const
 from rest_framework.renderers import JSONRenderer
 from django.http import JsonResponse
 
@@ -27,14 +27,17 @@ def SendConstJson(request):
 class GameList(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GameListSerializer
-    lookup_field = 'name'
+    lookup_field = 'id'
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        allowed_order_fields = ['name',]
+        allowed_order_fields = [ 'id', 'player1_username', 'player2_username', 'player1_score', 'player2_score', ]
         order_by = self.request.query_params.get('order_by')
         if order_by in allowed_order_fields:
             return Game.objects.all().order_by(order_by)
         return queryset
 		
-		
+class GameRetrieveDetail(generics.RetrieveAPIView):
+    queryset = Game.objects.all()
+    serializer_class = GameDetailSerializer
+    lookup_field = 'id'

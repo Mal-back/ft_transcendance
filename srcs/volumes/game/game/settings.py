@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('DJANGO_GAME_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['game', 'users', 'localhost', 'auth']
+ALLOWED_HOSTS = ['game', 'localhost', 'auth']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'game_app.apps.GameAppConfig',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'game.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('GAME_DB_NAME'),
         'USER': os.getenv('GAME_DB_USER'),
         'PASSWORD': os.getenv('GAME_DB_PASSWORD'),
