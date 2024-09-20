@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { removeSessionStorage, setSessionStorage } from "/sessionStorageUtils";
+import { removeSessionStorage, setSessionStorage } from "./Utils.js";
 import AbstractView from "./AbstractViews.js";
 import FetchApi from "./FetchApi.js";
 
@@ -46,15 +46,17 @@ export default class extends AbstractView {
     console.log("adding login.css");
   }
 
+  async loginEvent(ev) {
+    ev.preventDefault();
+    console.debug("Submit button clicked");
+    await this.login();
+  }
+
   async addEventListeners() {
     console.log("adding event addEventListeners");
     const button = document.querySelector("#loginButton");
     if (button) {
-      button.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        console.debug("Submit button clicked!");
-        await this.login();
-      });
+      button.addEventListener("click", (ev) => this.loginEvent(ev));
     }
   }
 
@@ -82,6 +84,8 @@ export default class extends AbstractView {
       } else {
         const errorData = await response.test();
         console.log("error in response: ", errorData);
+        removeSessionStorage();
+        navigateTo("/login");
       }
     } catch (error) {
       console.error("Error logging, fetch on /api/auth/" + username);
@@ -89,79 +93,102 @@ export default class extends AbstractView {
     }
   }
 
+  // async login() {
+  //   console.log("login");
+  //   const loginForm = document.querySelector("#login");
+  //   const username = loginForm.querySelector("input[name='Username']").value;
+  //   const password = loginForm.querySelector("input[name='Password']").value;
+  //
+  //   const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
+  //   if (!whitelist.test(username)) {
+  //     alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
+  //     return;
+  //   }
+  //   try {
+  //     const myHeaders = new Headers();
+  //     myHeaders.append("Content-Type", "application/json");
+  //     const myBody = JSON.stringify({
+  //       username: username,
+  //       password: password,
+  //     });
+  //
+  //     const request = new Request("/api/auth/login", {
+  //       method: "POST",
+  //       body: myBody,
+  //       headers: myHeaders,
+  //     });
+  //     const response = await fetch(request);
+  //
+  //     console.debug("Successful fetch login");
+  //     if (response.ok) {
+  //       console.debug("response:", response);
+  //       const data = await response.json();
+  //
+  //       const tokenAccess = data.access;
+  //       sessionStorage.setItem("accessJWT_transcendance", tokenAccess);
+  //       const tokenRefresh = data.refresh;
+  //       sessionStorage.setItem("refreshJWT_transcendance", tokenRefresh);
+  //       sessionStorage.setItem("username", username);
+  //       document.getElementById("loginResult").innerHTML = "Successful login";
+  //       console.debug("Successful login");
+  //       await this.log();
+  //       navigateTo("/");
+  //     } else {
+  //       document.getElementById("loginResult").innerHTML =
+  //         "Invalid Login, please try again";
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting from login: ", error);
+  //   }
+  // }
+
   async login() {
     console.log("login");
     const loginForm = document.querySelector("#login");
-    const username = loginForm.querySelector("input[name='Username']").value;
-    const password = loginForm.querySelector("input[name='Password']").value;
+    const nameForm = loginForm.querySelector("input[name='Username']").value;
+    const paswordForm = loginForm.querySelector("input[name='Password']").value;
 
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
-    if (!whitelist.test(username)) {
+    if (!whitelist.test(nameForm)) {
       alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
       return;
     }
     try {
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      const myBody = JSON.stringify({
-        username: username,
-        password: password,
-      });
-
-      const request = new Request("/api/auth/login", {
-        method: "POST",
-        body: myBody,
-        headers: myHeaders,
+      console.log("login before make request");
+      const request = await this.makeRequest("/api/auth/login", "POST", {
+        username: nameForm,
+        password: paswordForm,
       });
       const response = await fetch(request);
-
-      console.debug("Successful fetch login");
+      console.log("Response: ", response);
       if (response.ok) {
-        console.debug("response:", response);
-        const data = await response.json();
-
-        const tokenAccess = data.access;
-        sessionStorage.setItem("accessJWT_transcendance", tokenAccess);
-        const tokenRefresh = data.refresh;
-        sessionStorage.setItem("refreshJWT_transcendance", tokenRefresh);
-        sessionStorage.setItem("username", username);
-        document.getElementById("loginResult").innerHTML = "Successful login";
-        console.debug("Successful login");
-        await this.log();
-        navigateTo("/");
-      } else {
-        document.getElementById("loginResult").innerHTML =
-          "Invalid Login, please try again";
-      }
-    } catch (error) {
-      console.error("Error submitting from login: ", error);
-    }
-  }
-  async login() {
-    console.log("login");
-    const loginForm = document.querySelector("#login");
-    const usernameForm = loginForm.querySelector(
-      "input[name='Username']",
-    ).value;
-    const passwordForm = loginForm.querySelector(
-      "input[name='Password']",
-    ).value;
-
-    const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
-    if (!whitelist.test(username)) {
-      alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
-      return;
-    }
-    const api = new FetchApi();
-    try {
-      const response = await api.makeRequest("/api/auth/login", "POST", {
-        username: usernameForm,
-        password: passwordForm,
-      });
-      if (response.ok) {
+        console.log("login response.ok");
         const data = await response.JSON();
         setSessionStorage(data);
+      } else {
+        console.log("login response.notOk");
+        const dataError = await response.json();
+        console.log("Error in login: " + response.status + "; ", dataError);
       }
-    } catch {}
+    } catch (Error) {
+      console.error("Error fecthing login:", Error.message);
+    }
+  }
+
+  removeEventListeners() {
+    const button = document.querySelector("#loginButton");
+    console.info("removing event click on button : " + button.innerText);
+    button.removeEventListener("click", this.loginEvent);
+  }
+
+  removeCss() {
+    document.querySelectorAll(".page-css").forEach((e) => {
+      console.log("removing: ", e);
+      e.remove();
+    });
+  }
+  destroy() {
+    this.removeEventListeners();
+    this.removeCss();
   }
 }
