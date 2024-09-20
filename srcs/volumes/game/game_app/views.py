@@ -41,3 +41,4 @@ class GameRetrieveDetail(generics.RetrieveAPIView):
     queryset = Game.objects.all()
     serializer_class = GameDetailSerializer
     lookup_field = 'id'
+    
