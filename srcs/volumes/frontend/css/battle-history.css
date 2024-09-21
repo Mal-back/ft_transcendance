@@ -1,0 +1,28 @@
+/* Class History Section */
+
+.player-circle {
+    background-image: url(../img/red_panda.jpg);
+    width: 11vw;
+    height: 11vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+    max-width: 100px;
+    max-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    font-size: 1.5rem;
+}
+
+.player-name {
+    max-width: 100px;
+}
+
+.content {
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+}

@@ -66,32 +66,40 @@ export default class extends AbstractView {
 
     console.log("token", tokenProfile);
     return `
-        <div class="Profile container">
-            <div class="d-flex justify-content-center w-100">
-                <!-- Top profile section (centered) -->
-                <div class="top-profile d-flex flex-column justify-content-center align-items-center">
-                    <div class="rounded-circle Avatar status-playing" alt="Avatar"></div>
-                    <a class="black-txt">Username</a>
-                </div>
-            </div>
-
-            <!-- Left-aligned profile info -->
-            <div class="align-items-left mt-3 w-100">
-                <p class="black-txt">Win Rate: 75%</p>
-            </div>
-            <div class="align-items-left mt-3 w-100">
-                <p class="black-txt">Battle History:</p>
-            </div>
-            <div class="border p-3" style="height: 300px; overflow-y: auto;">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet accumsan urna. Cras
-                    ultricies scelerisque magna, vitae tempus nulla finibus sit amet. Aenean et pharetra odio. Phasellus
-                   </p>
-            </div>
-            <br>
-            <div class="align-items-right mt-3 w-100">
-                <a type="button" class="btn bg-lightgray">Settings</a>
-            </div>
-        </div>
           `;
+  }
+
+  async addEventListeners() {
+    const button = document.querySelector("#createUserButton");
+    if (button) {
+      button.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        console.debug("Submit button clicked!");
+        await this.submitNewUser();
+      });
+    }
+  }
+
+  removeEventListeners() {
+    const button = document.querySelector("#createUserButton");
+    if (button) {
+      console.info("removing event click on button : " + button.innerText);
+      button.removeEventListener("click", this.loginEvent);
+    }
+    document.querySelectorAll('[data-link="view"]').forEach((button) => {
+      console.info("removing event click on button : " + button.innerText);
+      button.removeEventListener("click", this.handleClick);
+    });
+  }
+
+  removeCss() {
+    document.querySelectorAll(".page-css").forEach((e) => {
+      console.log("removing: ", e);
+      e.remove();
+    });
+  }
+  destroy() {
+    this.removeEventListeners();
+    this.removeCss();
   }
 }

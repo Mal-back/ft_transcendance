@@ -1,11 +1,11 @@
 import Home from "./pages/Home.js";
 import Game from "./pages/Game.js";
 import Profile from "./pages/Profile.js";
-import Authentification from "./pages/Authentification.js";
 import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
 import Matchmaking from "./pages/Matchmaking.js";
 import EpicMode from "./pages/epicMode.js";
+import Logout from "./pages/Logout.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -19,12 +19,11 @@ const router = async () => {
   console.info("Router is on");
   const routes = [
     { path: "/", view: Home },
-    { path: "/game", view: Game },
+    { path: "/game", view: Matchmaking },
     { path: "/profile", view: Profile },
-    { path: "/authentification", view: Authentification },
     { path: "/createUser", view: CreateUser },
     { path: "/login", view: Login },
-    { path: "/matchmaking", view: Matchmaking },
+    { path: "/logout", view: Logout},
     { path: "/epic-mode", view: EpicMode},
   ];
 
@@ -58,7 +57,6 @@ const router = async () => {
     previousView.destroy();
   }
 
-  // view.loadCss();
 
   // const pathToRegex = (path) =>
   //   new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
@@ -109,6 +107,7 @@ const router = async () => {
   //   const view = new match.route.view(getParams(match));
 
   view.loadCss();
+
   try {
   document.querySelector("#app").innerHTML = await view.getHtml();
   } catch (error){
@@ -121,6 +120,7 @@ const router = async () => {
   }
 
   view.addEventListeners();
+
   // Function to print all CSS links on the page
 // function printAllCssLinks() {
 //   // Select all <link> elements with rel="stylesheet"

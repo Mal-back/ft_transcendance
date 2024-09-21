@@ -6,8 +6,8 @@
 
   export function setSessionStorage(data, username) {
     if (username){
-      sessionStorage.setItem("username_transcendance", username);
+      sessionStorage.setItem("username_transcendence", username);
     }
-    sessionStorage.setItem("accessJWT_transcendance", data.access);
-    sessionStorage.setItem("refreshJWT_transcendance", data.refresh);
+    sessionStorage.setItem("accessJWT_transcendence", data.access);
+    sessionStorage.setItem("refreshJWT_transcendence", data.refresh);
   }

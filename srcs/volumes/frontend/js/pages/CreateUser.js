@@ -72,10 +72,8 @@ export default class extends AbstractView {
 
     console.debug("trying fetch");
     try {
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
 
-      const myBody = JSON.stringify({
+      const request = await this.makeRequest("/api/auth/", {
         username: username,
         password: password,
         password2: password2,
@@ -83,43 +81,25 @@ export default class extends AbstractView {
         two_fa_enable: false,
       });
 
-      const request = new Request("/api/auth/", {
-        method: "POST",
-        body: myBody,
-        headers: myHeaders,
-      });
-
-      // console.debug("Method:", request.method); // GET, POST, etc.
-      // console.debug("URL:", request.url); // The request URL
-      // console.debug("Headers:", Array.from(request.headers.entries())); // All headers
-      // console.debug("Body:", myBody); // Whether the body has been read yet
-      // console.debug("Mode:", request.mode); // 'cors', 'no-cors', 'same-origin'
-      // console.debug("Credentials:", request.credentials); // 'omit', 'same-origin', or 'include'
-      // console.debug("Redirect:", request.redirect); // 'follow', 'manual', or 'error'
-
       const response = await fetch(request);
 
       if (response.ok) {
-        const result = await response.json(); // Parse the JSON response (if it's JSON)
-        document.getElementById("createUserResult").innerHTML =
-          `<p class="success-msg">Form submitted successfully!</p>`;
+        const result = await response.json(); 
         console.debug("Server response:", result);
+        this.showModalWithError("Account creation", "New account successfuly created");
         navigateTo("/login");
       } else {
         const errorData = await response.json();
-        // const errorMessages = Object.entries(errorData).map(([field, messages]) => `${field}: ${messages.join()}`)
         const errorMessages = Object.entries(errorData)
           .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
           .join("<br>");
-        alert(`Error: ${errorMessages || "Submission failed."}`);
-        // document.getElementById("createUserResult").innerHTML =
-          // `<p class="error-msg background white-txt">Error: ${errorMessages || "Submission failed."}</p>`;
+        this.showModalWithError("Error", `Error: ${errorMessages || "Submission failed."}`);
         console.debug("Server response:", errorData);
       }
     } catch (error) {
-      document.getElementById("createUserResult").innerHTML = `
-        <p class="error-msg background white-txt">Error: Unable to submit form. Please try again later.</p>`;
-      console.error("Error submitting form:", error);
+      this.showModalWithError("Error", "Unable to connect to the server, please wait");
+      navigateTo("/");
+      throw new Error("Redirect to /home, server is dead, good luck")
     }
   }
 
@@ -132,5 +112,28 @@ export default class extends AbstractView {
         await this.submitNewUser();
       });
     }
+  }
+
+  removeEventListeners() {
+    const button = document.querySelector("#createUserButton");
+    if (button) {
+      console.info("removing event click on button : " + button.innerText);
+      button.removeEventListener("click", this.loginEvent);
+    }
+    document.querySelectorAll('[data-link="view"]').forEach((button) => {
+      console.info("removing event click on button : " + button.innerText);
+      button.removeEventListener("click", this.handleClick);
+    });
+  }
+
+  removeCss() {
+    document.querySelectorAll(".page-css").forEach((e) => {
+      console.log("removing: ", e);
+      e.remove();
+    });
+  }
+  destroy() {
+    this.removeEventListeners();
+    this.removeCss();
   }
 }

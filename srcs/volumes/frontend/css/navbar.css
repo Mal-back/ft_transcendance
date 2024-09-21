@@ -1,16 +1,41 @@
-/* navbar magin and align center */
-.navbar {
-    margin: 0 5px;
-    align-self: center;
+.nav-link:hover {
+    background-color: #444;
 }
 
-/* add transparency to navbar bg */
-.navbar-bg {
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-/* change letter color to white + font size modified */
 .nav-link {
-    color: white;
-    font-size: 4.5vmin;
+    font-size: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #444;
+    padding: 1rem;
+    white-space: nowrap;
+    /* Prevents the text from wrapping */
+    overflow: hidden;
+    /* Hides overflowed content */
+    text-overflow: ellipsis;
+    /* Shows '...' for overflowing text */
+    width: 100%;
+    /* Ensures the link takes up the full width of the sidebar */
+    padding: 10px 15px;
+    /* Adjust padding for better spacing */
+    text-align: left;
+}
+
+/* .nav {
+    max-width: 100px;
+} */
+
+.bar-size-max {
+    width: 15%;
+}
+
+.col-10 {
+    width: 85%;
+}
+
+.no-overflow {
+    white-space: nowrap;
+    /* Prevents the text from wrapping */
+    overflow: hidden;
+    /* Hides overflowed content */
+    text-overflow: ellipsis;
 }

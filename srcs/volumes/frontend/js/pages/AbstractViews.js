@@ -2,7 +2,7 @@ import { navigateTo } from "../router.js";
 import { removeSessionStorage, setSessionStorage } from "./Utils.js";
 
 export default class {
-  constructor() {}
+  constructor() { }
 
   setTitle(title) {
     document.title = title;
@@ -12,6 +12,23 @@ export default class {
     return "";
   }
 
+  showModalWithError(title, message) {
+    const modalTitleElement = document.getElementById("alertLabel");
+    const errorMessageElement = document.getElementById("alertMessage");
+
+    modalTitleElement.textContent = title;
+    if (title == "Error") {
+      modalTitleElement.style.color = "red";
+    } else {
+      modalTitleElement.style.color = "black";
+    }
+
+    errorMessageElement.textContent = message;
+
+    const modal = new bootstrap.Modal(document.getElementById("alertModal"));
+    modal.show();
+  }
+
   parseJwt(token) {
     let base64Url = token.split(".")[1];
     let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -19,7 +36,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function (c) {
+        .map(function(c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -27,9 +44,9 @@ export default class {
     return JSON.parse(jsonPayload);
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -44,18 +61,17 @@ export default class {
 
   async makeRequest(url, myMethod, myBody) {
     const username = sessionStorage.getItem("username_transcendance");
-    let boolJSON = false;
     let accessToken = null;
     if (username) {
       accessToken = await this.getToken();
     }
-    console.log("accessToken =", accessToken);
-    if (myBody) boolJSON = true;
-    const myRequest = new Request(url, {
+    const options = {
       method: myMethod,
-      headers: this.makeHeaders(accessToken, boolJSON),
-    });
-    if (myBody != null) myRequest.body = JSON.stringify(myBody);
+      headers: this.makeHeaders(accessToken, myBody != null),
+    };
+    if (myBody) options.body = JSON.stringify(myBody);
+    console.log("accessToken =", accessToken);
+    const myRequest = new Request(url, options);
     console.log("Return make request");
     return myRequest;
   }
@@ -116,5 +132,5 @@ export default class {
     }
     return parseToken;
   }
-  destroy() {}
+  destroy() { }
 }

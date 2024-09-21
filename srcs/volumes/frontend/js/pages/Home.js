@@ -25,4 +25,16 @@ export default class extends AbstractView {
         </div>
   `;
   }
+
+  removeCss() {
+    document.querySelectorAll(".page-css").forEach((e) => {
+      console.log("removing: ", e);
+      e.remove();
+    });
+  }
+
+  destroy() {
+    this.removeCss();
+  }
 }
+
