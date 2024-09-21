@@ -16,4 +16,9 @@ from game_app.consumers import PracticeConsumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game.settings')
 
-application = get_asgi_application()
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": URLRouter([
+			path("/ws", PracticeConsumer.as_asgi()),
+        ])
+})

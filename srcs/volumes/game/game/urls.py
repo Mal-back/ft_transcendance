@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+websocket_urlpatterns = [path('api/game/', include('game_app.routing'))]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/game/', include('game_app.urls')),
