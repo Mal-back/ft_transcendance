@@ -1,0 +1,79 @@
+<div>
+    <div class="list-group-item d-flex align-items-center mb-3 rounded">
+
+        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+        <!-- IN THE STYLE, CHANGE THE IMAGE DEPENDING ON WHAT THE BACK GIVES U -->
+        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+        <div class="rounded-circle Avatar status-online me-3"
+            style="background-image: url(IMAGE-THAT-THE-BACK-GAVE-YOU);" alt="Avatar">
+        </div>
+
+        <div class="flex-fill">
+
+            <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+            <!-- IN THE h5 PUT THE FRIEND USERNAME -->
+            <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+            <h5 class="mb-0"> USERNAME </h5>
+            <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+            <!-- CHANGE THE data-bs-target DEPENDING ON THE FRIEND, UNIQUE ID IF POSSIBLE -->
+            <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+            <button class="text-decoration-none text-primary" data-bs-toggle="modal"
+                data-bs-target="#modalUSERNAME">Show profile</button>
+
+        </div>
+
+        <!-- !!!!!!!!!!!!!!!!!!!!!!!!! -->
+        <!-- THIS IS THE REMOVE BUTTON -->
+        <!-- !!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+        <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
+            Remove</button>
+
+    </div>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! -->
+    <!-- MODAL FOR EACH FRIEND -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! -->
+
+    <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+    <!-- ID AND LABEL ARE UNIQUE FOR EACH FRIEND JUST IN CASE -->
+    <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+    <div class="modal fade" id="modalUSERNAME" tabindex="-1" aria-labelledby="modalUSERNAMELabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUSERNAMELabel"> USERNAME </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+
+                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+                        <!-- IN THE STYLE, CHANGE THE IMAGE DEPENDING ON WHAT THE BACK GIVES U -->
+                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+                        <div class="rounded-circle Avatar status-online mb-3"
+                            style="background-image: url(IMAGE-THAT-THE-BACK-GAVE-YOU);">
+                        </div>
+
+                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! --> <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+                        <!-- IN THE h3 PUT THE FRIEND USERNAME --> <!-- IN THE h5 PUT THE USERNAME -->
+                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! --> <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+                        <h3> USERNAME </h3>
+
+                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+                        <!-- CHANGE THE WIN RATE IN FUNCTION OF WHAT THE BACK GAVE YOU -->
+                        <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+                        <p class="black-txt">Win Rate: 77%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

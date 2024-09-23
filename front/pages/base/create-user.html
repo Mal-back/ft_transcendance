@@ -6,35 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../../css/index.css">
     <link rel="stylesheet" href="../../css/colors/colors.css">
     <link rel="stylesheet" href="../../css/create-user.css">
     <link rel="stylesheet" href="../../css/background-basic.css">
     <title>Create User</title>
-    <div style="background-color: gray;">
-        <div class="container d-flex justify-content-center" style="font-size: 3.5vh; height: 5vh; width: 1vw;">
-            <div class="text-black">
-                FT_TRANSCENDENCE
-            </div>
-        </div>
-    </div>
 </head>
 
 <body>
+    <header>
+        <div style="background-color: gray;">
+            <div class="container d-flex align-items-center py-2">
+                <div class="icon-container d-flex align-items-center">
+                    <button class="btn btn-light" id="toggleSidebar" data-bs-toggle="offcanvas"
+                        data-bs-target="#sidebar" aria-controls="sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <a href="/" class="btn btn-light" title="Home">
+                        <i class="bi bi-house-fill"></i>
+                    </a>
+                    <a href="/authentification" class="btn btn-light" title="Logout">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+                </div>
+                <div class="text-black text-center flex-grow-1" style="font-size: 3.5vh;">
+                    FT_TRANSCENDENCE
+                </div>
+            </div>
+        </div>
+    </header>
+
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-2 bg-dark text-white vh-100 d-flex flex-column bar-size-max">
-                <div class="nav flex-column">
-                    <a class="nav-link text-white my-4" href="/" data-link>HOME</a>
-                    <a class="nav-link text-white my-4" href="/game" data-link>Game</a>
-                    <a class="nav-link text-white my-4" href="/profile" data-link>Profile</a>
-                    <a class="nav-link text-white my-4" href="/authentification" data-link>Login</a>
+            <div class="offcanvas offcanvas-start bg-dark text-white" id="sidebar" tabindex="-1"
+                aria-labelledby="sidebarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="nav flex-column">
+                        <a class="nav-link text-white my-4" href="/" data-link><i class="bi bi-house-fill"></i> HOME</a>
+                        <a class="nav-link text-white my-4" href="/game" data-link><i class="bi bi-controller"></i>
+                            Game</a>
+                        <a class="nav-link text-white my-4" href="/profile" data-link><i class="bi bi-person"></i>
+                            Profile</a>
+                        <a class="nav-link text-white my-4" href="/friends" data-link><i class="bi bi-person-heart"></i>
+                            Friends</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link><i
+                                class="bi bi-box-arrow-in-right"></i> Logout</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link><i
+                                class="bi bi-box-arrow-in-left"></i> Login</a>
+                    </div>
                 </div>
             </div>
-
             <!-- Main Content -->
-            <div class="col-10 d-flex justify-content-center">
+            <div class="col d-flex justify-content-center">
                 <div class="background">
                     <div class="p-5 bg-*">
                         <div class="black-txt bg-form create-user-form p-4">
