@@ -6,5 +6,4 @@ urlpatterns = [
 	path('create/', views.GameCreate.as_view(), name='game-create'),
 	path('getconst/', views.SendConstJson, name='const'),
 	path('<uuid:id>/', views.GameRetrieveDetail.as_view(), name='game-detail'),
-	# path('<uuid>/launch', , name='game-launch')
  ]

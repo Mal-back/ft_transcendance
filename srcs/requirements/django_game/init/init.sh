@@ -11,5 +11,5 @@ fi
 if ["$DUMP_DATA" == "True" ] ; then
 	exec python3 gunicornWrapper.py
 else
-	exec gunicorn --bind 0.0.0.0:8443 ${HOT_RELOAD} game.wsgi
+	exec daphne -b '0.0.0.0' -p '8443' game.asgi:application
 fi
