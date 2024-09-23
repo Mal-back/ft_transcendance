@@ -7,21 +7,19 @@ export default class extends AbstractView {
   }
 
   async loadCss() {
-    const linkElement = document.createElement("link");
-    linkElement.rel = "stylesheet";
-    linkElement.href = "../css/home.css";
-    linkElement.classList.add("page-css");
-    document.head.appendChild(linkElement);
+    this.createPageCss("../css/home.css");
   }
   async getHtml() {
     return `
-        <div class="container">
-            <section class="home text-center p-5">
-                <h1 class="welcome">Welcome to Our Pong!</h1>
-                <p class="welcome-msg">Explore the depth of the Pong game, play with friends, and personalize your
-                    profileas you desire!</p>
-                <p class="welcome-msg">✨ Have fun! ✨</p>
-            </section>
+        <div class="background">
+          <div class="container">
+              <section class="home text-center p-5">
+                  <h1 class="welcome">Welcome to Our Pong!</h1>
+                  <p class="welcome-msg">Explore the depth of the Pong game, play with friends, and personalize your
+                      profileas you desire!</p>
+                  <p class="welcome-msg">✨ Have fun! ✨</p>
+              </section>
+          </div>
         </div>
   `;
   }

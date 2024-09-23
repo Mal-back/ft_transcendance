@@ -8,9 +8,9 @@ export default class extends AbstractView {
     this.setTitle("Logout");
   }
   async getHtml() {
-    removeSessionStorage();
     const username = sessionStorage.getItem("username_transcendence");
     const loginOverlay = document.querySelector("#overlayLogin");
+    removeSessionStorage();
     loginOverlay.innerText = "Login";
     loginOverlay.href = "/login";
     this.showModalWithError("Logout", "Goodbye, " + username);

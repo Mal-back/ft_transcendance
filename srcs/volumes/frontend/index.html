@@ -20,15 +20,16 @@
 	<link rel="stylesheet" href="css/index.css" />
 	<link rel="stylesheet" href="css/colors/colors.css" />
 	<link rel="stylesheet" href="css/background-basic.css" />
+	<title>Home</title>
+</head>
+
+<body>
 	<div style="background-color: gray">
 		<div class="container d-flex justify-content-center" style="font-size: 3.5vh; height: 5vh; width: 1vw">
 			<div class="text-black">FT_TRANSCENDENCE</div>
 		</div>
 	</div>
-	<title>Home</title>
-</head>
 
-<body>
 	<!-- 	<div class="background"> -->
 	<!-- 		<div class="container d-flex flex-column"> -->
 	<!-- 			<nav class="navbar navbar-expand-lg navbar-dark navbar-bg"> -->
@@ -60,18 +61,16 @@
 					<a id="overlayLogin" class="nav-link text-white my-4" href="/login" data-link>Login</a>
 				</div>
 			</div>
-			<div class="col-10 d-flex justify-content-center">
-				<div id="app" class="container"></div>
-				<div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="ErrorLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h4 class="modal-title" id="alertLabel">Error</h4>
-								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-							</div>
-							<div class="modal-body">
-								<p id="alertMessage"></p>
-							</div>
+			<div id="app" class="col-10 d-flex justify-content-center"></div>
+			<div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="ErrorLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" id="alertLabel">Error</h4>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p id="alertMessage"></p>
 						</div>
 					</div>
 				</div>

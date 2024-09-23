@@ -54,11 +54,7 @@ export default class extends AbstractView {
   }
 
   async loadCss() {
-    const linkElement = document.createElement("link");
-    linkElement.rel = "stylesheet";
-    linkElement.href = "../css/login.css";
-    linkElement.classList.add("page-css");
-    document.head.appendChild(linkElement);
+    this.createPageCss("../css/login.css");
     console.log("adding login.css");
   }
 
@@ -82,11 +78,8 @@ export default class extends AbstractView {
     const nameForm = loginForm.querySelector("input[name='Username']").value;
     const paswordForm = loginForm.querySelector("input[name='Password']").value;
 
-    const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
-    if (!whitelist.test(nameForm)) {
-      alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
+    if (this.sanitizeInput([loginForm, nameForm, paswordForm]) == false)
       return;
-    }
     try {
       console.log("login before make request");
       const request = await this.makeRequest("/api/auth/login", "POST", {

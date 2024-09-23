@@ -2,7 +2,9 @@ import { navigateTo } from "../router.js";
 import { removeSessionStorage, setSessionStorage } from "./Utils.js";
 
 export default class {
-  constructor() { }
+  constructor() {
+    this.loginToLogout();
+  }
 
   setTitle(title) {
     document.title = title;
@@ -10,6 +12,33 @@ export default class {
 
   async getHtml() {
     return "";
+  }
+
+  createPageCss(refCss) {
+    const linkElement = document.createElement("link");
+    linkElement.rel = "stylesheet";
+    linkElement.href = refCss;
+    linkElement.classList.add("page-css");
+    document.head.appendChild(linkElement);
+  }
+
+  loginToLogout() {
+    const username = sessionStorage.getItem("username_transcendence");
+    const accessToken = sessionStorage.getItem("accessJWT_transcendence");
+    const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
+    const loginOverlay = document.querySelector("#overlayLogin");
+    if (username && accessToken && refreshToken) {
+      loginOverlay.innerText = "Logout";
+      loginOverlay.href = "/logout";
+    } else {
+      if (username || accessToken || refreshToken) {
+        removeSessionStorage();
+      }
+      if (loginOverlay.innerText == "Logout") {
+        loginOverlay.innerText = "Login";
+        loginOverlay.href = "/login";
+      }
+    }
   }
 
   showModalWithError(title, message) {
@@ -23,7 +52,7 @@ export default class {
       modalTitleElement.style.color = "black";
     }
 
-    errorMessageElement.textContent = message;
+    errorMessageElement.innerHTML = message;
 
     const modal = new bootstrap.Modal(document.getElementById("alertModal"));
     modal.show();
@@ -36,7 +65,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -44,9 +73,25 @@ export default class {
     return JSON.parse(jsonPayload);
   }
 
-  async loadCss() { }
+  sanitizeInput(inputList) {
+    console.log("sanitizeInput");
+    const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
+    for (let i = 0; i < inputList.length; i++) {
+      const input = inputList[i];
+      if (!whitelist.test(input)) {
+        this.showModalWithError(
+          "Error",
+          "Invalid characters! Allowed: alphanumeric, +, -, ., _, @",
+        );
+        return false;
+      }
+    }
+    return true;
+  }
 
-  async addEventListeners() { }
+  async loadCss() {}
+
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -65,8 +110,9 @@ export default class {
     if (username) {
       accessToken = await this.getToken();
     }
+    console.log("myMethod:", myMethod);
     const options = {
-      method: myMethod,
+      method: myMethod.toString(),
       headers: this.makeHeaders(accessToken, myBody != null),
     };
     if (myBody) options.body = JSON.stringify(myBody);
@@ -77,7 +123,8 @@ export default class {
   }
 
   async refreshToken(accessToken) {
-    const refreshJWT = sessionStorage.getItem("refreshJWT_transcendance");
+    console.log("refreshing token");
+    const refreshJWT = sessionStorage.getItem("refreshJWT_transcendence");
     if (!refreshJWT) {
       //ALERT
       removeSessionStorage();
@@ -89,7 +136,9 @@ export default class {
       const request = new Request("/api/auth/refresh", {
         method: "POST",
         headers: myHeaders,
-        body: JSON.stringify(refreshJWT),
+        body: JSON.stringify({
+          refresh: refreshJWT,
+        }),
       });
 
       const response = await fetch(request);
@@ -108,12 +157,12 @@ export default class {
       console.error("Error refreshing token:", error.message);
       removeSessionStorage();
       navigateTo("/login");
-      throw new Error("Redirect to login, invalid token");
+      throw error;
     }
   }
 
   async getToken() {
-    const authToken = sessionStorage.getItem("accessJWT_transcendance");
+    const authToken = sessionStorage.getItem("accessJWT_transcendence");
     if (!authToken) {
       console.log("User is not authentified", authToken);
       removeSessionStorage();
@@ -121,8 +170,8 @@ export default class {
     }
     const parseToken = this.parseJwt(authToken);
     const currentTime = Math.floor(Date.now() / 1000);
-    if (token.expire + 1 >= currentTime) {
-      const refreshToken = sessionStorage.getItem("refreshJWT_transcendance");
+    if (parseToken.exp + 1 >= currentTime) {
+      const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
       if (!refreshToken) {
         navigateTo("/login");
         removeSessionStorage();
@@ -132,5 +181,5 @@ export default class {
     }
     return parseToken;
   }
-  destroy() { }
+  destroy() {}
 }

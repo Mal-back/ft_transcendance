@@ -8,11 +8,7 @@ export default class extends AbstractView {
   }
 
   async loadCss() {
-    const linkElement = document.createElement("link");
-    linkElement.rel = "stylesheet";
-    linkElement.href = "../css/create-user.css";
-    linkElement.classList.add("page-css");
-    document.head.appendChild(linkElement);
+    this.createPageCss("../css/create-user.css");
   }
 
   async getHtml() {
@@ -51,6 +47,7 @@ export default class extends AbstractView {
             </div>
         <div id="createUserResult"></div>
         </div>
+        </div>
             `;
   }
 
@@ -58,48 +55,54 @@ export default class extends AbstractView {
     const createUser = document.querySelector("#createUser");
 
     const username = createUser.querySelector("input[name='Username']").value;
-    const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     const email = createUser.querySelector("input[name='Mail']").value;
     const password = createUser.querySelector("input[name='Password']").value;
     const password2 = createUser.querySelector(
       "input[name='Password-2']",
     ).value;
 
-    if (!whitelist.test(username) || !whitelist.test(email)) {
-      alert("Invalid characters ! Allowed: alphanumeric, +, -, ., _, @");
+    if (this.sanitizeInput([username, email, password, password2]) == false)
       return;
-    }
-
     console.debug("trying fetch");
     try {
-
-      const request = await this.makeRequest("/api/auth/", {
+      const request = await this.makeRequest("/api/auth/", "POST", {
         username: username,
         password: password,
         password2: password2,
         email: email,
         two_fa_enable: false,
       });
-
+      console.log("Before request:", request);
       const response = await fetch(request);
 
       if (response.ok) {
-        const result = await response.json(); 
+        const result = await response.json();
         console.debug("Server response:", result);
-        this.showModalWithError("Account creation", "New account successfuly created");
+        this.showModalWithError(
+          "Account creation",
+          "New account successfuly created",
+        );
         navigateTo("/login");
       } else {
         const errorData = await response.json();
         const errorMessages = Object.entries(errorData)
-          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
-          .join("<br>");
-        this.showModalWithError("Error", `Error: ${errorMessages || "Submission failed."}`);
+          .map(([field, messages]) => `${messages.join(", ")}`) // Joins multiple messages with commas
+          .join("<br>"); // Joins different field errors with new lines
+
+        this.showModalWithError(
+          "Error",
+          `${errorMessages || "Submission failed."}`,
+        );
         console.debug("Server response:", errorData);
       }
     } catch (error) {
-      this.showModalWithError("Error", "Unable to connect to the server, please wait");
+      console.error("Error in Request:", error.message);
+      this.showModalWithError(
+        "Error",
+        "Unable to connect to the server, please wait",
+      );
       navigateTo("/");
-      throw new Error("Redirect to /home, server is dead, good luck")
+      throw new Error("Redirect to /home, server is dead, good luck");
     }
   }
 
@@ -109,7 +112,11 @@ export default class extends AbstractView {
       button.addEventListener("click", async (ev) => {
         ev.preventDefault();
         console.debug("Submit button clicked!");
-        await this.submitNewUser();
+        try {
+          await this.submitNewUser();
+        } catch (error) {
+          console.error("Caught in Event Listener:", error.message);
+        }
       });
     }
   }

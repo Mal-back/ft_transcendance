@@ -7,11 +7,7 @@ export default class extends AbstractView {
   }
 
   async loadCss() {
-    const linkElement = document.createElement("link");
-    linkElement.rel = "stylesheet";
-    linkElement.href = "../css/matchmaking-hp.css";
-    linkElement.classList.add("page-css");
-    document.head.appendChild(linkElement);
+    this.createPageCss("../css/matchmaking-hp.css");
   }
   async getHtml() {
     return `

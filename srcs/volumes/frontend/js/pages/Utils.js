@@ -1,7 +1,7 @@
   export function removeSessionStorage() {
-    sessionStorage.removeItem("accessJWT_transcendance");
-    sessionStorage.removeItem("refreshJWT_transcendance");
-    sessionStorage.removeItem("username_transcendance");
+    sessionStorage.removeItem("accessJWT_transcendence");
+    sessionStorage.removeItem("refreshJWT_transcendence");
+    sessionStorage.removeItem("username_transcendence");
   }
 
   export function setSessionStorage(data, username) {

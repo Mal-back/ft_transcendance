@@ -6,6 +6,7 @@ import Login from "./pages/Login.js";
 import Matchmaking from "./pages/Matchmaking.js";
 import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
+import Settings from "./pages/Settings.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -25,6 +26,7 @@ const router = async () => {
     { path: "/login", view: Login },
     { path: "/logout", view: Logout},
     { path: "/epic-mode", view: EpicMode},
+    { path: "/settings", view: Settings},
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -110,16 +112,16 @@ const router = async () => {
 
   try {
   document.querySelector("#app").innerHTML = await view.getHtml();
+  view.addEventListeners();
   } catch (error){
     if (error.message.split(' ')[0] === "Redirect")
-      console.log(error.message);
+      console.log("MyError:", error.message);
     else {
       console.error("Error in get Html():", error.message);
+      console.trace();
       navigateTo("/");
     }
   }
-
-  view.addEventListeners();
 
   // Function to print all CSS links on the page
 // function printAllCssLinks() {
