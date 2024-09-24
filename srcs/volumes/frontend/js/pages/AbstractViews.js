@@ -74,14 +74,15 @@ export default class {
   }
 
   sanitizeInput(inputList) {
-    console.log("sanitizeInput");
+    console.log("sanitizeInput: ");
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     for (let i = 0; i < inputList.length; i++) {
       const input = inputList[i];
+      console.log("input = ", input);
       if (!whitelist.test(input)) {
         this.showModalWithError(
           "Error",
-          "Invalid characters! Allowed: alphanumeric, +, -, ., _, @",
+          "Invalid characters! Allowed: alphanumeric, +, -, ., _, @ on ",
         );
         return false;
       }
@@ -96,7 +97,10 @@ export default class {
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
     if (accessToken != null) {
+      console.log("Request with token");
       myHeaders.append("Authorization", "Bearer " + accessToken);
+    } else {
+      console.log("NO TOKEN HEADER");
     }
     if (boolJSON === true) {
       myHeaders.append("Content-Type", "application/json");
@@ -105,10 +109,17 @@ export default class {
   }
 
   async makeRequest(url, myMethod, myBody) {
-    const username = sessionStorage.getItem("username_transcendance");
+    console.log("MAKE REQUEST");
+    const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
-      accessToken = await this.getToken();
+      try {
+        accessToken = await this.getToken();
+      } catch (error) {
+        console.error("Error in getToken:", error.message);
+      }
+    } else {
+      console.log("NO USERNAME");
     }
     console.log("myMethod:", myMethod);
     const options = {
@@ -116,15 +127,17 @@ export default class {
       headers: this.makeHeaders(accessToken, myBody != null),
     };
     if (myBody) options.body = JSON.stringify(myBody);
-    console.log("accessToken =", accessToken);
+    console.log("options = ", options);
     const myRequest = new Request(url, options);
     console.log("Return make request");
     return myRequest;
   }
 
   async refreshToken(accessToken) {
-    console.log("refreshing token");
     const refreshJWT = sessionStorage.getItem("refreshJWT_transcendence");
+    console.log("refreshJWT before = ", refreshJWT);
+    const accessTokenB = sessionStorage.getItem("accessJWT_transcendence");
+    console.log("accessJWT before = ", accessTokenB);
     if (!refreshJWT) {
       //ALERT
       removeSessionStorage();
@@ -144,6 +157,7 @@ export default class {
       const response = await fetch(request);
       if (response.ok) {
         const data = await response.json();
+        console.log("setting new token");
         setSessionStorage(data);
       } else {
         const dataError = await response.json();
@@ -159,10 +173,14 @@ export default class {
       navigateTo("/login");
       throw error;
     }
+    const refreshJWTA = sessionStorage.getItem("refreshJWT_transcendence");
+    console.log("refreshJWT after = ", refreshJWTA);
+    const accessTokenA = sessionStorage.getItem("accessJWT_transcendence");
+    console.log("accessJWT after = ", accessTokenA);
   }
 
   async getToken() {
-    const authToken = sessionStorage.getItem("accessJWT_transcendence");
+    let authToken = sessionStorage.getItem("accessJWT_transcendence");
     if (!authToken) {
       console.log("User is not authentified", authToken);
       removeSessionStorage();
@@ -170,16 +188,24 @@ export default class {
     }
     const parseToken = this.parseJwt(authToken);
     const currentTime = Math.floor(Date.now() / 1000);
-    if (parseToken.exp + 1 >= currentTime) {
+    if (parseToken.exp + 1 <= currentTime) {
+      console.log("currentTime=", currentTime);
+      console.log("parseToken.exp=", parseToken.exp);
       const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
       if (!refreshToken) {
         navigateTo("/login");
         removeSessionStorage();
         throw new Error("Redirect to login, user is timed out");
       }
-      await this.refreshToken();
+      console.log("REFRESH TOKEN FROM GETTOKEN");
+      try {
+        await this.refreshToken();
+      } catch (error) {
+        throw error;
+      }
+      authToken = sessionStorage.getItem("accessJWT_transcendence");
     }
-    return parseToken;
+    return authToken;
   }
   destroy() {}
 }

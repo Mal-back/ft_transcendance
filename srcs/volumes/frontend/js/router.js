@@ -6,7 +6,7 @@ import Login from "./pages/Login.js";
 import Matchmaking from "./pages/Matchmaking.js";
 import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
-import Settings from "./pages/Settings.js";
+import Settings from "./pages/settings.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -123,6 +123,7 @@ const router = async () => {
     }
   }
 
+
   // Function to print all CSS links on the page
 // function printAllCssLinks() {
 //   // Select all <link> elements with rel="stylesheet"
@@ -136,6 +137,9 @@ const router = async () => {
 // }
 
 // Call the function to print all CSS links
+
+  //print all html
+  // console.log(document.documentElement.outerHTML);
 
 
 };

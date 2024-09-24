@@ -24,7 +24,7 @@ export default class extends AbstractView {
                         <!-- USERNAME -->
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="usernameChange" value="CurrentUsername" />
+                                    <input type="text" class="form-control" name="UsernameChange" value="CurrentUsername" />
                                     <button id="changeUsername" type="button" class="btn btn-success custom-button">
                                         Save Username
                                     </button>
@@ -208,12 +208,14 @@ export default class extends AbstractView {
 
   async changeUsername() {
     const username = sessionStorage.getItem("username_transcendence");
-    const newUsername = document.querySelector("#usernameChange");
-    if (this.sanitizeInput([newUsername])) return;
-
+    const newUsername = document.querySelector("input[name='UsernameChange']").value;
+    if (this.sanitizeInput([newUsername]) == false){
+    	return;
+    }
+  	console.log("newUsername = ", newUsername);
     try {
       const request = await this.makeRequest(
-        "/api/update/" + username,
+        "/api/auth/update/" + username,
         "PATCH",
         {
           username: newUsername,
@@ -221,7 +223,10 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (response.ok) {
+      	this.showModalWithError("Success", "Username change succesfuly")
         sessionStorage.setItem("username_transcendence", newUsername);
+        const data = await response.json();
+        console.log("data after change =", data);
       } else {
         const dataError = await response.json();
         this.showModalWithError("Error", dataError);
@@ -269,3 +274,4 @@ export default class extends AbstractView {
     this.removeCss();
   }
 }
+

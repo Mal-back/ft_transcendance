@@ -11,9 +11,9 @@ export default class extends AbstractView {
   async getHtml() {
     const username = sessionStorage.getItem("username_transcendance");
     if (username) {
-      const loginOverlay = document.querySelector("#overlayLogin");
-      loginOverlay.innerText = "Logout";
-      loginOverlay.href = "/logout";
+      // const loginOverlay = document.querySelector("#overlayLogin");
+      // loginOverlay.innerText = "Logout";
+      // loginOverlay.href = "/logout";
       navigateTo("/");
       throw new Error("Redirect to Home, User already logged in");
     }
@@ -78,8 +78,10 @@ export default class extends AbstractView {
     const nameForm = loginForm.querySelector("input[name='Username']").value;
     const paswordForm = loginForm.querySelector("input[name='Password']").value;
 
-    if (this.sanitizeInput([loginForm, nameForm, paswordForm]) == false)
+    if (this.sanitizeInput([nameForm, paswordForm]) == false){
+      console.log("Wrong input");
       return;
+    }
     try {
       console.log("login before make request");
       const request = await this.makeRequest("/api/auth/login", "POST", {

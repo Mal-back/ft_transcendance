@@ -8,6 +8,7 @@
     if (username){
       sessionStorage.setItem("username_transcendence", username);
     }
+
     sessionStorage.setItem("accessJWT_transcendence", data.access);
     sessionStorage.setItem("refreshJWT_transcendence", data.refresh);
   }

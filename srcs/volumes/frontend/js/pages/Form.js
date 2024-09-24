@@ -33,6 +33,7 @@ export default class extends AbstractView {
   async submitNewUser() {
     const createUser = document.querySelector("#createUser");
 
+
     const username = createUser.querySelector("input[name='username']").value;
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     const email = createUser.querySelector("input[name='email']").value;

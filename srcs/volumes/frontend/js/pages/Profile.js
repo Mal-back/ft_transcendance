@@ -58,7 +58,7 @@ export default class extends AbstractView {
     }
     // const userData = await this.loadUserData();
 
-    console.log("token", tokenProfile);
+    console.log("tokenProfile", tokenProfile);
     return `
 <div class="background">
                     <div class="Profile container">

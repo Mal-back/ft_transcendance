@@ -13,6 +13,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     return `
+      <div class="background">
         <div class="p-5 bg-*">
             <div class="black-txt bg-form create-user-form p-4">
                 <h1 class="mb-3 text-center create-user-title text-decoration-underline">Create User</h1>
@@ -45,9 +46,8 @@ export default class extends AbstractView {
             <div class="d-flex justify-content-center mt-3">
                 <button type="button" class="btn bg-blue login42-create white-txt">42 Connect</button>
             </div>
-        <div id="createUserResult"></div>
         </div>
-        </div>
+      </div>
             `;
   }
 
