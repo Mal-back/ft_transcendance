@@ -1,8 +1,9 @@
-FROM redis:8.0-debian
+FROM redis:5.0.4
 
-# COPY ./conf/redis.conf /etc/redis/redis.conf
+COPY ./conf/redis.conf /etc/redis/redis.conf
+COPY ./init/init_serv.sh /init/init_serv.sh
 
 EXPOSE 6379
 
-ENTRYPOINT [ "redis-server" ]
-CMD [ "/etc/redis/redis.conf", "--requirepass", "${REDIS_PASSWORD}"]
+ENTRYPOINT [ "/bin/bash" ]
+CMD [ "/init/init_serv.sh"]

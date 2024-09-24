@@ -60,11 +60,13 @@ MIDDLEWARE = [
     # 'users_app.middleware.UpdateLastUserActivityMiddleware'
 ]
 
-CHANNELS_LAYERS = {
-	"default": {
-		"BACKEND:" "channels_redis.core.RedisChannelLayer",
-		
-	}
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.getenv('REDIS_HOST'), os.getenv('REDIS_PORT'))],
+        },
+    },
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

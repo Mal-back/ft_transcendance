@@ -12,6 +12,6 @@ COPY ./certs/* /certs
 RUN chown -R postgres:postgres /etc/psql.conf
 RUN chown -R postgres:postgres /certs/
 
-ENTRYPOINT [ "/bin/bash" ]
-CMD [ "/docker-entrypoint-initdb.d/init_db.sh" ]
+# ENTRYPOINT [ "/bin/bash" ]
+# CMD [ "/docker-entrypoint-initdb.d/init_db.sh" ]
 
