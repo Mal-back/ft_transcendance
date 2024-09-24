@@ -27,21 +27,20 @@ export default class {
     const accessToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
     const loginOverlay = document.querySelector("#overlayLogin");
-    console.log(document.documentElement.outerHTML);
-    const iconElement = document.createElement("i");
     if (username && accessToken && refreshToken) {
-      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout'
+      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout';
       loginOverlay.href = "/logout";
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
       }
-      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-left"></i> Login'
+      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-left"></i> Login';
       loginOverlay.href = "/login";
     }
   }
 
   showModalWithError(title, message) {
+    console.log("SHOW MODALE");
     const modalTitleElement = document.getElementById("alertLabel");
     const errorMessageElement = document.getElementById("alertMessage");
 
@@ -55,7 +54,12 @@ export default class {
     errorMessageElement.innerHTML = message;
 
     const modalId = document.getElementById("alertModal");
-    const modal = new bootstrap.Modal(modalId);
+
+    let modal = bootstrap.Modal.getInstance(modalId); // Get the existing modal instance
+
+    if (!modal) {
+      modal = new bootstrap.Modal(modalId); // Create a new instance if it doesn't exist
+    }
     modal.show();
     modalId.querySelector(".btn-close").onclick = (ev) => {
       ev.preventDefault();
@@ -64,10 +68,19 @@ export default class {
   }
 
   closeModal() {
+    console.log("closing modal");
     const modalId = document.getElementById("alertModal");
     const modal = bootstrap.Modal.getInstance(modalId); // Get the existing modal instance
     if (modal) {
+      console.log("modal hide");
       modal.hide(); // Use Bootstrap method to hide
+      console.log("Is modal visible?", modalId.classList.contains("show"));
+      const backdrop = document.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.remove(); // Manually remove the backdrop if still present
+        console.log("Backdrop removed manually.");
+      }
+      console.log("Is modal visible?", modalId.classList.contains("show"));
     }
   }
 
@@ -102,9 +115,9 @@ export default class {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -219,5 +232,5 @@ export default class {
     }
     return authToken;
   }
-  destroy() { }
+  destroy() {}
 }
