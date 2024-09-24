@@ -27,9 +27,11 @@ export default class {
     const accessToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
     const loginOverlay = document.querySelector("#overlayLogin");
+    const iconElement = loginOverlay.querySelector("i");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerText = "Logout";
       loginOverlay.href = "/logout";
+      iconElement.className = "bi bi-box-arrow-right";
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
@@ -37,6 +39,7 @@ export default class {
       if (loginOverlay.innerText == "Logout") {
         loginOverlay.innerText = "Login";
         loginOverlay.href = "/login";
+        iconElement.className = "bi bi-box-arrow-in-left";
       }
     }
   }
@@ -90,9 +93,9 @@ export default class {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -207,5 +210,5 @@ export default class {
     }
     return authToken;
   }
-  destroy() {}
+  destroy() { }
 }

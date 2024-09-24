@@ -87,6 +87,10 @@
     color: darkviolet;
 }
 
+.red-txt:hover {
+    color: rgb(202, 0, 0);
+}
+
 .skyblue-txt:hover {
     color: skyblue;
 }
