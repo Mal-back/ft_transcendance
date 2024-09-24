@@ -54,8 +54,21 @@ export default class {
 
     errorMessageElement.innerHTML = message;
 
-    const modal = new bootstrap.Modal(document.getElementById("alertModal"));
+    const modalId = document.getElementById("alertModal");
+    const modal = new bootstrap.Modal(modalId);
     modal.show();
+    modalId.querySelector(".btn-close").onclick = (ev) => {
+      ev.preventDefault();
+      this.closeModal();
+    };
+  }
+
+  closeModal() {
+    const modalId = document.getElementById("alertModal");
+    const modal = bootstrap.Modal.getInstance(modalId); // Get the existing modal instance
+    if (modal) {
+      modal.hide(); // Use Bootstrap method to hide
+    }
   }
 
   parseJwt(token) {

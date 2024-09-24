@@ -53,17 +53,17 @@ export default class extends AbstractView {
                                                 <form>
                                                     <div class="mb-3">
                                                         <label for="email" class="form-label">Old Email</label>
-                                                        <input type="email" class="form-control" id="email"
+                                                        <input type="email" class="form-control" id="oldEmailInput" name="oldMail"
                                                             value="old-email@google.com" />
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="email" class="form-label">New Email</label>
-                                                        <input type="email" class="form-control" id="email"
+                                                        <input type="email" class="form-control" id="NewEmail" name="mailChange"
                                                             value="new-email@google.com" />
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="email" class="form-label">Confirm New Email</label>
-                                                        <input type="email" class="form-control" id="email"
+                                                        <input type="email" class="form-control" id="CheckEmail" name="checkMail"
                                                             value="new-email@google.com" />
                                                     </div>
                                                 </form>
@@ -73,7 +73,7 @@ export default class extends AbstractView {
                                                     Close
                                                 </button>
                                                 <button type="button" class="btn btn-success"
-                                                    id="confirm-changes-email-btn">
+                                                    id="confirmChangesMail">
                                                     Confirm Changes
                                                 </button>
                                             </div>
@@ -208,11 +208,13 @@ export default class extends AbstractView {
 
   async changeUsername() {
     const username = sessionStorage.getItem("username_transcendence");
-    const newUsername = document.querySelector("input[name='UsernameChange']").value;
-    if (this.sanitizeInput([newUsername]) == false){
-    	return;
+    const newUsername = document.querySelector(
+      "input[name='UsernameChange']",
+    ).value;
+    if (this.sanitizeInput([newUsername]) == false) {
+      return;
     }
-  	console.log("newUsername = ", newUsername);
+    console.log("newUsername = ", newUsername);
     try {
       const request = await this.makeRequest(
         "/api/auth/update/" + username,
@@ -223,7 +225,7 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (response.ok) {
-      	this.showModalWithError("Success", "Username change succesfuly")
+        this.showModalWithError("Success", "Username change succesfuly");
         sessionStorage.setItem("username_transcendence", newUsername);
         const data = await response.json();
         console.log("data after change =", data);
@@ -237,16 +239,104 @@ export default class extends AbstractView {
     }
   }
 
+  async checkoldMail(mailTocheck) {
+    const username = sessionStorage.getItem("username_transcendence");
+    try {
+      const request = await this.makeRequest("/api/auth/" + username, "GET");
+      const response = await fetch(request);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(
+          "old mail = " + data.email + "oldMail == data.mail :",
+          data.email == mailTocheck,
+        );
+        return data.email == mailTocheck;
+      } else {
+        navigateTo("/login");
+        // this.showModalWithError(
+        //   "Error",
+        //   "Authentification error, re-login please",
+        // );
+        removeSessionStorage();
+        throw Error(`Redirect to /login, error: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error in checkoldMail:", error);
+      throw error;
+    }
+  }
+
+  async changeMail() {
+    const username = sessionStorage.getItem("username_transcendence");
+    const oldMail = document.querySelector("input[name='oldMail']").value;
+    const newMail = document.querySelector("input[name='mailChange']").value;
+    const checkMail = document.querySelector("input[name='checkMail']").value;
+    if (this.sanitizeInput([newMail, oldMail, checkMail]) == false) {
+      return;
+    }
+    console.log("newMail = ", newMail);
+    if (newMail != checkMail) {
+      this.showModalWithError(
+        "Error",
+        "New e-mail and its confirmation do not match",
+      );
+      return false;
+    }
+    try {
+      if ((await this.checkoldMail(oldMail)) == false) {
+        this.showModalWithError("Error", "Incorrect old E-mail address");
+        return;
+      }
+    } catch (error) {
+      throw error;
+    }
+    try {
+      const request = await this.makeRequest(
+        "/api/auth/update/" + username,
+        "PATCH",
+        {
+          email: newMail,
+        },
+      );
+      const response = await fetch(request);
+      if (response.ok) {
+        this.showModalWithError("Success", "E-mail change succesfuly");
+        const data = await response.json();
+        console.log("data after change =", data);
+      } else {
+        const dataError = await response.json();
+        this.showModalWithError("Error", dataError);
+      }
+    } catch (error) {
+      console.error("Error in changeMail Request");
+      this.showModalWithError("Error", error.message);
+      throw error;
+    }
+  }
+
   async addEventListeners() {
-    const button = document.querySelector("#changeUsername");
-    if (button) {
-      button.addEventListener("click", async (ev) => {
+    const buttonUsername = document.querySelector("#changeUsername");
+    if (buttonUsername) {
+      buttonUsername.addEventListener("click", async (ev) => {
         ev.preventDefault();
         console.debug("Submit button clicked!");
         try {
           await this.changeUsername();
         } catch (error) {
           console.error("Caught in Event Listener:", error.message);
+        }
+      });
+    }
+    const buttonMail = document.querySelector("#confirmChangesMail");
+    if (buttonMail) {
+      buttonMail.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        console.debug("Submit button clicked!");
+        try {
+          await this.changeMail();
+        } catch (error) {
+          console.error("error: ", error.message);
+          // throw error;
         }
       });
     }
@@ -261,6 +351,10 @@ export default class extends AbstractView {
     if (changeUsernameButton) {
       changeUsernameButton.removeEventListener("click", this.changeUsername);
     }
+    const changeMailButton = document.querySelector("#confirmChangesMail");
+    if (changeMailButton) {
+      changeMailButton.removeEventListener("click", this.changeMail);
+    }
   }
 
   removeCss() {
@@ -274,4 +368,3 @@ export default class extends AbstractView {
     this.removeCss();
   }
 }
-

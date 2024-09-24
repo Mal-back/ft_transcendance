@@ -114,8 +114,10 @@ const router = async () => {
   document.querySelector("#app").innerHTML = await view.getHtml();
   view.addEventListeners();
   } catch (error){
-    if (error.message.split(' ')[0] === "Redirect")
+    if (error.message.split(' ')[0] === "Redirect"){
+      view.showModalWithError("Error", error.message);
       console.log("MyError:", error.message);
+    }
     else {
       console.error("Error in get Html():", error.message);
       console.trace();
