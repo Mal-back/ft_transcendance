@@ -6,6 +6,7 @@ from rest_framework.views import APIView, Response, csrf_exempt
 from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, createServiceToken, MyTokenObtainPairSerializer
 from .permissions import IsOwner
 from .models import CustomUser, Service
+from .requests_manager import send_request, send_requests
 from rest_framework import serializers
 # Create your views here.
 
@@ -22,11 +23,8 @@ class UserDeleteView(generics.DestroyAPIView) :
     permission_classes = [IsOwner]
 
     def perform_destroy(self, instance):
-        token = createServiceToken(Service.objects.get('auth'))
-        headers = {'Authorization': f'Bearer {token}'}
         req_url = f'http://users:8443/api/users/{instance.username}/delete/'
-        response = requests.delete(req_url, headers=headers)
-        if response.status != 204:
+        if send_request(url=req_url, method='delete') != 204:
             raise serializers.ValidationError('Invalid data sent to users ms')
         instance.delete()
 
@@ -39,12 +37,11 @@ class UserCreateView(generics.ListCreateAPIView) :
     def perform_create(self, serializer):
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data.get('username')
-        token = createServiceToken(Service.objects.get(serviceName='auth'))
-        headers = {'Authorization' : f'Bearer {token}'}
-        service_url = 'http://users:8443/api/users/create/'
-        response = requests.post(service_url, json={'username': username}, headers=headers)
-        if response.status_code != 201:
-            raise serializers.ValidationError('Invalid data sent to users ms')
+        req_urls = ['http://users:8443/api/users/create/',
+                   'http://matchmaking:8443/api/matchmaking/create/',]
+        status = send_requests(urls=req_urls, method='post', body={'username':username}, headers={}) != 201
+        # if any(item != 201 for item in status):
+        #     raise serializers.ValidationError('Invalid data sent to users ms')
         user = serializer.save()
         return user
         
@@ -60,14 +57,9 @@ class UserUpdateView(generics.UpdateAPIView):
         instance = self.get_object()
         old_username = instance.username
         new_username = serializer.validated_data.get('username', old_username)
-        print(old_username)
-        print(new_username)
         if old_username != new_username:
-            token = createServiceToken(Service.objects.get(serviceName='auth'))
-            headers = {'Authorization' : f'Bearer {token}'}
-            service_url = f'http://users:8443/api/users/{old_username}/update/'
-            response = requests.patch(service_url, json={'username': new_username}, headers=headers)
-            if response.status_code != 200:
+            req_url = f'http://users:8443/api/users/{old_username}/update/'
+            if send_request(url=req_url, method='patch', body={'username':new_username}) != 200:
                 raise serializers.ValidationError('Invalid data sent to users ms')
             else :
                 serializer.save()
@@ -84,7 +76,6 @@ class UserUpdateView(generics.UpdateAPIView):
         user = self.perform_update(serializer=serializer)
 
         token = MyTokenObtainPairSerializer.get_token(user)
-        print(token)
         access_token = str(token.access_token)
         refresh_token = str(token)
         response_data = {
@@ -95,11 +86,6 @@ class UserUpdateView(generics.UpdateAPIView):
                 }
         response_data.update(serializer.data)
         return Response(response_data, status=status.HTTP_200_OK)
-
-        
-
-
-
 
 class ServiceJWTObtainPair(APIView):
     @method_decorator(csrf_exempt)
