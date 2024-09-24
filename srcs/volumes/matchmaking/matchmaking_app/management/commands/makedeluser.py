@@ -6,7 +6,7 @@ class Command(BaseCommand):
     help = 'Create Deleted Account User'
     
     def handle(self, *args, **kwargs):
-            username = 'dleted_account'
+            username = 'deleted_account'
             
             user, created = MatchUser.objects.get_or_create(username=username)
 
