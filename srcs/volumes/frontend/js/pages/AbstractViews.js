@@ -27,20 +27,17 @@ export default class {
     const accessToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
     const loginOverlay = document.querySelector("#overlayLogin");
-    const iconElement = loginOverlay.querySelector("i");
+    console.log(document.documentElement.outerHTML);
+    const iconElement = document.createElement("i");
     if (username && accessToken && refreshToken) {
-      loginOverlay.innerText = "Logout";
+      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout'
       loginOverlay.href = "/logout";
-      iconElement.className = "bi bi-box-arrow-right";
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
       }
-      if (loginOverlay.innerText == "Logout") {
-        loginOverlay.innerText = "Login";
-        loginOverlay.href = "/login";
-        iconElement.className = "bi bi-box-arrow-in-left";
-      }
+      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-left"></i> Login'
+      loginOverlay.href = "/login";
     }
   }
 
@@ -77,7 +74,6 @@ export default class {
   }
 
   sanitizeInput(inputList) {
-    console.log("sanitizeInput: ");
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     for (let i = 0; i < inputList.length; i++) {
       const input = inputList[i];

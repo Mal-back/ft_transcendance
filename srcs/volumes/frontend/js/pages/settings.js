@@ -164,9 +164,6 @@ export default class extends AbstractView {
                     </button>
                 </div>
                 <!-- <br> -->
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#alertInvalid">
-                    Save All Changes
-                </button>
                 <div class="modal fade" id="handleData" tabindex="-1" aria-labelledby="handleDataLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
@@ -248,7 +245,7 @@ export default class extends AbstractView {
                         <div class="col-4">
                             <img src="../../img/ts/EVERMORE.jpeg" class="img-fluid rounded border" alt="Background 4"
                                 style="cursor: pointer;"
-                                >F
+                                >
                         </div>
                     </div>
                 </div>
