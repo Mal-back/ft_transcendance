@@ -32,6 +32,21 @@
     width: 85%;
 }
 
+.offcanvas {
+    max-width: 25%;
+}
+
+.icon-container {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.icon-container .btn {
+    margin-left: 0.5rem;
+}
+
 .no-overflow {
     white-space: nowrap;
     /* Prevents the text from wrapping */

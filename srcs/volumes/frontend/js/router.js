@@ -24,9 +24,9 @@ const router = async () => {
     { path: "/profile", view: Profile },
     { path: "/createUser", view: CreateUser },
     { path: "/login", view: Login },
-    { path: "/logout", view: Logout},
-    { path: "/epic-mode", view: EpicMode},
-    { path: "/settings", view: Settings},
+    { path: "/logout", view: Logout },
+    { path: "/epic-mode", view: EpicMode },
+    { path: "/settings", view: Settings },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -127,21 +127,21 @@ const router = async () => {
 
 
   // Function to print all CSS links on the page
-// function printAllCssLinks() {
-//   // Select all <link> elements with rel="stylesheet"
-//   const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-//   
-//   // Loop through each <link> element
-//   cssLinks.forEach((link) => {
-//     // Print the href attribute (URL of the stylesheet) to the console
-//     console.log(link.href);
-//   });
-// }
+  // function printAllCssLinks() {
+  //   // Select all <link> elements with rel="stylesheet"
+  //   const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+  //   
+  //   // Loop through each <link> element
+  //   cssLinks.forEach((link) => {
+  //     // Print the href attribute (URL of the stylesheet) to the console
+  //     console.log(link.href);
+  //   });
+  // }
 
-// Call the function to print all CSS links
+  // Call the function to print all CSS links
 
   //print all html
-  // console.log(document.documentElement.outerHTML);
+  console.log(document.documentElement.outerHTML);
 
 
 };

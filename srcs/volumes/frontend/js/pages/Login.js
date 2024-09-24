@@ -78,7 +78,7 @@ export default class extends AbstractView {
     const nameForm = loginForm.querySelector("input[name='Username']").value;
     const paswordForm = loginForm.querySelector("input[name='Password']").value;
 
-    if (this.sanitizeInput([nameForm, paswordForm]) == false){
+    if (this.sanitizeInput([nameForm, paswordForm]) == false) {
       console.log("Wrong input");
       return;
     }
@@ -94,9 +94,6 @@ export default class extends AbstractView {
         console.log("login response.ok");
         const data = await response.json();
         setSessionStorage(data, nameForm);
-        const loginOverlay = document.querySelector("#overlayLogin");
-        loginOverlay.innerText = "Logout";
-        loginOverlay.href = "/logout";
         navigateTo("/");
       } else {
         console.log("login response.notOk");
