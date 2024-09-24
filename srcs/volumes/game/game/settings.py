@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'game_app.apps.GameAppConfig',
+    'game_app',
     'corsheaders',
 ]
 
@@ -59,6 +59,13 @@ MIDDLEWARE = [
     # 'game_app.middleware.SetRequestHostMiddleware',
     # 'users_app.middleware.UpdateLastUserActivityMiddleware'
 ]
+
+CHANNELS_LAYERS = {
+	"default": {
+		"BACKEND:" "channels_redis.core.RedisChannelLayer",
+		
+	}
+}
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

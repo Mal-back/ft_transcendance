@@ -1,10 +1,19 @@
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
+import json
+import logging
 
-class PracticeConsumer(WebsocketConsumer):
-    def connect(self):
-        self.accept()
-        print("Consumer connection accepted")
+log = logging.getLogger(__name__)
+
+class PlayerConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+        log.info("Player Connected")
+        await self.send("Connection accepted")
+
     
-    def receive(self, text_data=None, bytes_data=None, **kwargs):
+    async def receive(self, text_data=None, bytes_data=None, **kwargs):
+        log.info(text_data)
         if text_data == 'PING':
-            self.send('PONG')
+            await self.send('PONG')
+        else:
+            await self.send('Command unknown')
