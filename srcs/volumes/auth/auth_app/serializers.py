@@ -74,8 +74,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             token.set_exp(lifetime=timedelta(hours=12))
             token.set_exp(lifetime=timedelta(days=3), claim='refresh')
         else:
-            token.set_exp(lifetime=timedelta(minutes=3))
-            token.set_exp(lifetime=timedelta(hours=6), claim='refresh')
+            token.set_exp(lifetime=timedelta(minutes=5))
+            token.set_exp(lifetime=timedelta(days=1), claim='refresh')
 
         return token
 
