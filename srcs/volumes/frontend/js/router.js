@@ -10,6 +10,9 @@ import Settings from "./pages/settings.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
+  if (view) {
+    view.destroy();
+  }
   history.pushState(null, null, url);
   router();
 };

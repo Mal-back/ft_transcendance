@@ -140,10 +140,10 @@ export default class extends AbstractView {
   async addEventListeners() {
     // const button = document.querySelector("#settingsButton");
     // if (button) {
-      // button.addEventListener("click", async (ev) => {
-        // ev.preventDefault();
-        // console.debug("Submit button clicked!");
-      // });
+    // button.addEventListener("click", async (ev) => {
+    // ev.preventDefault();
+    // console.debug("Submit button clicked!");
+    // });
     // }
   }
 
@@ -166,6 +166,7 @@ export default class extends AbstractView {
     });
   }
   destroy() {
+    this.cleanModal();
     this.removeEventListeners();
     this.removeCss();
   }

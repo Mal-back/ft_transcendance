@@ -27,15 +27,25 @@ export default class {
     const accessToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
     const loginOverlay = document.querySelector("#overlayLogin");
+    const logIcon = document.querySelector("#logIconRef");
+    const logIconImg = document.querySelector("#logIconImg");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout';
       loginOverlay.href = "/logout";
+      logIcon.href = "/logout";
+      logIcon.title = "Logout";
+      logIconImg.classList.remove("bi-box-arrow-left");
+      logIconImg.classList.add("bi-box-arrow-right");
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
       }
       loginOverlay.innerHTML = '<i class="bi bi-box-arrow-left"></i> Login';
       loginOverlay.href = "/login";
+      logIcon.href = "/login";
+      logIcon.title = "Login";
+      logIconImg.classList.remove("bi-box-arrow-right");
+      logIconImg.classList.add("bi-box-arrow-left");
     }
   }
 
@@ -81,6 +91,25 @@ export default class {
         console.log("Backdrop removed manually.");
       }
       console.log("Is modal visible?", modalId.classList.contains("show"));
+    }
+  }
+
+  cleanModal() {
+    const modal = document.querySelectorAll(".modal");
+    if (modal) {
+      modal.forEach((element) => {
+        // element.hide();
+        if (element.id != "alertModal") {
+          console.log("removing modal: ", element.id);
+          const modalInstance = bootstrap.Modal.getInstance(element);
+          if (modalInstance) modalInstance.hide();
+          element.remove();
+        }
+      });
+    }
+    const backdrop = document.querySelector(".modal-backdrop");
+    if (backdrop) {
+      backdrop.remove(); // Manually remove the backdrop if still present
     }
   }
 
