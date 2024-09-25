@@ -372,7 +372,9 @@ export default class extends AbstractView {
                 "/api/auth/update/" + username,
                 "PATCH",
                 {
-                    password: newPassword,
+                    password: oldPassword,
+                    new_password: newPassword,
+                    new_password2: confirmPassword,
                 },
             );
             const response = await fetch(request);
