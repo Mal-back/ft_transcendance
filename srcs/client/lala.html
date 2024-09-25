@@ -5,7 +5,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="robots" content="NONE,NOARCHIVE">
   <title>AttributeError
-          at /api/auth/update/val</title>
+          at /api/auth/password/val</title>
   <style>
     html * { padding:0; margin:0; }
     body * { padding:10px 20px; }
@@ -102,8 +102,10 @@
 <body>
 <header id="summary">
   <h1>AttributeError
-       at /api/auth/update/val</h1>
-  <pre class="exception_value">&#x27;MyTokenObtainPairSerializer&#x27; object has no attribute &#x27;access_token&#x27;</pre>
+       at /api/auth/password/val</h1>
+  <pre class="exception_value">Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.
+Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.</pre>
   <table class="meta">
 
     <tr>
@@ -112,7 +114,7 @@
     </tr>
     <tr>
       <th scope="row">Request URL:</th>
-      <td>https://localhost/api/auth/update/val</td>
+      <td>https://localhost/api/auth/password/val</td>
     </tr>
 
     <tr>
@@ -128,19 +130,21 @@
 
     <tr>
       <th scope="row">Exception Value:</th>
-      <td><pre>&#x27;MyTokenObtainPairSerializer&#x27; object has no attribute &#x27;access_token&#x27;</pre></td>
+      <td><pre>Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.
+Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.</pre></td>
     </tr>
 
 
     <tr>
       <th scope="row">Exception Location:</th>
-      <td><span class="fname">/code/auth_app/views.py</span>, line 86, in update</td>
+      <td><span class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</span>, line 470, in get_attribute</td>
     </tr>
 
 
     <tr>
       <th scope="row">Raised during:</th>
-      <td>auth_app.views.UserUpdateView</td>
+      <td>auth_app.views.PasswordUpdateView</td>
     </tr>
 
     <tr>
@@ -162,7 +166,7 @@
     </tr>
     <tr>
       <th scope="row">Server time:</th>
-      <td>Tue, 24 Sep 2024 10:37:57 +0000</td>
+      <td>Wed, 25 Sep 2024 11:59:07 +0000</td>
     </tr>
   </table>
 </header>
@@ -180,50 +184,50 @@
     <ul class="traceback">
       
         
-        <li class="frame django">
+        <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py</code>, line 55, in inner
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 437, in get_attribute
           
 
           
-            <div class="context" id="c139750385889344">
+            <div class="context" id="c140581686891200">
               
-                <ol start="48" class="pre-context" id="pre139750385889344">
+                <ol start="430" class="pre-context" id="pre140581686891200">
                 
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>        return inner</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>    def get_attribute(self, instance):</pre></li>
                 
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>    else:</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        Given the *outgoing* object instance, return the primitive value</pre></li>
                 
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>        @wraps(get_response)</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        that should be used for this field.</pre></li>
                 
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>        def inner(request):</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        try:</pre></li>
                 
                 </ol>
               
-              <ol start="55" class="context-line">
-                <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>                response = get_response(request)
-                               ^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="437" class="context-line">
+                <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>            return get_attribute(instance, self.source_attrs)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='56' class="post-context" id="post139750385889344">
+                <ol start='438' class="post-context" id="post140581686891200">
                   
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>            except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        except BuiltinSignatureError as exc:</pre></li>
                   
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>                response = response_for_exception(request, exc)</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>            msg = (</pre></li>
                   
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>            return response</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;Field source for `{serializer}.{field}` maps to a built-in &#x27;</pre></li>
                   
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;function type and is invalid. Define a property or method on &#x27;</pre></li>
                   
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre>        return inner</pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;the `{instance}` instance that wraps the call to the built-in &#x27;</pre></li>
                   
-                  <li onclick="toggle('pre139750385889344', 'post139750385889344')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;function.&#x27;.format(</pre></li>
                   
               </ol>
               
@@ -235,7 +239,190 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385889344">
+            <table class="vars" id="v140581686891200">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>instance</td>
+                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>msg</td>
+                    <td class="code"><pre>(&#x27;Got AttributeError when attempting to get a value for field `new_password` &#x27;
+ &#x27;on serializer `PasswordModficationSerializer`.\n&#x27;
+ &#x27;The serializer field might be named incorrectly and not match any attribute &#x27;
+ &#x27;or key on the `CustomUser` instance.\n&#x27;
+ &quot;Original exception text was: &#x27;CustomUser&#x27; object has no attribute &quot;
+ &quot;&#x27;new_password&#x27;.&quot;)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>CharField(required=True)</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 104, in get_attribute
+          
+
+          
+            <div class="context" id="c140581686890752">
+              
+                <ol start="97" class="pre-context" id="pre140581686890752">
+                
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>    Also accepts either attribute lookup on objects or dictionary lookups.</pre></li>
+                
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>    &quot;&quot;&quot;</pre></li>
+                
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>    for attr in attrs:</pre></li>
+                
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>        try:</pre></li>
+                
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            if isinstance(instance, Mapping):</pre></li>
+                
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>                instance = instance[attr]</pre></li>
+                
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            else:</pre></li>
+                
+                </ol>
+              
+              <ol start="104" class="context-line">
+                <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>                instance = getattr(instance, attr)
+                                ^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='105' class="post-context" id="post140581686890752">
+                  
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>        except ObjectDoesNotExist:</pre></li>
+                  
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            return None</pre></li>
+                  
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>        if is_simple_callable(instance):</pre></li>
+                  
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            try:</pre></li>
+                  
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>                instance = instance()</pre></li>
+                  
+                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            except (AttributeError, KeyError) as exc:</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140581686890752">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>attr</td>
+                    <td class="code"><pre>&#x27;new_password&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>attrs</td>
+                    <td class="code"><pre>[&#x27;new_password&#x27;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>instance</td>
+                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+          <li class="cause"><h3>
+          
+            During handling of the above exception (&#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;), another exception occurred:
+          
+        </h3></li>
+        
+        <li class="frame django">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py</code>, line 55, in inner
+          
+
+          
+            <div class="context" id="c140581686887552">
+              
+                <ol start="48" class="pre-context" id="pre140581686887552">
+                
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        return inner</pre></li>
+                
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>    else:</pre></li>
+                
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        @wraps(get_response)</pre></li>
+                
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        def inner(request):</pre></li>
+                
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="55" class="context-line">
+                <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>                response = get_response(request)
+                               ^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='56' class="post-context" id="post140581686887552">
+                  
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>            except Exception as exc:</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>                response = response_for_exception(request, exc)</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>            return response</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        return inner</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140581686887552">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -246,17 +433,17 @@
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>AttributeError(&quot;&#x27;MyTokenObtainPairSerializer&#x27; object has no attribute &#x27;access_token&#x27;&quot;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.\nOriginal exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.&quot;)</pre></td>
                   </tr>
                 
                   <tr>
                     <td>get_response</td>
-                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7f1a2e3e7770&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fdbbb925100&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -272,44 +459,44 @@
           
 
           
-            <div class="context" id="c139750385890944">
+            <div class="context" id="c140581686887488">
               
-                <ol start="190" class="pre-context" id="pre139750385890944">
+                <ol start="190" class="pre-context" id="pre140581686887488">
                 
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>        if response is None:</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>        if response is None:</pre></li>
                 
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
                 
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
                 
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>            if iscoroutinefunction(wrapped_callback):</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            if iscoroutinefunction(wrapped_callback):</pre></li>
                 
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
                 
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            try:</pre></li>
                 
                 </ol>
               
               <ol start="197" class="context-line">
-                <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)
+                <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)
                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='198' class="post-context" id="post139750385890944">
+                <ol start='198' class="post-context" id="post140581686887488">
                   
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>            except Exception as e:</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            except Exception as e:</pre></li>
                   
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
                   
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>                if response is None:</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                if response is None:</pre></li>
                   
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>                    raise</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                    raise</pre></li>
                   
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385890944', 'post139750385890944')"><pre>        # Complain if the view returned None (a common error).</pre></li>
+                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>        # Complain if the view returned None (a common error).</pre></li>
                   
               </ol>
               
@@ -321,7 +508,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385890944">
+            <table class="vars" id="v140581686887488">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -332,7 +519,7 @@
                 
                   <tr>
                     <td>callback</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7f1a2c24fb00&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fdbb978fec0&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -352,7 +539,7 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -362,12 +549,12 @@
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7f1a2e3e7770&gt;</pre></td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fdbbb925100&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>wrapped_callback</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7f1a2c24fb00&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fdbb978fec0&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -383,40 +570,40 @@
           
 
           
-            <div class="context" id="c139750385887744">
+            <div class="context" id="c140581686887616">
               
-                <ol start="58" class="pre-context" id="pre139750385887744">
+                <ol start="58" class="pre-context" id="pre140581686887616">
                 
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre>        async def _view_wrapper(request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>        async def _view_wrapper(request, *args, **kwargs):</pre></li>
                 
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre>            return await view_func(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>            return await view_func(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre>    else:</pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>    else:</pre></li>
                 
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre>        def _view_wrapper(request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>        def _view_wrapper(request, *args, **kwargs):</pre></li>
                 
                 </ol>
               
               <ol start="65" class="context-line">
-                <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre>            return view_func(request, *args, **kwargs)
+                <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>            return view_func(request, *args, **kwargs)
                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='66' class="post-context" id="post139750385887744">
+                <ol start='66' class="post-context" id="post140581686887616">
                   
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre>    _view_wrapper.csrf_exempt = True</pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>    _view_wrapper.csrf_exempt = True</pre></li>
                   
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385887744', 'post139750385887744')"><pre>    return wraps(view_func)(_view_wrapper)</pre></li>
+                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>    return wraps(view_func)(_view_wrapper)</pre></li>
                   
               </ol>
               
@@ -428,7 +615,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385887744">
+            <table class="vars" id="v140581686887616">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -449,12 +636,12 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>view_func</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7f1a2c24fa60&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fdbb978fe20&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -470,44 +657,44 @@
           
 
           
-            <div class="context" id="c139750385882752">
+            <div class="context" id="c140581686512448">
               
-                <ol start="97" class="pre-context" id="pre139750385882752">
+                <ol start="97" class="pre-context" id="pre140581686512448">
                 
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>            self = cls(**initkwargs)</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            self = cls(**initkwargs)</pre></li>
                 
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>            self.setup(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            self.setup(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>            if not hasattr(self, &quot;request&quot;):</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            if not hasattr(self, &quot;request&quot;):</pre></li>
                 
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>                raise AttributeError(</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                raise AttributeError(</pre></li>
                 
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>                    &quot;%s instance has no &#x27;request&#x27; attribute. Did you override &quot;</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                    &quot;%s instance has no &#x27;request&#x27; attribute. Did you override &quot;</pre></li>
                 
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>                    &quot;setup() and forget to call super()?&quot; % cls.__name__</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                    &quot;setup() and forget to call super()?&quot; % cls.__name__</pre></li>
                 
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>                )</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                )</pre></li>
                 
                 </ol>
               
               <ol start="104" class="context-line">
-                <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>            return self.dispatch(request, *args, **kwargs)
+                <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            return self.dispatch(request, *args, **kwargs)
                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='105' class="post-context" id="post139750385882752">
+                <ol start='105' class="post-context" id="post140581686512448">
                   
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>        view.view_class = cls</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        view.view_class = cls</pre></li>
                   
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>        view.view_initkwargs = initkwargs</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        view.view_initkwargs = initkwargs</pre></li>
                   
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>        # __name__ and __qualname__ are intentionally left unchanged as</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        # __name__ and __qualname__ are intentionally left unchanged as</pre></li>
                   
-                  <li onclick="toggle('pre139750385882752', 'post139750385882752')"><pre>        # view_class should be used to robustly determine the name of the view</pre></li>
+                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        # view_class should be used to robustly determine the name of the view</pre></li>
                   
               </ol>
               
@@ -519,7 +706,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385882752">
+            <table class="vars" id="v140581686512448">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -535,7 +722,7 @@
                 
                   <tr>
                     <td>cls</td>
-                    <td class="code"><pre>&lt;class &#x27;auth_app.views.UserUpdateView&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;class &#x27;auth_app.views.PasswordUpdateView&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -550,12 +737,12 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -571,44 +758,44 @@
           
 
           
-            <div class="context" id="c139750385891008">
+            <div class="context" id="c140581686893568">
               
-                <ol start="502" class="pre-context" id="pre139750385891008">
+                <ol start="502" class="pre-context" id="pre140581686893568">
                 
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>                                  self.http_method_not_allowed)</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>                                  self.http_method_not_allowed)</pre></li>
                 
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>            else:</pre></li>
                 
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>                handler = self.http_method_not_allowed</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>                handler = self.http_method_not_allowed</pre></li>
                 
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>            response = handler(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>            response = handler(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>        except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        except Exception as exc:</pre></li>
                 
                 </ol>
               
               <ol start="509" class="context-line">
-                <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>            response = self.handle_exception(exc)
+                <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>            response = self.handle_exception(exc)
                             ^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='510' class="post-context" id="post139750385891008">
+                <ol start='510' class="post-context" id="post140581686893568">
                   
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
                   
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>        return self.response</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        return self.response</pre></li>
                   
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>    def options(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>    def options(self, request, *args, **kwargs):</pre></li>
                   
-                  <li onclick="toggle('pre139750385891008', 'post139750385891008')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -620,7 +807,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385891008">
+            <table class="vars" id="v140581686893568">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -636,7 +823,7 @@
                 
                   <tr>
                     <td>handler</td>
-                    <td class="code"><pre>&lt;bound method UpdateAPIView.patch of &lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method UpdateAPIView.patch of &lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -646,12 +833,12 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -667,44 +854,44 @@
           
 
           
-            <div class="context" id="c139750385893312">
+            <div class="context" id="c140581686891008">
               
-                <ol start="462" class="pre-context" id="pre139750385893312">
+                <ol start="462" class="pre-context" id="pre140581686891008">
                 
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>        exception_handler = self.get_exception_handler()</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        exception_handler = self.get_exception_handler()</pre></li>
                 
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>        context = self.get_exception_handler_context()</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        context = self.get_exception_handler_context()</pre></li>
                 
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>        response = exception_handler(exc, context)</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        response = exception_handler(exc, context)</pre></li>
                 
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>        if response is None:</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        if response is None:</pre></li>
                 
                 </ol>
               
               <ol start="469" class="context-line">
-                <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>            self.raise_uncaught_exception(exc)
+                <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>            self.raise_uncaught_exception(exc)
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='470' class="post-context" id="post139750385893312">
+                <ol start='470' class="post-context" id="post140581686891008">
                   
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>        response.exception = True</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        response.exception = True</pre></li>
                   
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>        return response</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        return response</pre></li>
                   
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
                   
-                  <li onclick="toggle('pre139750385893312', 'post139750385893312')"><pre>        if settings.DEBUG:</pre></li>
+                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        if settings.DEBUG:</pre></li>
                   
               </ol>
               
@@ -716,7 +903,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385893312">
+            <table class="vars" id="v140581686891008">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -729,18 +916,18 @@
                     <td>context</td>
                     <td class="code"><pre>{&#x27;args&#x27;: (),
  &#x27;kwargs&#x27;: {&#x27;username&#x27;: &#x27;val&#x27;},
- &#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;,
- &#x27;view&#x27;: &lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;}</pre></td>
+ &#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;,
+ &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;}</pre></td>
                   </tr>
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>AttributeError(&quot;&#x27;MyTokenObtainPairSerializer&#x27; object has no attribute &#x27;access_token&#x27;&quot;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.\nOriginal exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.&quot;)</pre></td>
                   </tr>
                 
                   <tr>
                     <td>exception_handler</td>
-                    <td class="code"><pre>&lt;function exception_handler at 0x7f1a2c311f80&gt;</pre></td>
+                    <td class="code"><pre>&lt;function exception_handler at 0x7fdbba112020&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -750,7 +937,7 @@
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -766,44 +953,44 @@
           
 
           
-            <div class="context" id="c139750385888768">
+            <div class="context" id="c140581686888960">
               
-                <ol start="473" class="pre-context" id="pre139750385888768">
+                <ol start="473" class="pre-context" id="pre140581686888960">
                 
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
                 
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>        if settings.DEBUG:</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>        if settings.DEBUG:</pre></li>
                 
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>            request = self.request</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            request = self.request</pre></li>
                 
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>            renderer_format = getattr(request.accepted_renderer, &#x27;format&#x27;)</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            renderer_format = getattr(request.accepted_renderer, &#x27;format&#x27;)</pre></li>
                 
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>            use_plaintext_traceback = renderer_format not in (&#x27;html&#x27;, &#x27;api&#x27;, &#x27;admin&#x27;)</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            use_plaintext_traceback = renderer_format not in (&#x27;html&#x27;, &#x27;api&#x27;, &#x27;admin&#x27;)</pre></li>
                 
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>            request.force_plaintext_errors(use_plaintext_traceback)</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            request.force_plaintext_errors(use_plaintext_traceback)</pre></li>
                 
                 </ol>
               
               <ol start="480" class="context-line">
-                <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>        raise exc
+                <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>        raise exc
              ^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='481' class="post-context" id="post139750385888768">
+                <ol start='481' class="post-context" id="post140581686888960">
                   
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>    # Note: Views are made CSRF exempt from within `as_view` as to prevent</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    # Note: Views are made CSRF exempt from within `as_view` as to prevent</pre></li>
                   
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>    # accidental removal of this exemption in cases where `dispatch` needs to</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    # accidental removal of this exemption in cases where `dispatch` needs to</pre></li>
                   
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>    # be overridden.</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    # be overridden.</pre></li>
                   
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>    def dispatch(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    def dispatch(self, request, *args, **kwargs):</pre></li>
                   
-                  <li onclick="toggle('pre139750385888768', 'post139750385888768')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>        &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -815,7 +1002,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385888768">
+            <table class="vars" id="v140581686888960">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -826,7 +1013,7 @@
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>AttributeError(&quot;&#x27;MyTokenObtainPairSerializer&#x27; object has no attribute &#x27;access_token&#x27;&quot;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.\nOriginal exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.&quot;)</pre></td>
                   </tr>
                 
                   <tr>
@@ -836,12 +1023,12 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -862,44 +1049,44 @@
           
 
           
-            <div class="context" id="c139750385891456">
+            <div class="context" id="c140581686888768">
               
-                <ol start="499" class="pre-context" id="pre139750385891456">
+                <ol start="499" class="pre-context" id="pre140581686888768">
                 
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>            # Get the appropriate handler method</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            # Get the appropriate handler method</pre></li>
                 
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>            if request.method.lower() in self.http_method_names:</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            if request.method.lower() in self.http_method_names:</pre></li>
                 
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>                handler = getattr(self, request.method.lower(),</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>                handler = getattr(self, request.method.lower(),</pre></li>
                 
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>                                  self.http_method_not_allowed)</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>                                  self.http_method_not_allowed)</pre></li>
                 
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            else:</pre></li>
                 
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>                handler = self.http_method_not_allowed</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>                handler = self.http_method_not_allowed</pre></li>
                 
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre></pre></li>
                 
                 </ol>
               
               <ol start="506" class="context-line">
-                <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>            response = handler(request, *args, **kwargs)
+                <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            response = handler(request, *args, **kwargs)
                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='507' class="post-context" id="post139750385891456">
+                <ol start='507' class="post-context" id="post140581686888768">
                   
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>        except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>        except Exception as exc:</pre></li>
                   
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>            response = self.handle_exception(exc)</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            response = self.handle_exception(exc)</pre></li>
                   
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
                   
-                  <li onclick="toggle('pre139750385891456', 'post139750385891456')"><pre>        return self.response</pre></li>
+                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>        return self.response</pre></li>
                   
               </ol>
               
@@ -911,7 +1098,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385891456">
+            <table class="vars" id="v140581686888768">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -927,7 +1114,7 @@
                 
                   <tr>
                     <td>handler</td>
-                    <td class="code"><pre>&lt;bound method UpdateAPIView.patch of &lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method UpdateAPIView.patch of &lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -937,12 +1124,12 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -958,44 +1145,44 @@
           
 
           
-            <div class="context" id="c139750385883520">
+            <div class="context" id="c140581686510016">
               
-                <ol start="226" class="pre-context" id="pre139750385883520">
+                <ol start="226" class="pre-context" id="pre140581686510016">
                 
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>    Concrete view for updating a model instance.</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    Concrete view for updating a model instance.</pre></li>
                 
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>    def put(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    def put(self, request, *args, **kwargs):</pre></li>
                 
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>        return self.update(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>        return self.update(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>    def patch(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    def patch(self, request, *args, **kwargs):</pre></li>
                 
                 </ol>
               
               <ol start="233" class="context-line">
-                <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>        return self.partial_update(request, *args, **kwargs)
+                <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>        return self.partial_update(request, *args, **kwargs)
                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='234' class="post-context" id="post139750385883520">
+                <ol start='234' class="post-context" id="post140581686510016">
                   
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>class ListCreateAPIView(mixins.ListModelMixin,</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>class ListCreateAPIView(mixins.ListModelMixin,</pre></li>
                   
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>                        mixins.CreateModelMixin,</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>                        mixins.CreateModelMixin,</pre></li>
                   
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>                        GenericAPIView):</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>                        GenericAPIView):</pre></li>
                   
-                  <li onclick="toggle('pre139750385883520', 'post139750385883520')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -1007,7 +1194,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385883520">
+            <table class="vars" id="v140581686510016">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1028,12 +1215,12 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -1049,44 +1236,44 @@
           
 
           
-            <div class="context" id="c139750385883072">
+            <div class="context" id="c140581686899456">
               
-                <ol start="75" class="pre-context" id="pre139750385883072">
+                <ol start="75" class="pre-context" id="pre140581686899456">
                 
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>        return Response(serializer.data)</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        return Response(serializer.data)</pre></li>
                 
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>    def perform_update(self, serializer):</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    def perform_update(self, serializer):</pre></li>
                 
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>        serializer.save()</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        serializer.save()</pre></li>
                 
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>    def partial_update(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    def partial_update(self, request, *args, **kwargs):</pre></li>
                 
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>        kwargs[&#x27;partial&#x27;] = True</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        kwargs[&#x27;partial&#x27;] = True</pre></li>
                 
                 </ol>
               
               <ol start="82" class="context-line">
-                <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>        return self.update(request, *args, **kwargs)
+                <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        return self.update(request, *args, **kwargs)
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='83' class="post-context" id="post139750385883072">
+                <ol start='83' class="post-context" id="post140581686899456">
                   
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>class DestroyModelMixin:</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>class DestroyModelMixin:</pre></li>
                   
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    &quot;&quot;&quot;</pre></li>
                   
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>    Destroy a model instance.</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    Destroy a model instance.</pre></li>
                   
-                  <li onclick="toggle('pre139750385883072', 'post139750385883072')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -1098,7 +1285,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385883072">
+            <table class="vars" id="v140581686899456">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1119,12 +1306,12 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -1136,48 +1323,48 @@
         
         <li class="frame user">
           
-            <code class="fname">/code/auth_app/views.py</code>, line 86, in update
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py</code>, line 75, in update
           
 
           
-            <div class="context" id="c139750385888256">
+            <div class="context" id="c140581686888448">
               
-                <ol start="79" class="pre-context" id="pre139750385888256">
+                <ol start="68" class="pre-context" id="pre140581686888448">
                 
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        serializer = self.get_serializer(instance, data=request.data, partial=partial)</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        self.perform_update(serializer)</pre></li>
                 
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        serializer.is_valid(raise_exception=True)</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        if getattr(instance, &#x27;_prefetched_objects_cache&#x27;, None):</pre></li>
                 
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        self.perform_update(serializer=serializer)</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>            # If &#x27;prefetch_related&#x27; has been applied to a queryset, we need to</pre></li>
                 
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre></pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>            # forcibly invalidate the prefetch cache on the instance.</pre></li>
                 
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        user = serializer.instance</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>            instance._prefetched_objects_cache = {}</pre></li>
                 
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        token = MyTokenObtainPairSerializer(user)</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
                 
                 </ol>
               
-              <ol start="86" class="context-line">
-                <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        access_token = str(token.access_token)
-                               ^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="75" class="context-line">
+                <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        return Response(serializer.data)
+                            ^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='87' class="post-context" id="post139750385888256">
+                <ol start='76' class="post-context" id="post140581686888448">
                   
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        refresh_token = str(token)</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>        response_data = {</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>    def perform_update(self, serializer):</pre></li>
                   
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>                &#x27;message&#x27;:&#x27;update successefull&#x27;,</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        serializer.save()</pre></li>
                   
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>                &#x27;new username&#x27;:user.username,</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>                &#x27;access&#x27;: access_token,</pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>    def partial_update(self, request, *args, **kwargs):</pre></li>
                   
-                  <li onclick="toggle('pre139750385888256', 'post139750385888256')"><pre>                &#x27;refresh&#x27;: refresh_token, </pre></li>
+                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        kwargs[&#x27;partial&#x27;] = True</pre></li>
                   
               </ol>
               
@@ -1189,7 +1376,7 @@
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v139750385888256">
+            <table class="vars" id="v140581686888448">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1220,35 +1407,383 @@
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.UserUpdateView object at 0x7f1a2d3fc590&gt;</pre></td>
+                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>serializer</td>
-                    <td class="code"><pre>UserRegistrationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/update/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.UserUpdateView object&gt;}, data={}, partial=True):
-    username = CharField(help_text=&#x27;Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.&#x27;, max_length=150, validators=[&lt;django.contrib.auth.validators.UnicodeUsernameValidator object&gt;, &lt;UniqueValidator(queryset=CustomUser.objects.all())&gt;])
-    email = EmailField(required=True)
-    password = CharField(max_length=128, style={&#x27;input_type&#x27;: &#x27;password&#x27;}, write_only=True)
-    password2 = CharField(max_length=128, required=True, style={&#x27;input_type&#x27;: &#x27;password&#x27;}, write_only=True)
-    is_active = BooleanField(help_text=&#x27;Designates whether this user should be treated as active. Unselect this instead of deleting accounts.&#x27;, label=&#x27;Active&#x27;, read_only=True)
-    two_fa_enabled = BooleanField(required=False)</pre></td>
+                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
+    password = CharField(required=True)
+    new_password = CharField(required=True)
+    new_password2 = CharField(required=True)</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 571, in data
+          
+
+          
+            <div class="context" id="c140581686891776">
+              
+                <ol start="564" class="pre-context" id="pre140581686891776">
+                
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        return BoundField(field, value, error)</pre></li>
+                
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    # Include a backlink to the serializer class on return objects.</pre></li>
+                
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    # Allows renderers such as HTMLFormRenderer to get the full field info.</pre></li>
+                
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    @property</pre></li>
+                
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    def data(self):</pre></li>
+                
+                </ol>
+              
+              <ol start="571" class="context-line">
+                <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        ret = super().data
+                   ^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='572' class="post-context" id="post140581686891776">
+                  
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        return ReturnDict(ret, serializer=self)</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    @property</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    def errors(self):</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        ret = super().errors</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        if isinstance(ret, list) and len(ret) == 1 and getattr(ret[0], &#x27;code&#x27;, None) == &#x27;null&#x27;:</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140581686891776">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>__class__</td>
+                    <td class="code"><pre>&lt;class &#x27;rest_framework.serializers.Serializer&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
-                    <td>token</td>
-                    <td class="code"><pre>MyTokenObtainPairSerializer(&lt;CustomUser: val&gt;):
-    username = CharField(write_only=True)
-    password = PasswordField()</pre></td>
+                    <td>self</td>
+                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
+    password = CharField(required=True)
+    new_password = CharField(required=True)
+    new_password2 = CharField(required=True)</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 249, in data
+          
+
+          
+            <div class="context" id="c140581686888832">
+              
+                <ol start="242" class="pre-context" id="pre140581686888832">
+                
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                &#x27;You should either call `.is_valid()` first, &#x27;</pre></li>
+                
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                &#x27;or access `.initial_data` instead.&#x27;</pre></li>
+                
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            )</pre></li>
+                
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            raise AssertionError(msg)</pre></li>
+                
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>        if not hasattr(self, &#x27;_data&#x27;):</pre></li>
+                
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            if self.instance is not None and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
+                
+                </ol>
+              
+              <ol start="249" class="context-line">
+                <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                self._data = self.to_representation(self.instance)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='250' class="post-context" id="post140581686888832">
+                  
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            elif hasattr(self, &#x27;_validated_data&#x27;) and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
+                  
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                self._data = self.to_representation(self.validated_data)</pre></li>
+                  
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            else:</pre></li>
+                  
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                self._data = self.get_initial()</pre></li>
+                  
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>        return self._data</pre></li>
+                  
+                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140581686888832">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
+    password = CharField(required=True)
+    new_password = CharField(required=True)
+    new_password2 = CharField(required=True)</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 525, in to_representation
+          
+
+          
+            <div class="context" id="c140581686891392">
+              
+                <ol start="518" class="pre-context" id="pre140581686891392">
+                
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        Object instance -&gt; Dict of primitive datatypes.</pre></li>
+                
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        &quot;&quot;&quot;</pre></li>
+                
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        ret = {}</pre></li>
+                
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        fields = self._readable_fields</pre></li>
+                
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        for field in fields:</pre></li>
+                
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="525" class="context-line">
+                <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>                attribute = field.get_attribute(instance)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='526' class="post-context" id="post140581686891392">
+                  
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            except SkipField:</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>                continue</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            # We skip `to_representation` for `None` values so that fields do</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            # not have to explicitly deal with that case.</pre></li>
+                  
+                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            #</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140581686891392">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>attribute</td>
+                    <td class="code"><pre>&#x27;pbkdf2_sha256$870000$3oazVALQvFoE58e8BXnTx9$F8FjG6AWjLIUUwlp6Ey6b9TFUJPBAIAzcru/3f9BoPE=&#x27;</pre></td>
                   </tr>
                 
                   <tr>
-                    <td>user</td>
+                    <td>check_for_none</td>
+                    <td class="code"><pre>&#x27;pbkdf2_sha256$870000$3oazVALQvFoE58e8BXnTx9$F8FjG6AWjLIUUwlp6Ey6b9TFUJPBAIAzcru/3f9BoPE=&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>field</td>
+                    <td class="code"><pre>CharField(required=True)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>fields</td>
+                    <td class="code"><pre>&lt;generator object Serializer._readable_fields at 0x7fdbb97cc100&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>instance</td>
                     <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>ret</td>
+                    <td class="code"><pre>{&#x27;password&#x27;: &#x27;pbkdf2_sha256$870000$3oazVALQvFoE58e8BXnTx9$F8FjG6AWjLIUUwlp6Ey6b9TFUJPBAIAzcru/3f9BoPE=&#x27;}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
+    password = CharField(required=True)
+    new_password = CharField(required=True)
+    new_password2 = CharField(required=True)</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 470, in get_attribute
+          
+
+          
+            <div class="context" id="c140581686887808">
+              
+                <ol start="463" class="pre-context" id="pre140581686887808">
+                
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    exc_type=type(exc).__name__,</pre></li>
+                
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    field=self.field_name,</pre></li>
+                
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    serializer=self.parent.__class__.__name__,</pre></li>
+                
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    instance=instance.__class__.__name__,</pre></li>
+                
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    exc=exc</pre></li>
+                
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                )</pre></li>
+                
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>            )</pre></li>
+                
+                </ol>
+              
+              <ol start="470" class="context-line">
+                <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>            raise type(exc)(msg)
+                 ^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='471' class="post-context" id="post140581686887808">
+                  
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>    def get_default(self):</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>        &quot;&quot;&quot;</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>        Return the default value to use when validating data if no input</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>        is provided for this field.</pre></li>
+                  
+                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140581686887808">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>instance</td>
+                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>msg</td>
+                    <td class="code"><pre>(&#x27;Got AttributeError when attempting to get a value for field `new_password` &#x27;
+ &#x27;on serializer `PasswordModficationSerializer`.\n&#x27;
+ &#x27;The serializer field might be named incorrectly and not match any attribute &#x27;
+ &#x27;or key on the `CustomUser` instance.\n&#x27;
+ &quot;Original exception text was: &#x27;CustomUser&#x27; object has no attribute &quot;
+ &quot;&#x27;new_password&#x27;.&quot;)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>CharField(required=True)</pre></td>
                   </tr>
                 
               </tbody>
@@ -1264,7 +1799,7 @@
   <div id="pastebinTraceback" class="pastebin">
     <input type="hidden" name="language" value="PythonConsole">
     <input type="hidden" name="title"
-      value="AttributeError at /api/auth/update/val">
+      value="AttributeError at /api/auth/password/val">
     <input type="hidden" name="source" value="Django Dpaste Agent">
     <input type="hidden" name="poster" value="Django">
     <textarea name="content" id="traceback_area" cols="140" rows="25">
@@ -1272,7 +1807,7 @@ Environment:
 
 
 Request Method: PATCH
-Request URL: https://localhost/api/auth/update/val
+Request URL: https://localhost/api/auth/password/val
 
 Django Version: 5.1
 Python Version: 3.12.5
@@ -1300,6 +1835,14 @@ Installed Middleware:
 
 
 Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 437, in get_attribute
+    return get_attribute(instance, self.source_attrs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 104, in get_attribute
+    instance = getattr(instance, attr)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+
+During handling of the above exception (&#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;), another exception occurred:
   File "/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
                ^^^^^^^^^^^^^^^^^^^^^
@@ -1330,12 +1873,26 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py", line 82, in partial_update
     return self.update(request, *args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/code/auth_app/views.py", line 86, in update
-    access_token = str(token.access_token)
-                       ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py", line 75, in update
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 571, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 249, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 525, in to_representation
+    attribute = field.get_attribute(instance)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 470, in get_attribute
+    raise type(exc)(msg)
+    ^^^^^^^^^^^^^^^^^^^^
 
-Exception Type: AttributeError at /api/auth/update/val
-Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute &#x27;access_token&#x27;
+Exception Type: AttributeError at /api/auth/password/val
+Exception Value: Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.
+Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.
 </textarea>
   <br><br>
   <input type="submit" value="Share this traceback on a public website">
@@ -1361,7 +1918,32 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
 
   <h3 id="post-info">POST</h3>
   
-    <p>No POST data</p>
+    <table class="req">
+      <thead>
+        <tr>
+          <th scope="col">Variable</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td>password</td>
+            <td class="code"><pre>&#x27;aaa&#x27;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>new_password</td>
+            <td class="code"><pre>&#x27;bbb&#x27;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>new_password2</td>
+            <td class="code"><pre>&#x27;bbb&#x27;</pre></td>
+          </tr>
+        
+      </tbody>
+    </table>
   
 
   <h3 id="files-info">FILES</h3>
@@ -1386,7 +1968,12 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
       
         <tr>
           <td>CONTENT_LENGTH</td>
-          <td class="code"><pre>&#x27;0&#x27;</pre></td>
+          <td class="code"><pre>&#x27;47&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONTENT_TYPE</td>
+          <td class="code"><pre>&#x27;application/x-www-form-urlencoded&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -1402,7 +1989,7 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
         <tr>
           <td>HTTP_AUTHORIZATION</td>
           <td class="code"><pre>(&#x27;Bearer &#x27;
- &#x27;eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3MTc0NDk3LCJpYXQiOjE3MjcxNzQxOTcsImp0aSI6ImE3NzQyZDhkYjMwMTQ4NWNhMjk3ZTdmZjZhYzIzZWFkIiwidXNlcm5hbWUiOiJ2YWwiLCJyZWZyZXNoIjoxNzI3MjYwNTk3fQ.htGV9vt9L3empjj3o0rlcUPTOWyMZ2-pa9xZajeWwg_ykKRbU8xi5SKSJOzwVUk4gl5MlUnj-exQJWn2RxCttm_Kgi_qfO3kCsUTgweNYUFyBw_C9LIHm7FcCvB1Oz-L_Nt8rYh5vcKciEvbI7pXE7At3AvPXnDzDswPb6vPp-LMPnlU_a9KhK7ymi0eNVgVB4Dn1JcCm0u9oWxMk5TcEMlhuDS9Zk9Xs8gCoDmMyqANQKFiO5IGlD9mClMBhnbaebGWQ4kLkSADdxtjHdvJ87qFabPPMhDJVZH9GQzfrj5y9nheilm-7mRowzK0eNUqPeorU4tnOciCzQuUEdRQZhy1h6bDVBC7kpSjrRgrYdMJbNrl5kXnWdiHrllZSAQ5CUnm8u-5yX1phfi-ReB4wWwV8vWkiidZwZVpA70tjr5P6bS3FPcKsxVkgl8fCFwCHPpBrr5uqxvw4nRVF24ZdGIZAY53aXKXUZMkQ7jZZ6acx-xRVXdr0mKa7_js5rRP7aVhGmBo2YCzhYhX42x-LS5Kq0MN9sHvCT92kk-BbUyw958SUgCMIm2m1weRJEsjtfXF3j2MJ7zCvsYY0m8X-i5Ob_s_0Z7fzTBoWUrr7ZB6958bnKGAyv4ZRwGZN_DYY2IYcq0Azd__Vpp7RJHlyV8vf_7ADtos5s6K7l8oDwI&#x27;)</pre></td>
+ &#x27;eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3MjY1NzExLCJpYXQiOjE3MjcyNjU0MTEsImp0aSI6IjIwMDQ3ODhiZDE4YzQyNzhiYmNhMGZlYjRmMzI3MDAzIiwidXNlcm5hbWUiOiJ2YWwiLCJyZWZyZXNoIjoxNzI3MzUxODExfQ.H_AZ1Te5a9MWFGfqBni1CETUexKAXFztSpaGwzBILlQQWWYjs6fy1C2F56S78vXwEAriLKuOsA3zHqDnkftxRkxmzLJ-Rzq-izBxNu73I4iGhI8yx1m0KEsCMvXrnGA0iBOcHwfGSmpIr4nIky1-l692OccSHNXLSQaN9heOp9jBnG6aJ30r-GIexZvNKSY4-yO5vg-8E9-Lnr7nFCMpRtYwYQBvfpVBjss-wpgsRU2BxfFqpZSyNIREuLbpYloc3h4zz2xjQ-N5SsGLGpV1QeIeXdrH4VWrVrvKIXvCF98VjWVaz8yGt9TUWPrmrbcjBWVJP8neuN_OpXdb-XAjxJD8wjIsgtU52ny27WSWWZPTu4FlF-XOx8d3573v9D2bUyYVjF8EPPIN6gCRBsmZORTPBL5k7cRzfZ5VHNCmH4B_3dIu1i4AzF8vuoar29nFLCxZewBeEIHZ3NV8FMiJXuD5oS28-lH0J8JytZwJzeBtJNRymQomhLx2WqGnvgDmTTt85Mw5LHSJUrwTLhE26zd9rQFaObJfhP-ogkpdxmSMJDtQ7ulg9lJEKMQeykY46yo3f1MhuGkushitsyjT1Shp6f5NmybkVT16zmHPoUnk0nuROViXbMAfLMxZ0PLmuz-2DeptFM5EfxOzPLOd2SPlVSjHgOdj-mEMRQEpdHo&#x27;)</pre></td>
         </tr>
       
         <tr>
@@ -1437,7 +2024,7 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
       
         <tr>
           <td>PATH_INFO</td>
-          <td class="code"><pre>&#x27;/api/auth/update/val&#x27;</pre></td>
+          <td class="code"><pre>&#x27;/api/auth/password/val&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -1447,7 +2034,7 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
       
         <tr>
           <td>RAW_URI</td>
-          <td class="code"><pre>&#x27;/api/auth/update/val&#x27;</pre></td>
+          <td class="code"><pre>&#x27;/api/auth/password/val&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -1457,7 +2044,7 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
       
         <tr>
           <td>REMOTE_PORT</td>
-          <td class="code"><pre>&#x27;34734&#x27;</pre></td>
+          <td class="code"><pre>&#x27;43644&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -1492,12 +2079,12 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
       
         <tr>
           <td>gunicorn.socket</td>
-          <td class="code"><pre>&lt;socket.socket fd=9, family=2, type=1, proto=0, laddr=(&#x27;172.18.0.6&#x27;, 8443), raddr=(&#x27;172.18.0.7&#x27;, 34734)&gt;</pre></td>
+          <td class="code"><pre>&lt;socket.socket fd=9, family=2, type=1, proto=0, laddr=(&#x27;172.18.0.5&#x27;, 8443), raddr=(&#x27;172.18.0.7&#x27;, 43644)&gt;</pre></td>
         </tr>
       
         <tr>
           <td>wsgi.errors</td>
-          <td class="code"><pre>&lt;gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7f1a2c243010&gt;</pre></td>
+          <td class="code"><pre>&lt;gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7fdbb97d1180&gt;</pre></td>
         </tr>
       
         <tr>
@@ -1507,7 +2094,7 @@ Exception Value: &#x27;MyTokenObtainPairSerializer&#x27; object has no attribute
       
         <tr>
           <td>wsgi.input</td>
-          <td class="code"><pre>&lt;gunicorn.http.body.Body object at 0x7f1a2c243380&gt;</pre></td>
+          <td class="code"><pre>&lt;gunicorn.http.body.Body object at 0x7fdbb97d0500&gt;</pre></td>
         </tr>
       
         <tr>

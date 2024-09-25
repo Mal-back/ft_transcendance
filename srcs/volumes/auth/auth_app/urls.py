@@ -12,6 +12,7 @@ urlpatterns = [
         path('logout', TokenBlacklistView.as_view(), name='auth-logout'),
         path('delete/<str:username>', views.UserDeleteView.as_view(), name='auth-delete'),
         path('update/<str:username>', views.UserUpdateView.as_view(), name='auth-update'),
+        path('password/<str:username>', views.PasswordUpdateView.as_view(), name='password-update'),
         path('internal/auth', views.ServiceJWTObtainPair.as_view(), name='service-auth'),
         path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
         path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
