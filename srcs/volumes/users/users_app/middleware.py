@@ -16,8 +16,7 @@ class UpdateLastUserActivityMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        if request.user.is_authenticated:
+        if request.user is not None and getattr(request.user, 'is_authenticated', False):
             PublicUser.objects.filter(pk=request.user.pk).update(last_seen_online=now())
-            return self.get_response(request)
         return response
 

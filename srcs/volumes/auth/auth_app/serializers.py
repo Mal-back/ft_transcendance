@@ -74,8 +74,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             token.set_exp(lifetime=timedelta(hours=12))
             token.set_exp(lifetime=timedelta(days=3), claim='refresh')
         else:
-            token.set_exp(lifetime=timedelta(minutes=3))
-            token.set_exp(lifetime=timedelta(hours=6), claim='refresh')
+            token.set_exp(lifetime=timedelta(minutes=5))
+            token.set_exp(lifetime=timedelta(days=1), claim='refresh')
 
         return token
 
@@ -87,8 +87,6 @@ class ServiceObtainTokenSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         password = attrs.get('password')
         serviceName = attrs.get('serviceName')
-        print(serviceName)
-        print(make_password(password))
         try :
             service = Service.objects.get(serviceName=serviceName)
         except Service.DoesNotExist:
@@ -97,11 +95,11 @@ class ServiceObtainTokenSerializer(serializers.ModelSerializer):
         if not check_password(password, service.password) :
             raise ValidationError('Invalid Credentials')
 
-        token = create_service_token(service)
+        token = createServiceToken(service)
         return {'token': token}
 
 #
-def create_service_token(service):
+def createServiceToken(service):
     payload = {
         'service_name': str(service.serviceName),
         'exp': datetime.utcnow() + timedelta(hours=12),

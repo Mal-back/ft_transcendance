@@ -68,7 +68,7 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
 
     def get_is_your_friend(self, obj):
         request = self.context.get('request')
-        if request and request.user.is_authenticated:
+        if request.user is not None and request.user.is_authenticated:
             if obj.id == request.user.id:
                 return None
             try:
