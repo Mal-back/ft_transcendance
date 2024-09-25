@@ -15,8 +15,8 @@ export default class extends AbstractView {
     this.createPageCss("../css/buttons.css");
   }
 
-    async getHtml() {
-        return `
+  async getHtml() {
+    return `
     <div class="background">
     <div class="Profile container">
         <div class="container mt-4">
@@ -266,8 +266,7 @@ export default class extends AbstractView {
     </div>
 </div>
             `;
-    }
-
+  }
 
   async changeUsername() {
     const username = sessionStorage.getItem("username_transcendence");
@@ -329,12 +328,20 @@ export default class extends AbstractView {
     }
   }
 
-async changePassword() {
+  async changePassword() {
     const username = sessionStorage.getItem("username_transcendence");
-    const oldPassword = document.querySelector("input[name='oldPassword']").value;
-    const newPassword = document.querySelector("input[name='newPassword']").value;
-    const confirmPassword = document.querySelector("input[name='confirmPassword']").value;
-    if (this.sanitizeInput([newPassword, oldPassword, confirmPassword]) == false) {
+    const oldPassword = document.querySelector(
+      "input[name='oldPassword']",
+    ).value;
+    const newPassword = document.querySelector(
+      "input[name='newPassword']",
+    ).value;
+    const confirmPassword = document.querySelector(
+      "input[name='confirmPassword']",
+    ).value;
+    if (
+      this.sanitizeInput([newPassword, oldPassword, confirmPassword]) == false
+    ) {
       return;
     }
     if (newPassword != confirmPassword) {
@@ -365,12 +372,8 @@ async changePassword() {
       console.error("Error in changePass Request");
       this.showModalWithError("Error", error.message);
       throw error;
-    }}
-        catch (error){
-            console.error("Error in changePassword:", error.message);
-        }
+    }
   }
-
 
   async changeMail() {
     const username = sessionStorage.getItem("username_transcendence");
@@ -518,18 +521,18 @@ async changePassword() {
       });
     }
     const buttonPass = document.querySelector("#confirm-changes-password-btn");
-        console.log("HERE");
-    if (buttonPass){
-            buttonPass.addEventListener("click", async (ev) => {
+    console.log("HERE");
+    if (buttonPass) {
+      buttonPass.addEventListener("click", async (ev) => {
         console.log("change password button pressed");
-                ev.preventDefault();
-                try {
-                    await this.changePassword();
-                } catch (error){
-                    console.error("error: ", error.message);
-                }
-            })
+        ev.preventDefault();
+        try {
+          await this.changePassword();
+        } catch (error) {
+          console.error("error: ", error.message);
         }
+      });
+    }
     // Handle the profile background confirmation
     const images = document.querySelectorAll(".img-fluid");
     images.forEach((img) => {
