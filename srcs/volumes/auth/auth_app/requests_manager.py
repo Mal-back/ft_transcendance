@@ -13,6 +13,8 @@ def send_request(url:str, method:str, body={}, headers={}) -> int:
     token = createServiceToken(Service.objects.get(serviceName='auth'))
     headers.update({'Authorization': f'Bearer {token}'})
     response = req_methods[method](url,json=body ,headers=headers)
+    if response.status_code != 201:
+        print(response.text)
     return response.status_code
 
 def send_requests(urls:list, method:str, body={}, headers={}) -> int:
@@ -21,5 +23,4 @@ def send_requests(urls:list, method:str, body={}, headers={}) -> int:
         print(f'Sending a request to {url}')
         ret = send_request(url=url, method=method, body=body, headers=headers)
         status_list.append(ret)
-    print(status_list)
     return status_list
