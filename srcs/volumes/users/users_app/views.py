@@ -1,10 +1,13 @@
 from os.path import exists
+import requests
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
+from .permissions import isAuth
+from .authentification import CustomAuthentication
 
 # Create your views here.
 
@@ -36,7 +39,9 @@ class PublicUserRetrieveDetail(generics.RetrieveAPIView):
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
 
+
 class PublicUserCreate(generics.CreateAPIView) :
+    permission_classes = [isAuth]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
 
