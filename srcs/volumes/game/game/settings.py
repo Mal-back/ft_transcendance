@@ -60,14 +60,14 @@ MIDDLEWARE = [
     # 'users_app.middleware.UpdateLastUserActivityMiddleware'
 ]
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [(os.getenv('REDIS_HOST'), os.getenv('REDIS_PORT'))],
-#         },
-#     },
-# }
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ["redis://:" + os.getenv("REDIS_PASSWORD") + "@" + os.getenv("REDIS_HOST") + ":" + os.getenv("REDIS_PORT")],
+        },
+    },
+}
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
@@ -99,7 +99,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'game.wsgi.application'
+# WSGI_APPLICATION = 'game.wsgi.application'
 ASGI_APPLICATION = 'game.asgi.application'
 
 
