@@ -22,7 +22,7 @@ class UserDeleteView(generics.DestroyAPIView) :
     permission_classes = [IsOwner]
 
     def perform_destroy(self, instance):
-        token = createServiceToken(Service.objects.get('auth'))
+        token = createServiceToken(Service.objects.get(serviceName='auth'))
         headers = {'Authorization': f'Bearer {token}'}
         req_url = f'http://users:8443/api/users/{instance.username}/delete/'
         response = requests.delete(req_url, headers=headers)
@@ -60,8 +60,6 @@ class UserUpdateView(generics.UpdateAPIView):
         instance = self.get_object()
         old_username = instance.username
         new_username = serializer.validated_data.get('username', old_username)
-        print(old_username)
-        print(new_username)
         if old_username != new_username:
             token = createServiceToken(Service.objects.get(serviceName='auth'))
             headers = {'Authorization' : f'Bearer {token}'}
