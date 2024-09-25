@@ -59,7 +59,6 @@ const router = async () => {
     previousView.destroy();
   }
 
-
   // const pathToRegex = (path) =>
   //   new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
   //
@@ -111,26 +110,24 @@ const router = async () => {
   view.loadCss();
 
   try {
-  document.querySelector("#app").innerHTML = await view.getHtml();
-  view.addEventListeners();
-  } catch (error){
-    if (error.message.split(' ')[0] === "Redirect"){
+    document.querySelector("#app").innerHTML = await view.getHtml();
+    view.addEventListeners();
+  } catch (error) {
+    if (error.message.split(" ")[0] === "Redirect") {
       view.showModalWithError("Error", error.message);
       console.log("MyError:", error.message);
-    }
-    else {
+    } else {
       console.error("Error in get Html():", error.message);
       console.trace();
       navigateTo("/");
     }
   }
 
-
   // Function to print all CSS links on the page
   // function printAllCssLinks() {
   //   // Select all <link> elements with rel="stylesheet"
   //   const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-  //   
+  //
   //   // Loop through each <link> element
   //   cssLinks.forEach((link) => {
   //     // Print the href attribute (URL of the stylesheet) to the console
@@ -142,10 +139,6 @@ const router = async () => {
 
   //print all html
   // console.log(document.documentElement.outerHTML);
-
-
-
-
 };
 
 window.addEventListener("popstate", router);

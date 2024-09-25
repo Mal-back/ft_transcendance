@@ -9,10 +9,24 @@ export default class extends AbstractView {
   }
   async getHtml() {
     const username = sessionStorage.getItem("username_transcendence");
-    const loginOverlay = document.querySelector("#overlayLogin");
+    const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
+    if (refreshToken) {
+      try {
+        const request = await this.makeRequest("/api/auth/logout", "POST", {
+          refresh: refreshToken,
+        });
+        const response = await fetch(request);
+        if (response.ok) {
+          console.log("response: ", response);
+          console.log(`token deleted: ${response.status}`);
+        } else {
+          console.log("failed to delete token");
+        }
+      } catch (error) {
+        console.error("Fail to delete token: ", error);
+      }
+    }
     removeSessionStorage();
-    // loginOverlay.innerText = "Login";
-    // loginOverlay.href = "/login";
     this.showModalWithError("Logout", "Goodbye, " + username);
     navigateTo("/");
     throw new Error("Redirect to /home, user is logging out");
