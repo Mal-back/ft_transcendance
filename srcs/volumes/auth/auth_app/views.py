@@ -3,9 +3,9 @@ from django.utils.decorators import method_decorator
 from rest_framework import generics, status
 from rest_framework.response import Serializer
 from rest_framework.views import APIView, Response, csrf_exempt
-from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, createServiceToken, MyTokenObtainPairSerializer
+from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, MyTokenObtainPairSerializer, PasswordModficationSerializer
 from .permissions import IsOwner
-from .models import CustomUser, Service
+from .models import CustomUser
 from .requests_manager import send_request, send_requests
 from rest_framework import serializers
 # Create your views here.
@@ -86,6 +86,12 @@ class UserUpdateView(generics.UpdateAPIView):
                 }
         response_data.update(serializer.data)
         return Response(response_data, status=status.HTTP_200_OK)
+
+class PasswordUpdateView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = PasswordModficationSerializer
+    lookup_field = 'username'
+    permission_classes = [IsOwner]
 
 class ServiceJWTObtainPair(APIView):
     @method_decorator(csrf_exempt)

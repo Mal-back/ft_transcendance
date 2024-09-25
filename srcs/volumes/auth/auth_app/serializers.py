@@ -64,6 +64,26 @@ class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=256)
     password = serializers.CharField(write_only=True)
 
+class PasswordModficationSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=128, required=True, write_only=True)
+    new_password = serializers.CharField(max_length=128, required=True, write_only=True)
+    new_password2 = serializers.CharField(max_length=128, required=True, write_only=True)
+
+    def validate_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError('Old password is incorrect')
+        return value
+    def validate(self, data):
+        if data['new_password'] != data['new_password2']:
+            raise serializers.ValidationError("Passwords dont't match")
+        return data
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

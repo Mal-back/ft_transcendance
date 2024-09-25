@@ -25,6 +25,13 @@ Done :
 - 'update/<str:username>' : Update user info. Allowed Method: PUT, PATCH. Expected payload : all user fields on PUT, or only the fields user wants to modify on PATCH.
 	 Permissions : Only the owner of the account can access their details.
 
+- password/<str:username>: Change password. Allow Methods : PUT, PATCH. Expected payload :
+{
+	'password':'current password',
+	'new_password':'new password',
+	'new_password2':'must match new_password',
+	}
+
 -	'password_reset/' : Send a reset e mail by word if e mail is known. Post method. Payload: email.
 	'password_reset/done/'. Base view from django if the e mail is done. I think we won't use it
 	'reset/<uidb64>/<token>/'. Link sent by e-mail to reset password
