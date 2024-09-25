@@ -51,6 +51,23 @@ services:
       - '8443'
     restart: on-failure
 
+  matchmaking:
+    image: transcendance_django_matchmaking
+    container_name: 'transcendance_django_matchmaking'
+    volumes:
+      - data_django_matchmaking:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_matchmaking 
+    build:
+      context: requirements/django_matchmaking
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '8443'
+    restart: on-failure
+
   frontend:
     image: transcendance_frontend
     container_name: 'transcendance_frontend'
@@ -92,6 +109,19 @@ services:
       - '5432'
     restart: on-failure
 
+  postgresql_matchmaking:
+    image: transcendance_postgresql_matchmaking
+    container_name: 'transcendance_postgresql_matchmaking'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_matchmaking
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '5432'
+    restart: on-failure
+
 
 volumes:
   data_django_auth:
@@ -108,6 +138,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/users
+  data_django_matchmaking:
+    name: data_django_matchmaking
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/matchmaking
   data_frontend:
     name: data_frontend
     driver: local
