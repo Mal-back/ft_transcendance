@@ -1,6 +1,11 @@
+from datetime import datetime, timedelta
+import jwt
 import requests
+from django.conf import settings
 from .serializers import createServiceToken
-from .models import Service
+from .models import Service, Token
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import TokenError
 
 def send_request(url:str, method:str, body={}, headers={}) -> int:
     req_methods = {
@@ -9,18 +14,62 @@ def send_request(url:str, method:str, body={}, headers={}) -> int:
             'update':requests.put,
             'patch':requests.patch,
             }
-
-    token = createServiceToken(Service.objects.get(serviceName='auth'))
-    headers.update({'Authorization': f'Bearer {token}'})
-    response = req_methods[method](url,json=body ,headers=headers)
-    if response.status_code != 201:
-        print(response.text)
+    response = req_methods[method](url, json=body ,headers=headers)
     return response.status_code
 
-def send_requests(urls:list, method:str, body={}, headers={}) -> int:
-    status_list = []
+def send_create_requests(urls:list, method:str, body={}, headers={}) -> bool:
+    token = getToken()
+    headers.update({'Authorization': f'Bearer {token}'})
+    successefull_elements = []
     for url in urls:
-        print(f'Sending a request to {url}')
-        ret = send_request(url=url, method=method, body=body, headers=headers)
-        status_list.append(ret)
-    return status_list
+        if send_request(url=url, method=method, body=body, headers=headers) != 201:
+            break
+        else:
+            successefull_elements.append(url)
+    if len(urls) != len(successefull_elements):
+        for url in successefull_elements:
+            rollback_url = url.replace('create', 'delete') + body['username'] + '/' 
+            send_request(url=rollback_url, method='delete', headers=headers)
+        return False
+    return True
+
+# def send_delete_requests(urls:list, method:str, body={}, headers={}) -> bool :
+#     token = createServiceToken(Service.objects.get(serviceName='auth'))
+#     headers.update({'Authorization': f'Bearer {token}'})
+#     successefull_elements = []
+#     for url in urls:
+#         if send_request(url=url, method=method, body=body, headers=headers) != 201:
+#             break
+#         else:
+#             successefull_elements.append(url)
+#     if len(urls) != len(successefull_elements):
+#         for url in successefull_elements:
+#             rollback_url = url.replace('create', 'delete') + body['username'] + '/' 
+#             send_request(url=rollback_url, method='delete', headers=headers)
+#         return False
+#     return True
+
+def getToken():
+    auth = Token.objects.get(serviceName='auth')
+
+    try:
+            decoded_token = jwt.decode(
+                auth.token,
+                settings.SIMPLE_JWT['VERIFYING_KEY'],
+                algorithms=[settings.SIMPLE_JWT['ALGORITHM']]
+            )
+            timestamp = decoded_token.get('exp')
+            time = datetime.fromtimestamp(timestamp)
+            margin = datetime.now() + timedelta(minutes=1)
+            if time < margin:
+                return generate_new_auth_token(auth)
+            return auth.token
+    except Exception:
+        validated_token = generate_new_auth_token(auth)
+    return validated_token
+
+def generate_new_auth_token(tokenObj, serviceName:str='auth') :
+        validated_token = createServiceToken(Service.objects.get(serviceName=serviceName))
+        tokenObj.token = validated_token
+        tokenObj.save()
+        return validated_token

@@ -36,6 +36,6 @@ Url available for frontend :
 Url Available for other microservices only:
  	'create/' -> Create a user. Method: Post. Permission: Only Auth
  	'<str:username>/update' -> Update Username. Method: Patch. Permission: Only Auth
- 	'<str:username>/delete' -> Delete User. Method: Patch. Permission: Only Auth
+ 	'delete/<str:username>/' -> Delete User. Method: Patch. Permission: Only Auth
 	'<str:username>/increment/<str:lookupfield>/': Increment the given match field by one. Method: Patch. Permission : Only MatchMaking
 

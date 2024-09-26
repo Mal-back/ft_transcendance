@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
-from .permissions import isAuth
+from .permissions import IsAuth, IsOwner
 from .authentification import CustomAuthentication
 
 # Create your views here.
@@ -41,16 +41,18 @@ class PublicUserRetrieveDetail(generics.RetrieveAPIView):
 
 
 class PublicUserCreate(generics.CreateAPIView) :
-    permission_classes = [isAuth]
+    permission_classes = [IsAuth]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
 
 class PublicUserUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuth]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
 
 class PublicUserDelete(generics.DestroyAPIView):
+    permission_classes = [IsAuth]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
@@ -85,6 +87,7 @@ class PublicUserIncrement(APIView):
 
 class PublicUserAddFriend(APIView):
     lookup_field = 'username'
+    permission_classes = [IsOwner]
     def patch(self, request, username, friendusername):
         if username == friendusername:
             return Response({'info': 'user can\'t add himself as a friend'}, status=status.HTTP_304_NOT_MODIFIED)
@@ -109,6 +112,7 @@ class PublicUserAddFriend(APIView):
 class PublicUserListFriends(generics.ListAPIView):
     serializer_class = PublicUserListSerializer
     lookup_field = 'username'
+    permission_classes = [IsOwner]
 
     def get_queryset(self):
         username = self.kwargs.get('username')
@@ -116,6 +120,8 @@ class PublicUserListFriends(generics.ListAPIView):
         return user.friends.all()
 
 class PublicUserRemoveFriend(APIView):
+    permission_classes = [IsOwner]
+    lookup_field = 'username'
     def delete(self,request, username, friendusername):
         if username == friendusername:
             return Response({'info': 'user can\'t remove itself form friendlist'}, status=status.HTTP_304_NOT_MODIFIED)

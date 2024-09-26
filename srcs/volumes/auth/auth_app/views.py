@@ -6,8 +6,9 @@ from rest_framework.views import APIView, Response, csrf_exempt
 from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, MyTokenObtainPairSerializer, PasswordModficationSerializer
 from .permissions import IsOwner
 from .models import CustomUser
-from .requests_manager import send_request, send_requests
+from .requests_manager import send_request, send_create_requests
 from rest_framework import serializers
+from rest_framework.exceptions import APIException
 # Create your views here.
 
 class UserDetailView(generics.RetrieveAPIView) :
@@ -39,9 +40,8 @@ class UserCreateView(generics.ListCreateAPIView) :
         username = serializer.validated_data.get('username')
         req_urls = ['http://users:8443/api/users/create/',
                    'http://matchmaking:8443/api/matchmaking/create/',]
-        status = send_requests(urls=req_urls, method='post', body={'username':username}, headers={}) != 201
-        # if any(item != 201 for item in status):
-        #     raise serializers.ValidationError('Invalid data sent to users ms')
+        if send_create_requests(urls=req_urls, method='post', body={'username':username}, headers={}) == False:
+            raise MicroServiceError
         user = serializer.save()
         return user
         
@@ -100,3 +100,8 @@ class ServiceJWTObtainPair(APIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MicroServiceError(APIException):
+    status_code = 500
+    default_detail = 'An error happend between microservice interaction. Please try again later'
+    default_code = 'MicroService error'
