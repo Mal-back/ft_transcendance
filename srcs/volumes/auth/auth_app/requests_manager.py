@@ -17,12 +17,12 @@ def send_request(url:str, method:str, body={}, headers={}) -> int:
     response = req_methods[method](url, json=body ,headers=headers)
     return response.status_code
 
-def send_create_requests(urls:list, method:str, body={}, headers={}) -> bool:
+def send_create_requests(urls:list, body={}, headers={}) -> bool:
     token = getToken()
     headers.update({'Authorization': f'Bearer {token}'})
     successefull_elements = []
     for url in urls:
-        if send_request(url=url, method=method, body=body, headers=headers) != 201:
+        if send_request(url=url, method='post', body=body, headers=headers) != 201:
             break
         else:
             successefull_elements.append(url)
@@ -33,21 +33,15 @@ def send_create_requests(urls:list, method:str, body={}, headers={}) -> bool:
         return False
     return True
 
-# def send_delete_requests(urls:list, method:str, body={}, headers={}) -> bool :
-#     token = createServiceToken(Service.objects.get(serviceName='auth'))
-#     headers.update({'Authorization': f'Bearer {token}'})
-#     successefull_elements = []
-#     for url in urls:
-#         if send_request(url=url, method=method, body=body, headers=headers) != 201:
-#             break
-#         else:
-#             successefull_elements.append(url)
-#     if len(urls) != len(successefull_elements):
-#         for url in successefull_elements:
-#             rollback_url = url.replace('create', 'delete') + body['username'] + '/' 
-#             send_request(url=rollback_url, method='delete', headers=headers)
-#         return False
-#     return True
+def send_delete_requests(urls:list, body={}, headers={}) -> bool :
+    token = getToken()  
+    headers.update({'Authorization': f'Bearer {token}'})
+    for url in urls:
+        send_request(url=url, method='delete', body=body, headers=headers)
+
+def send_update_requests( old_username:str ,rurls:list, body={}, headers={}) -> bool:
+    token = getToken()  
+    headers.update({'Authorization': f'Bearer {token}'})
 
 def getToken():
     auth = Token.objects.get(serviceName='auth')

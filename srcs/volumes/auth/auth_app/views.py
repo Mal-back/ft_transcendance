@@ -6,7 +6,7 @@ from rest_framework.views import APIView, Response, csrf_exempt
 from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, MyTokenObtainPairSerializer, PasswordModficationSerializer
 from .permissions import IsOwner
 from .models import CustomUser
-from .requests_manager import send_request, send_create_requests
+from .requests_manager import send_delete_requests, send_create_requests
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 # Create your views here.
@@ -24,9 +24,8 @@ class UserDeleteView(generics.DestroyAPIView) :
     permission_classes = [IsOwner]
 
     def perform_destroy(self, instance):
-        req_url = f'http://users:8443/api/users/{instance.username}/delete/'
-        if send_request(url=req_url, method='delete') != 204:
-            raise serializers.ValidationError('Invalid data sent to users ms')
+        req_url = [f'http://users:8443/api/users/delete/{instance.username}/',]
+        send_delete_requests(url=req_url)
         instance.delete()
 
 
@@ -40,7 +39,7 @@ class UserCreateView(generics.ListCreateAPIView) :
         username = serializer.validated_data.get('username')
         req_urls = ['http://users:8443/api/users/create/',
                    'http://matchmaking:8443/api/matchmaking/create/',]
-        if send_create_requests(urls=req_urls, method='post', body={'username':username}, headers={}) == False:
+        if send_create_requests(urls=req_urls, body={'username':username}) == False:
             raise MicroServiceError
         user = serializer.save()
         return user

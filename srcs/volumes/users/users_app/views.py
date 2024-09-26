@@ -41,7 +41,7 @@ class PublicUserRetrieveDetail(generics.RetrieveAPIView):
 
 
 class PublicUserCreate(generics.CreateAPIView) :
-    permission_classes = [IsAuth]
+    # permission_classes = [IsAuth]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
 

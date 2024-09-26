@@ -10,7 +10,7 @@ from .permissions import IsAuth, IsOwner
 class MatchUserCreate(generics.CreateAPIView):
     queryset = MatchUser.objects.all()
     serializer_class = MatchUserSerializer 
-    # permission_classes = [IsAuth]
+    permission_classes = [IsAuth]
 
 class MatchUserList(generics.ListAPIView):
     queryset = MatchUser.objects.all()
