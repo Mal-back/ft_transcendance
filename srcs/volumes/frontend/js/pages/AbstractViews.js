@@ -98,7 +98,6 @@ export default class {
     const modal = document.querySelectorAll(".modal");
     if (modal) {
       modal.forEach((element) => {
-        // element.hide();
         if (element.id != "alertModal") {
           console.log("removing modal: ", element.id);
           const modalInstance = bootstrap.Modal.getInstance(element);
@@ -109,7 +108,7 @@ export default class {
     }
     const backdrop = document.querySelector(".modal-backdrop");
     if (backdrop) {
-      backdrop.remove(); // Manually remove the backdrop if still present
+      backdrop.remove();
     }
   }
 
@@ -190,13 +189,12 @@ export default class {
   async refreshToken(accessToken) {
     const refreshJWT = sessionStorage.getItem("refreshJWT_transcendence");
     console.log("refreshJWT before = ", refreshJWT);
-    const accessTokenB = sessionStorage.getItem("accessJWT_transcendence");
-    console.log("accessJWT before = ", accessTokenB);
+    console.log("accessJWT before = ", accessToken);
     if (!refreshJWT) {
       //ALERT
       removeSessionStorage();
-      navigateTo("/login");
-      throw new Error("Redirect to login, invalid token");
+      navigateTo("/");
+      // throw new Error("Redirect to login, invalid token");
     }
     try {
       const myHeaders = this.makeHeaders(accessToken, true);
@@ -207,7 +205,7 @@ export default class {
           refresh: refreshJWT,
         }),
       });
-
+      console.log("Refresh Request:", request);
       const response = await fetch(request);
       if (response.ok) {
         const data = await response.json();
@@ -253,7 +251,7 @@ export default class {
       }
       console.log("REFRESH TOKEN FROM GETTOKEN");
       try {
-        await this.refreshToken();
+        await this.refreshToken(authToken);
       } catch (error) {
         throw error;
       }

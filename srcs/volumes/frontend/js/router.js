@@ -7,6 +7,7 @@ import Matchmaking from "./pages/Matchmaking.js";
 import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
+import Friends from "./pages/Friends.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -30,6 +31,7 @@ const router = async () => {
     { path: "/logout", view: Logout },
     { path: "/epic-mode", view: EpicMode },
     { path: "/settings", view: Settings },
+    { path: "/friends", view: Friends}
   ];
 
   const potentialMatches = routes.map((route) => {
