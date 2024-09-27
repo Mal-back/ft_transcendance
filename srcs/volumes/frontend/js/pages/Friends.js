@@ -18,7 +18,7 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       let friendname = "moi";
       if (username == "moi") friendname = "toi";
-      const request = this.makeRequest(
+      const request = await this.makeRequest(
         `/api/users/${username}/friend/add/${friendname}`,
         "PATCH",
         null,
@@ -76,6 +76,7 @@ export default class extends AbstractView {
       console.error("error", error.message);
       throw error;
     }
+    console.log("htmlContent:", htmlContent);
     return htmlContent;
   }
 
@@ -160,7 +161,7 @@ export default class extends AbstractView {
       "align-items-center",
     );
 
-    const modalBodyAvatar = document.create("div");
+    const modalBodyAvatar = document.createElement("div");
     let onlineStatus = "status-offline";
     if (friendJson.is_online == true) onlineStatus = "status-online";
     modalBodyAvatar.classList.add(
@@ -212,35 +213,29 @@ export default class extends AbstractView {
     friendListGroup.appendChild(buttonRemoveFriend);
 
     friendMainDiv.appendChild(friendListGroup);
+    console.log("FRIENDLISTGROUP: ", friendListGroup);
   }
 
-  async createFriendMainDiv(friendList, friendUsername) {
+  createFriendMainDiv(friendList, friendJson) {
     const friendMainDiv = document.createElement("div");
-    const request = this.makeRequest(
-      `/api/users/${friendUsername}`,
-      "GET",
-      null,
-    );
+    this.createFriendElement(friendMainDiv, friendJson);
+    this.createFriendModal(friendMainDiv, friendJson);
+    console.log("FRIENDLISTEND:", friendList);
+    friendList.appendChild(friendMainDiv);
+  }
 
-    try {
-      const response = await fetch(request);
-      if (response.ok) {
-        const friendJson = await response.json();
-
-        this.createFriendElement(friendMainDiv, friendJson);
-        this.createFriendModal(friendMainDiv, friendJson);
-        friendList.appendChild(friendMainDiv);
-      } else {
-        console.error(`Error in fetching info on ${friendUsername}`);
-      }
-    } catch (error) {
-      console.error(`Error in fetching info on ${friendUsername}`);
+  forLoopArray(friendsArray, friendList) {
+    for (let indexArray = 0; indexArray < friendsArray.length; indexArray++) {
+      const userJson = friendsArray[indexArray];
+      console.log("friendJson:", userJson);
+      this.createFriendMainDiv(friendList, userJson);
     }
   }
 
   async createFriendList() {
     const friendList = document.querySelector("#friendsList");
     const username = sessionStorage.getItem("username_transcendence");
+    let data = null;
     try {
       const request = await this.makeRequest(
         `/api/users/${username}/friend/`,
@@ -249,24 +244,44 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("data:", data);
-        if (data.count == 0){
-          console.log("LOL NO FRIENDS");
-          friendList.textContent = "No Friends :(";
-          return ;
-        }
-        const friendsArray = Object.values(data).map((value) => [value]);
-        console.log("friendsArray = ", friendsArray);
-        console.log("first friend = ", friendsArray[0]);
-        await this.createFriendMainDiv(friendList, friendsArray[0]);
-      } else {
+      if (!response.ok) {
         console.log("response: ", response);
+        return;
+      }
+      data = await response.json();
+      console.log("data:", data);
+      if (data.count == 0) {
+        console.log("LOL NO FRIENDS");
+        friendList.textContent = "No Friends :(";
+        return;
       }
     } catch (error) {
       console.error("error in friendlist: ", error.message);
       console.trace();
+    }
+
+    const count = data.count;
+    let friendsArray = data.results;
+    console.log("FRIENDARRAY:", friendsArray);
+
+    this.forLoopArray(friendsArray, friendList);
+    for (let indexPage = 1; indexPage < count; indexPage++) {
+      try {
+        const request = await this.makeRequest(`${data.next}`, "GET", null);
+        const response = await fetch(request);
+        if (response.ok) {
+          console.log(`Response for indexPage(${indexPage})`, response);
+          this.forLoopArray(friendsArray, friendList);
+        } else {
+          console.log(
+            `Error in Response for indexPage(${indexPage})`,
+            response,
+          );
+          return;
+        }
+      } catch (error) {
+        console.error("Error in loop friend:", error.messge);
+      }
     }
   }
 
