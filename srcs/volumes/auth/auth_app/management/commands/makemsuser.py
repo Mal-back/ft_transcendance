@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.hashers import make_password
-from auth_app.models import Service
+from auth_app.models import Service, Token
+from auth_app.serializers import createServiceToken
 
 class Command(BaseCommand):
     help = 'Create microservice users'
@@ -20,3 +21,8 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f'User "{serviceName}" created'))
             else:
                 self.stdout.write(self.style.WARNING(f'User "{serviceName}" already exists'))
+        user, created = Token.objects.get_or_create(serviceName='auth', defaults={'token':createServiceToken(Service.objects.get(serviceName='auth'))})
+        if created:
+            self.stdout.write(self.style.SUCCESS(f'User "{serviceName}" created'))
+        else:
+            self.stdout.write(self.style.WARNING(f'User "{serviceName}" already exists'))

@@ -9,3 +9,7 @@ class CustomUser(AbstractUser):
 class Service(models.Model):
     serviceName = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+
+class Token(models.Model):
+    serviceName = models.CharField(max_length=255)
+    token = models.TextField()

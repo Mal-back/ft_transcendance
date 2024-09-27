@@ -5,7 +5,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="robots" content="NONE,NOARCHIVE">
   <title>AttributeError
-          at /api/auth/password/val</title>
+          at /api/users/val/friend/</title>
   <style>
     html * { padding:0; margin:0; }
     body * { padding:10px 20px; }
@@ -102,19 +102,17 @@
 <body>
 <header id="summary">
   <h1>AttributeError
-       at /api/auth/password/val</h1>
-  <pre class="exception_value">Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.
-The serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.
-Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.</pre>
+       at /api/users/val/friend/</h1>
+  <pre class="exception_value">&#x27;PublicUser&#x27; object has no attribute &#x27;is_authenticated&#x27;</pre>
   <table class="meta">
 
     <tr>
       <th scope="row">Request Method:</th>
-      <td>PATCH</td>
+      <td>GET</td>
     </tr>
     <tr>
       <th scope="row">Request URL:</th>
-      <td>https://localhost/api/auth/password/val</td>
+      <td>http://localhost:8080/api/users/val/friend/</td>
     </tr>
 
     <tr>
@@ -130,21 +128,19 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
 
     <tr>
       <th scope="row">Exception Value:</th>
-      <td><pre>Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.
-The serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.
-Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.</pre></td>
+      <td><pre>&#x27;PublicUser&#x27; object has no attribute &#x27;is_authenticated&#x27;</pre></td>
     </tr>
 
 
     <tr>
       <th scope="row">Exception Location:</th>
-      <td><span class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</span>, line 470, in get_attribute</td>
+      <td><span class="fname">/code/users_app/serializers.py</span>, line 104, in get_is_your_friend</td>
     </tr>
 
 
     <tr>
       <th scope="row">Raised during:</th>
-      <td>auth_app.views.PasswordUpdateView</td>
+      <td>users_app.views.PublicUserListFriends</td>
     </tr>
 
     <tr>
@@ -166,7 +162,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
     </tr>
     <tr>
       <th scope="row">Server time:</th>
-      <td>Wed, 25 Sep 2024 11:59:07 +0000</td>
+      <td>Fri, 27 Sep 2024 12:51:30 +0000</td>
     </tr>
   </table>
 </header>
@@ -184,233 +180,50 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
     <ul class="traceback">
       
         
-        <li class="frame user">
-          
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 437, in get_attribute
-          
-
-          
-            <div class="context" id="c140581686891200">
-              
-                <ol start="430" class="pre-context" id="pre140581686891200">
-                
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>    def get_attribute(self, instance):</pre></li>
-                
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        &quot;&quot;&quot;</pre></li>
-                
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        Given the *outgoing* object instance, return the primitive value</pre></li>
-                
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        that should be used for this field.</pre></li>
-                
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        &quot;&quot;&quot;</pre></li>
-                
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        try:</pre></li>
-                
-                </ol>
-              
-              <ol start="437" class="context-line">
-                <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>            return get_attribute(instance, self.source_attrs)
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
-              </ol>
-              
-                <ol start='438' class="post-context" id="post140581686891200">
-                  
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>        except BuiltinSignatureError as exc:</pre></li>
-                  
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>            msg = (</pre></li>
-                  
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;Field source for `{serializer}.{field}` maps to a built-in &#x27;</pre></li>
-                  
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;function type and is invalid. Define a property or method on &#x27;</pre></li>
-                  
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;the `{instance}` instance that wraps the call to the built-in &#x27;</pre></li>
-                  
-                  <li onclick="toggle('pre140581686891200', 'post140581686891200')"><pre>                &#x27;function.&#x27;.format(</pre></li>
-                  
-              </ol>
-              
-            </div>
-          
-
-          
-            
-              <details>
-                <summary class="commands">Local vars</summary>
-            
-            <table class="vars" id="v140581686891200">
-              <thead>
-                <tr>
-                  <th scope="col">Variable</th>
-                  <th scope="col">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr>
-                    <td>instance</td>
-                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>msg</td>
-                    <td class="code"><pre>(&#x27;Got AttributeError when attempting to get a value for field `new_password` &#x27;
- &#x27;on serializer `PasswordModficationSerializer`.\n&#x27;
- &#x27;The serializer field might be named incorrectly and not match any attribute &#x27;
- &#x27;or key on the `CustomUser` instance.\n&#x27;
- &quot;Original exception text was: &#x27;CustomUser&#x27; object has no attribute &quot;
- &quot;&#x27;new_password&#x27;.&quot;)</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>self</td>
-                    <td class="code"><pre>CharField(required=True)</pre></td>
-                  </tr>
-                
-              </tbody>
-            </table>
-            </details>
-          
-        </li>
-      
-        
-        <li class="frame user">
-          
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 104, in get_attribute
-          
-
-          
-            <div class="context" id="c140581686890752">
-              
-                <ol start="97" class="pre-context" id="pre140581686890752">
-                
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>    Also accepts either attribute lookup on objects or dictionary lookups.</pre></li>
-                
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>    &quot;&quot;&quot;</pre></li>
-                
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>    for attr in attrs:</pre></li>
-                
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>        try:</pre></li>
-                
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            if isinstance(instance, Mapping):</pre></li>
-                
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>                instance = instance[attr]</pre></li>
-                
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            else:</pre></li>
-                
-                </ol>
-              
-              <ol start="104" class="context-line">
-                <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>                instance = getattr(instance, attr)
-                                ^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
-              </ol>
-              
-                <ol start='105' class="post-context" id="post140581686890752">
-                  
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>        except ObjectDoesNotExist:</pre></li>
-                  
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            return None</pre></li>
-                  
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>        if is_simple_callable(instance):</pre></li>
-                  
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            try:</pre></li>
-                  
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>                instance = instance()</pre></li>
-                  
-                  <li onclick="toggle('pre140581686890752', 'post140581686890752')"><pre>            except (AttributeError, KeyError) as exc:</pre></li>
-                  
-              </ol>
-              
-            </div>
-          
-
-          
-            
-              <details>
-                <summary class="commands">Local vars</summary>
-            
-            <table class="vars" id="v140581686890752">
-              <thead>
-                <tr>
-                  <th scope="col">Variable</th>
-                  <th scope="col">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr>
-                    <td>attr</td>
-                    <td class="code"><pre>&#x27;new_password&#x27;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>attrs</td>
-                    <td class="code"><pre>[&#x27;new_password&#x27;]</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>instance</td>
-                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
-                  </tr>
-                
-              </tbody>
-            </table>
-            </details>
-          
-        </li>
-      
-        
-          <li class="cause"><h3>
-          
-            During handling of the above exception (&#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;), another exception occurred:
-          
-        </h3></li>
-        
         <li class="frame django">
           
             <code class="fname">/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py</code>, line 55, in inner
           
 
           
-            <div class="context" id="c140581686887552">
+            <div class="context" id="c140207016321088">
               
-                <ol start="48" class="pre-context" id="pre140581686887552">
+                <ol start="48" class="pre-context" id="pre140207016321088">
                 
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        return inner</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>        return inner</pre></li>
                 
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>    else:</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>    else:</pre></li>
                 
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        @wraps(get_response)</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>        @wraps(get_response)</pre></li>
                 
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        def inner(request):</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>        def inner(request):</pre></li>
                 
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>            try:</pre></li>
                 
                 </ol>
               
               <ol start="55" class="context-line">
-                <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>                response = get_response(request)
+                <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>                response = get_response(request)
                                ^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='56' class="post-context" id="post140581686887552">
+                <ol start='56' class="post-context" id="post140207016321088">
                   
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>            except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>            except Exception as exc:</pre></li>
                   
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>                response = response_for_exception(request, exc)</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>                response = response_for_exception(request, exc)</pre></li>
                   
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>            return response</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>            return response</pre></li>
                   
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre>        return inner</pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre>        return inner</pre></li>
                   
-                  <li onclick="toggle('pre140581686887552', 'post140581686887552')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321088', 'post140207016321088')"><pre></pre></li>
                   
               </ol>
               
@@ -422,7 +235,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686887552">
+            <table class="vars" id="v140207016321088">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -433,17 +246,17 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.\nOriginal exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.&quot;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;&#x27;PublicUser&#x27; object has no attribute &#x27;is_authenticated&#x27;&quot;)</pre></td>
                   </tr>
                 
                   <tr>
                     <td>get_response</td>
-                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fdbbb925100&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7f8480f1ebd0&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -459,44 +272,44 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686887488">
+            <div class="context" id="c140207016321216">
               
-                <ol start="190" class="pre-context" id="pre140581686887488">
+                <ol start="190" class="pre-context" id="pre140207016321216">
                 
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>        if response is None:</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>        if response is None:</pre></li>
                 
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
                 
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
                 
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            if iscoroutinefunction(wrapped_callback):</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>            if iscoroutinefunction(wrapped_callback):</pre></li>
                 
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
                 
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>            try:</pre></li>
                 
                 </ol>
               
               <ol start="197" class="context-line">
-                <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)
+                <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)
                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='198' class="post-context" id="post140581686887488">
+                <ol start='198' class="post-context" id="post140207016321216">
                   
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>            except Exception as e:</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>            except Exception as e:</pre></li>
                   
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
                   
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                if response is None:</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>                if response is None:</pre></li>
                   
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>                    raise</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>                    raise</pre></li>
                   
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686887488', 'post140581686887488')"><pre>        # Complain if the view returned None (a common error).</pre></li>
+                  <li onclick="toggle('pre140207016321216', 'post140207016321216')"><pre>        # Complain if the view returned None (a common error).</pre></li>
                   
               </ol>
               
@@ -508,7 +321,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686887488">
+            <table class="vars" id="v140207016321216">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -519,7 +332,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>callback</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fdbb978fec0&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7f847d790c20&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -539,7 +352,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -549,12 +362,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fdbbb925100&gt;</pre></td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7f8480f1ebd0&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>wrapped_callback</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fdbb978fec0&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7f847d790c20&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -570,40 +383,40 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686887616">
+            <div class="context" id="c140207016321280">
               
-                <ol start="58" class="pre-context" id="pre140581686887616">
+                <ol start="58" class="pre-context" id="pre140207016321280">
                 
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>        async def _view_wrapper(request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre>        async def _view_wrapper(request, *args, **kwargs):</pre></li>
                 
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>            return await view_func(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre>            return await view_func(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>    else:</pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre>    else:</pre></li>
                 
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>        def _view_wrapper(request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre>        def _view_wrapper(request, *args, **kwargs):</pre></li>
                 
                 </ol>
               
               <ol start="65" class="context-line">
-                <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>            return view_func(request, *args, **kwargs)
+                <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre>            return view_func(request, *args, **kwargs)
                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='66' class="post-context" id="post140581686887616">
+                <ol start='66' class="post-context" id="post140207016321280">
                   
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>    _view_wrapper.csrf_exempt = True</pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre>    _view_wrapper.csrf_exempt = True</pre></li>
                   
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686887616', 'post140581686887616')"><pre>    return wraps(view_func)(_view_wrapper)</pre></li>
+                  <li onclick="toggle('pre140207016321280', 'post140207016321280')"><pre>    return wraps(view_func)(_view_wrapper)</pre></li>
                   
               </ol>
               
@@ -615,7 +428,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686887616">
+            <table class="vars" id="v140207016321280">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -636,12 +449,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>view_func</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fdbb978fe20&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7f847d790cc0&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -657,44 +470,44 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686512448">
+            <div class="context" id="c140207016218944">
               
-                <ol start="97" class="pre-context" id="pre140581686512448">
+                <ol start="97" class="pre-context" id="pre140207016218944">
                 
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            self = cls(**initkwargs)</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>            self = cls(**initkwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            self.setup(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>            self.setup(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            if not hasattr(self, &quot;request&quot;):</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>            if not hasattr(self, &quot;request&quot;):</pre></li>
                 
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                raise AttributeError(</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>                raise AttributeError(</pre></li>
                 
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                    &quot;%s instance has no &#x27;request&#x27; attribute. Did you override &quot;</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>                    &quot;%s instance has no &#x27;request&#x27; attribute. Did you override &quot;</pre></li>
                 
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                    &quot;setup() and forget to call super()?&quot; % cls.__name__</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>                    &quot;setup() and forget to call super()?&quot; % cls.__name__</pre></li>
                 
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>                )</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>                )</pre></li>
                 
                 </ol>
               
               <ol start="104" class="context-line">
-                <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>            return self.dispatch(request, *args, **kwargs)
+                <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>            return self.dispatch(request, *args, **kwargs)
                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='105' class="post-context" id="post140581686512448">
+                <ol start='105' class="post-context" id="post140207016218944">
                   
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        view.view_class = cls</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>        view.view_class = cls</pre></li>
                   
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        view.view_initkwargs = initkwargs</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>        view.view_initkwargs = initkwargs</pre></li>
                   
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        # __name__ and __qualname__ are intentionally left unchanged as</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>        # __name__ and __qualname__ are intentionally left unchanged as</pre></li>
                   
-                  <li onclick="toggle('pre140581686512448', 'post140581686512448')"><pre>        # view_class should be used to robustly determine the name of the view</pre></li>
+                  <li onclick="toggle('pre140207016218944', 'post140207016218944')"><pre>        # view_class should be used to robustly determine the name of the view</pre></li>
                   
               </ol>
               
@@ -706,7 +519,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686512448">
+            <table class="vars" id="v140207016218944">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -722,7 +535,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>cls</td>
-                    <td class="code"><pre>&lt;class &#x27;auth_app.views.PasswordUpdateView&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;class &#x27;users_app.views.PublicUserListFriends&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -737,12 +550,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
+                    <td class="code"><pre>&lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -758,44 +571,44 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686893568">
+            <div class="context" id="c140207016321344">
               
-                <ol start="502" class="pre-context" id="pre140581686893568">
+                <ol start="502" class="pre-context" id="pre140207016321344">
                 
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>                                  self.http_method_not_allowed)</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>                                  self.http_method_not_allowed)</pre></li>
                 
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>            else:</pre></li>
                 
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>                handler = self.http_method_not_allowed</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>                handler = self.http_method_not_allowed</pre></li>
                 
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>            response = handler(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>            response = handler(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>        except Exception as exc:</pre></li>
                 
                 </ol>
               
               <ol start="509" class="context-line">
-                <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>            response = self.handle_exception(exc)
+                <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>            response = self.handle_exception(exc)
                             ^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='510' class="post-context" id="post140581686893568">
+                <ol start='510' class="post-context" id="post140207016321344">
                   
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
                   
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        return self.response</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>        return self.response</pre></li>
                   
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>    def options(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>    def options(self, request, *args, **kwargs):</pre></li>
                   
-                  <li onclick="toggle('pre140581686893568', 'post140581686893568')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016321344', 'post140207016321344')"><pre>        &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -807,7 +620,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686893568">
+            <table class="vars" id="v140207016321344">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -823,7 +636,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>handler</td>
-                    <td class="code"><pre>&lt;bound method UpdateAPIView.patch of &lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method ListAPIView.get of &lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -833,12 +646,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
+                    <td class="code"><pre>&lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -854,44 +667,44 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686891008">
+            <div class="context" id="c140207016321856">
               
-                <ol start="462" class="pre-context" id="pre140581686891008">
+                <ol start="462" class="pre-context" id="pre140207016321856">
                 
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        exception_handler = self.get_exception_handler()</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>        exception_handler = self.get_exception_handler()</pre></li>
                 
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        context = self.get_exception_handler_context()</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>        context = self.get_exception_handler_context()</pre></li>
                 
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        response = exception_handler(exc, context)</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>        response = exception_handler(exc, context)</pre></li>
                 
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        if response is None:</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>        if response is None:</pre></li>
                 
                 </ol>
               
               <ol start="469" class="context-line">
-                <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>            self.raise_uncaught_exception(exc)
+                <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>            self.raise_uncaught_exception(exc)
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='470' class="post-context" id="post140581686891008">
+                <ol start='470' class="post-context" id="post140207016321856">
                   
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        response.exception = True</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>        response.exception = True</pre></li>
                   
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        return response</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>        return response</pre></li>
                   
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
                   
-                  <li onclick="toggle('pre140581686891008', 'post140581686891008')"><pre>        if settings.DEBUG:</pre></li>
+                  <li onclick="toggle('pre140207016321856', 'post140207016321856')"><pre>        if settings.DEBUG:</pre></li>
                   
               </ol>
               
@@ -903,7 +716,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686891008">
+            <table class="vars" id="v140207016321856">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -916,18 +729,18 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                     <td>context</td>
                     <td class="code"><pre>{&#x27;args&#x27;: (),
  &#x27;kwargs&#x27;: {&#x27;username&#x27;: &#x27;val&#x27;},
- &#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;,
- &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;}</pre></td>
+ &#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;,
+ &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;}</pre></td>
                   </tr>
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.\nOriginal exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.&quot;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;&#x27;PublicUser&#x27; object has no attribute &#x27;is_authenticated&#x27;&quot;)</pre></td>
                   </tr>
                 
                   <tr>
                     <td>exception_handler</td>
-                    <td class="code"><pre>&lt;function exception_handler at 0x7fdbba112020&gt;</pre></td>
+                    <td class="code"><pre>&lt;function exception_handler at 0x7f847e116ca0&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -937,7 +750,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
+                    <td class="code"><pre>&lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -953,44 +766,44 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686888960">
+            <div class="context" id="c140207016322048">
               
-                <ol start="473" class="pre-context" id="pre140581686888960">
+                <ol start="473" class="pre-context" id="pre140207016322048">
                 
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
                 
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>        if settings.DEBUG:</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>        if settings.DEBUG:</pre></li>
                 
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            request = self.request</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>            request = self.request</pre></li>
                 
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            renderer_format = getattr(request.accepted_renderer, &#x27;format&#x27;)</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>            renderer_format = getattr(request.accepted_renderer, &#x27;format&#x27;)</pre></li>
                 
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            use_plaintext_traceback = renderer_format not in (&#x27;html&#x27;, &#x27;api&#x27;, &#x27;admin&#x27;)</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>            use_plaintext_traceback = renderer_format not in (&#x27;html&#x27;, &#x27;api&#x27;, &#x27;admin&#x27;)</pre></li>
                 
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>            request.force_plaintext_errors(use_plaintext_traceback)</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>            request.force_plaintext_errors(use_plaintext_traceback)</pre></li>
                 
                 </ol>
               
               <ol start="480" class="context-line">
-                <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>        raise exc
+                <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>        raise exc
              ^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='481' class="post-context" id="post140581686888960">
+                <ol start='481' class="post-context" id="post140207016322048">
                   
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    # Note: Views are made CSRF exempt from within `as_view` as to prevent</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>    # Note: Views are made CSRF exempt from within `as_view` as to prevent</pre></li>
                   
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    # accidental removal of this exemption in cases where `dispatch` needs to</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>    # accidental removal of this exemption in cases where `dispatch` needs to</pre></li>
                   
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    # be overridden.</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>    # be overridden.</pre></li>
                   
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>    def dispatch(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>    def dispatch(self, request, *args, **kwargs):</pre></li>
                   
-                  <li onclick="toggle('pre140581686888960', 'post140581686888960')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016322048', 'post140207016322048')"><pre>        &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -1002,7 +815,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686888960">
+            <table class="vars" id="v140207016322048">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1013,7 +826,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.\nOriginal exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.&quot;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;&#x27;PublicUser&#x27; object has no attribute &#x27;is_authenticated&#x27;&quot;)</pre></td>
                   </tr>
                 
                   <tr>
@@ -1023,12 +836,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
+                    <td class="code"><pre>&lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -1049,44 +862,44 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686888768">
+            <div class="context" id="c140207016319808">
               
-                <ol start="499" class="pre-context" id="pre140581686888768">
+                <ol start="499" class="pre-context" id="pre140207016319808">
                 
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            # Get the appropriate handler method</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>            # Get the appropriate handler method</pre></li>
                 
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            if request.method.lower() in self.http_method_names:</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>            if request.method.lower() in self.http_method_names:</pre></li>
                 
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>                handler = getattr(self, request.method.lower(),</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>                handler = getattr(self, request.method.lower(),</pre></li>
                 
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>                                  self.http_method_not_allowed)</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>                                  self.http_method_not_allowed)</pre></li>
                 
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>            else:</pre></li>
                 
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>                handler = self.http_method_not_allowed</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>                handler = self.http_method_not_allowed</pre></li>
                 
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre></pre></li>
                 
                 </ol>
               
               <ol start="506" class="context-line">
-                <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            response = handler(request, *args, **kwargs)
+                <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>            response = handler(request, *args, **kwargs)
                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='507' class="post-context" id="post140581686888768">
+                <ol start='507' class="post-context" id="post140207016319808">
                   
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>        except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>        except Exception as exc:</pre></li>
                   
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>            response = self.handle_exception(exc)</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>            response = self.handle_exception(exc)</pre></li>
                   
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
                   
-                  <li onclick="toggle('pre140581686888768', 'post140581686888768')"><pre>        return self.response</pre></li>
+                  <li onclick="toggle('pre140207016319808', 'post140207016319808')"><pre>        return self.response</pre></li>
                   
               </ol>
               
@@ -1098,7 +911,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686888768">
+            <table class="vars" id="v140207016319808">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1114,7 +927,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>handler</td>
-                    <td class="code"><pre>&lt;bound method UpdateAPIView.patch of &lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method ListAPIView.get of &lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -1124,12 +937,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
+                    <td class="code"><pre>&lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -1141,48 +954,48 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/generics.py</code>, line 233, in patch
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/generics.py</code>, line 203, in get
           
 
           
-            <div class="context" id="c140581686510016">
+            <div class="context" id="c140207016222208">
               
-                <ol start="226" class="pre-context" id="pre140581686510016">
+                <ol start="196" class="pre-context" id="pre140207016222208">
                 
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    Concrete view for updating a model instance.</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>class ListAPIView(mixins.ListModelMixin,</pre></li>
                 
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>                  GenericAPIView):</pre></li>
                 
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    def put(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>    &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>        return self.update(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>    Concrete view for listing a queryset.</pre></li>
                 
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>    &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    def patch(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>    def get(self, request, *args, **kwargs):</pre></li>
                 
                 </ol>
               
-              <ol start="233" class="context-line">
-                <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>        return self.partial_update(request, *args, **kwargs)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="203" class="context-line">
+                <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>        return self.list(request, *args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='234' class="post-context" id="post140581686510016">
+                <ol start='204' class="post-context" id="post140207016222208">
                   
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>class ListCreateAPIView(mixins.ListModelMixin,</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>class RetrieveAPIView(mixins.RetrieveModelMixin,</pre></li>
                   
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>                        mixins.CreateModelMixin,</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>                      GenericAPIView):</pre></li>
                   
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>                        GenericAPIView):</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>    &quot;&quot;&quot;</pre></li>
                   
-                  <li onclick="toggle('pre140581686510016', 'post140581686510016')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016222208', 'post140207016222208')"><pre>    Concrete view for retrieving a model instance.</pre></li>
                   
               </ol>
               
@@ -1194,7 +1007,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686510016">
+            <table class="vars" id="v140207016222208">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1215,12 +1028,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
+                    <td class="code"><pre>&lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -1232,48 +1045,48 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py</code>, line 82, in partial_update
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py</code>, line 43, in list
           
 
           
-            <div class="context" id="c140581686899456">
+            <div class="context" id="c140207016319296">
               
-                <ol start="75" class="pre-context" id="pre140581686899456">
+                <ol start="36" class="pre-context" id="pre140207016319296">
                 
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        return Response(serializer.data)</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>    &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>    def list(self, request, *args, **kwargs):</pre></li>
                 
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    def perform_update(self, serializer):</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>        queryset = self.filter_queryset(self.get_queryset())</pre></li>
                 
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        serializer.save()</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>        page = self.paginate_queryset(queryset)</pre></li>
                 
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    def partial_update(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>        if page is not None:</pre></li>
                 
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        kwargs[&#x27;partial&#x27;] = True</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>            serializer = self.get_serializer(page, many=True)</pre></li>
                 
                 </ol>
               
-              <ol start="82" class="context-line">
-                <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>        return self.update(request, *args, **kwargs)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="43" class="context-line">
+                <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>            return self.get_paginated_response(serializer.data)
+                                                   ^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='83' class="post-context" id="post140581686899456">
+                <ol start='44' class="post-context" id="post140207016319296">
                   
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>        serializer = self.get_serializer(queryset, many=True)</pre></li>
                   
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>class DestroyModelMixin:</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>        return Response(serializer.data)</pre></li>
                   
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    Destroy a model instance.</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686899456', 'post140581686899456')"><pre>    &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016319296', 'post140207016319296')"><pre>class RetrieveModelMixin:</pre></li>
                   
               </ol>
               
@@ -1285,7 +1098,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686899456">
+            <table class="vars" id="v140207016319296">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1297,102 +1110,6 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                   <tr>
                     <td>args</td>
                     <td class="code"><pre>()</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>kwargs</td>
-                    <td class="code"><pre>{&#x27;partial&#x27;: True, &#x27;username&#x27;: &#x27;val&#x27;}</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
-                  </tr>
-                
-              </tbody>
-            </table>
-            </details>
-          
-        </li>
-      
-        
-        <li class="frame user">
-          
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py</code>, line 75, in update
-          
-
-          
-            <div class="context" id="c140581686888448">
-              
-                <ol start="68" class="pre-context" id="pre140581686888448">
-                
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        self.perform_update(serializer)</pre></li>
-                
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        if getattr(instance, &#x27;_prefetched_objects_cache&#x27;, None):</pre></li>
-                
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>            # If &#x27;prefetch_related&#x27; has been applied to a queryset, we need to</pre></li>
-                
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>            # forcibly invalidate the prefetch cache on the instance.</pre></li>
-                
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>            instance._prefetched_objects_cache = {}</pre></li>
-                
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
-                
-                </ol>
-              
-              <ol start="75" class="context-line">
-                <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        return Response(serializer.data)
-                            ^^^^^^^^^^^^^^^</pre> <span>…</span></li>
-              </ol>
-              
-                <ol start='76' class="post-context" id="post140581686888448">
-                  
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
-                  
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>    def perform_update(self, serializer):</pre></li>
-                  
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        serializer.save()</pre></li>
-                  
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre></pre></li>
-                  
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>    def partial_update(self, request, *args, **kwargs):</pre></li>
-                  
-                  <li onclick="toggle('pre140581686888448', 'post140581686888448')"><pre>        kwargs[&#x27;partial&#x27;] = True</pre></li>
-                  
-              </ol>
-              
-            </div>
-          
-
-          
-            
-              <details>
-                <summary class="commands">Local vars</summary>
-            
-            <table class="vars" id="v140581686888448">
-              <thead>
-                <tr>
-                  <th scope="col">Variable</th>
-                  <th scope="col">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr>
-                    <td>args</td>
-                    <td class="code"><pre>()</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>instance</td>
-                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -1401,26 +1118,33 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                   </tr>
                 
                   <tr>
-                    <td>partial</td>
-                    <td class="code"><pre>True</pre></td>
+                    <td>page</td>
+                    <td class="code"><pre>[&lt;PublicUser: PublicUser object (2)&gt;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>queryset</td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;PublicUser: PublicUser object (2)&gt;]&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;auth_app.views.PasswordUpdateView object at 0x7fdbb97d1430&gt;</pre></td>
+                    <td class="code"><pre>&lt;users_app.views.PublicUserListFriends object at 0x7f847d811b50&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>serializer</td>
-                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
-    password = CharField(required=True)
-    new_password = CharField(required=True)
-    new_password2 = CharField(required=True)</pre></td>
+                    <td class="code"><pre>PublicUserListSerializer([&lt;PublicUser: PublicUser object (2)&gt;], context={&#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object&gt;}, many=True):
+    username = CharField(max_length=128, validators=[&lt;UniqueValidator(queryset=PublicUser.objects.all())&gt;])
+    profilePic = URLField(label=&#x27;ProfilePic&#x27;, max_length=200, required=False)
+    is_online = SerializerMethodField()
+    full_profile = HyperlinkedIdentityField(lookup_field=&#x27;username&#x27;, view_name=&#x27;user-detail&#x27;)
+    is_your_friend = SerializerMethodField()</pre></td>
                   </tr>
                 
               </tbody>
@@ -1432,48 +1156,48 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 571, in data
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 795, in data
           
 
           
-            <div class="context" id="c140581686891776">
+            <div class="context" id="c140207016313600">
               
-                <ol start="564" class="pre-context" id="pre140581686891776">
+                <ol start="788" class="pre-context" id="pre140207016313600">
                 
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        return BoundField(field, value, error)</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>        return representation.list_repr(self, indent=1)</pre></li>
                 
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    # Include a backlink to the serializer class on return objects.</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>    # Include a backlink to the serializer class on return objects.</pre></li>
                 
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    # Allows renderers such as HTMLFormRenderer to get the full field info.</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>    # Allows renderers such as HTMLFormRenderer to get the full field info.</pre></li>
                 
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    @property</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>    @property</pre></li>
                 
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    def data(self):</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>    def data(self):</pre></li>
                 
                 </ol>
               
-              <ol start="571" class="context-line">
-                <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        ret = super().data
+              <ol start="795" class="context-line">
+                <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>        ret = super().data
                    ^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='572' class="post-context" id="post140581686891776">
+                <ol start='796' class="post-context" id="post140207016313600">
                   
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        return ReturnDict(ret, serializer=self)</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>        return ReturnList(ret, serializer=self)</pre></li>
                   
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    @property</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>    @property</pre></li>
                   
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>    def errors(self):</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>    def errors(self):</pre></li>
                   
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        ret = super().errors</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>        ret = super().errors</pre></li>
                   
-                  <li onclick="toggle('pre140581686891776', 'post140581686891776')"><pre>        if isinstance(ret, list) and len(ret) == 1 and getattr(ret[0], &#x27;code&#x27;, None) == &#x27;null&#x27;:</pre></li>
+                  <li onclick="toggle('pre140207016313600', 'post140207016313600')"><pre>        if isinstance(ret, list) and len(ret) == 1 and getattr(ret[0], &#x27;code&#x27;, None) == &#x27;null&#x27;:</pre></li>
                   
               </ol>
               
@@ -1485,7 +1209,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686891776">
+            <table class="vars" id="v140207016313600">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1496,15 +1220,17 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>__class__</td>
-                    <td class="code"><pre>&lt;class &#x27;rest_framework.serializers.Serializer&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;class &#x27;rest_framework.serializers.ListSerializer&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
-    password = CharField(required=True)
-    new_password = CharField(required=True)
-    new_password2 = CharField(required=True)</pre></td>
+                    <td class="code"><pre>PublicUserListSerializer([&lt;PublicUser: PublicUser object (2)&gt;], context={&#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object&gt;}, many=True):
+    username = CharField(max_length=128, validators=[&lt;UniqueValidator(queryset=PublicUser.objects.all())&gt;])
+    profilePic = URLField(label=&#x27;ProfilePic&#x27;, max_length=200, required=False)
+    is_online = SerializerMethodField()
+    full_profile = HyperlinkedIdentityField(lookup_field=&#x27;username&#x27;, view_name=&#x27;user-detail&#x27;)
+    is_your_friend = SerializerMethodField()</pre></td>
                   </tr>
                 
               </tbody>
@@ -1520,44 +1246,44 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           
 
           
-            <div class="context" id="c140581686888832">
+            <div class="context" id="c140207016320960">
               
-                <ol start="242" class="pre-context" id="pre140581686888832">
+                <ol start="242" class="pre-context" id="pre140207016320960">
                 
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                &#x27;You should either call `.is_valid()` first, &#x27;</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>                &#x27;You should either call `.is_valid()` first, &#x27;</pre></li>
                 
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                &#x27;or access `.initial_data` instead.&#x27;</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>                &#x27;or access `.initial_data` instead.&#x27;</pre></li>
                 
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            )</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>            )</pre></li>
                 
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            raise AssertionError(msg)</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>            raise AssertionError(msg)</pre></li>
                 
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>        if not hasattr(self, &#x27;_data&#x27;):</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>        if not hasattr(self, &#x27;_data&#x27;):</pre></li>
                 
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            if self.instance is not None and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>            if self.instance is not None and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
                 
                 </ol>
               
               <ol start="249" class="context-line">
-                <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                self._data = self.to_representation(self.instance)
+                <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>                self._data = self.to_representation(self.instance)
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='250' class="post-context" id="post140581686888832">
+                <ol start='250' class="post-context" id="post140207016320960">
                   
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            elif hasattr(self, &#x27;_validated_data&#x27;) and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>            elif hasattr(self, &#x27;_validated_data&#x27;) and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
                   
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                self._data = self.to_representation(self.validated_data)</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>                self._data = self.to_representation(self.validated_data)</pre></li>
                   
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>            else:</pre></li>
                   
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>                self._data = self.get_initial()</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>                self._data = self.get_initial()</pre></li>
                   
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre>        return self._data</pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre>        return self._data</pre></li>
                   
-                  <li onclick="toggle('pre140581686888832', 'post140581686888832')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016320960', 'post140207016320960')"><pre></pre></li>
                   
               </ol>
               
@@ -1569,7 +1295,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686888832">
+            <table class="vars" id="v140207016320960">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1580,10 +1306,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
-    password = CharField(required=True)
-    new_password = CharField(required=True)
-    new_password2 = CharField(required=True)</pre></td>
+                    <td class="code"><pre>PublicUserListSerializer([&lt;PublicUser: PublicUser object (2)&gt;], context={&#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object&gt;}, many=True):
+    username = CharField(max_length=128, validators=[&lt;UniqueValidator(queryset=PublicUser.objects.all())&gt;])
+    profilePic = URLField(label=&#x27;ProfilePic&#x27;, max_length=200, required=False)
+    is_online = SerializerMethodField()
+    full_profile = HyperlinkedIdentityField(lookup_field=&#x27;username&#x27;, view_name=&#x27;user-detail&#x27;)
+    is_your_friend = SerializerMethodField()</pre></td>
                   </tr>
                 
               </tbody>
@@ -1595,48 +1323,48 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 525, in to_representation
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 714, in to_representation
           
 
           
-            <div class="context" id="c140581686891392">
+            <div class="context" id="c140207016320000">
               
-                <ol start="518" class="pre-context" id="pre140581686891392">
+                <ol start="707" class="pre-context" id="pre140207016320000">
                 
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        Object instance -&gt; Dict of primitive datatypes.</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        List of object instances -&gt; List of dicts of primitive datatypes.</pre></li>
                 
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        ret = {}</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        # Dealing with nested relationships, data can be a Manager,</pre></li>
                 
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        fields = self._readable_fields</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        # so, first get a queryset from the Manager if needed</pre></li>
                 
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        iterable = data.all() if isinstance(data, models.manager.BaseManager) else data</pre></li>
                 
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>        for field in fields:</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        return [</pre></li>
                 
                 </ol>
               
-              <ol start="525" class="context-line">
-                <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>                attribute = field.get_attribute(instance)
-                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="714" class="context-line">
+                <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>            self.child.to_representation(item) for item in iterable
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='526' class="post-context" id="post140581686891392">
+                <ol start='715' class="post-context" id="post140207016320000">
                   
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            except SkipField:</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        ]</pre></li>
                   
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>                continue</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre></pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>    def validate(self, attrs):</pre></li>
                   
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            # We skip `to_representation` for `None` values so that fields do</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>        return attrs</pre></li>
                   
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            # not have to explicitly deal with that case.</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686891392', 'post140581686891392')"><pre>            #</pre></li>
+                  <li onclick="toggle('pre140207016320000', 'post140207016320000')"><pre>    def update(self, instance, validated_data):</pre></li>
                   
               </ol>
               
@@ -1648,7 +1376,98 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686891392">
+            <table class="vars" id="v140207016320000">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>data</td>
+                    <td class="code"><pre>[&lt;PublicUser: PublicUser object (2)&gt;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iterable</td>
+                    <td class="code"><pre>[&lt;PublicUser: PublicUser object (2)&gt;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PublicUserListSerializer([&lt;PublicUser: PublicUser object (2)&gt;], context={&#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object&gt;}, many=True):
+    username = CharField(max_length=128, validators=[&lt;UniqueValidator(queryset=PublicUser.objects.all())&gt;])
+    profilePic = URLField(label=&#x27;ProfilePic&#x27;, max_length=200, required=False)
+    is_online = SerializerMethodField()
+    full_profile = HyperlinkedIdentityField(lookup_field=&#x27;username&#x27;, view_name=&#x27;user-detail&#x27;)
+    is_your_friend = SerializerMethodField()</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 538, in to_representation
+          
+
+          
+            <div class="context" id="c140207017806208">
+              
+                <ol start="531" class="pre-context" id="pre140207017806208">
+                
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>            #</pre></li>
+                
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>            # For related fields with `use_pk_only_optimization` we need to</pre></li>
+                
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>            # resolve the pk value.</pre></li>
+                
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute</pre></li>
+                
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>            if check_for_none is None:</pre></li>
+                
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>                ret[field.field_name] = None</pre></li>
+                
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>            else:</pre></li>
+                
+                </ol>
+              
+              <ol start="538" class="context-line">
+                <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>                ret[field.field_name] = field.to_representation(attribute)
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='539' class="post-context" id="post140207017806208">
+                  
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>        return ret</pre></li>
+                  
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>    def validate(self, attrs):</pre></li>
+                  
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre>        return attrs</pre></li>
+                  
+                  <li onclick="toggle('pre140207017806208', 'post140207017806208')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140207017806208">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1659,40 +1478,45 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                 
                   <tr>
                     <td>attribute</td>
-                    <td class="code"><pre>&#x27;pbkdf2_sha256$870000$3oazVALQvFoE58e8BXnTx9$F8FjG6AWjLIUUwlp6Ey6b9TFUJPBAIAzcru/3f9BoPE=&#x27;</pre></td>
+                    <td class="code"><pre>&lt;PublicUser: PublicUser object (2)&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>check_for_none</td>
-                    <td class="code"><pre>&#x27;pbkdf2_sha256$870000$3oazVALQvFoE58e8BXnTx9$F8FjG6AWjLIUUwlp6Ey6b9TFUJPBAIAzcru/3f9BoPE=&#x27;</pre></td>
+                    <td class="code"><pre>&lt;PublicUser: PublicUser object (2)&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>field</td>
-                    <td class="code"><pre>CharField(required=True)</pre></td>
+                    <td class="code"><pre>SerializerMethodField()</pre></td>
                   </tr>
                 
                   <tr>
                     <td>fields</td>
-                    <td class="code"><pre>&lt;generator object Serializer._readable_fields at 0x7fdbb97cc100&gt;</pre></td>
+                    <td class="code"><pre>&lt;generator object Serializer._readable_fields at 0x7f847d7ed6c0&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>instance</td>
-                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
+                    <td class="code"><pre>&lt;PublicUser: PublicUser object (2)&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>ret</td>
-                    <td class="code"><pre>{&#x27;password&#x27;: &#x27;pbkdf2_sha256$870000$3oazVALQvFoE58e8BXnTx9$F8FjG6AWjLIUUwlp6Ey6b9TFUJPBAIAzcru/3f9BoPE=&#x27;}</pre></td>
+                    <td class="code"><pre>{&#x27;full_profile&#x27;: &#x27;http://localhost:8080/api/users/vall/&#x27;,
+ &#x27;is_online&#x27;: False,
+ &#x27;profilePic&#x27;: &#x27;http://localhost:8080/media/default.jpg&#x27;,
+ &#x27;username&#x27;: &#x27;vall&#x27;}</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>PasswordModficationSerializer(&lt;CustomUser: val&gt;, context={&#x27;request&#x27;: &lt;rest_framework.request.Request: PATCH &#x27;/api/auth/password/val&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;auth_app.views.PasswordUpdateView object&gt;}, data=&lt;QueryDict: {&#x27;password&#x27;: [&#x27;aaa&#x27;], &#x27;new_password&#x27;: [&#x27;bbb&#x27;], &#x27;new_password2&#x27;: [&#x27;bbb&#x27;]}&gt;, partial=True):
-    password = CharField(required=True)
-    new_password = CharField(required=True)
-    new_password2 = CharField(required=True)</pre></td>
+                    <td class="code"><pre>PublicUserListSerializer([&lt;PublicUser: PublicUser object (2)&gt;], context={&#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object&gt;}):
+    username = CharField(max_length=128, validators=[&lt;UniqueValidator(queryset=PublicUser.objects.all())&gt;])
+    profilePic = URLField(label=&#x27;ProfilePic&#x27;, max_length=200, required=False)
+    is_online = SerializerMethodField()
+    full_profile = HyperlinkedIdentityField(lookup_field=&#x27;username&#x27;, view_name=&#x27;user-detail&#x27;)
+    is_your_friend = SerializerMethodField()</pre></td>
                   </tr>
                 
               </tbody>
@@ -1704,48 +1528,48 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 470, in get_attribute
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 1870, in to_representation
           
 
           
-            <div class="context" id="c140581686887808">
+            <div class="context" id="c140207017684352">
               
-                <ol start="463" class="pre-context" id="pre140581686887808">
+                <ol start="1863" class="pre-context" id="pre140207017684352">
                 
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    exc_type=type(exc).__name__,</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>        if self.method_name is None:</pre></li>
                 
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    field=self.field_name,</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>            self.method_name = &#x27;get_{field_name}&#x27;.format(field_name=field_name)</pre></li>
                 
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    serializer=self.parent.__class__.__name__,</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    instance=instance.__class__.__name__,</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>        super().bind(field_name, parent)</pre></li>
                 
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                    exc=exc</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>                )</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>    def to_representation(self, value):</pre></li>
                 
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>            )</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>        method = getattr(self.parent, self.method_name)</pre></li>
                 
                 </ol>
               
-              <ol start="470" class="context-line">
-                <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>            raise type(exc)(msg)
-                 ^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="1870" class="context-line">
+                <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>        return method(value)
+                     ^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='471' class="post-context" id="post140581686887808">
+                <ol start='1871' class="post-context" id="post140207017684352">
                   
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre></pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>    def get_default(self):</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>class ModelField(Field):</pre></li>
                   
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>        Return the default value to use when validating data if no input</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>    &quot;&quot;&quot;</pre></li>
                   
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre>        is provided for this field.</pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre>    A generic field that can be used against an arbitrary model field.</pre></li>
                   
-                  <li onclick="toggle('pre140581686887808', 'post140581686887808')"><pre></pre></li>
+                  <li onclick="toggle('pre140207017684352', 'post140207017684352')"><pre></pre></li>
                   
               </ol>
               
@@ -1757,7 +1581,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140581686887808">
+            <table class="vars" id="v140207017684352">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1767,23 +1591,114 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
               <tbody>
                 
                   <tr>
-                    <td>instance</td>
-                    <td class="code"><pre>&lt;CustomUser: val&gt;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>msg</td>
-                    <td class="code"><pre>(&#x27;Got AttributeError when attempting to get a value for field `new_password` &#x27;
- &#x27;on serializer `PasswordModficationSerializer`.\n&#x27;
- &#x27;The serializer field might be named incorrectly and not match any attribute &#x27;
- &#x27;or key on the `CustomUser` instance.\n&#x27;
- &quot;Original exception text was: &#x27;CustomUser&#x27; object has no attribute &quot;
- &quot;&#x27;new_password&#x27;.&quot;)</pre></td>
+                    <td>method</td>
+                    <td class="code"><pre>&lt;bound method PublicUserListSerializer.get_is_your_friend of PublicUserListSerializer([&lt;PublicUser: PublicUser object (2)&gt;], context={&#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object&gt;}):
+    username = CharField(max_length=128, validators=[&lt;UniqueValidator(queryset=PublicUser.objects.all())&gt;])
+    profilePic = URLField(label=&#x27;ProfilePic&#x27;, max_length=200, required=False)
+    is_online = SerializerMethodField()
+    full_profile = HyperlinkedIdentityField(lookup_field=&#x27;username&#x27;, view_name=&#x27;user-detail&#x27;)
+    is_your_friend = SerializerMethodField()&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>CharField(required=True)</pre></td>
+                    <td class="code"><pre>SerializerMethodField()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>value</td>
+                    <td class="code"><pre>&lt;PublicUser: PublicUser object (2)&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/code/users_app/serializers.py</code>, line 104, in get_is_your_friend
+          
+
+          
+            <div class="context" id="c140207017723840">
+              
+                <ol start="97" class="pre-context" id="pre140207017723840">
+                
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>    def get_is_online(self, obj): </pre></li>
+                
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>        if obj.last_seen_online == None or now() - obj.last_seen_online &gt; timedelta(minutes=5):</pre></li>
+                
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>            return False </pre></li>
+                
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>        return True</pre></li>
+                
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>    def get_is_your_friend(self, obj):</pre></li>
+                
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>        request = self.context.get(&#x27;request&#x27;)</pre></li>
+                
+                </ol>
+              
+              <ol start="104" class="context-line">
+                <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>        if request and request.user.is_authenticated:
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='105' class="post-context" id="post140207017723840">
+                  
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>            if obj.id == request.user.id:</pre></li>
+                  
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>                return None</pre></li>
+                  
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>            try:</pre></li>
+                  
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>                user = PublicUser.objects.get(pk=request.user.id)</pre></li>
+                  
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>            except PublicUser.DoesNotExist:</pre></li>
+                  
+                  <li onclick="toggle('pre140207017723840', 'post140207017723840')"><pre>                return None</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140207017723840">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>obj</td>
+                    <td class="code"><pre>&lt;PublicUser: PublicUser object (2)&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PublicUserListSerializer([&lt;PublicUser: PublicUser object (2)&gt;], context={&#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/users/val/friend/&#x27;&gt;, &#x27;format&#x27;: None, &#x27;view&#x27;: &lt;users_app.views.PublicUserListFriends object&gt;}):
+    username = CharField(max_length=128, validators=[&lt;UniqueValidator(queryset=PublicUser.objects.all())&gt;])
+    profilePic = URLField(label=&#x27;ProfilePic&#x27;, max_length=200, required=False)
+    is_online = SerializerMethodField()
+    full_profile = HyperlinkedIdentityField(lookup_field=&#x27;username&#x27;, view_name=&#x27;user-detail&#x27;)
+    is_your_friend = SerializerMethodField()</pre></td>
                   </tr>
                 
               </tbody>
@@ -1799,15 +1714,15 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
   <div id="pastebinTraceback" class="pastebin">
     <input type="hidden" name="language" value="PythonConsole">
     <input type="hidden" name="title"
-      value="AttributeError at /api/auth/password/val">
+      value="AttributeError at /api/users/val/friend/">
     <input type="hidden" name="source" value="Django Dpaste Agent">
     <input type="hidden" name="poster" value="Django">
     <textarea name="content" id="traceback_area" cols="140" rows="25">
 Environment:
 
 
-Request Method: PATCH
-Request URL: https://localhost/api/auth/password/val
+Request Method: GET
+Request URL: http://localhost:8080/api/users/val/friend/
 
 Django Version: 5.1
 Python Version: 3.12.5
@@ -1818,10 +1733,10 @@ Installed Applications:
  &#x27;django.contrib.sessions&#x27;,
  &#x27;django.contrib.messages&#x27;,
  &#x27;django.contrib.staticfiles&#x27;,
- &#x27;corsheaders&#x27;,
  &#x27;rest_framework&#x27;,
  &#x27;rest_framework_simplejwt.token_blacklist&#x27;,
- &#x27;auth_app.apps.AuthAppConfig&#x27;]
+ &#x27;users_app.apps.UsersAppConfig&#x27;,
+ &#x27;corsheaders&#x27;]
 Installed Middleware:
 [&#x27;corsheaders.middleware.CorsMiddleware&#x27;,
  &#x27;django.middleware.security.SecurityMiddleware&#x27;,
@@ -1830,19 +1745,13 @@ Installed Middleware:
  &#x27;django.middleware.csrf.CsrfViewMiddleware&#x27;,
  &#x27;django.contrib.auth.middleware.AuthenticationMiddleware&#x27;,
  &#x27;django.contrib.messages.middleware.MessageMiddleware&#x27;,
- &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;]
+ &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;,
+ &#x27;users_app.middleware.SetRequestHostMiddleware&#x27;,
+ &#x27;users_app.middleware.UpdateLastUserActivityMiddleware&#x27;]
 
 
 
 Traceback (most recent call last):
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 437, in get_attribute
-    return get_attribute(instance, self.source_attrs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 104, in get_attribute
-    instance = getattr(instance, attr)
-               ^^^^^^^^^^^^^^^^^^^^^^^
-
-During handling of the above exception (&#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;), another exception occurred:
   File "/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
                ^^^^^^^^^^^^^^^^^^^^^
@@ -1867,32 +1776,33 @@ During handling of the above exception (&#x27;CustomUser&#x27; object has no att
   File "/usr/local/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
     response = handler(request, *args, **kwargs)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/generics.py", line 233, in patch
-    return self.partial_update(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py", line 82, in partial_update
-    return self.update(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py", line 75, in update
-    return Response(serializer.data)
-                    ^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 571, in data
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/mixins.py", line 43, in list
+    return self.get_paginated_response(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 795, in data
     ret = super().data
           ^^^^^^^^^^^^
   File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 249, in data
     self._data = self.to_representation(self.instance)
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 525, in to_representation
-    attribute = field.get_attribute(instance)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 470, in get_attribute
-    raise type(exc)(msg)
-    ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 714, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 538, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 1870, in to_representation
+    return method(value)
+           ^^^^^^^^^^^^^
+  File "/code/users_app/serializers.py", line 104, in get_is_your_friend
+    if request and request.user.is_authenticated:
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Exception Type: AttributeError at /api/auth/password/val
-Exception Value: Got AttributeError when attempting to get a value for field `new_password` on serializer `PasswordModficationSerializer`.
-The serializer field might be named incorrectly and not match any attribute or key on the `CustomUser` instance.
-Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x27;new_password&#x27;.
+Exception Type: AttributeError at /api/users/val/friend/
+Exception Value: &#x27;PublicUser&#x27; object has no attribute &#x27;is_authenticated&#x27;
 </textarea>
   <br><br>
   <input type="submit" value="Share this traceback on a public website">
@@ -1908,7 +1818,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
 
   
     <h3 id="user-info">USER</h3>
-    <p>val</p>
+    <p>PublicUser object (1)</p>
   
 
   <h3 id="get-info">GET</h3>
@@ -1918,32 +1828,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
 
   <h3 id="post-info">POST</h3>
   
-    <table class="req">
-      <thead>
-        <tr>
-          <th scope="col">Variable</th>
-          <th scope="col">Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-          <tr>
-            <td>password</td>
-            <td class="code"><pre>&#x27;aaa&#x27;</pre></td>
-          </tr>
-        
-          <tr>
-            <td>new_password</td>
-            <td class="code"><pre>&#x27;bbb&#x27;</pre></td>
-          </tr>
-        
-          <tr>
-            <td>new_password2</td>
-            <td class="code"><pre>&#x27;bbb&#x27;</pre></td>
-          </tr>
-        
-      </tbody>
-    </table>
+    <p>No POST data</p>
   
 
   <h3 id="files-info">FILES</h3>
@@ -1967,29 +1852,19 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
     <tbody>
       
         <tr>
-          <td>CONTENT_LENGTH</td>
-          <td class="code"><pre>&#x27;47&#x27;</pre></td>
-        </tr>
-      
-        <tr>
-          <td>CONTENT_TYPE</td>
-          <td class="code"><pre>&#x27;application/x-www-form-urlencoded&#x27;</pre></td>
-        </tr>
-      
-        <tr>
           <td>HTTP_ACCEPT</td>
           <td class="code"><pre>&#x27;*/*&#x27;</pre></td>
         </tr>
       
         <tr>
           <td>HTTP_ACCEPT_ENCODING</td>
-          <td class="code"><pre>&#x27;gzip, deflate&#x27;</pre></td>
+          <td class="code"><pre>&#x27;gzip, deflate, br&#x27;</pre></td>
         </tr>
       
         <tr>
           <td>HTTP_AUTHORIZATION</td>
           <td class="code"><pre>(&#x27;Bearer &#x27;
- &#x27;eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3MjY1NzExLCJpYXQiOjE3MjcyNjU0MTEsImp0aSI6IjIwMDQ3ODhiZDE4YzQyNzhiYmNhMGZlYjRmMzI3MDAzIiwidXNlcm5hbWUiOiJ2YWwiLCJyZWZyZXNoIjoxNzI3MzUxODExfQ.H_AZ1Te5a9MWFGfqBni1CETUexKAXFztSpaGwzBILlQQWWYjs6fy1C2F56S78vXwEAriLKuOsA3zHqDnkftxRkxmzLJ-Rzq-izBxNu73I4iGhI8yx1m0KEsCMvXrnGA0iBOcHwfGSmpIr4nIky1-l692OccSHNXLSQaN9heOp9jBnG6aJ30r-GIexZvNKSY4-yO5vg-8E9-Lnr7nFCMpRtYwYQBvfpVBjss-wpgsRU2BxfFqpZSyNIREuLbpYloc3h4zz2xjQ-N5SsGLGpV1QeIeXdrH4VWrVrvKIXvCF98VjWVaz8yGt9TUWPrmrbcjBWVJP8neuN_OpXdb-XAjxJD8wjIsgtU52ny27WSWWZPTu4FlF-XOx8d3573v9D2bUyYVjF8EPPIN6gCRBsmZORTPBL5k7cRzfZ5VHNCmH4B_3dIu1i4AzF8vuoar29nFLCxZewBeEIHZ3NV8FMiJXuD5oS28-lH0J8JytZwJzeBtJNRymQomhLx2WqGnvgDmTTt85Mw5LHSJUrwTLhE26zd9rQFaObJfhP-ogkpdxmSMJDtQ7ulg9lJEKMQeykY46yo3f1MhuGkushitsyjT1Shp6f5NmybkVT16zmHPoUnk0nuROViXbMAfLMxZ0PLmuz-2DeptFM5EfxOzPLOd2SPlVSjHgOdj-mEMRQEpdHo&#x27;)</pre></td>
+ &#x27;eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3NDQxNjkyLCJpYXQiOjE3Mjc0NDEzOTIsImp0aSI6Ijk4OGFiODJjYjhkMTRjZjdiYzYzNDc3YTcxNThkYzE3IiwidXNlcm5hbWUiOiJ2YWwifQ.YVux7Q1h2-6sor_ifk2ZLtq6nGApoSVcVWWNrqe1IVsHXfXuTvq8ixQvKII_9PMDGTDnTNSUWVp8ej1FMKGyN-UFRs-ZjlWMXrnd4G-PHN0Gladl15i5LkZBTmq2pD3VeZU965FGEEqbhvOXTkFHDDM5WsBSJbU0HZtMY-8p0nQ7KCqAI8jdXNsTigPUetVrJI5jD1wy4quRKt_EsfmIBbxOqYcQEJoGo5ZduPs5-FMow6lm1SAxyVuxixbwn-ivbrP7hQHQV2gvANVRhG0_LHTyGwFq7Wg3ZQ51Bq3mH0AurbST1vdGP_mBz5kStqxbPnC018vKjfGoXNLmvesa0MUSPAVkErUiUd0vr64LiTj2dVRCDlzRdIeiOYyOxfTUDyBCcuc7GYCxCXBxt1h0mkx0nmwETCBIynXrgsRYrNstO7DpC9avbb2fQlY72MCjmyeUymvQmKh3iXl1yZqw1bF1LLr374apVdBEVIDprwhFj36TZA72kwM-F60bt1cPYHTHRaMhhusXwykmgm0n6vO5ZvQMlKdd65I_HJMdRIyd30m71fEQQqkscwDhBI8NIU1yaF_sgNAmdwpvRzTzrNu4ROqq_1q3WzCktCg9KfPFQBYBCVfqM-E47p90Bvi8WZ4knmUcRfTvy2z-yNPdJXfXwPFUMsdzxKe0pNsRnE4&#x27;)</pre></td>
         </tr>
       
         <tr>
@@ -1999,7 +1874,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>HTTP_HOST</td>
-          <td class="code"><pre>&#x27;localhost&#x27;</pre></td>
+          <td class="code"><pre>&#x27;localhost:8080&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2024,7 +1899,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>PATH_INFO</td>
-          <td class="code"><pre>&#x27;/api/auth/password/val&#x27;</pre></td>
+          <td class="code"><pre>&#x27;/api/users/val/friend/&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2034,22 +1909,22 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>RAW_URI</td>
-          <td class="code"><pre>&#x27;/api/auth/password/val&#x27;</pre></td>
+          <td class="code"><pre>&#x27;/api/users/val/friend/&#x27;</pre></td>
         </tr>
       
         <tr>
           <td>REMOTE_ADDR</td>
-          <td class="code"><pre>&#x27;172.18.0.7&#x27;</pre></td>
+          <td class="code"><pre>&#x27;172.18.0.9&#x27;</pre></td>
         </tr>
       
         <tr>
           <td>REMOTE_PORT</td>
-          <td class="code"><pre>&#x27;43644&#x27;</pre></td>
+          <td class="code"><pre>&#x27;50102&#x27;</pre></td>
         </tr>
       
         <tr>
           <td>REQUEST_METHOD</td>
-          <td class="code"><pre>&#x27;PATCH&#x27;</pre></td>
+          <td class="code"><pre>&#x27;GET&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2079,12 +1954,12 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>gunicorn.socket</td>
-          <td class="code"><pre>&lt;socket.socket fd=9, family=2, type=1, proto=0, laddr=(&#x27;172.18.0.5&#x27;, 8443), raddr=(&#x27;172.18.0.7&#x27;, 43644)&gt;</pre></td>
+          <td class="code"><pre>&lt;socket.socket fd=9, family=2, type=1, proto=0, laddr=(&#x27;172.18.0.7&#x27;, 8443), raddr=(&#x27;172.18.0.9&#x27;, 50102)&gt;</pre></td>
         </tr>
       
         <tr>
           <td>wsgi.errors</td>
-          <td class="code"><pre>&lt;gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7fdbb97d1180&gt;</pre></td>
+          <td class="code"><pre>&lt;gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7f847d811960&gt;</pre></td>
         </tr>
       
         <tr>
@@ -2094,7 +1969,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>wsgi.input</td>
-          <td class="code"><pre>&lt;gunicorn.http.body.Body object at 0x7fdbb97d0500&gt;</pre></td>
+          <td class="code"><pre>&lt;gunicorn.http.body.Body object at 0x7f847d8119d0&gt;</pre></td>
         </tr>
       
         <tr>
@@ -2132,7 +2007,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
 
 
   <h3 id="settings-info">Settings</h3>
-  <h4>Using settings module <code>auth.settings</code></h4>
+  <h4>Using settings module <code>users.settings</code></h4>
   <table class="req">
     <thead>
       <tr>
@@ -2154,7 +2029,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>ALLOWED_HOSTS</td>
-          <td class="code"><pre>[&#x27;auth&#x27;, &#x27;localhost&#x27;, &#x27;http://localhost:8080&#x27;, &#x27;frontend&#x27;]</pre></td>
+          <td class="code"><pre>[&#x27;users&#x27;, &#x27;localhost&#x27;, &#x27;auth&#x27;]</pre></td>
         </tr>
       
         <tr>
@@ -2174,7 +2049,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>AUTH_USER_MODEL</td>
-          <td class="code"><pre>&#x27;auth_app.CustomUser&#x27;</pre></td>
+          <td class="code"><pre>&#x27;auth.User&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2203,11 +2078,6 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
         </tr>
       
         <tr>
-          <td>CORS_ALLOWED_ORIGINS</td>
-          <td class="code"><pre>[&#x27;http://localhost:8080&#x27;]</pre></td>
-        </tr>
-      
-        <tr>
           <td>CORS_ALLOW_ALL_ORIGINS</td>
           <td class="code"><pre>True</pre></td>
         </tr>
@@ -2222,6 +2092,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           <td class="code"><pre>[&#x27;content-type&#x27;,
  &#x27;x-csrftoken&#x27;,
  &#x27;authorization&#x27;,
+ &#x27;Authorization&#x27;,
  &#x27;accept&#x27;,
  &#x27;origin&#x27;,
  &#x27;user-agent&#x27;,
@@ -2275,7 +2146,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>CSRF_TRUSTED_ORIGINS</td>
-          <td class="code"><pre>[&#x27;http://localhost:8080&#x27;]</pre></td>
+          <td class="code"><pre>[]</pre></td>
         </tr>
       
         <tr>
@@ -2290,9 +2161,9 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
              &#x27;CONN_HEALTH_CHECKS&#x27;: False,
              &#x27;CONN_MAX_AGE&#x27;: 0,
              &#x27;ENGINE&#x27;: &#x27;django.db.backends.postgresql&#x27;,
-             &#x27;HOST&#x27;: &#x27;postgresql_auth&#x27;,
-             &#x27;NAME&#x27;: &#x27;braklabnp1312&#x27;,
-             &#x27;OPTIONS&#x27;: {&#x27;sslcert&#x27;: &#x27;/certs/auth_client.crt&#x27;,
+             &#x27;HOST&#x27;: &#x27;postgresql_users&#x27;,
+             &#x27;NAME&#x27;: &#x27;braklalcl1312&#x27;,
+             &#x27;OPTIONS&#x27;: {&#x27;sslcert&#x27;: &#x27;/certs/users_client.crt&#x27;,
                          &#x27;sslkey&#x27;: &#x27;********************&#x27;,
                          &#x27;sslmode&#x27;: &#x27;require&#x27;,
                          &#x27;sslrootcert&#x27;: &#x27;/certs/ca.crt&#x27;},
@@ -2304,7 +2175,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
                       &#x27;MIRROR&#x27;: None,
                       &#x27;NAME&#x27;: None},
              &#x27;TIME_ZONE&#x27;: None,
-             &#x27;USER&#x27;: &#x27;redouanefaid&#x27;}}</pre></td>
+             &#x27;USER&#x27;: &#x27;jacquesmesrine&#x27;}}</pre></td>
         </tr>
       
         <tr>
@@ -2422,7 +2293,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>EMAIL_BACKEND</td>
-          <td class="code"><pre>&#x27;django.core.mail.backends.console.EmailBackend&#x27;</pre></td>
+          <td class="code"><pre>&#x27;django.core.mail.backends.smtp.EmailBackend&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2549,10 +2420,10 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
  &#x27;django.contrib.sessions&#x27;,
  &#x27;django.contrib.messages&#x27;,
  &#x27;django.contrib.staticfiles&#x27;,
- &#x27;corsheaders&#x27;,
  &#x27;rest_framework&#x27;,
  &#x27;rest_framework_simplejwt.token_blacklist&#x27;,
- &#x27;auth_app.apps.AuthAppConfig&#x27;]</pre></td>
+ &#x27;users_app.apps.UsersAppConfig&#x27;,
+ &#x27;corsheaders&#x27;]</pre></td>
         </tr>
       
         <tr>
@@ -2767,7 +2638,9 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
  &#x27;django.middleware.csrf.CsrfViewMiddleware&#x27;,
  &#x27;django.contrib.auth.middleware.AuthenticationMiddleware&#x27;,
  &#x27;django.contrib.messages.middleware.MessageMiddleware&#x27;,
- &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;]</pre></td>
+ &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;,
+ &#x27;users_app.middleware.SetRequestHostMiddleware&#x27;,
+ &#x27;users_app.middleware.UpdateLastUserActivityMiddleware&#x27;]</pre></td>
         </tr>
       
         <tr>
@@ -2802,12 +2675,14 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>REST_FRAMEWORK</td>
-          <td class="code"><pre>{&#x27;DEFAULT_AUTHENTICATION_CLASSES&#x27;: (&#x27;auth_app.authentication.CustomJWTAuth&#x27;,)}</pre></td>
+          <td class="code"><pre>{&#x27;DEFAULT_AUTHENTICATION_CLASSES&#x27;: (&#x27;users_app.authentification.CustomAuthentication&#x27;,),
+ &#x27;DEFAULT_PAGINATION_CLASS&#x27;: &#x27;rest_framework.pagination.LimitOffsetPagination&#x27;,
+ &#x27;PAGE_SIZE&#x27;: 10}</pre></td>
         </tr>
       
         <tr>
           <td>ROOT_URLCONF</td>
-          <td class="code"><pre>&#x27;auth.urls&#x27;</pre></td>
+          <td class="code"><pre>&#x27;users.urls&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2847,7 +2722,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>SECURE_PROXY_SSL_HEADER</td>
-          <td class="code"><pre>(&#x27;HTTP_X_FORWARDED_PROTO&#x27;, &#x27;http&#x27;)</pre></td>
+          <td class="code"><pre>(&#x27;HTTP_X_FORWARDED_PROTO&#x27;, &#x27;https&#x27;)</pre></td>
         </tr>
       
         <tr>
@@ -2942,7 +2817,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>SETTINGS_MODULE</td>
-          <td class="code"><pre>&#x27;auth.settings&#x27;</pre></td>
+          <td class="code"><pre>&#x27;users.settings&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2967,28 +2842,8 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>SIMPLE_JWT</td>
-          <td class="code"><pre>{&#x27;ACCESS_TOKEN_LIFETIME&#x27;: &#x27;********************&#x27;,
- &#x27;ALGORITHM&#x27;: &#x27;RS512&#x27;,
- &#x27;AUDIENCE&#x27;: None,
- &#x27;AUTH_HEADER_NAME&#x27;: &#x27;HTTP_AUTHORIZATION&#x27;,
+          <td class="code"><pre>{&#x27;ALGORITHM&#x27;: &#x27;RS512&#x27;,
  &#x27;AUTH_HEADER_TYPES&#x27;: (&#x27;Bearer&#x27;,),
- &#x27;AUTH_TOKEN_CLASSES&#x27;: &#x27;********************&#x27;,
- &#x27;BLACKLIST_AFTER_ROTATION&#x27;: True,
- &#x27;ISSUER&#x27;: None,
- &#x27;JSON_ENCODER&#x27;: None,
- &#x27;JTI_CLAIM&#x27;: &#x27;jti&#x27;,
- &#x27;JWK_URL&#x27;: None,
- &#x27;LEEWAY&#x27;: 0,
- &#x27;REFRESH_TOKEN_LIFETIME&#x27;: &#x27;********************&#x27;,
- &#x27;ROTATE_REFRESH_TOKENS&#x27;: &#x27;********************&#x27;,
- &#x27;SIGNING_KEY&#x27;: &#x27;********************&#x27;,
- &#x27;TOKEN_OBTAIN_SERIALIZER&#x27;: &#x27;********************&#x27;,
- &#x27;TOKEN_TYPE_CLAIM&#x27;: &#x27;********************&#x27;,
- &#x27;TOKEN_USER_CLASS&#x27;: &#x27;********************&#x27;,
- &#x27;UPDATE_LAST_LOGIN&#x27;: False,
- &#x27;USER_AUTHENTICATION_RULE&#x27;: &#x27;rest_framework_simplejwt.authentication.default_user_authentication_rule&#x27;,
- &#x27;USER_ID_CLAIM&#x27;: &#x27;user_id&#x27;,
- &#x27;USER_ID_FIELD&#x27;: &#x27;id&#x27;,
  &#x27;VERIFYING_KEY&#x27;: &#x27;********************&#x27;}</pre></td>
         </tr>
       
@@ -3023,7 +2878,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
           <td>TEMPLATES</td>
           <td class="code"><pre>[{&#x27;APP_DIRS&#x27;: True,
   &#x27;BACKEND&#x27;: &#x27;django.template.backends.django.DjangoTemplates&#x27;,
-  &#x27;DIRS&#x27;: [&#x27;/code/templates&#x27;],
+  &#x27;DIRS&#x27;: [],
   &#x27;OPTIONS&#x27;: {&#x27;context_processors&#x27;: [&#x27;django.template.context_processors.debug&#x27;,
                                      &#x27;django.template.context_processors.request&#x27;,
                                      &#x27;django.contrib.auth.context_processors.auth&#x27;,
@@ -3087,7 +2942,7 @@ Original exception text was: &#x27;CustomUser&#x27; object has no attribute &#x2
       
         <tr>
           <td>WSGI_APPLICATION</td>
-          <td class="code"><pre>&#x27;auth.wsgi.application&#x27;</pre></td>
+          <td class="code"><pre>&#x27;users.wsgi.application&#x27;</pre></td>
         </tr>
       
         <tr>
