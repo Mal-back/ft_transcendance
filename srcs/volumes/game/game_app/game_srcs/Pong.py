@@ -5,6 +5,12 @@ from .Pad import Pad
 from .Player import Player
 from .Ball import Ball
 import time
+import threading
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+import logging
+
+log = logging.getLogger(__name__)
   
 class Pong():
     def __init__(self, player1 : Player, player2 : Player):
@@ -93,3 +99,16 @@ class Pong():
             self.ball.move()
             if self.checkCollisions() == False:
                 break
+            
+            
+            
+class testThread(threading.Thread):
+    def __init__(self, group_name, **kwargs):
+        super(testThread, self).__init__(daemon=True, name="testThread", **kwargs)
+        log.info("Init thread")
+        self.group_name = group_name
+        log.info("Group name thread = " + self.group_name)
+        self.channel_layers = get_channel_layer()
+        async_to_sync(self.channel_layers.group_send)(self.group_name, {"type" : "chat.message", "message" : "Thread for game is launched"})
+        
+    

@@ -1,4 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer, SyncConsumer
+# from game_app.models import LocalGameRoom
+from game_app.game_srcs.Pong import testThread
 import json
 import logging
 import re
@@ -13,20 +15,22 @@ class PlayerConsumer(AsyncWebsocketConsumer):
         path = self.scope["path"]
         self.room_name = path.rsplit('/', 1)[1]
         await self.accept()
-        await self.send("Channel name : " + self.channel_name)
-        await self.send("Room name : " + self.room_name)
-        await self.channel_layer.group_add(self.room_name, self.channel_name)
+        # self.send("Channel name : " + self.channel_name)
+        # self.send("Room name : " + self.room_name)
+        # await self.channel_layer.group_add(self.room_name, self.channel_name)
         
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_name, self.channel_name)
+        # await self.channel_layer.group_discard(self.room_name, self.channel_name)
         log.info("Player disconnected")
         
     async def chat_message(self, event):
-        await self.send(text_data=event["message"])
-        
-    async def join(self, msg):
-        await self.channel_layer.send("game_engine", {})
+        log.info("chat_message function PlayerCOnsumer")
+        # await self.send(text_data=event["message"])
+
+    async def join(self, msg: dict):
+        log.info("Join function PlayerCOnsumer")
+        # await self.channel_layer.send("game_engine", {"type": "test","name": " Jack"})
         
     
     async def receive(self, text_data=None, bytes_data=None, **kwargs):
@@ -35,18 +39,28 @@ class PlayerConsumer(AsyncWebsocketConsumer):
         msg = content["content"]
         name = content["name"]
         if type == "message":
-            await self.channel_layer.group_send(self.room_name,
-			{
-				"type": "chat.message",
-				"message": name + " : " + msg,
-			})
+            return
+            # await self.channel_layer.group_send(self.room_name,
+			# {
+			# 	"type": "chat.message",
+			# 	"message": name + " : " + msg,
+			# })
         elif type == "join":
-            self.join("test")
+            self.join({"name" : "Jack",})
         else:
             log.warn("unknown type message from websocket")
             
+            
 class GameConsumer(SyncConsumer):
     def __init__(self, *args, **kwargs):
-        log.info("Game Consumer: %s %s", args, kwargs)
+        """
+        Created on demand when the first player joins.
+        """
+        log.info("Test GameConsumer init")
         super().__init__(*args, **kwargs)
-        self.groupe_name = ""
+        self.group_name = "985"
+        # self.engine = testThread(self.group_name)
+        
+        
+    def test(self, event):
+        log.info("Test GameConsumer")
