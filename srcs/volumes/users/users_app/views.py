@@ -119,6 +119,11 @@ class PublicUserListFriends(generics.ListAPIView):
         user = get_object_or_404(PublicUser, username=username)
         return user.friends.all()
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
 class PublicUserRemoveFriend(APIView):
     permission_classes = [IsOwner]
     lookup_field = 'username'

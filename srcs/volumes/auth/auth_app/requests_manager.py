@@ -39,9 +39,11 @@ def send_delete_requests(urls:list, body={}, headers={}) -> bool :
     for url in urls:
         send_request(url=url, method='delete', body=body, headers=headers)
 
-def send_update_requests( old_username:str ,rurls:list, body={}, headers={}) -> bool:
+def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bool:
     token = getToken()  
     headers.update({'Authorization': f'Bearer {token}'})
+    for url in urls:
+        send_request(url=url, method='patch', body=body, headers=headers)
 
 def getToken():
     auth = Token.objects.get(serviceName='auth')

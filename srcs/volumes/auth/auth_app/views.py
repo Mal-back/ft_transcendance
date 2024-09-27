@@ -6,7 +6,7 @@ from rest_framework.views import APIView, Response, csrf_exempt
 from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, MyTokenObtainPairSerializer, PasswordModficationSerializer
 from .permissions import IsOwner
 from .models import CustomUser
-from .requests_manager import send_delete_requests, send_create_requests
+from .requests_manager import send_delete_requests, send_create_requests, send_update_requests
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 # Create your views here.
@@ -56,14 +56,12 @@ class UserUpdateView(generics.UpdateAPIView):
         instance = self.get_object()
         old_username = instance.username
         new_username = serializer.validated_data.get('username', old_username)
-        # if old_username != new_username:
-        #     req_url = f'http://users:8443/api/users/{old_username}/update/'
-        #     if send_request(url=req_url, method='patch', body={'username':new_username}) != 200:
-        #         raise serializers.ValidationError('Invalid data sent to users ms')
-        #     else :
-        #         serializer.save()
-        # else:
-        #     serializer.save()
+        if old_username != new_username:
+            req_urls = ['http://users:8443/api/users/{old_username}/update/']
+            send_update_requests(old_username, req_urls, body={'username':new_username})
+            serializer.save()
+        else:
+            serializer.save()
         return serializer.instance
 
     def update(self, request, *args, **kwargs):

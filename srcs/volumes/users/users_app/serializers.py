@@ -98,18 +98,11 @@ class PublicUserListSerializer(serializers.ModelSerializer):
         if obj.last_seen_online == None or now() - obj.last_seen_online > timedelta(minutes=5):
             return False 
         return True
-
+    
     def get_is_your_friend(self, obj):
         request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            if obj.id == request.user.id:
-                return None
-            try:
-                user = PublicUser.objects.get(pk=request.user.id)
-            except PublicUser.DoesNotExist:
-                return None
-            if user.friends.filter(id=obj.pk).exists():
-                return True
-            return False
-        else :
+        if request.user and obj.id == request.user.id:
             return None
+        if request.user.friends.filter(id=obj.pk).exists():
+            return True
+        return False
