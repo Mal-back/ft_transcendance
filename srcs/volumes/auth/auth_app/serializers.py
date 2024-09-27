@@ -90,12 +90,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['username'] = user.username
         del token['user_id']
-        if user.groups.filter(name='service').exists():
-            token.set_exp(lifetime=timedelta(hours=12))
-            token.set_exp(lifetime=timedelta(days=3), claim='refresh')
-        else:
-            token.set_exp(lifetime=timedelta(minutes=5))
-            token.set_exp(lifetime=timedelta(days=1), claim='refresh')
+        token.set_exp(lifetime=timedelta(minutes=5))
+        token.payload['exp'] = (datetime.utcnow() + timedelta(days=1)).timestamp()
 
         return token
 

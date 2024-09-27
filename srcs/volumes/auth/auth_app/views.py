@@ -56,14 +56,14 @@ class UserUpdateView(generics.UpdateAPIView):
         instance = self.get_object()
         old_username = instance.username
         new_username = serializer.validated_data.get('username', old_username)
-        if old_username != new_username:
-            req_url = f'http://users:8443/api/users/{old_username}/update/'
-            if send_request(url=req_url, method='patch', body={'username':new_username}) != 200:
-                raise serializers.ValidationError('Invalid data sent to users ms')
-            else :
-                serializer.save()
-        else:
-            serializer.save()
+        # if old_username != new_username:
+        #     req_url = f'http://users:8443/api/users/{old_username}/update/'
+        #     if send_request(url=req_url, method='patch', body={'username':new_username}) != 200:
+        #         raise serializers.ValidationError('Invalid data sent to users ms')
+        #     else :
+        #         serializer.save()
+        # else:
+        #     serializer.save()
         return serializer.instance
 
     def update(self, request, *args, **kwargs):
