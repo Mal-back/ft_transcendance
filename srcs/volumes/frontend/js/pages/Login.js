@@ -93,6 +93,13 @@ export default class extends AbstractView {
       if (response.ok) {
         console.log("login response.ok");
         const data = await response.json();
+        const parseAccess = this.parseJwt(data.access);
+        const parseRefresh = this.parseJwt(data.refresh);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        console.log(
+          `TIME\n, parseAccess.exp = ${parseAccess.exp}, parseRefresh.exp = ${parseRefresh.exp}, currentTime= ${currentTime}`,
+        );
         setSessionStorage(data, nameForm);
         navigateTo("/");
       } else {

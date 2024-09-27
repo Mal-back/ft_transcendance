@@ -25,6 +25,7 @@ export default class extends AbstractView {
       );
       console.log("FWUFBWUFWBU");
       console.log("Request:", request);
+
       const response = await fetch(request);
       if (response.ok) {
         // const data = await response.json();
@@ -75,6 +76,7 @@ export default class extends AbstractView {
       console.error("error", error.message);
       throw error;
     }
+    return htmlContent;
   }
 
   createAvatarElement(friendJson) {
@@ -237,7 +239,7 @@ export default class extends AbstractView {
   }
 
   async createFriendList() {
-    const friendList = document.querySelector("#friendList");
+    const friendList = document.querySelector("#friendsList");
     const username = sessionStorage.getItem("username_transcendence");
     try {
       const request = await this.makeRequest(
@@ -250,6 +252,11 @@ export default class extends AbstractView {
       if (response.ok) {
         const data = await response.json();
         console.log("data:", data);
+        if (data.count == 0){
+          console.log("LOL NO FRIENDS");
+          friendList.textContent = "No Friends :(";
+          return ;
+        }
         const friendsArray = Object.values(data).map((value) => [value]);
         console.log("friendsArray = ", friendsArray);
         console.log("first friend = ", friendsArray[0]);

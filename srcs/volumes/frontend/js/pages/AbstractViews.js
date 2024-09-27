@@ -206,6 +206,11 @@ export default class {
         }),
       });
       console.log("Refresh Request:", request);
+      console.log("Request body: ", JSON.stringify({
+        refresh: refreshJWT,
+      }));
+      const parseRefresh = this.parseJwt(refreshJWT);
+      console.log("refresh.exp", parseRefresh.exp);
       const response = await fetch(request);
       if (response.ok) {
         const data = await response.json();

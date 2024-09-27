@@ -3,20 +3,20 @@ import { navigateTo } from "../router.js";
 import { removeSessionStorage, setSessionStorage } from "./Utils.js";
 
 export default class extends AbstractView {
-  constructor() {
-    super();
-    this.setTitle("Settings");
-    this.selectedBackground = null;
-  }
+    constructor() {
+        super();
+        this.setTitle("Settings");
+        this.selectedBackground = null;
+    }
 
-  async loadCss() {
-    this.createPageCss("../css/profile.css");
-    this.createPageCss("../css/background-profile.css");
-    this.createPageCss("../css/buttons.css");
-  }
+    async loadCss() {
+        this.createPageCss("../css/profile.css");
+        this.createPageCss("../css/background-profile.css");
+        this.createPageCss("../css/buttons.css");
+    }
 
-  async getHtml() {
-    return `
+    async getHtml() {
+        return `
     <div class="background">
     <div class="Profile container">
         <div class="container mt-4">
@@ -281,334 +281,334 @@ export default class extends AbstractView {
     </div>
 </div>
             `;
-  }
-
-  async changeUsername() {
-    console.log("CHANGE USERNAME");
-    const username = sessionStorage.getItem("username_transcendence");
-    const newUsername = document.querySelector(
-      "input[name='UsernameChange']",
-    ).value;
-    if (this.sanitizeInput([newUsername]) == false) {
-      return;
     }
-    console.log("newUsername = ", newUsername);
-    try {
-      const request = await this.makeRequest(
-        "/api/auth/update/" + username,
-        "PATCH",
-        {
-          username: newUsername,
-        },
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        this.showModalWithError("Success", "Username change succesfuly");
-        sessionStorage.setItem("username_transcendence", newUsername);
-        console.log("rsponse", response);
-        const data = await response.json();
-        setSessionStorage(data, newUsername);
-      } else {
-        const dataError = await response.json();
-        this.showModalWithError("Error", dataError);
-      }
-    } catch (error) {
-      console.error("Error in changeUsername Request");
-      this.showModalWithError("Error", error.message);
-    }
-  }
 
-  async checkoldMail(mailTocheck) {
-    const username = sessionStorage.getItem("username_transcendence");
-    try {
-      const request = await this.makeRequest("/api/auth/" + username, "GET");
-      const response = await fetch(request);
-      if (response.ok) {
-        const data = await response.json();
-        console.log(
-          "old mail = " + data.email + "oldMail == data.mail :",
-          data.email == mailTocheck,
+    async changeUsername() {
+        console.log("CHANGE USERNAME");
+        const username = sessionStorage.getItem("username_transcendence");
+        const newUsername = document.querySelector(
+            "input[name='UsernameChange']",
+        ).value;
+        if (this.sanitizeInput([newUsername]) == false) {
+            return;
+        }
+        console.log("newUsername = ", newUsername);
+        try {
+            const request = await this.makeRequest(
+                "/api/auth/update/" + username,
+                "PATCH",
+                {
+                    username: newUsername,
+                },
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                this.showModalWithError("Success", "Username change succesfuly");
+                sessionStorage.setItem("username_transcendence", newUsername);
+                console.log("rsponse", response);
+                const data = await response.json();
+                setSessionStorage(data, newUsername);
+            } else {
+                const dataError = await response.json();
+                this.showModalWithError("Error", dataError);
+            }
+        } catch (error) {
+            console.error("Error in changeUsername Request");
+            this.showModalWithError("Error", error.message);
+        }
+    }
+
+    async checkoldMail(mailTocheck) {
+        const username = sessionStorage.getItem("username_transcendence");
+        try {
+            const request = await this.makeRequest("/api/auth/" + username, "GET");
+            const response = await fetch(request);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(
+                    "old mail = " + data.email + "oldMail == data.mail :",
+                    data.email == mailTocheck,
+                );
+                return data.email == mailTocheck;
+            } else {
+                removeSessionStorage();
+                navigateTo("/login");
+                this.showModalWithError(
+                    "Error",
+                    "Authentification error, re-login please",
+                );
+            }
+        } catch (error) {
+            console.error("Error in checkoldMail:", error);
+            throw error;
+        }
+    }
+
+    async changePassword() {
+        const username = sessionStorage.getItem("username_transcendence");
+        const oldPassword = document.querySelector(
+            "input[name='oldPassword']",
+        ).value;
+        const newPassword = document.querySelector(
+            "input[name='newPassword']",
+        ).value;
+        const confirmPassword = document.querySelector(
+            "input[name='confirmPassword']",
+        ).value;
+        if (
+            this.sanitizeInput([newPassword, oldPassword, confirmPassword]) == false
+        ) {
+            return;
+        }
+        if (newPassword != confirmPassword) {
+            this.showModalWithError(
+                "Error",
+                "New password and its confirmation do not match",
+            );
+            return false;
+        }
+        try {
+            const request = await this.makeRequest(
+                "/api/auth/password/" + username,
+                "PATCH",
+                {
+                    password: oldPassword,
+                    new_password: newPassword,
+                    new_password2: confirmPassword,
+                },
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                this.showModalWithError("Success", "Password change succesfuly");
+                console.log("response", response);
+                // const data = await response.json();
+                // console.log("data after change =", data);
+            } else {
+                const dataError = await response.json();
+                this.showModalWithError("Error", dataError);
+            }
+        } catch (error) {
+            console.error("Error in changePass Request");
+            this.showModalWithError("Error", error.message);
+            throw error;
+        }
+    }
+
+    async changeMail() {
+        console.log("CHANGE MAIL");
+        const username = sessionStorage.getItem("username_transcendence");
+        const oldMail = document.querySelector("input[name='oldMail']").value;
+        const newMail = document.querySelector("input[name='mailChange']").value;
+        const checkMail = document.querySelector("input[name='checkMail']").value;
+        if (this.sanitizeInput([newMail, oldMail, checkMail]) == false) {
+            return;
+        }
+        console.log("newMail = ", newMail);
+        if (newMail != checkMail) {
+            this.showModalWithError(
+                "Error",
+                "New e-mail and its confirmation do not match",
+            );
+            return false;
+        }
+        try {
+            if ((await this.checkoldMail(oldMail)) == false) {
+                this.showModalWithError("Error", "Incorrect old E-mail address");
+                return;
+            }
+        } catch (error) {
+            throw error;
+        }
+        try {
+            const request = await this.makeRequest(
+                "/api/auth/update/" + username,
+                "PATCH",
+                {
+                    email: newMail,
+                },
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                this.showModalWithError("Success", "E-mail change succesfuly");
+                const data = await response.json();
+                console.log("data after change =", data);
+            } else {
+                const dataError = await response.json();
+                this.showModalWithError("Error", dataError);
+            }
+        } catch (error) {
+            console.error("Error in changeMail Request");
+            this.showModalWithError("Error", error.message);
+            throw error;
+        }
+    }
+
+    async deleteAccount() {
+        const username = sessionStorage.getItem("username_transcendence");
+        try {
+            const request = await this.makeRequest(
+                `/api/auth/delete/${username}`, // Assuming this is your delete endpoint
+                "DELETE",
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                removeSessionStorage();
+                this.cleanModal();
+                this.showModalWithError("Success", "Account successfully deleted.");
+
+                navigateTo("/"); // Navigate the user back to login after account deletion
+                // window.location.href = "/";
+            } else {
+                const dataError = await response.json();
+                this.showModalWithError("Error", dataError);
+            }
+        } catch (error) {
+            console.error("Error during account deletion request:", error);
+            this.showModalWithError("Error", error.message);
+        }
+    }
+
+    selectProfileBackground(imagePath, element) {
+        this.selectedBackground = imagePath;
+        document.getElementById(
+            "currentProfileBackgroundPreview",
+        ).style.backgroundImage = `url(${imagePath})`;
+        // Deselect other images
+        let images = document.querySelectorAll(".img-fluid");
+        images.forEach((img) => img.classList.remove("border-success"));
+        element.classList.add("border-success");
+    }
+    async addEventListeners() {
+        try {
+            const button = document.querySelector("#changeUsername");
+            if (button) {
+                button.addEventListener("click", async (ev) => {
+                    ev.preventDefault();
+                    console.debug("Submit button clicked!");
+                    try {
+                        await this.changeUsername();
+                    } catch (error) {
+                        console.error("Caught in Event Listener:", error.message);
+                    }
+                });
+            }
+            const buttonMail = document.querySelector("#confirmChangesMail");
+            if (buttonMail) {
+                buttonMail.addEventListener("click", async (ev) => {
+                    ev.preventDefault();
+                    console.debug("Submit button clicked!");
+                    try {
+                        await this.changeMail();
+                    } catch (error) {
+                        console.error("error: ", error.message);
+                        // throw error;
+                    }
+                });
+            }
+            const buttonPass = document.querySelector(
+                "#confirm-changes-password-btn",
+            );
+            if (buttonPass) {
+                buttonPass.addEventListener("click", async (ev) => {
+                    console.log("change password button pressed");
+                    ev.preventDefault();
+                    try {
+                        await this.changePassword();
+                    } catch (error) {
+                        console.error("error: ", error.message);
+                    }
+                });
+            }
+
+            const deleteAccountButton = document.querySelector(
+                "#confirmDeleteAccountBtn",
+            );
+            if (deleteAccountButton) {
+                deleteAccountButton.addEventListener("click", async (ev) => {
+                    ev.preventDefault();
+                    console.debug("Delete Account confirmed!");
+                    try {
+                        await this.deleteAccount();
+                    } catch (error) {
+                        console.error("Error while deleting account:", error.message);
+                    }
+                });
+            }
+
+            const openDeleteAccountModalButton =
+                document.querySelector(".btn-warning"); // Assuming the "Delete Account" button is the warning button
+            if (openDeleteAccountModalButton) {
+                openDeleteAccountModalButton.addEventListener("click", (ev) => {
+                    ev.preventDefault();
+                    console.debug("Delete Account button pressed!");
+                });
+            }
+            // Handle the profile background confirmation
+            const images = document.querySelectorAll(".img-fluid");
+            images.forEach((img) => {
+                img.addEventListener("click", (event) => {
+                    this.selectProfileBackground(img.src, img); // Call the method using 'this'
+                });
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    removeEventListeners() {
+        const changeUsernameButton = document.querySelector("#changeUsername");
+        if (changeUsernameButton) {
+            changeUsernameButton.removeEventListener("click", this.changeUsername);
+        }
+        const deleteAccountButton = document.querySelector(
+            "#confirmDeleteAccountBtn",
         );
-        return data.email == mailTocheck;
-      } else {
-        removeSessionStorage();
-        navigateTo("/login");
-        this.showModalWithError(
-          "Error",
-          "Authentification error, re-login please",
+        if (deleteAccountButton) {
+            deleteAccountButton.removeEventListener("click", this.deleteAccount);
+        }
+
+        const openDeleteAccountModalButton = document.querySelector(".btn-warning");
+        if (openDeleteAccountModalButton) {
+            openDeleteAccountModalButton.removeEventListener(
+                "click",
+                this.openDeleteAccountModal,
+            );
+        }
+        const confirmProfileBackgroundButton = document.querySelector(
+            "#confirm-profile-background-btn",
         );
-      }
-    } catch (error) {
-      console.error("Error in checkoldMail:", error);
-      throw error;
+        if (confirmProfileBackgroundButton) {
+            confirmProfileBackgroundButton.removeEventListener(
+                "click",
+                this.confirmProfileBackground,
+            );
+        }
+        const uploadProfileBackgroundInput = document.querySelector(
+            "#uploadProfileBackground",
+        );
+        if (uploadProfileBackgroundInput) {
+            uploadProfileBackgroundInput.removeEventListener(
+                "change",
+                this.uploadProfileBackground,
+            );
+        }
+        const changeMailButton = document.querySelector("#confirmChangesMail");
+        if (changeMailButton) {
+            changeMailButton.removeEventListener("click", this.changeMail);
+        }
     }
-  }
+    removeCss() {
+        document.querySelectorAll(".page-css").forEach((e) => {
+            console.log("removing: ", e);
+            e.remove();
+        });
+    }
 
-  async changePassword() {
-    const username = sessionStorage.getItem("username_transcendence");
-    const oldPassword = document.querySelector(
-      "input[name='oldPassword']",
-    ).value;
-    const newPassword = document.querySelector(
-      "input[name='newPassword']",
-    ).value;
-    const confirmPassword = document.querySelector(
-      "input[name='confirmPassword']",
-    ).value;
-    if (
-      this.sanitizeInput([newPassword, oldPassword, confirmPassword]) == false
-    ) {
-      return;
-    }
-    if (newPassword != confirmPassword) {
-      this.showModalWithError(
-        "Error",
-        "New password and its confirmation do not match",
-      );
-      return false;
-    }
-    try {
-      const request = await this.makeRequest(
-        "/api/auth/password/" + username,
-        "PATCH",
-        {
-          password: oldPassword,
-          new_password: newPassword,
-          new_password2: confirmPassword,
-        },
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        this.showModalWithError("Success", "Password change succesfuly");
-        console.log("response", response);
-        // const data = await response.json();
-        // console.log("data after change =", data);
-      } else {
-        const dataError = await response.json();
-        this.showModalWithError("Error", dataError);
-      }
-    } catch (error) {
-      console.error("Error in changePass Request");
-      this.showModalWithError("Error", error.message);
-      throw error;
-    }
-  }
-
-  async changeMail() {
-    console.log("CHANGE MAIL");
-    const username = sessionStorage.getItem("username_transcendence");
-    const oldMail = document.querySelector("input[name='oldMail']").value;
-    const newMail = document.querySelector("input[name='mailChange']").value;
-    const checkMail = document.querySelector("input[name='checkMail']").value;
-    if (this.sanitizeInput([newMail, oldMail, checkMail]) == false) {
-      return;
-    }
-    console.log("newMail = ", newMail);
-    if (newMail != checkMail) {
-      this.showModalWithError(
-        "Error",
-        "New e-mail and its confirmation do not match",
-      );
-      return false;
-    }
-    try {
-      if ((await this.checkoldMail(oldMail)) == false) {
-        this.showModalWithError("Error", "Incorrect old E-mail address");
-        return;
-      }
-    } catch (error) {
-      throw error;
-    }
-    try {
-      const request = await this.makeRequest(
-        "/api/auth/update/" + username,
-        "PATCH",
-        {
-          email: newMail,
-        },
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        this.showModalWithError("Success", "E-mail change succesfuly");
-        const data = await response.json();
-        console.log("data after change =", data);
-      } else {
-        const dataError = await response.json();
-        this.showModalWithError("Error", dataError);
-      }
-    } catch (error) {
-      console.error("Error in changeMail Request");
-      this.showModalWithError("Error", error.message);
-      throw error;
-    }
-  }
-
-  async deleteAccount() {
-    const username = sessionStorage.getItem("username_transcendence");
-    try {
-      const request = await this.makeRequest(
-        `/api/auth/delete/${username}`, // Assuming this is your delete endpoint
-        "DELETE",
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        removeSessionStorage();
+    destroy() {
         this.cleanModal();
-        this.showModalWithError("Success", "Account successfully deleted.");
-
-        navigateTo("/"); // Navigate the user back to login after account deletion
-        // window.location.href = "/";
-      } else {
-        const dataError = await response.json();
-        this.showModalWithError("Error", dataError);
-      }
-    } catch (error) {
-      console.error("Error during account deletion request:", error);
-      this.showModalWithError("Error", error.message);
+        this.removeEventListeners();
+        this.removeCss();
     }
-  }
-
-  selectProfileBackground(imagePath, element) {
-    this.selectedBackground = imagePath;
-    document.getElementById(
-      "currentProfileBackgroundPreview",
-    ).style.backgroundImage = `url(${imagePath})`;
-    // Deselect other images
-    let images = document.querySelectorAll(".img-fluid");
-    images.forEach((img) => img.classList.remove("border-success"));
-    element.classList.add("border-success");
-  }
-  async addEventListeners() {
-    try {
-      const button = document.querySelector("#changeUsername");
-      if (button) {
-        button.addEventListener("click", async (ev) => {
-          ev.preventDefault();
-          console.debug("Submit button clicked!");
-          try {
-            await this.changeUsername();
-          } catch (error) {
-            console.error("Caught in Event Listener:", error.message);
-          }
-        });
-      }
-      const buttonMail = document.querySelector("#confirmChangesMail");
-      if (buttonMail) {
-        buttonMail.addEventListener("click", async (ev) => {
-          ev.preventDefault();
-          console.debug("Submit button clicked!");
-          try {
-            await this.changeMail();
-          } catch (error) {
-            console.error("error: ", error.message);
-            // throw error;
-          }
-        });
-      }
-      const buttonPass = document.querySelector(
-        "#confirm-changes-password-btn",
-      );
-      if (buttonPass) {
-        buttonPass.addEventListener("click", async (ev) => {
-          console.log("change password button pressed");
-          ev.preventDefault();
-          try {
-            await this.changePassword();
-          } catch (error) {
-            console.error("error: ", error.message);
-          }
-        });
-      }
-
-      const deleteAccountButton = document.querySelector(
-        "#confirmDeleteAccountBtn",
-      );
-      if (deleteAccountButton) {
-        deleteAccountButton.addEventListener("click", async (ev) => {
-          ev.preventDefault();
-          console.debug("Delete Account confirmed!");
-          try {
-            await this.deleteAccount();
-          } catch (error) {
-            console.error("Error while deleting account:", error.message);
-          }
-        });
-      }
-
-      const openDeleteAccountModalButton =
-        document.querySelector(".btn-warning"); // Assuming the "Delete Account" button is the warning button
-      if (openDeleteAccountModalButton) {
-        openDeleteAccountModalButton.addEventListener("click", (ev) => {
-          ev.preventDefault();
-          console.debug("Delete Account button pressed!");
-        });
-      }
-      // Handle the profile background confirmation
-      const images = document.querySelectorAll(".img-fluid");
-      images.forEach((img) => {
-        img.addEventListener("click", (event) => {
-          this.selectProfileBackground(img.src, img); // Call the method using 'this'
-        });
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  removeEventListeners() {
-    const changeUsernameButton = document.querySelector("#changeUsername");
-    if (changeUsernameButton) {
-      changeUsernameButton.removeEventListener("click", this.changeUsername);
-    }
-    const deleteAccountButton = document.querySelector(
-      "#confirmDeleteAccountBtn",
-    );
-    if (deleteAccountButton) {
-      deleteAccountButton.removeEventListener("click", this.deleteAccount);
-    }
-
-    const openDeleteAccountModalButton = document.querySelector(".btn-warning");
-    if (openDeleteAccountModalButton) {
-      openDeleteAccountModalButton.removeEventListener(
-        "click",
-        this.openDeleteAccountModal,
-      );
-    }
-    const confirmProfileBackgroundButton = document.querySelector(
-      "#confirm-profile-background-btn",
-    );
-    if (confirmProfileBackgroundButton) {
-      confirmProfileBackgroundButton.removeEventListener(
-        "click",
-        this.confirmProfileBackground,
-      );
-    }
-    const uploadProfileBackgroundInput = document.querySelector(
-      "#uploadProfileBackground",
-    );
-    if (uploadProfileBackgroundInput) {
-      uploadProfileBackgroundInput.removeEventListener(
-        "change",
-        this.uploadProfileBackground,
-      );
-    }
-    const changeMailButton = document.querySelector("#confirmChangesMail");
-    if (changeMailButton) {
-      changeMailButton.removeEventListener("click", this.changeMail);
-    }
-  }
-  removeCss() {
-    document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
-      e.remove();
-    });
-  }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-  }
 }
 // const confirmButton = document.getElementById('confirm-profile-background-btn');
 // if (confirmButton) {
