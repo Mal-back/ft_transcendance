@@ -23,7 +23,6 @@ export default class extends AbstractView {
         "PATCH",
         null,
       );
-      console.log("FWUFBWUFWBU");
       console.log("Request:", request);
 
       const response = await fetch(request);
@@ -57,27 +56,50 @@ export default class extends AbstractView {
       navigateTo("/login");
       throw new Error("Redirect to login");
     }
-    const htmlContent = `
-            <div class="background">
-              <div class="container mt-4">
-                <!-- Search Bar -->
-                  <div class="bg-* text-white text-center p-3 rounded">
-                   <h3 class="mb-0">Friends</h3>
-                  </div>
-                  <div class="list-group" id="friendsList">
-                  </div>
-              </div>
-            </div>
-            `;
-    document.querySelector("#app").innerHTML = htmlContent;
+    const background = document.createElement("div");
+    background.classList.add("background");
+    const container = document.createElement("div");
+    container.classList.add("container", "mt-4");
+    const textDiv = document.createElement("div");
+    textDiv.classList.add(
+      "bg-*",
+      "text-white",
+      "text-center",
+      "p-3",
+      "rounded",
+    );
+    const text = document.createElement("h3");
+    text.classList.add("mb-0");
+    text.textContent = "Friends";
+    textDiv.appendChild(text);
+    container.appendChild(textDiv);
+    const list = document.createElement("div");
+    list.classList.add("list-group");
+    list.id = "friendsList";
+    // const htmlContent = `
+    //         <div class="background">
+    //           <div class="container mt-4">
+    //             <!-- Search Bar -->
+    //               <div class="bg-* text-white text-center p-3 rounded">
+    //                <h3 class="mb-0">Friends</h3>
+    //               </div>
+    //               <div class="list-group" id="friendsList">
+    //               </div>
+    //           </div>
+    //         </div>
+    //         `;
+    // const app = (document.querySelector("#app").innerHTML = htmlContent);
+    //
     try {
-      await this.createFriendList();
+      await this.createFriendList(list);
     } catch (error) {
       console.error("error", error.message);
       throw error;
     }
-    console.log("htmlContent:", htmlContent);
-    return htmlContent;
+    container.appendChild(list);
+    background.appendChild(container);
+    console.info("BACKGROUND", background.outerHTML);
+    return background.outerHTML;
   }
 
   createAvatarElement(friendJson) {
@@ -93,6 +115,7 @@ export default class extends AbstractView {
       "me-3",
     );
     friendAvatar.style = `background-image: ${friendJson.profilePic}`;
+    // friendAvatar.style.backgroundImage = `url('${friendJson.profilePic}')`;
     friendAvatar.alt = "Avatar";
     return friendAvatar;
   }
@@ -112,6 +135,7 @@ export default class extends AbstractView {
     buttonProfile.classList.add("text-decoration-none", "text-primary");
     buttonProfile.setAttribute("data-bs-toggle", "modal");
     buttonProfile.setAttribute("data-bs-target", nameModal);
+    buttonProfile.textContent = "Show Profile";
 
     friendName.appendChild(buttonProfile);
     return friendName;
@@ -183,7 +207,8 @@ export default class extends AbstractView {
     modalBodyFlex.appendChild(modalBodyText);
 
     modalBody.appendChild(modalBodyFlex);
-    friendMainDiv.appendChild(modalBody);
+    friendModal.appendChild(modalBody);
+    friendMainDiv.appendChild(friendModal);
   }
 
   createFriendElement(friendMainDiv, friendJson) {
@@ -220,8 +245,8 @@ export default class extends AbstractView {
     const friendMainDiv = document.createElement("div");
     this.createFriendElement(friendMainDiv, friendJson);
     this.createFriendModal(friendMainDiv, friendJson);
-    console.log("FRIENDLISTEND:", friendList);
     friendList.appendChild(friendMainDiv);
+    console.log("FRIENDLISTEND:", friendList);
   }
 
   forLoopArray(friendsArray, friendList) {
@@ -232,8 +257,7 @@ export default class extends AbstractView {
     }
   }
 
-  async createFriendList() {
-    const friendList = document.querySelector("#friendsList");
+  async createFriendList(friendList) {
     const username = sessionStorage.getItem("username_transcendence");
     let data = null;
     try {
@@ -260,29 +284,43 @@ export default class extends AbstractView {
       console.trace();
     }
 
-    const count = data.count;
     let friendsArray = data.results;
     console.log("FRIENDARRAY:", friendsArray);
 
     this.forLoopArray(friendsArray, friendList);
-    for (let indexPage = 1; indexPage < count; indexPage++) {
+    let nextPage = data.next;
+    while (nextPage) {
       try {
-        const request = await this.makeRequest(`${data.next}`, "GET", null);
+        const request = await this.makeRequest(nextPage, "GET", null);
         const response = await fetch(request);
         if (response.ok) {
-          console.log(`Response for indexPage(${indexPage})`, response);
-          this.forLoopArray(friendsArray, friendList);
+          const pageData = await response.json();
+          friendsArray = pageData.results; // Fetch new results
+          this.forLoopArray(friendsArray, friendList); // Append new friends
+          nextPage = pageData.next; // Update next page
         } else {
-          console.log(
-            `Error in Response for indexPage(${indexPage})`,
-            response,
-          );
-          return;
+          console.log("Error in fetching next page:", response);
+          break;
         }
       } catch (error) {
-        console.error("Error in loop friend:", error.messge);
+        console.error("Error fetching next page:", error.message);
+        break;
       }
     }
+  }
+
+  async addEventListeners() {
+    document.querySelectorAll(".btn-danger").forEach(function(button) {
+      button.addEventListener("click", function() {
+        const username = button
+          .closest(".list-group-item")
+          .querySelector("h5").textContent;
+        console.log("Removing:", username);
+      });
+    });
+    const arrayModal = document
+      .querySelector("#friendsList")
+      .querySelectorAll();
   }
 
   removeEventListeners() {

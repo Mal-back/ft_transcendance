@@ -31,7 +31,7 @@ const router = async () => {
     { path: "/logout", view: Logout },
     { path: "/epic-mode", view: EpicMode },
     { path: "/settings", view: Settings },
-    { path: "/friends", view: Friends}
+    { path: "/friends", view: Friends },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -143,7 +143,7 @@ const router = async () => {
   // Call the function to print all CSS links
 
   //print all html
-  // console.log(document.documentElement.outerHTML);
+  console.log(document.documentElement.outerHTML);
 };
 
 window.addEventListener("popstate", router);

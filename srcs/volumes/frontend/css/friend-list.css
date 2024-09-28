@@ -10,7 +10,6 @@
     max-height: 70px;
     min-width: 50px;
     min-height: 50px;
-
 }
 
 /* Ensure border is always applied */
@@ -31,4 +30,8 @@
     border: none;
     color: #007bff;
     text-decoration: none;
+}
+
+#friendsList {
+    display: block;
 }
