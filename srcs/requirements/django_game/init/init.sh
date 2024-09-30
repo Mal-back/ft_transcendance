@@ -1,4 +1,4 @@
-/bin/bash
+#!/bin/bash
 
 pip install --upgrade pip --no-input
 pip install -r /init/requirements.txt --no-input
@@ -11,6 +11,6 @@ fi
 if ["$DUMP_DATA" == "True" ] ; then
 	exec python3 gunicornWrapper.py
 else
-	exec daphne -b '0.0.0.0' -p '8443' game.asgi:application -v2
-	exec python3 manage.py runworker game_engine
+	daphne -b '0.0.0.0' -p '8443' game.asgi:application -v2
+	python3 manage.py runworker game_engine
 fi
