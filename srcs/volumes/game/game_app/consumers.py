@@ -6,6 +6,7 @@ import logging
 from asgiref.sync import async_to_sync, sync_to_async
 import django
 django.setup()
+import threading
 from game_app.models import LocalGame
 
 log = logging.getLogger(__name__)
@@ -70,50 +71,7 @@ class LocalGameConsumer(SyncConsumer):
         group_name = event["game_id"]
         self.game_instances.update({group_name: LocalEngine(group_name=group_name),})
         self.game_instances[group_name].start()
+        self.game_instances[group_name].test()
         
-        
-    
-# class PlayerConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         path = self.scope["path"]
-#         self.group_name = path.rsplit('/', 1)[1]
-#         await self.accept()
-#         await self.send("Channel name : " + self.channel_name)
-#         await self.send("Room name : " + self.group_name)
-#         await self.channel_layer.group_add(self.group_name, self.channel_name)
-        
-
-#     async def disconnect(self, close_code):
-#         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-#         log.info("Player disconnected")
-        
-#     async def chat_message(self, event):
-#         log.info("chat_message function PlayerCOnsumer")
-#         await self.send(text_data=event["message"])
-
-#     async def join(self, msg: dict):
-#         log.info("Join function PlayerCOnsumer")
-        
-#         await self.channel_layer.send(
-#     "game_engine",
-#     {
-#         "type": "test.init",
-#         "group_name": self.group_name,
-#     },
-# )
-
-#     async def receive(self, text_data=None, bytes_data=None, **kwargs):
-#         content = json.loads(text_data)
-#         type = content["type"]
-#         msg = content["content"]
-#         name = content["name"]
-#         if type == "message":
-#             await self.channel_layer.group_send(self.group_name,
-# 			{
-# 				"type": "chat.message",
-# 				"message": name + " : " + msg,
-# 			})
-#         elif type == "join":
-#             return await self.join({"name" : "Jack",})
-#         else:
-#             log.warn("unknown type message from websocket")
+    def join_thread(self, event):
+        return
