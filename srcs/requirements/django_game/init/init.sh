@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export DJANGO_SETTINGS_MODULE=game.settings
 pip install --upgrade pip --no-input
 pip install -r /init/requirements.txt --no-input
 python3 manage.py makemigrations --noinput
@@ -12,5 +13,5 @@ if ["$DUMP_DATA" == "True" ] ; then
 	exec python3 gunicornWrapper.py
 else
 	daphne -b '0.0.0.0' -p '8443' game.asgi:application -v2
-	python3 manage.py runworker game_engine
+	# python3 manage.py runworker game_engine
 fi

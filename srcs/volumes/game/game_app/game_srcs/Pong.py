@@ -99,16 +99,40 @@ class Pong():
             self.ball.move()
             if self.checkCollisions() == False:
                 break
-            
-            
-            
-class testThread(threading.Thread):
+
+
+class LocalEngine(threading.Thread):
     def __init__(self, group_name, **kwargs):
-        super(testThread, self).__init__(daemon=True, name="testThread", **kwargs)
-        log.info("Init thread")
+        super(LocalEngine, self).__init__(daemon=True, name=group_name, **kwargs)
         self.group_name = group_name
-        log.info("Group name thread = " + self.group_name)
-        self.channel_layers = get_channel_layer()
-        async_to_sync(self.channel_layers.group_send)(self.group_name, {"type" : "chat.message", "message" : "Thread for game is launched"})
+        self.channel_layer = get_channel_layer()
+        
+    def start(self):
+        print("starting game instance for game " + self.group_name)
+        i = 1
+        while (i != 10):
+            i = i +1
+            async_to_sync(self.channel_layer.group_send)(self.group_name, {
+				"type": "channel.msg",
+				"msg": "i = " + str(i),
+			})
+            time.sleep(3)
+        
+  
+# class testThread(threading.Thread):
+#     def __init__(self, group_name, **kwargs):
+#         super(testThread, self).__init__(daemon=True, name="testThread", **kwargs)
+#         self.group_name = group_name
+#         self.channel_layer = get_channel_layer()
+        
+#     def start(self):
+#         i = 0
+#         while i != 10:
+#             i = i + 1
+#             async_to_sync(self.channel_layer.group_send)(self.group_name, {
+# 				"type": "chat.message",
+# 				"message": "Message from thread, i = " + str(i),
+# 			})
+
         
     

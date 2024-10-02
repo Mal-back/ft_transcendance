@@ -1,8 +1,6 @@
 from django.db import models
-from django.urls import reverse
 
-
-# class LocalGameRoom(models.Model):
-#     game_id = models.IntegerField()
-#     game_player = models.CharField()
-#     game_nb_player = models.IntegerField()
+class LocalGame(models.Model):
+    game_creator = models.CharField(max_length=100)
+    game_id = models.CharField(max_length=100)
+    

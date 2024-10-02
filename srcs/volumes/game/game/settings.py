@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import django
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'game_app',
+    'game_app.apps.GameAppConfig',
     'corsheaders',
 ]
 
@@ -99,7 +100,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_AP1PLICATION = 'game.wsgi.application'
+# WSGI_AP1PLICATION = 'game.wsgi.application'
 ASGI_APPLICATION = 'game.asgi.application'
 
 
