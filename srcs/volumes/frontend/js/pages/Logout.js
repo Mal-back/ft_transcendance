@@ -17,13 +17,13 @@ export default class extends AbstractView {
         });
         const response = await fetch(request);
         if (response.ok) {
-          console.log("response: ", response);
           console.log(`token deleted: ${response.status}`);
         } else {
-          console.log("failed to delete token");
+          const log = await this.getErrorLogfromServer(response);
+          console.log(log);
         }
       } catch (error) {
-        console.error("Fail to delete token: ", error);
+        console.error("Fail to delete token: ", error.message);
       }
     }
     removeSessionStorage();

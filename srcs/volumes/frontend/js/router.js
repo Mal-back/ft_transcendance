@@ -112,14 +112,13 @@ const router = async () => {
   //
   //   const view = new match.route.view(getParams(match));
 
-  view.loadCss();
-
   try {
+    await view.loadCss();
     document.querySelector("#app").innerHTML = await view.getHtml();
     view.addEventListeners();
   } catch (error) {
     if (error.message.split(" ")[0] === "Redirect") {
-      view.showModalWithError("Error", error.message);
+      view.showModalWithError("Redirect", error.message);
       console.log("MyError:", error.message);
     } else {
       console.error("Error in get Html():", error.message);
@@ -143,7 +142,7 @@ const router = async () => {
   // Call the function to print all CSS links
 
   //print all html
-  console.log(document.documentElement.outerHTML);
+  // console.log(document.documentElement.outerHTML);
 };
 
 window.addEventListener("popstate", router);

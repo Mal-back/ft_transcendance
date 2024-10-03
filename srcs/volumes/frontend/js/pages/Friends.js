@@ -13,11 +13,9 @@ export default class extends AbstractView {
     this.createPageCss("../css/background-profile.css");
   }
 
-  async makeFriend() {
+  async makeFriend(friendname) {
     try {
       const username = sessionStorage.getItem("username_transcendence");
-      let friendname = "moi";
-      if (username == "moi") friendname = "toi";
       const request = await this.makeRequest(
         `/api/users/${username}/friend/add/${friendname}`,
         "PATCH",
@@ -39,7 +37,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     try {
-      await this.makeFriend();
+      await this.makeFriend("joi");
     } catch (error) {
       console.error("error making friends:", error.message);
     }
@@ -98,7 +96,7 @@ export default class extends AbstractView {
     }
     container.appendChild(list);
     background.appendChild(container);
-    console.info("BACKGROUND", background.outerHTML);
+    // console.info("BACKGROUND", background.outerHTML);
     return background.outerHTML;
   }
 
@@ -172,7 +170,7 @@ export default class extends AbstractView {
     modalHeaderButton.setAttribute("aria-label", "Close");
     modalHeader.appendChild(modalHeaderButton);
 
-    friendModal.appendChild(modalHeader);
+    modalContent.appendChild(modalHeader);
 
     const modalBody = document.createElement("div");
     modalBody.classList.add("modal-body");
@@ -207,8 +205,11 @@ export default class extends AbstractView {
     modalBodyFlex.appendChild(modalBodyText);
 
     modalBody.appendChild(modalBodyFlex);
-    friendModal.appendChild(modalBody);
+    modalContent.appendChild(modalBody);
+    modalDialog.appendChild(modalContent);
+    friendModal.appendChild(modalDialog);
     friendMainDiv.appendChild(friendModal);
+    console.log("Created modal:", friendModal);
   }
 
   createFriendElement(friendMainDiv, friendJson) {
@@ -285,7 +286,7 @@ export default class extends AbstractView {
     }
 
     let friendsArray = data.results;
-    console.log("FRIENDARRAY:", friendsArray);
+    // console.log("FRIENDARRAY:", friendsArray);
 
     this.forLoopArray(friendsArray, friendList);
     let nextPage = data.next;
@@ -299,7 +300,8 @@ export default class extends AbstractView {
           this.forLoopArray(friendsArray, friendList); // Append new friends
           nextPage = pageData.next; // Update next page
         } else {
-          console.log("Error in fetching next page:", response);
+          const log = await this.getErrorLogfromServer(response);
+          console.log(log);
           break;
         }
       } catch (error) {
@@ -309,18 +311,43 @@ export default class extends AbstractView {
     }
   }
 
+  async removeFriends(friendUsername) {
+    console.log("Removing:", friendUsername);
+    const username = sessionStorage.getItem("username_transcendence");
+    try {
+      const request = await this.makeRequest(
+        `/api/users/${username}/friend/delete/${friendUsername}`,
+        "DELETE",
+        null,
+      );
+      const response = await fetch(request);
+      if (response.ok) {
+        console.log("Removed friend:", friendUsername);
+        console.log("response:", response);
+        navigateTo("/friends");
+      } else {
+        console.log("response:", response);
+      }
+    } catch (error) {
+      console.error("Error in removeFriends: ", error.message);
+    }
+  }
+
   async addEventListeners() {
-    document.querySelectorAll(".btn-danger").forEach(function(button) {
-      button.addEventListener("click", function() {
-        const username = button
+    document.querySelectorAll(".btn-danger").forEach((button) => {
+      button.addEventListener("click", async (ev) => {
+        const friendUsername = button
           .closest(".list-group-item")
           .querySelector("h5").textContent;
-        console.log("Removing:", username);
+        console.log("Removing:", friendUsername);
+        ev.preventDefault();
+        try {
+          await this.removeFriends(friendUsername);
+        } catch (error) {
+          console.error("Error In remove Button: ", error.message);
+        }
       });
     });
-    const arrayModal = document
-      .querySelector("#friendsList")
-      .querySelectorAll();
   }
 
   removeEventListeners() {

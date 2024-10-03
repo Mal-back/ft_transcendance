@@ -72,28 +72,21 @@ export default class extends AbstractView {
         email: email,
         two_fa_enable: false,
       });
-      console.log("Before request:", request);
       const response = await fetch(request);
 
       if (response.ok) {
-        const result = await response.json();
-        console.debug("Server response:", result);
         this.showModalWithError(
           "Account creation",
           "New account successfuly created",
         );
         navigateTo("/login");
       } else {
-        const errorData = await response.json();
-        const errorMessages = Object.entries(errorData)
-          .map(([field, messages]) => `${messages.join(", ")}`) // Joins multiple messages with commas
-          .join("<br>"); // Joins different field errors with new lines
-
+        const log = await this.getErrorLogfromServer(response);
         this.showModalWithError(
           "Error",
-          `${errorMessages || "Submission failed."}`,
+          `${log || "Submission failed."}`,
         );
-        console.debug("Server response:", errorData);
+        console.debug("Server response:", log);
       }
     } catch (error) {
       console.error("Error in Request:", error.message);
@@ -102,7 +95,7 @@ export default class extends AbstractView {
         "Unable to connect to the server, please wait",
       );
       navigateTo("/");
-      throw new Error("Redirect to /home, server is dead, good luck");
+      // throw new Error("Redirect to /home, server is dead, good luck");
     }
   }
 

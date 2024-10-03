@@ -284,7 +284,6 @@ export default class extends AbstractView {
     }
 
     async changeUsername() {
-        console.log("CHANGE USERNAME");
         const username = sessionStorage.getItem("username_transcendence");
         const newUsername = document.querySelector(
             "input[name='UsernameChange']",
@@ -292,7 +291,6 @@ export default class extends AbstractView {
         if (this.sanitizeInput([newUsername]) == false) {
             return;
         }
-        console.log("newUsername = ", newUsername);
         try {
             const request = await this.makeRequest(
                 "/api/auth/update/" + username,
@@ -309,8 +307,9 @@ export default class extends AbstractView {
                 const data = await response.json();
                 setSessionStorage(data, newUsername);
             } else {
-                const dataError = await response.json();
-                this.showModalWithError("Error", dataError);
+                const log = await this.getErrorLogfromServer(response);
+                console.log(log);
+                this.showModalWithError("Error", log);
             }
         } catch (error) {
             console.error("Error in changeUsername Request");
@@ -384,18 +383,16 @@ export default class extends AbstractView {
                 // const data = await response.json();
                 // console.log("data after change =", data);
             } else {
-                const dataError = await response.json();
-                this.showModalWithError("Error", dataError);
+                const logError = await this.getErrorLogfromServer(response);
+                this.showModalWithError("Error", logError);
             }
         } catch (error) {
-            console.error("Error in changePass Request");
             this.showModalWithError("Error", error.message);
             throw error;
         }
     }
 
     async changeMail() {
-        console.log("CHANGE MAIL");
         const username = sessionStorage.getItem("username_transcendence");
         const oldMail = document.querySelector("input[name='oldMail']").value;
         const newMail = document.querySelector("input[name='mailChange']").value;
@@ -411,14 +408,14 @@ export default class extends AbstractView {
             );
             return false;
         }
-        try {
-            if ((await this.checkoldMail(oldMail)) == false) {
-                this.showModalWithError("Error", "Incorrect old E-mail address");
-                return;
-            }
-        } catch (error) {
-            throw error;
-        }
+        // try {
+        //     if ((await this.checkoldMail(oldMail)) == false) {
+        //         this.showModalWithError("Error", "Incorrect old E-mail address");
+        //         return;
+        //     }
+        // } catch (error) {
+        //     throw error;
+        // }
         try {
             const request = await this.makeRequest(
                 "/api/auth/update/" + username,
@@ -433,7 +430,7 @@ export default class extends AbstractView {
                 const data = await response.json();
                 console.log("data after change =", data);
             } else {
-                const dataError = await response.json();
+                const dataError = await this.getErrorLogfromServer(response);
                 this.showModalWithError("Error", dataError);
             }
         } catch (error) {

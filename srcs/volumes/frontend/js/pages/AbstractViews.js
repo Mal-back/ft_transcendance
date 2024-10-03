@@ -65,10 +65,9 @@ export default class {
 
     const modalId = document.getElementById("alertModal");
 
-    let modal = bootstrap.Modal.getInstance(modalId); // Get the existing modal instance
-
+    let modal = bootstrap.Modal.getInstance(modalId);
     if (!modal) {
-      modal = new bootstrap.Modal(modalId); // Create a new instance if it doesn't exist
+      modal = new bootstrap.Modal(modalId);
     }
     modal.show();
     modalId.querySelector(".btn-close").onclick = (ev) => {
@@ -78,19 +77,14 @@ export default class {
   }
 
   closeModal() {
-    console.log("closing modal");
     const modalId = document.getElementById("alertModal");
-    const modal = bootstrap.Modal.getInstance(modalId); // Get the existing modal instance
+    const modal = bootstrap.Modal.getInstance(modalId);
     if (modal) {
-      console.log("modal hide");
-      modal.hide(); // Use Bootstrap method to hide
-      console.log("Is modal visible?", modalId.classList.contains("show"));
+      modal.hide();
       const backdrop = document.querySelector(".modal-backdrop");
       if (backdrop) {
-        backdrop.remove(); // Manually remove the backdrop if still present
-        console.log("Backdrop removed manually.");
+        backdrop.remove();
       }
-      console.log("Is modal visible?", modalId.classList.contains("show"));
     }
   }
 
@@ -150,10 +144,7 @@ export default class {
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
     if (accessToken != null) {
-      console.log("Request with token");
       myHeaders.append("Authorization", "Bearer " + accessToken);
-    } else {
-      console.log("NO TOKEN HEADER");
     }
     if (boolJSON === true) {
       myHeaders.append("Content-Type", "application/json");
@@ -161,8 +152,24 @@ export default class {
     return myHeaders;
   }
 
+  async getErrorLogfromServer(response) {
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      try {
+        const errorJSON = await response.json();
+        const errorMessages = Object.entries(errorJSON)
+          .map(([field, messages]) => `${messages.join(", ")}`)
+          .join("<br>");
+        return errorMessages;
+      } catch (error) {
+        console.error("getErrorLogfromServer:", error.message);
+        return error;
+      }
+    } else {
+      return `${response.status} ${response.statusText}`;
+    }
+  }
   async makeRequest(url, myMethod, myBody) {
-    console.log("MAKE REQUEST");
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
@@ -171,8 +178,6 @@ export default class {
       } catch (error) {
         console.error("Error in getToken:", error.message);
       }
-    } else {
-      console.log("NO USERNAME");
     }
     console.log("myMethod:", myMethod);
     const options = {
@@ -180,18 +185,19 @@ export default class {
       headers: this.makeHeaders(accessToken, myBody != null),
     };
     if (myBody) options.body = JSON.stringify(myBody);
-    console.log("options = ", options);
     const myRequest = new Request(url, options);
-    console.log("Return make request");
     return myRequest;
   }
 
   async refreshToken(accessToken) {
     const refreshJWT = sessionStorage.getItem("refreshJWT_transcendence");
-    console.log("refreshJWT before = ", refreshJWT);
-    console.log("accessJWT before = ", accessToken);
+    // console.log("refreshJWT before = ", refreshJWT);
+    // console.log("accessJWT before = ", accessToken);
     if (!refreshJWT) {
-      //ALERT
+      this.showModalWithError(
+        "Error",
+        "Error in authentification, relog please",
+      );
       removeSessionStorage();
       navigateTo("/");
       // throw new Error("Redirect to login, invalid token");
@@ -205,59 +211,42 @@ export default class {
           refresh: refreshJWT,
         }),
       });
-      console.log("Refresh Request:", request);
-      console.log("Request body: ", JSON.stringify({
-        refresh: refreshJWT,
-      }));
-      const parseRefresh = this.parseJwt(refreshJWT);
-      console.log("refresh.exp", parseRefresh.exp);
       const response = await fetch(request);
       if (response.ok) {
         const data = await response.json();
-        console.log("setting new token");
         setSessionStorage(data);
       } else {
-        const dataError = await response.json();
-        if (response.status === 403) {
-          console.log("User is not connected/ have unsufficient permission");
-        } else {
-          console.log("Error in request:" + response.status + "; ", dataError);
-        }
+        const log = this.getErrorLogfromServer(response);
+        console.log(log);
+        this.showModalWithError("Error", log);
+        removeSessionStorage();
+        navigateTo("/");
       }
     } catch (error) {
       console.error("Error refreshing token:", error.message);
+      this.showModalWithError("Error", error.message);
       removeSessionStorage();
       navigateTo("/login");
       throw error;
     }
-    const refreshJWTA = sessionStorage.getItem("refreshJWT_transcendence");
-    console.log("refreshJWT after = ", refreshJWTA);
-    const accessTokenA = sessionStorage.getItem("accessJWT_transcendence");
-    console.log("accessJWT after = ", accessTokenA);
   }
 
   async getToken() {
     let authToken = sessionStorage.getItem("accessJWT_transcendence");
-    if (!authToken) {
+    const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
+    if (!authToken || !refreshToken) {
       console.log("User is not authentified", authToken);
       removeSessionStorage();
+      navigateTo("/login");
       return null;
     }
     const parseToken = this.parseJwt(authToken);
     const currentTime = Math.floor(Date.now() / 1000);
     if (parseToken.exp + 1 <= currentTime) {
-      console.log("currentTime=", currentTime);
-      console.log("parseToken.exp=", parseToken.exp);
-      const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
-      if (!refreshToken) {
-        navigateTo("/login");
-        removeSessionStorage();
-        throw new Error("Redirect to login, user is timed out");
-      }
-      console.log("REFRESH TOKEN FROM GETTOKEN");
       try {
         await this.refreshToken(authToken);
       } catch (error) {
+        console.error("getToken", error.message);
         throw error;
       }
       authToken = sessionStorage.getItem("accessJWT_transcendence");

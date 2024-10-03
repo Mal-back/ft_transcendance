@@ -91,21 +91,12 @@ export default class extends AbstractView {
       const response = await fetch(request);
       console.log("Response: ", response);
       if (response.ok) {
-        console.log("login response.ok");
         const data = await response.json();
-        const parseAccess = this.parseJwt(data.access);
-        const parseRefresh = this.parseJwt(data.refresh);
-        const currentTime = Math.floor(Date.now() / 1000);
-
-        console.log(
-          `TIME\n, parseAccess.exp = ${parseAccess.exp}, parseRefresh.exp = ${parseRefresh.exp}, currentTime= ${currentTime}`,
-        );
         setSessionStorage(data, nameForm);
         navigateTo("/");
       } else {
-        console.log("login response.notOk");
-        const dataError = await response.json();
-        console.log("Error in login: " + response.status + "; ", dataError);
+        const log = await this.getErrorLogfromServer(response);
+        console.log(log);
       }
     } catch (Error) {
       console.error("Error fetching login:", Error.message);
