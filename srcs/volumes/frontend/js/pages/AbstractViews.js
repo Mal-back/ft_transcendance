@@ -4,6 +4,7 @@ import { removeSessionStorage, setSessionStorage } from "./Utils.js";
 export default class {
   constructor() {
     this.loginToLogout();
+    this.closeSidebarOnNavigate();
   }
 
   setTitle(title) {
@@ -12,6 +13,19 @@ export default class {
 
   async getHtml() {
     return "";
+  }
+
+  // Add an event listener to your SPA navigation logic
+  closeSidebarOnNavigate() {
+    console.log("CLOSE FUCKING SIDEBAR");
+    const sidebar = document.getElementById("sidebar");
+    // Ensure the sidebar is open before attempting to close
+    if (sidebar.classList.contains("show")) {
+      const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
+      if (offcanvasInstance) {
+        offcanvasInstance.hide(); // Close the sidebar
+      }
+    }
   }
 
   createPageCss(refCss) {

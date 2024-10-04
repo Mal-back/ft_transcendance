@@ -18,6 +18,9 @@ export const navigateTo = (url) => {
   router();
 };
 
+
+
+
 let view = null;
 
 const router = async () => {
