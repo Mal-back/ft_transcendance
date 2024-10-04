@@ -105,7 +105,7 @@ log = logging.getLogger(__name__)
 
 @frozen
 class Coordinates:
-	x = attr.ib
+	x = attr.ib()
 
 class LocalEngine(threading.Thread):
 	def __init__(self, game_id, **kwargs):
@@ -140,3 +140,42 @@ class LocalEngine(threading.Thread):
    
 	def send_state(self) -> None:
 		return
+
+
+from attrs import frozen, define, field, validators
+from typing import Tuple
+
+
+
+@frozen
+class Direction:
+    dx: int = field(validator=[validators.instance_of(int),])
+    dy: int = field(validator=validators.instance_of(int))
+    
+
+@frozen(kw_only=True)
+class Coordinates:
+    x: int = field(validator=validators.instance_of(int))
+    y: int = field(validator=validators.instance_of(int))
+    
+    def move(self, direction : Direction) -> 'Coordinates':
+        return Coordinates(self.x + direction.dx, self.y + direction.dy)
+    
+    def render(self) -> Tuple[int, int]:
+        return (self.x, self.y)
+        
+        
+@define
+class Player:
+    score: int = field(validator=validators.instance_of(int))
+    @score.validator
+    def check_negative_score(self, attribute, value) -> None:
+        if value < 0:
+            raise ValueError("Negative Score")
+    
+
+
+coord = Coordinates(x=-2, y=2)
+bob = Player(5)
+print(bob)
+print(coord)
