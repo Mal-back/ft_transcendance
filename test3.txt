@@ -1,0 +1,20 @@
+.editorconfig            .yamllint.yml            README.md                regex-assembly/
+.git/                    CHANGES.md               SECURITY.md              renovate.json
+.github/                 CONTRIBUTING.md          SPONSORS.md              rules/
+.gitignore               CONTRIBUTORS.md          crs-setup.conf           tests/
+.gitmodules              INSTALL.md               crs-setup.conf.example   util/
+.linelint.yml            KNOWN_BUGS.md            docs/                    
+.pre-commit-config.yaml  LICENSE                  plugins/                 
+
+SecDefaultAction "phase:1,log,auditlog,pass"
+SecDefaultAction "phase:2,log,auditlog,pass"
+
+SecAction \
+    "id:900990,\
+    phase:1,\
+    pass,\
+    t:none,\
+    nolog,\
+    tag:'OWASP_CRS',\
+    ver:'OWASP_CRS/4.6.0-dev',\
+    setvar:tx.crs_setup_version=460"

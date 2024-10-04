@@ -1,0 +1,6 @@
+Users: 
+- crud -- done
+- change stat -- done
+- friend manage -- done
+- online status -- done (I guess ? Boring to test for the moment)
+- change profile pic -- not done (later)

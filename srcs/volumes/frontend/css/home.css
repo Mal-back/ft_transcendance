@@ -1,0 +1,12 @@
+.home {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 2%;
+}
+
+.welcome {
+    font-size: 4vmin;
+}
+
+.welcome-msg {
+    font-size: 1.6vmin;
+}
