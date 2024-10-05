@@ -102,15 +102,29 @@ log = logging.getLogger(__name__)
 
 from attrs import frozen, define, field, validators
 from typing import Tuple
+from json import dumps
         
 @define
 class Player:
-    username: str = field(validator=validators.instance_of(str))
+    username: str = field(validator=validators.instance_of(str), default="default_name")
     position: Coordinates = field(validator=validators.instance_of(Coordinates), default=Coordinates(50,50))
+    direction: Direction = field(validator=validators.instance_of(Direction), default=Direction(0,1))
     score: int = field(validator=validators.instance_of(int), default=0)
     len: int = field(validator=validators.instance_of(int), default=Const["PAD_LEN"].value)
     height: int = field(validator=validators.instance_of(int), default=Const["PAD_HEIGHT"].value)
     
+    def render(self) -> dict:
+        return { "username": self.username,
+            "position": self.position.render(),
+            "score": self.score,
+        }
+        
+    def reset_direction(self) -> None:
+        self.direction = Direction(0, 0)
+        
+    def move(self) -> None:
+        self.position = self.position.move(self.direction)
+        self.reset_direction()
     
 @define
 class Ball:
@@ -118,12 +132,45 @@ class Ball:
     direction: Direction = field(validator=validators.instance_of(Direction), default=Const["BALL_DIR"].value)
     size: int = field(validator=validators.instance_of(int), default=Const["BALL_SIZE"].value)
     
+    def move(self) -> None:
+        self.position = self.position.move(self.direction)
+    
+    def reset_position(self) -> None:
+        self.position = Const["CENTER"].value
+    
+    def render(self) -> dict:
+        return { "position": self.position.render(),
+        }
+        
+    
 @define
 class Board:
-    player_1 : Player = field(validator=validators.instance_of(Player))
-    player_2 : Player = field(validator=validators.instance_of(Player))
     ball: Ball = field(validator=validators.instance_of(Ball), default=Ball())
-    dimension : Coordinates = field(validator=validators.instance_of(Coordinates), default=Const["DIMENSION"].value)    
+    dimension : Coordinates = field(validator=validators.instance_of(Coordinates), default=Const["DIMENSION"].value)
+    
+    def render(self) -> dict:
+        return { "Ball" : self.ball.render(),
+                "Dimensions" : self.dimension.render(),
+        }
+    
+@define
+class State:
+    board: Board = field(validator=validators.instance_of(Board), default=Board())
+    player_1 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_1", position=Coordinates(Const["X_PLAYER_1"].value, Const["Y_PLAYER"].value)))
+    player_2 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_2", position=Coordinates(Const["X_PLAYER_2"].value, Const["Y_PLAYER"].value)))
+    def render(self) -> dict:
+        return { "Board" : self.board.render(),
+                "Player 1" : self.player_1.render(),
+                "Player 2" : self.player_2.render(),    
+        }
+        
+    def perform_movements(self) -> None:
+        self.player_1.move()
+        self.player_2.move()
+        self.board.ball.move()
+        
+    def update(self) -> None:
+        self.perform_movements()
     
 class LocalEngine(threading.Thread):
     def __init__(self, game_id, **kwargs):
@@ -132,21 +179,21 @@ class LocalEngine(threading.Thread):
         self.channel_layer = get_channel_layer()
         self.end_lock = threading.Lock()
         self.end = False
-        self.board = Board(player_1=Player(username="Jean"), player_2=Player("Bob"))
+        self.state = State()
+        self.state_rate = 1 / 60
         
     def run(self) -> None:
         print("starting game instance for game " + self.game_id)
-        i = 1
-        async_to_sync(self.channel_layer.group_send)(self.game_id, {
-            "type": "channel.msg",
-            "msg": "Position balle : " + str(self.board.ball.position.render()) +
-            "score joueur 1 : " + str(self.board.player_1.score) +
-            "score joueur 2 : " + str(self.board.player_2.score)
-        })
-        with self.end_lock:
-            if self.end == True:
-                return
-            time.sleep(3)
+        while True:
+            self.state.update()
+            async_to_sync(self.channel_layer.group_send)(self.game_id, {
+                "type" : "send_state",
+                "State" : self.state.render(),
+            })
+            with self.end_lock:
+                if self.end == True:
+                    break
+                time.sleep(self.state_rate)
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "end.game"
         })

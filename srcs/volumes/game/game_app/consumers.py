@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import SyncConsumer
 from game_app.game_srcs.Pong import LocalEngine
-import json
+from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
 import django
@@ -47,6 +47,9 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			"game_id": self.group_name
 		})
 		
+	async def send_state(self, event):
+		await self.send(dumps(event["State"]))
+  
 	async def end_game(self, event):
 		await self.close()
   
@@ -55,7 +58,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		await self.send(event["msg"])
 	
 	async def receive(self, text_data=None, bytes_data=None):
-		content = json.loads(text_data)
+		content = loads(text_data)
 		type = content["type"]
 		message = content["message"]
 		log.info("Receive from " + self.username + " type = " + type + " message = " + message)
