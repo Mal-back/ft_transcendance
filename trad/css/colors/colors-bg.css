@@ -1,0 +1,238 @@
+/* css for bg color */
+@import url(./colors-bg:hover.css);
+
+.bg-white {
+    background-color: white;
+}
+
+.bg-red {
+    background-color: red;
+}
+
+.bg-blue {
+    background-color: blue;
+}
+
+.bg-black {
+    background-color: black;
+}
+
+.bg-green {
+    background-color: green;
+}
+
+.bg-purple {
+    background-color: purple;
+}
+
+.bg-orange {
+    background-color: orange;
+}
+
+.bg-pink {
+    background-color: pink;
+}
+
+.bg-gray {
+    background-color: gray;
+}
+
+.bg-brown {
+    background-color: brown;
+}
+
+.bg-cyan {
+    background-color: cyan;
+}
+
+.bg-magenta {
+    background-color: magenta;
+}
+
+.bg-lightblue {
+    background-color: lightblue;
+}
+
+.bg-lightgreen {
+    background-color: lightgreen;
+}
+
+.bg-lightyellow {
+    background-color: lightyellow;
+}
+
+.bg-lightgray {
+    background-color: lightgray;
+}
+
+.bg-lightpink {
+    background-color: lightpink;
+}
+
+.bg-lightcoral {
+    background-color: lightcoral;
+}
+
+.bg-darkblue {
+    background-color: darkblue;
+}
+
+.bg-darkgreen {
+    background-color: darkgreen;
+}
+
+.bg-darkred {
+    background-color: darkred;
+}
+
+.bg-darkgray {
+    background-color: darkgray;
+}
+
+.bg-darkorange {
+    background-color: darkorange;
+}
+
+.bg-darkviolet {
+    background-color: darkviolet;
+}
+
+.bg-skyblue {
+    background-color: skyblue;
+}
+
+.bg-seagreen {
+    background-color: seagreen;
+}
+
+.bg-slategray {
+    background-color: slategray;
+}
+
+.bg-olive {
+    background-color: olive;
+}
+
+.bg-teal {
+    background-color: teal;
+}
+
+.bg-tomato {
+    background-color: tomato;
+}
+
+.bg-gold {
+    background-color: gold;
+}
+
+.bg-silver {
+    background-color: silver;
+}
+
+.bg-aqua {
+    background-color: aqua;
+}
+
+.bg-azure {
+    background-color: azure;
+}
+
+.bg-beige {
+    background-color: beige;
+}
+
+.bg-chocolate {
+    background-color: chocolate;
+}
+
+.bg-coral {
+    background-color: coral;
+}
+
+.bg-indigo {
+    background-color: indigo;
+}
+
+.bg-lavender {
+    background-color: lavender;
+}
+
+.bg-lime {
+    background-color: lime;
+}
+
+.bg-maroon {
+    background-color: maroon;
+}
+
+.bg-navy {
+    background-color: navy;
+}
+
+.bg-orchid {
+    background-color: orchid;
+}
+
+.bg-plum {
+    background-color: plum;
+}
+
+.bg-salmon {
+    background-color: salmon;
+}
+
+.bg-turquoise {
+    background-color: turquoise;
+}
+
+.bg-violet {
+    background-color: violet;
+}
+
+.bg-midnightblue {
+    background-color: midnightblue;
+}
+
+.bg-sienna {
+    background-color: sienna;
+}
+
+.bg-peachpuff {
+    background-color: peachpuff;
+}
+
+.bg-rosybrown {
+    background-color: rosybrown;
+}
+
+.bg-moccasin {
+    background-color: moccasin;
+}
+
+.bg-papayawhip {
+    background-color: papayawhip;
+}
+
+.bg-lightsalmon {
+    background-color: lightsalmon;
+}
+
+.bg-hotpink {
+    background-color: hotpink;
+}
+
+.bg-darkyellow {
+    background-color: rgb(202, 202, 47);
+}
+
+.bg-semitransparent {
+    background-color: rbg(10, 0, 0, 0.4);
+}
+
+.bg-semi-t-white {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.bg-form {
+    background-color: rgba(255, 255, 255, 0.9);
+}

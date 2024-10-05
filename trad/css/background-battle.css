@@ -1,0 +1,24 @@
+.background-battle {
+    background-image: url("../img/bg-space.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    width: 95vw;
+    height: 99vh;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border: 5px solid white;
+}

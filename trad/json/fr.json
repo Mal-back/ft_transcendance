@@ -1,0 +1,13 @@
+{
+    "welcomeMessage": "Bienvenue dans Notre Pong !",
+    "description1": "Explorez la profondeur du jeu Pong, jouez avec des amis et personnalisez votre profil à votre guise!",
+    "description2": "✨ Amusez-vous bien ! ✨",
+    "menu": {
+        "home": "ACCUEIL",
+        "game": "Jeu",
+        "profile": "Profil",
+        "friends": "Amis",
+        "logout": "Déconnexion",
+        "login": "Connexion"
+    }
+}

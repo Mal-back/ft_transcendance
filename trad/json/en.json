@@ -1,0 +1,13 @@
+{
+    "welcomeMessage": "Welcome to Our Pong!",
+    "description1": "Explore the depth of the Pong game, play with friends, and personalize your profile as you desire!",
+    "description2": "✨ Have fun! ✨",
+    "menu": {
+        "home": "HOME",
+        "game": "Game",
+        "profile": "Profile",
+        "friends": "Friends",
+        "logout": "Logout",
+        "login": "Login"
+    }
+}
