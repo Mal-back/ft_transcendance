@@ -146,4 +146,4 @@ class PublicUserRemoveFriend(APIView):
         user.friends.remove(delete_friend)
         user.save()
 
-        return Response({'OK' : 'Successefully delete the user from friend list'}, status=status.HTTP_204_NO_CONTENT)        
+        return Response({'OK' : 'Successefully delete the user from friend list'}, status=status.HTTP_200_OK)        
