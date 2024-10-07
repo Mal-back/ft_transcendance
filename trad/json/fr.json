@@ -1,7 +1,25 @@
 {
-    "welcomeMessage": "Bienvenue dans Notre Pong !",
-    "description1": "Explorez la profondeur du jeu Pong, jouez avec des amis et personnalisez votre profil à votre guise!",
-    "description2": "✨ Amusez-vous bien ! ✨",
+    "homeTitle": "Bienvenue dans Notre Pong !",
+    "descriptionHomeMessage": "Explorez la profondeur du jeu Pong, jouez avec des amis et personnalisez votre profil à votre guise!",
+    "descriptionHomeMessage2": "✨ Amusez-vous bien ! ✨",
+    "authTitle": "Vous n'êtes pas encore connecté",
+    "createProfileBtn": "Créer un nouveau profil",
+    "loginBtn": "Connexion",
+    "createUserTitle": "Créer un utilisateur",
+    "usernameLabel": "Nom d'utilisateur :",
+    "mailLabel": "Email :",
+    "passwordLabel": "Mot de passe :",
+    "password2Label": "Mot de passe 2 :",
+    "Connect42Btn": "42 Connection",
+    "Matchmaking": "Matchmaking",
+    "NormalMode": "MODE NORMAL",
+    "NormalModeTitle": "Mode Normal",
+    "EpicMode": "MODE ÉPIQUE",
+    "EpicModeTitle": "Mode Épique",
+    "Tournament": "Tournoi",
+    "LocalMatch": "MODE LOCAL",
+    "RandomMatch": "MATCH ALÉATOIRE",
+    "FriendlyMatch": "MATCH AMICAL",
     "menu": {
         "home": "ACCUEIL",
         "game": "Jeu",
@@ -9,5 +27,11 @@
         "friends": "Amis",
         "logout": "Déconnexion",
         "login": "Connexion"
-    }
+    },
+    "winRateLabel": "Taux de Victoire:",
+    "battleHistoryLabel": "Historique de Matchs:",
+    "matchDate": "DATE",
+    "settingsButton": "Paramètres",
+    "WIN": "Gagnant",
+    "LOSE": "Perdant"
 }
