@@ -1,4 +1,5 @@
 from attrs import frozen, define, field, validators
+from .Const import Const
 from typing import Tuple
 
 @frozen
@@ -23,6 +24,18 @@ class Coordinates:
 	x: int = field(validator=validators.instance_of(int))
 	y: int = field(validator=validators.instance_of(int))
 	
+	# def get_new_x(self, direction : Direction) -> int:
+	# 	if direction.dx < 0:
+	# 		return min(0, direction.dx + self.x)
+	# 	else:
+	# 		return max(Const["BOARD_LEN"].value, direction.dx + self.x)   
+
+	# def get_new_y(self, direction : Direction) -> int:
+	# 	if direction.dx < 0:
+	# 		return min(0, direction.dy + self.y)
+	# 	else:
+	# 		return max(Const["BOARD_HEIGHT"].value, direction.dy + self.y)   
+ 
 	def move(self, direction : Direction) -> 'Coordinates':
 		return Coordinates(self.x + direction.dx, self.y + direction.dy)
 	
