@@ -8,6 +8,7 @@ import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
 import Friends from "./pages/Friends.js";
+import Pong from "./pages/Pong.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -17,9 +18,6 @@ export const navigateTo = (url) => {
   history.pushState(null, null, url);
   router();
 };
-
-
-
 
 let view = null;
 
@@ -35,6 +33,7 @@ const router = async () => {
     { path: "/epic-mode", view: EpicMode },
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
+    { path: "/pong", view: Pong },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -119,6 +118,7 @@ const router = async () => {
     await view.loadCss();
     document.querySelector("#app").innerHTML = await view.getHtml();
     view.addEventListeners();
+    if (match.route.path == "/pong") view.pongGame();
   } catch (error) {
     if (error.message.split(" ")[0] === "Redirect") {
       view.showModalWithError("Redirect", error.message);
@@ -159,4 +159,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
   router();
+});
+
+function closeSidebar(sidebar) {
+  const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
+  if (offcanvasInstance) {
+    offcanvasInstance.hide();
+  }
+}
+
+document.addEventListener("click", (ev) => {
+  const sidebar = document.getElementById("sidebar");
+  const toggleButton = document.getElementById("toggleSidebar");
+  const isClickInsideSidebar = sidebar.contains(ev.target);
+  const isClickOnToggleButton = toggleButton.contains(ev.target);
+
+  if (
+    !isClickInsideSidebar &&
+    !isClickOnToggleButton &&
+    sidebar.classList.contains("show")
+  )
+    closeSidebar(sidebar);
 });

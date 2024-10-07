@@ -96,10 +96,12 @@ export default class extends AbstractView {
         navigateTo("/");
       } else {
         const log = await this.getErrorLogfromServer(response);
+        this.showModalWithError("Error", log);
         console.log(log);
       }
     } catch (Error) {
       console.error("Error fetching login:", Error.message);
+        this.showModalWithError("Error", Error.message);
     }
   }
 

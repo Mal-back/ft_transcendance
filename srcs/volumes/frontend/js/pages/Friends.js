@@ -13,7 +13,7 @@ export default class extends AbstractView {
     this.createPageCss("../css/background-profile.css");
   }
 
-  async makeFriend(friendname) {
+  async addFriendRequest(friendname) {
     try {
       const username = sessionStorage.getItem("username_transcendence");
       const request = await this.makeRequest(
@@ -25,13 +25,16 @@ export default class extends AbstractView {
 
       const response = await fetch(request);
       if (response.ok) {
-        // const data = await response.json();
-        console.log("response", response);
+        const data = await this.getErrorLogfromServer(response);
+        this.showModalWithError("Success", data);
+        navigateTo("/friends");
       } else {
-        console.log("response", response);
+        const dataError = await this.getErrorLogfromServer(response);
+        this.showModalWithError("Error", dataError);
       }
     } catch (error) {
       console.error("error makefriends:", error.message);
+      this.showModalWithError("Error", error.message);
     }
   }
 
@@ -68,28 +71,29 @@ export default class extends AbstractView {
       "p-3",
       "rounded",
     );
+    const flexDivFriend = document.createElement("div");
+    flexDivFriend.classList.add(
+      "d-flex",
+      "justify-content-between",
+      "align-items-center",
+    );
     const text = document.createElement("h3");
     text.classList.add("mb-0");
     text.textContent = "Friends";
-    textDiv.appendChild(text);
+    flexDivFriend.appendChild(text);
+    const addFriendButton = document.createElement("button");
+    addFriendButton.classList.add("btn", "btn-primary");
+    addFriendButton.setAttribute("data-bs-toggle", "modal");
+    addFriendButton.setAttribute("data-bs-target", "#addFriendModal");
+    addFriendButton.innerHTML = `<i class="bi bi-person-plus"></i> Add Friend`;
+    flexDivFriend.appendChild(addFriendButton);
+    textDiv.appendChild(flexDivFriend);
     container.appendChild(textDiv);
+
+    this.addNewFriendModal(container);
     const list = document.createElement("div");
     list.classList.add("list-group");
     list.id = "friendsList";
-    // const htmlContent = `
-    //         <div class="background">
-    //           <div class="container mt-4">
-    //             <!-- Search Bar -->
-    //               <div class="bg-* text-white text-center p-3 rounded">
-    //                <h3 class="mb-0">Friends</h3>
-    //               </div>
-    //               <div class="list-group" id="friendsList">
-    //               </div>
-    //           </div>
-    //         </div>
-    //         `;
-    // const app = (document.querySelector("#app").innerHTML = htmlContent);
-    //
     try {
       await this.createFriendList(list);
     } catch (error) {
@@ -100,6 +104,40 @@ export default class extends AbstractView {
     background.appendChild(container);
     // console.info("BACKGROUND", background.outerHTML);
     return background.outerHTML;
+  }
+
+  addNewFriendModal(container) {
+    const modalFriend = document.createElement("div");
+    modalFriend.classList.add("modal", "fade");
+    modalFriend.id = "addFriendModal";
+    modalFriend.setAttribute("tabindex", "-1");
+    modalFriend.setAttribute("aria-labelledby", "addFriendModalLabel");
+    modalFriend.setAttribute("aria-hidden", "true");
+
+    modalFriend.innerHTML = `<div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addFriendModalLabel">Add Friend</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="addFriendForm">
+                                            <div class="mb-3">
+                                                <label for="friendUsername" class="form-label">Enter Username</label>
+                                                <input type="text" class="form-control" name="friendRequest" id="friendUsername" required>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" form="addFriendForm" id="addFriendRequest">Add
+                                            Friend</button>
+                                    </div>
+                                </div>
+                            </div>`;
+    container.appendChild(modalFriend);
   }
 
   createAvatarElement(friendJson) {
@@ -260,6 +298,14 @@ export default class extends AbstractView {
     }
   }
 
+  noFriendDiv(friendList) {
+    friendList.innerHTML = `<div class="list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
+                                <p class="h4">✨ <i>Maidenless</i> ✨</p>
+                                
+                                <p class="h4">Please, add friends</p>
+                            </div>`;
+  }
+
   async createFriendList(friendList) {
     const username = sessionStorage.getItem("username_transcendence");
     let data = null;
@@ -279,7 +325,7 @@ export default class extends AbstractView {
       console.log("data:", data);
       if (data.count == 0) {
         console.log("LOL NO FRIENDS");
-        friendList.textContent = "No Friends :(";
+        this.noFriendDiv(friendList);
         return;
       }
     } catch (error) {
@@ -349,6 +395,18 @@ export default class extends AbstractView {
           console.error("Error In remove Button: ", error.message);
         }
       });
+    });
+    const addFriendButton = document.querySelector("#addFriendRequest");
+    addFriendButton.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const addFriendUsername = document.querySelector(
+        "input[name='friendRequest']",
+      ).value;
+      try {
+        await this.addFriendRequest(addFriendUsername);
+      } catch (error) {
+        console.error("Error in Request Friend", error.message);
+      }
     });
   }
 

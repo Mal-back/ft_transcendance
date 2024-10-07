@@ -17,7 +17,6 @@ export default class {
 
   // Add an event listener to your SPA navigation logic
   closeSidebarOnNavigate() {
-    console.log("CLOSE FUCKING SIDEBAR");
     const sidebar = document.getElementById("sidebar");
     // Ensure the sidebar is open before attempting to close
     if (sidebar.classList.contains("show")) {
@@ -170,9 +169,29 @@ export default class {
     const contentType = response.headers.get("Content-Type");
     if (contentType && contentType.includes("application/json")) {
       try {
-        const errorJSON = await response.json();
+        const responseText = await response.text();
+        if (!responseText) {
+          console.log("RESPONSE IS EMPTY");
+          return "Empty response";
+        }
+        const errorJSON = JSON.parse(responseText);
+        // const errorMessages = Object.entries(errorJSON)
+        //   .map(([field, errorMessages]) => {
+        //   if (!Array.isArray(errorMessages))
+        //     return errorMessages;
+        //   `${errorMessages.join(", ")}`})
+        //   .join("<br>");
+        // return errorMessages;
+
         const errorMessages = Object.entries(errorJSON)
-          .map(([field, messages]) => `${messages.join(", ")}`)
+          .map(([field, errorMessage]) => {
+            // Ensure errorMessage is an array; if not, make it an array
+            if (Array.isArray(errorMessage)) {
+              return errorMessage.join(", ");
+            } else {
+              return errorMessage; // Just use the string directly if not an array
+            }
+          })
           .join("<br>");
         return errorMessages;
       } catch (error) {
