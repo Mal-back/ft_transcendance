@@ -7,6 +7,7 @@ RUN mkdir -p /etc/nginx/ssl
 RUN mkdir -p /etc/nginx/certs
 
 RUN mkdir -p /var/www/static
+RUN mkdir -p /var/www/media
 
 RUN chown -R www-data:www-data var/www/static/ 
 
