@@ -1,5 +1,4 @@
 from attrs import frozen, define, field, validators
-from .Const import Const
 from typing import Tuple
 
 @frozen

@@ -48,7 +48,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		})
 		
 	async def send_state(self, event):
-		await self.send(dumps(event["State"]))
+		await self.send(dumps(event["Frame"]))
   
 	async def end_game(self, event):
 		await self.close()
