@@ -101,7 +101,7 @@ class PublicUserAddFriend(APIView):
         except PublicUser.DoesNotExist:
             return Response({'error': 'New friend does not exists'}, status=status.HTTP_400_BAD_REQUEST)
         if user.friends.filter(username=friendusername).exists():
-            return Response({'info': 'new friend was already a friend'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         if cur_friends is None:
             return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
         user.friends.add(new_friend)
@@ -146,4 +146,4 @@ class PublicUserRemoveFriend(APIView):
         user.friends.remove(delete_friend)
         user.save()
 
-        return Response({'OK' : 'Successefully delete the user from friend list'}, status=status.HTTP_204_NO_CONTENT)        
+        return Response({'OK' : 'Successefully delete the user from friend list'}, status=status.HTTP_200_OK)        

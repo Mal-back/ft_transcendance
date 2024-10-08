@@ -3,7 +3,8 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    min-height: 100vh;
+    min-height: 95vh;
+    max-height: 95vh;
     height: 100%;
     width: 100%;
     position: relative;
@@ -14,7 +15,7 @@ canvas {
     margin: auto;
     display: block;
     width: 95vw;
-    height: 99vh;
+    height: 85vh;
     position: absolute;
     top: 0;
     bottom: 0;

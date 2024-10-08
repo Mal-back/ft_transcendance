@@ -29,7 +29,7 @@ export default class extends AbstractView {
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="Password">${getlanguage(userLanguage, Password)}</label>
+                        <label for="Password">Password</label>
                         <input class="form-control" name="Password" id="Password" type="password">
                     </div>
                     <br>
