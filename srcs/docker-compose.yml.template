@@ -122,6 +122,50 @@ services:
       - '5432'
     restart: on-failure
 
+  game:
+    image: transcendance_django_game
+    container_name: 'transcendance_django_game'
+    volumes:
+      - data_django_game:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_game
+      - redis
+    build:
+      context: requirements/django_game
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '8443'
+    restart: on-failure
+
+  redis:
+    image: transcendance_redis
+    container_name: 'transcendance_redis'
+    networks:
+      - transcendance
+    build:
+      context: requirements/redis
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '6379'
+    restart: on-failure
+
+  postgresql_game:
+    image: transcendance_postgresql_game
+    container_name: 'transcendance_postgresql_game'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_game
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '5432'
+    restart: on-failure
+
 
 volumes:
   data_django_auth:
@@ -159,6 +203,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/auth/staticRoot
+  data_django_game:
+    name: data_django_game
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/game
 
 
 networks:
