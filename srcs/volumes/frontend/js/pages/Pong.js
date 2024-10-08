@@ -58,15 +58,11 @@ export default class extends AbstractView {
     const context = canvas.getContext("2d");
 
     // Set canvas dimensions
-
     const header = document.querySelector("#header");
     const headerHeight = header ? header.offsetHeight : 0;
     canvas.width = (window.innerWidth * 0.95) / 2; // 95% of the viewport width
     canvas.height = (window.innerHeight - headerHeight) / 2; // 99% of the viewport height
 
-    console.log(
-      `canvas.height=${canvas.height}, window.innerHeight=${window.innerHeight}, headerHeight = ${headerHeight}`,
-    );
     // Adjust for high-DPI displays
     const scaleFactor = window.devicePixelRatio || 1;
     canvas.width *= scaleFactor;
