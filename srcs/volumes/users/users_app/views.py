@@ -107,7 +107,7 @@ class PublicUserAddFriend(APIView):
         user.friends.add(new_friend)
         user.save()
 
-        return Response({'OK' : 'Successefully add the user as friend'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'OK' : 'Successefully add the user as friend'}, status=status.HTTP_200_OK)
 
 class PublicUserListFriends(generics.ListAPIView):
     serializer_class = PublicUserListSerializer
