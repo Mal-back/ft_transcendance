@@ -46,9 +46,20 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			"type": "start.game",
 			"game_id": self.group_name
 		})
-		
+
+	async def move(self, content):
+		await self.channel_layer.send("local_engine", {
+			"type" : "move",
+			"game_id": self.group_name,
+			"player" : content["player"],
+			"direction": content["direction"]
+		})
+
 	async def send_state(self, event):
 		await self.send(dumps(event["Frame"]))
+  
+	async def send_config(self, event):
+		await self.send(dumps(event["Config"]))
   
 	async def end_game(self, event):
 		await self.close()
@@ -60,12 +71,11 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data=None, bytes_data=None):
 		content = loads(text_data)
 		type = content["type"]
-		message = content["message"]
-		log.info("Receive from " + self.username + " type = " + type + " message = " + message)
 		if type == "start_game":
 			await self.start_game()
 		elif type == "move":
-			return
+			await self.move(content)
+			
 		else:
 			log.info("Wrong type receive in LocalPlayerConsumer : " + type)
 		
@@ -79,6 +89,9 @@ class LocalGameConsumer(SyncConsumer):
 		game_id = event["game_id"]
 		self.game_instances.update({game_id: LocalEngine(game_id=game_id),})
 		self.game_instances[game_id].start()
+  
+	def move(self, event):
+		return
 		
 	def end_thread(self, event):
 		game_id = event["game_id"]
