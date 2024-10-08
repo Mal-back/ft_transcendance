@@ -18,6 +18,8 @@ env :
 down :
 	docker compose -f ./srcs/docker-compose.yml down
 
+re : down all
+
 clean :
 	docker stop $$(docker ps -qa);\
 	docker rm $$(docker ps -qa);\

@@ -4,11 +4,16 @@
 
 DJANGO_AUTH=./srcs/requirements/django_auth/certs
 DJANGO_USERS=./srcs/requirements/django_users/certs
+DJANGO_GAME=./srcs/requirements/django_game/certs
 DJANGO_MATCHMAKING=./srcs/requirements/django_matchmaking/certs/
+
 NGINX=./srcs/requirements/nginx/certs
+
 PGSQL_AUTH=./srcs/requirements/postgreSQL_auth/certs
 PGSQL_USERS=./srcs/requirements/postgreSQL_users/certs
+PGSQL_GAME=./srcs/requirements/postgreSQL_game/certs
 PGSQL_MATCHMAKING=./srcs/requirements/postgreSQL_matchmaking/certs
+
 FRONTEND=./srcs/requirements/frontend/certs
 GEN_CSR="openssl req -new -newkey rsa:4096 -nodes -out"
 GEN_CRT="openssl x509 -req -days 365000 -in"
@@ -22,11 +27,13 @@ openssl req -new -x509 -nodes -days 365000 -key ca.key -out ca.crt -subj "/C=FR/
 
 mkdir -p $DJANGO_AUTH
 mkdir -p $DJANGO_USERS
+mkdir -p $DJANGO_GAME
 mkdir -p $DJANGO_MATCHMAKING
 mkdir -p $NGINX
 mkdir -p $PGSQL_AUTH
 mkdir -p $FRONTEND
 mkdir -p $PGSQL_USERS
+mkdir -p $PGSQL_GAME
 mkdir -p $PGSQL_MATCHMAKING
 
 $GEN_CSR $NGINX/nginx_client.csr -keyout $NGINX/nginx_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=nginx_client/UID=vlevy" 
@@ -53,6 +60,15 @@ $GEN_CRT $DJANGO_USERS/users_client.csr -out $DJANGO_USERS/users_client.crt -CA 
 $GEN_CSR $PGSQL_USERS/pgsql_users.csr -keyout $PGSQL_USERS/pgsql_users.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=pgsql/UID=vlevy" 
 $GEN_CRT $PGSQL_USERS/pgsql_users.csr -out $PGSQL_USERS/pgsql_users.crt -CA ca.crt -CAkey ca.key
 
+$GEN_CSR $DJANGO_GAME/game.csr -keyout $DJANGO_GAME/game.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=game/UID=vlevy" 
+$GEN_CRT $DJANGO_GAME/game.csr -out $DJANGO_GAME/game.crt -CA ./ca.crt -CAkey ./ca.key
+
+$GEN_CSR $DJANGO_GAME/game_client.csr -keyout $DJANGO_GAME/game_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=game_client/UID=vlevy"
+$GEN_CRT $DJANGO_GAME/game_client.csr -out $DJANGO_GAME/game_client.crt -CA ca.crt -CAkey ca.key
+
+$GEN_CSR $PGSQL_GAME/pgsql_game.csr -keyout $PGSQL_GAME/pgsql_game.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=pgsql/UID=vlevy" 
+$GEN_CRT $PGSQL_GAME/pgsql_game.csr -out $PGSQL_GAME/pgsql_game.crt -CA ca.crt -CAkey ca.key
+
 $GEN_CSR $DJANGO_MATCHMAKING/matchmaking.csr -keyout $DJANGO_MATCHMAKING/matchmaking.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=matchmaking/UID=vlevy" 
 $GEN_CRT $DJANGO_MATCHMAKING/matchmaking.csr -out $DJANGO_MATCHMAKING/matchmaking.crt -CA ./ca.crt -CAkey ./ca.key
 
@@ -63,10 +79,12 @@ $GEN_CSR $PGSQL_MATCHMAKING/pgsql_matchmaking.csr -keyout $PGSQL_MATCHMAKING/pgs
 $GEN_CRT $PGSQL_MATCHMAKING/pgsql_matchmaking.csr -out $PGSQL_MATCHMAKING/pgsql_matchmaking.crt -CA ca.crt -CAkey ca.key
 
 cp ./ca.crt $DJANGO_AUTH/ca.crt
+cp ./ca.crt $DJANGO_GAME/ca.crt
 cp ./ca.crt $NGINX/ca.crt
 cp ./ca.crt $FRONTEND/ca.crt
 cp ./ca.crt $PGSQL_AUTH/ca.crt
 cp ./ca.crt $PGSQL_USERS/ca.crt
+cp ./ca.crt $PGSQL_GAME/ca.crt
 cp ./ca.crt $DJANGO_USERS/ca.crt
 cp ./ca.crt $PGSQL_MATCHMAKING/ca.crt
 cp ./ca.crt $DJANGO_MATCHMAKING/ca.crt
@@ -76,4 +94,5 @@ rm ./ca.crt ./ca.key
 openssl genpkey -algorithm RSA -out $DJANGO_AUTH/jwt_private.pem -pkeyopt rsa_keygen_bits:4096
 openssl rsa -pubout -in $DJANGO_AUTH/jwt_private.pem -out $DJANGO_AUTH/jwt_public.pem
 cp $DJANGO_AUTH/jwt_public.pem $DJANGO_USERS/jwt_public.pem
+cp $DJANGO_AUTH/jwt_public.pem $DJANGO_GAME/jwt_public.pem
 cp $DJANGO_AUTH/jwt_public.pem $DJANGO_MATCHMAKING/jwt_public.pem
