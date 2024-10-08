@@ -17,15 +17,16 @@ class AvatarView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = UserAvatarSerializer(data=request.data)
         if serializer.is_valid():
+            reset_avatar(request.user_username)
             save_image(request.user_username, serializer.validated_data)
+            # TODO: send request to ms username for actualizing data
             return Response({'status':'new avatar successefully updated'}, status=201)
         return Response(serializer.errors, status=400)
 
     def delete(self, request, *args, **kwargs):
-        print('cc')
         if reset_avatar('tester') == True:
             return Response({'OK' : 'Successefully reset the avatar'}, status=status.HTTP_204_NO_CONTENT)
-        return Response({'No Content':'Could not find a avatar for this user'}, status=status.HTTP_304_NOT_MODIFIED)
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
 
 def save_image(username:str, validated_data) -> bool:
     file_path = os.path.join(settings.MEDIA_ROOT, 'users_avatars', f"{username}.{validated_data['image_type']}")
@@ -48,5 +49,4 @@ def reset_avatar(username:str):
         if os.path.exists(path):
             os.remove(path)
             return True
-    return False
-    
+    return False 
