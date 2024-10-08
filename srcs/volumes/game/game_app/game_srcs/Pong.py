@@ -9,6 +9,8 @@ from .Coord import Coordinates, Direction
 log = logging.getLogger(__name__)
 from attrs import define, field, validators
 from .Math import CollisionCircleSegment, ImpactProjection, Circle, GetBounceDir, GetNormal
+
+allowed_movement = ["UP", "DOWN", "NONE"]
         
 @define
 class Player:
@@ -19,6 +21,7 @@ class Player:
     len: int = field(validator=validators.instance_of(int), default=Const["PAD_LEN"].value)
     height: int = field(validator=validators.instance_of(int), default=Const["PAD_HEIGHT"].value)
     speed: int = field(validator=validators.instance_of(int), default=Const["PAD_SPEED"].value)
+    movement: str = field(validator=[validators.instance_of(str), validators.in_(allowed_movement),], default="NONE")
  
     def render(self) -> dict:
         return { "username": self.username,
@@ -47,12 +50,6 @@ class Player:
             return self.position.x - self.len
         else:
             return self.position.x + self.len
-        
-    def go_up(self) -> None:
-        self.direction = Direction(0, self.speed)
-    
-    def go_down(self) -> None:
-        self.direction = Direction(0, -self.speed)
 
     def correct_direction(self) -> Direction:
         new_dy = self.direction.dy
@@ -64,8 +61,18 @@ class Player:
 
     def reset_direction(self) -> None:
         self.direction = Direction(0, 0)
-  
+        self.movement = "NONE"
+        
+    def read_movement(self) -> Direction:
+        if self.movement == "UP":
+            return Direction(0, self.speed)
+        elif self.movement == "DOWN":
+            return Direction(0, -self.speed)
+        else:
+            return self.direction
+    
     def move(self) -> None:
+        self.direction = self.read_movement()
         self.direction = self.correct_direction()
         self.position = self.position.move(self.direction)
     
@@ -197,15 +204,14 @@ class LocalEngine(threading.Thread):
         self.end = False
         self.frame = Frame()
         self.state_rate = 1 / 60
-        self.frame_lock = threading.Lock()
+        self.movement_lock = threading.Lock()
         
     def run(self) -> None:
         print("starting game instance for game " + self.game_id)
         self.send_config()
         while True:
             self.frame = self.get_next_frame()
-            with self.frame_lock:
-                self.send_frame()
+            self.send_frame()
             if self.frame.end == True:
                 break;
             with self.end_lock:
@@ -216,22 +222,15 @@ class LocalEngine(threading.Thread):
             "type": "end.game"
         })
         
-    def receive_movement(self, player : str, movement : str):
-        with self.frame_lock:
-            if player == "player_1":
-                if movement == "UP":
-                    print("Movement up for player 1")
-                    self.frame.player_1.go_up()
-                elif movement == "DOWN":
-                    print("Movement down for player 1")
-                    self.frame.player_1.go_down()
-            if player == "player_2":
-                if movement == "UP":
-                    print("Movement up for player 2")
-                    self.frame.player_2.go_up()
-                elif movement == "DOWN":
-                    print("Movement down for player 2")
-                    self.frame.player_2.go_down()
+    def receive_movement(self, player : str, direction : str):
+        try:
+            with self.movement_lock:
+                if player == "player_1":
+                    self.frame.player_1.movement = direction
+                if player == "player_2":
+                    self.frame.player_2.movement = direction
+        except ValueError:
+            print("Invalid movement received from " + player)
                      
     def move_players(self, frame : Frame) -> Frame:
         frame.player_1.move()
@@ -266,7 +265,8 @@ class LocalEngine(threading.Thread):
         if new_frame.reset == True:
             new_frame.reset = False
             return new_frame
-        new_frame = self.move_players(new_frame)
+        with self.movement_lock:
+            new_frame = self.move_players(new_frame)
         new_frame = self.move_ball(new_frame)
         return new_frame
  

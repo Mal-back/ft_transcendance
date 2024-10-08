@@ -18,7 +18,7 @@ def CollisionCircleLine(A : Coordinates, B : Coordinates, circle : Circle):
     u = Direction(B.x - A.x, B.y - A.y)
     AC = Direction(circle.position.x - A.x, circle.position.y - A.y)
     num = abs(u.dx * AC.dy - u.dy * AC.dx)
-    den = pow(u.dx * u.dx + u.dy * u.dy, 0.5)
+    den = math.sqrt(u.dx * u.dx + u.dy * u.dy)
     CI = num / den
     if (CI < circle.radius):
         return True

@@ -29,7 +29,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			log.info("Local game already exists")
 			self.delete = False
 			await self.close()
-			
+ 	
 	async def disconnect(self, code):
 		log.info("Player " + self.username + " disconnected")
 		if self.delete == True:
@@ -62,6 +62,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		await self.send(dumps(event["Config"]))
   
 	async def end_game(self, event):
+		self.delete = True
 		await self.close()
   
 	async def channel_msg(self, event):
@@ -75,7 +76,6 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.start_game()
 		elif type == "move":
 			await self.move(content)
-			
 		else:
 			log.info("Wrong type receive in LocalPlayerConsumer : " + type)
 		
@@ -87,11 +87,12 @@ class LocalGameConsumer(SyncConsumer):
 	def start_game(self, event):
 		print("Entering start_game() in LocalGameConsumer")
 		game_id = event["game_id"]
-		self.game_instances.update({game_id: LocalEngine(game_id=game_id),})
+		self.game_instances[game_id] =  LocalEngine(game_id=game_id)
+		# self.game_instances.update({game_id: LocalEngine(game_id=game_id),})
 		self.game_instances[game_id].start()
   
 	def move(self, event):
-		return
+		self.game_instances[event["game_id"]].receive_movement(event["player"], event["direction"])
 		
 	def end_thread(self, event):
 		game_id = event["game_id"]
