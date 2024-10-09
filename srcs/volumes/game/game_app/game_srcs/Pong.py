@@ -305,8 +305,8 @@ class LocalEngine(threading.Thread):
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "send.config",
             "Config": {self.config.render(), {
-                "player_1": self.player_1.top_left.render(),
-                "player_2": self.player_2.top_left.render(),
-                "ball": self.board.ball.render(),}
+                "player_1": self.frame.player_1.top_left.render(),
+                "player_2": self.frame.player_2.top_left.render(),
+                "ball": self.frame.board.ball.render(),}
             },
         })       
