@@ -41,10 +41,16 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			})
 		await self.channel_layer.group_discard(self.group_name, self.channel_name)
 	
+	async def init_game(self):
+		await self.channel_layer.send("local_engine", {
+			"type": "init.game",
+			"game_id": self.group_name,
+		})
+
 	async def start_game(self):
 		await self.channel_layer.send("local_engine", {
 			"type": "start.game",
-			"game_id": self.group_name
+			"game_id": self.group_name,
 		})
 
 	async def move(self, content):
@@ -74,6 +80,8 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		type = content["type"]
 		if type == "start_game":
 			await self.start_game()
+		elif type == "init_game":
+			await self.init_game()
 		elif type == "move":
 			await self.move(content)
 		else:
@@ -84,12 +92,15 @@ class LocalGameConsumer(SyncConsumer):
 		print("LocalGameConsumer created")
 		self.game_instances = {}
 		
-	def start_game(self, event):
+	def init_game(self, event):
 		print("Entering start_game() in LocalGameConsumer")
 		game_id = event["game_id"]
 		self.game_instances[game_id] =  LocalEngine(game_id=game_id)
-		# self.game_instances.update({game_id: LocalEngine(game_id=game_id),})
 		self.game_instances[game_id].start()
+
+	def start_game(self, event):
+		game_id = event["game_id"]
+		self.game_instances[game_id].start_game()
   
 	def move(self, event):
 		self.game_instances[event["game_id"]].receive_movement(event["player"], event["direction"])

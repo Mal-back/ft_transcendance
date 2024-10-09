@@ -25,14 +25,19 @@ class Player:
  
     def render(self) -> dict:
         return { "username": self.username,
-            "position": self.position.render(),
-            "top": self.top(),
-              "bot": self.bot(),
-              "front": self.front(),
-              "back": self.back(),
+            "position": self.top_left.render(),
             "score": self.score,
+        #     "position": self.position.render(),
+        #     "top": self.top(),
+        #       "bot": self.bot(),
+        #       "front": self.front(),
+        #       "back": self.back(),
+        #     "score": self.score,
         }
     
+    def top_left(self) -> Coordinates:
+        return Coordinates(self.position.y + self.height, self.position.x - self.len)
+
     def top(self) -> int:
         return self.position.y + self.height
 
@@ -144,10 +149,10 @@ class Ball:
     
     def render(self) -> dict:
         return { "position": self.position.render(),
-          "top": self.top(),
-          "bot": self.bot(),
-          "front": self.front(),
-          "back": self.back(),
+        #   "top": self.top(),
+        #   "bot": self.bot(),
+        #   "front": self.front(),
+        #   "back": self.back(),
         }
     
 @define
@@ -205,10 +210,25 @@ class LocalEngine(threading.Thread):
         self.frame = Frame()
         self.state_rate = 1 / 60
         self.movement_lock = threading.Lock()
+        self.start_lock = threading.Lock()
+        self.start = False
         
+    def wait_start(self):
+        print("Waiting for game instance " + self.game_id + " to start")
+        while True:
+            with self.start_lock:
+                if self.start == True:
+                    break
+            time.sleep(1/60)
+
+    def start_game(self):
+        print("Starting game instance " + self.game_id)
+        with self.start_lock:
+            self.start = True
+
     def run(self) -> None:
-        print("starting game instance for game " + self.game_id)
         self.send_config()
+        self.wait_start()
         while True:
             self.frame = self.get_next_frame()
             self.send_frame()
