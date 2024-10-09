@@ -9,6 +9,7 @@ import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
 import Friends from "./pages/Friends.js";
 import Pong from "./pages/Pong.js";
+import TruePong from "./pages/TruePong.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -34,6 +35,7 @@ const router = async () => {
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
     { path: "/pong", view: Pong },
+    { path: "/pongLocal", view: TruePong },
   ];
 
   const potentialMatches = routes.map((route) => {
