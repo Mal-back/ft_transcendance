@@ -29,6 +29,7 @@ export default class extends AbstractView {
         this.showModalWithError("Success", data);
         navigateTo("/friends");
       } else {
+        console.info("RESPONSE: ", response);
         const dataError = await this.getErrorLogfromServer(response);
         this.showModalWithError("Error", dataError);
       }

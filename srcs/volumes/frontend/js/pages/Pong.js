@@ -35,26 +35,7 @@ export default class extends AbstractView {
   //
 
   pongGame() {
-    const websocket = new WebSocket(`ws://localhost:8080/api/game/ws/14845 `);
-
-    websocket.addEventListener(`open`, (ev) => {
-      console.log("Websocket is opened");
-      const body = JSON.stringify({ type: "start_game" });
-      websocket.send(body);
-    });
-
-    websocket.addEventListener("message", (ev) => {
-      console.log("Message Socket: ", ev.data);
-    });
-
-    websocket.addEventListener("close", (ev) => {
-      console.log("websocket is closed");
-    });
-
-    websocket.addEventListener("error", (ev) => {
-      console.error("Error in websocket: ", ev);
-    });
-    const canvas = document.getElementById("ongoing-game");
+        const canvas = document.getElementById("ongoing-game");
     const context = canvas.getContext("2d");
 
     // Set canvas dimensions
@@ -202,22 +183,52 @@ export default class extends AbstractView {
       canvas.height *= scaleFactor;
       context.scale(scaleFactor, scaleFactor);
     });
+
+    const websocket = new WebSocket(`ws://localhost:8080/api/game/ws/14845 `);
+
+    websocket.addEventListener(`open`, (ev) => {
+      console.log("Websocket is opened");
+      // const body = JSON.stringify({ type: "start_game" });
+      // websocket.send(body);
+    });
+
+    websocket.addEventListener("message", (ev) => {
+      console.log("Message Socket: ", ev.data);
+    });
+
+    websocket.addEventListener("close", (ev) => {
+      console.log("websocket is closed");
+    });
+
+    websocket.addEventListener("error", (ev) => {
+      console.error("Error in websocket: ", ev);
+    });
+
+  document.addEventListener("click", (ev) => {
+      const canvas = document.getElementById("ongoing-game");
+      const isClickInsideCanvas = canvas.contains(ev.target);
+      if (isClickInsideCanvas) {
+      const body = JSON.stringify({ type: "start_game" });
+      websocket.send(body);
+      }
+    })
+
   }
 
   async addEventListeners() {
-    const button = document.querySelector("#createUserButton");
-    if (button) {
-      button.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        console.debug("Submit button clicked!");
-        try {
-          await this.submitNewUser();
-        } catch (error) {
-          console.error("Caught in Event Listener:", error.message);
-        }
-      });
+    // const button = document.querySelector("#createUserButton");
+    // if (button) {
+    //   button.addEventListener("click", async (ev) => {
+    //     ev.preventDefault();
+    //     console.debug("Submit button clicked!");
+    //     try {
+    //       await this.submitNewUser();
+    //     } catch (error) {
+    //       console.error("Caught in Event Listener:", error.message);
+    //     }
+    //   });
+    // }
     }
-  }
   removeEventListeners() {
     const button = document.querySelector("#createUserButton");
     if (button) {

@@ -2,7 +2,7 @@ from enum import Enum
 from .Coord import Coordinates, Direction
 
 class Const(Enum):
-    BOARD_LEN = 500
+    BOARD_LEN = 1000
     BOARD_HEIGHT = 500
     DIMENSION = Coordinates(BOARD_LEN,BOARD_HEIGHT)
     CENTER = Coordinates(int(BOARD_LEN / 2), int(BOARD_HEIGHT / 2))
