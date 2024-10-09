@@ -307,6 +307,6 @@ class LocalEngine(threading.Thread):
             "Config": {self.config.render(), {
                 "player_1": self.player_1.top_left.render(),
                 "player_2": self.player_2.top_left.render(),
-                "ball": self.board.ball.render(),
+                "ball": self.board.ball.render(),}
             },
         })       
