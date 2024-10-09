@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'avatar_management_app.apps.AvatarManagementAppConfig'
+    'avatar_management_app.apps.AvatarManagementAppConfig',
+    'ms_client.apps.MsClientConfig',
 ]
 
 MIDDLEWARE = [
@@ -149,6 +150,12 @@ SIMPLE_JWT = {
             "ALGORITHM": "RS512",
             "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
             "AUTH_HEADER_TYPES": ("Bearer",),
+        }
+
+MS_CLIENT_SETTINGS = {
+        'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
+        'SERVICE_NAME':'avatar',
+        'SERVICE_SECRET':'acab1313',
         }
 
 # Internationalization
