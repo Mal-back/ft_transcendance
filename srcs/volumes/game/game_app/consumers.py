@@ -80,6 +80,8 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		type = content["type"]
 		if type == "start_game":
 			await self.start_game()
+		elif type == "init_game":
+			await self.init_game()
 		elif type == "move":
 			await self.move(content)
 		else:
