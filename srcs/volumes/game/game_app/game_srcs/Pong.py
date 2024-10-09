@@ -211,20 +211,20 @@ class LocalEngine(threading.Thread):
         self.state_rate = 1 / 60
         self.movement_lock = threading.Lock()
         self.start_lock = threading.Lock()
-        self.start = False
+        self.begin = False
         
     def wait_start(self):
         print("Waiting for game instance " + self.game_id + " to start")
         while True:
             with self.start_lock:
-                if self.start == True:
+                if self.begin == True:
                     break
             time.sleep(1/60)
 
     def start_game(self):
         print("Starting game instance " + self.game_id)
         with self.start_lock:
-            self.start = True
+            self.begin = True
 
     def run(self) -> None:
         self.send_config()
