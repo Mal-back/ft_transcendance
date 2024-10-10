@@ -211,6 +211,9 @@ class LocalEngine(threading.Thread):
             with self.start_lock:
                 if self.begin == True:
                     break
+            with self.end_lock:
+                if self.end == True:
+                    break
             time.sleep(1/60)
 
     def start_game(self):
@@ -222,14 +225,14 @@ class LocalEngine(threading.Thread):
         self.send_config()
         self.wait_start()
         while True:
+            with self.end_lock:
+                if self.end == True:
+                    break
             print("Thread game id = " + str(self.game_id) + " / score = " + str(self.frame.player_1.score))
             self.frame = self.get_next_frame()
             self.send_frame()
             if self.frame.end == True:
                 break;
-            with self.end_lock:
-                if self.end == True:
-                    break
             time.sleep(self.state_rate)
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "end.game"
