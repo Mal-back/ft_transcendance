@@ -31,13 +31,13 @@ class Player:
         }
     
     def top_left(self) -> Coordinates:
-        return Coordinates(self.position.x - self.len, self.position.y + self.height)
+        return Coordinates(self.position.x - self.len, self.position.y - self.height)
 
     def top(self) -> int:
-        return self.position.y + self.height
+        return self.position.y - self.height
 
     def bot(self) -> int:
-        return self.position.y - self.height
+        return self.position.y + self.height
 
     def front(self) -> int:
         if self.position.x < Const["CENTER"].value.x:
@@ -53,9 +53,9 @@ class Player:
 
     def correct_direction(self) -> Direction:
         new_dy = self.direction.dy
-        if self.top() + self.direction.dy > Const["BOARD_HEIGHT"].value:
+        if self.bot() + self.direction.dy > Const["BOARD_HEIGHT"].value:
             new_dy = Const["BOARD_HEIGHT"].value - self.top()
-        elif self.bot() + self.direction.dy < 0:
+        elif self.top() - self.direction.dy < 0:
             new_dy = -self.bot()
         return Direction(self.direction.dx, new_dy)
 
@@ -65,9 +65,9 @@ class Player:
         
     def read_movement(self) -> Direction:
         if self.movement == "UP":
-            return Direction(0, self.speed)
-        elif self.movement == "DOWN":
             return Direction(0, -self.speed)
+        elif self.movement == "DOWN":
+            return Direction(0, +self.speed)
         else:
             return self.direction
     
@@ -83,10 +83,10 @@ class Ball:
     size: int = field(validator=validators.instance_of(int), default=Const["BALL_SIZE"].value)
 
     def top(self) -> int:
-        return self.position.y + self.size
+        return self.position.y - self.size
 
     def bot(self) -> int:
-        return self.position.y - self.size
+        return self.position.y + self.size
 
     def front(self) -> int:
         if self.direction.dx < 0:
@@ -125,7 +125,7 @@ class Ball:
     def handle_wall_collision(self) -> None:
         y_wall = 0 if self.direction.dy < 0 else Const["BOARD_HEIGHT"].value
         impact = ImpactProjection(Coordinates(0, y_wall), Coordinates(Const["BOARD_LEN"].value, y_wall), self.position)
-        sign_dy = 1 if self.direction.dy > 0 else -1
+        sign_dy = 1 if self.direction.dy >= 0 else -1
         new_pos = Coordinates(impact.x, -sign_dy * self.size + impact.y)
         self.position = new_pos
         self.direction = GetBounceDir(self.direction, GetNormal(Coordinates(0, y_wall), Coordinates(Const["BOARD_LEN"].value, y_wall), self.position))		
