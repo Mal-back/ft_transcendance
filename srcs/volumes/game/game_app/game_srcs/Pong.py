@@ -36,7 +36,7 @@ class Player:
         }
     
     def top_left(self) -> Coordinates:
-        return Coordinates(self.position.y + self.height, self.position.x - self.len)
+        return Coordinates(self.position.x - self.len, self.position.y + self.height)
 
     def top(self) -> int:
         return self.position.y + self.height
