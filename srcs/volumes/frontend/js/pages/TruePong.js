@@ -110,6 +110,7 @@ export default class extends AbstractView {
 
     // Draw functions (apply scaling to server-sent coordinates)
     function drawPaddles() {
+      console.log("drawPaddles");
       context.fillStyle = "white";
       // Scale paddle positions and sizes using the scale factors
       context.fillRect(
@@ -127,6 +128,7 @@ export default class extends AbstractView {
     }
 
     function drawBall() {
+      console.log(`drawBall: ball.x = ${ball.x}; ball.radius = ${ball.radius}; scaleX = ${scaleX}, scaleY = ${scaleY}`);
       context.fillStyle = "white";
       context.beginPath();
       // Scale ball position and radius using the scale factors
@@ -145,7 +147,7 @@ export default class extends AbstractView {
       context.clearRect(0, 0, canvas.width, canvas.height);
       drawPaddles();
       drawBall();
-      updateScore();
+      // updateScore();
     }
     const websocket = new WebSocket(`ws://localhost:8080/api/game/ws/14845 `);
 
@@ -209,32 +211,39 @@ export default class extends AbstractView {
       console.log("Message Socket: ", ev.data);
       if (gameStart == false) {
         const gameState = JSON.parse(ev.data);
-        serverGameWidth = gameState.board_len;
-        serverGameHeight = gameState.board_height;
+        serverGameWidth = gameState.Dimensions.board_len;
+        serverGameHeight = gameState.Dimensions.board_height;
 
         scaleX = canvas.width / serverGameWidth;
         scaleY = canvas.height / serverGameHeight;
 
+        console.log("scaleX", scaleX);
+        console.log("scaleY", scaleY);
         leftPaddle = {
-          x: gameState.Player_1.x,
-          y: gameState.Player_1.y,
-          width: gameState.pad_len * 2,
-          height: gameState.pad_height * 2,
+          x: gameState.player_1[0],
+          y: gameState.player_1[1],
+          width: gameState.Dimensions.pad_len/*  * 2 */,
+          height: gameState.Dimensions.pad_height/*  * 2 */,
         };
 
+        console.log("leftPaddle", leftPaddle);
         rightPaddle = {
-          x: gameState.Player_2.x,
-          y: gameState.Player_2.y,
-          width: gameState.pad_len * 2,
-          height: gameState.pad_height * 2,
+          x: gameState.player_2[0],
+          y: gameState.player_2[1],
+          width: gameState.Dimensions.pad_len/*  * 2 */,
+          height: gameState.Dimensions.pad_height/*  * 2 */,
         };
 
+        console.log("leftPaddle", rightPaddle);
         ball = {
-          x: gameState.ball.x,
-          y: gameState.ball.y,
-          radius: gameState.ball.radius,
+          x: gameState.ball[0],
+          y: gameState.ball[1],
+          radius: gameState.Dimensions.ball_size,
         };
+
+        console.log("ball", ball);
         gameStart = true;
+        draw();
       } else {
       }
     });
