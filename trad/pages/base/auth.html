@@ -111,7 +111,7 @@
             const translation = translations;
             if (translation) {
                 // Update main content translations
-                document.getElementById('authTitle').textContent = translation.authTitle;
+                document.getElementById('authTitle').textContent = translation.login.authTitle;
 
                 // Update menu translations using innerHTML
                 document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
@@ -122,8 +122,8 @@
                 document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
 
                 // Update buttons
-                document.getElementById('createProfileBtn').textContent = translation.createProfileBtn;
-                document.getElementById('loginBtn').textContent = translation.loginBtn;
+                document.getElementById('createProfileBtn').textContent = translation.login.createProfileBtn;
+                document.getElementById('loginBtn').textContent = translation.login.loginBtn;
             }
         }
 

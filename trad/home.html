@@ -105,9 +105,9 @@
             console.log(translation);
             if (translation) {
                 // Update main content translations
-                document.getElementById('homeTitle').textContent = translation.homeTitle;
-                document.getElementById('descriptionHomeMessage').textContent = translation.descriptionHomeMessage;
-                document.getElementById('descriptionHomeMessage2').textContent = translation.descriptionHomeMessage2;
+                document.getElementById('homeTitle').textContent = translation.homePage.homeTitle;
+                document.getElementById('descriptionHomeMessage').textContent = translation.homePage.descriptionHomeMessage;
+                document.getElementById('descriptionHomeMessage2').textContent = translation.homePage.descriptionHomeMessage2;
 
                 // Update menu translations using innerHTML
                 document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;

@@ -1,0 +1,66 @@
+{
+    "settingsLabel": "Settings",
+    "settings": {
+        "Username": {
+            "label": "Username",
+            "inputType": "text",
+            "currentValue": "CurrentUsername",
+            "saveButton": "Save Username"
+        },
+        "Background": {
+            "label": "Profile Background",
+            "changeButton": "Change Profile Background"
+        },
+        "Email": {
+            "buttonLabel": "Handle Email",
+            "changeButton": "Change Email",
+            "modalFields": {
+                "OldEmail": "old-email@google.com",
+                "NewEmail": "new-email@google.com",
+                "ConfirmNewEmail": "new-email@google.com"
+            },
+            "modalButtons": [
+                "Close",
+                "Confirm Changes"
+            ]
+        },
+        "Password": {
+            "buttonLabel": "Handle Password",
+            "changeButton": "Change Password",
+            "modalFields": [
+                "Old Password",
+                "New Password",
+                "Confirm New Password"
+            ],
+            "modalButtons": [
+                "Close",
+                "Confirm Changes"
+            ]
+        },
+        "Language": {
+            "label": "Language",
+            "inputType": "select",
+            "options": [
+                "English",
+                "Spanish",
+                "French"
+            ],
+            "saveButton": "Save Language"
+        },
+        "DataHandler": {
+            "buttonLabel": "Handle Data",
+            "modalTitle": "Handle Data",
+            "modalFields": [
+                "Send All Data",
+                "Delete Account",
+                "Delete All Data"
+            ],
+            "modalButtons": [
+                "Close"
+            ]
+        }
+    },
+    "footerButtonSettings": {
+        "label": "Save All Changes"
+    }
+}
