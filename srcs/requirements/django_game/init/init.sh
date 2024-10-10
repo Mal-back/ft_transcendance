@@ -13,6 +13,6 @@ if ["$DUMP_DATA" == "True" ] ; then
 	exec python3 gunicornWrapper.py
 else
 	python3 manage.py flush --noinput
-	daphne -b '0.0.0.0' -p '8443' game.asgi:application -v2
+	daphne -b '0.0.0.0' -p '8443' --ws-protocol "graphql-ws" --proxy-headers game.asgi:application
 	# python3 manage.py runworker game_engine
 fi

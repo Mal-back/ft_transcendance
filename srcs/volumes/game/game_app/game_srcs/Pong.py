@@ -1,6 +1,7 @@
 # coding: utf-8
 from .Const import Const
 import time
+import copy
 import threading
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -27,12 +28,6 @@ class Player:
         return { "username": self.username,
             "position": self.top_left().render(),
             "score": self.score,
-        #     "position": self.position.render(),
-        #     "top": self.top(),
-        #       "bot": self.bot(),
-        #       "front": self.front(),
-        #       "back": self.back(),
-        #     "score": self.score,
         }
     
     def top_left(self) -> Coordinates:
@@ -149,10 +144,6 @@ class Ball:
     
     def render(self) -> dict:
         return { "position": self.position.render(),
-        #   "top": self.top(),
-        #   "bot": self.bot(),
-        #   "front": self.front(),
-        #   "back": self.back(),
         }
     
 @define
@@ -201,14 +192,14 @@ class Config:
     
 class LocalEngine(threading.Thread):
     def __init__(self, game_id, **kwargs):
-        super().__init__()
-        self.config = Config()
+        super().__init__(daemon=True)
+        self.config = copy.deepcopy(Config())
         self.game_id = game_id
         self.channel_layer = get_channel_layer()
         self.end_lock = threading.Lock()
         self.end = False
-        self.frame = Frame()
-        self.state_rate = 1 / 10
+        self.frame = copy.deepcopy(Frame())
+        self.state_rate = 1 / 60
         self.movement_lock = threading.Lock()
         self.start_lock = threading.Lock()
         self.begin = False
@@ -230,6 +221,7 @@ class LocalEngine(threading.Thread):
         self.send_config()
         self.wait_start()
         while True:
+            print("Thread game id = " + str(self.game_id) + " / score = " + str(self.frame.player_1.score))
             self.frame = self.get_next_frame()
             self.send_frame()
             if self.frame.end == True:

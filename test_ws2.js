@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const socket = new WebSocket('ws://localhost:8080/api/game/ws/202');
+const socket = new WebSocket('ws://localhost:8080/api/game/ws/445');
 
 socket.onopen = function(event) {
 	socket.send(JSON.stringify({

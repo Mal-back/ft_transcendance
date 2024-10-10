@@ -1,5 +1,5 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.consumer import SyncConsumer
+from channels.consumer import SyncConsumer, AsyncConsumer
 from game_app.game_srcs.Pong import LocalEngine
 from json import dumps, loads
 import logging
