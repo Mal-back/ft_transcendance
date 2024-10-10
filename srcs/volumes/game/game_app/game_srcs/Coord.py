@@ -1,4 +1,4 @@
-from attrs import frozen, define, field, validators
+from attrs import frozen, field, validators
 from typing import Tuple
 
 @frozen

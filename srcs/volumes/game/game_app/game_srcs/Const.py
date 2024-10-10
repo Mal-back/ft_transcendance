@@ -11,7 +11,7 @@ class Const(Enum):
     PAD_HEIGHT = int(BOARD_HEIGHT * 30 / 100 / 2)
     PAD_SPEED = int(BOARD_HEIGHT / 200)
     BALL_SIZE = int((BOARD_HEIGHT + BOARD_LEN) / 100)
-    MAX_SCORE = 1
+    MAX_SCORE = 5
     PAD_OFFSET = int(BOARD_LEN * 5 / 100)
     X_PLAYER_1 = PAD_OFFSET
     X_PLAYER_2 = BOARD_LEN - PAD_OFFSET

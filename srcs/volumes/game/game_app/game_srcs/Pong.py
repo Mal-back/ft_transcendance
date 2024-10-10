@@ -1,6 +1,7 @@
 # coding: utf-8
 from .Const import Const
 import time
+import copy
 import threading
 import copy
 from asgiref.sync import async_to_sync
@@ -28,22 +29,16 @@ class Player:
         return { "username": self.username,
             "position": self.top_left().render(),
             "score": self.score,
-        #     "position": self.position.render(),
-        #     "top": self.top(),
-        #       "bot": self.bot(),
-        #       "front": self.front(),
-        #       "back": self.back(),
-        #     "score": self.score,
         }
     
     def top_left(self) -> Coordinates:
-        return Coordinates(self.position.x - self.len, self.position.y + self.height)
+        return Coordinates(self.position.x - self.len, self.position.y - self.height)
 
     def top(self) -> int:
-        return self.position.y + self.height
+        return self.position.y - self.height
 
     def bot(self) -> int:
-        return self.position.y - self.height
+        return self.position.y + self.height
 
     def front(self) -> int:
         if self.position.x < Const["CENTER"].value.x:
@@ -59,9 +54,9 @@ class Player:
 
     def correct_direction(self) -> Direction:
         new_dy = self.direction.dy
-        if self.top() + self.direction.dy > Const["BOARD_HEIGHT"].value:
+        if self.bot() + self.direction.dy > Const["BOARD_HEIGHT"].value:
             new_dy = Const["BOARD_HEIGHT"].value - self.top()
-        elif self.bot() + self.direction.dy < 0:
+        elif self.top() - self.direction.dy < 0:
             new_dy = -self.bot()
         return Direction(self.direction.dx, new_dy)
 
@@ -71,9 +66,9 @@ class Player:
         
     def read_movement(self) -> Direction:
         if self.movement == "UP":
-            return Direction(0, self.speed)
-        elif self.movement == "DOWN":
             return Direction(0, -self.speed)
+        elif self.movement == "DOWN":
+            return Direction(0, +self.speed)
         else:
             return self.direction
     
@@ -89,10 +84,10 @@ class Ball:
     size: int = field(validator=validators.instance_of(int), default=Const["BALL_SIZE"].value)
 
     def top(self) -> int:
-        return self.position.y + self.size
+        return self.position.y - self.size
 
     def bot(self) -> int:
-        return self.position.y - self.size
+        return self.position.y + self.size
 
     def front(self) -> int:
         if self.direction.dx < 0:
@@ -131,7 +126,7 @@ class Ball:
     def handle_wall_collision(self) -> None:
         y_wall = 0 if self.direction.dy < 0 else Const["BOARD_HEIGHT"].value
         impact = ImpactProjection(Coordinates(0, y_wall), Coordinates(Const["BOARD_LEN"].value, y_wall), self.position)
-        sign_dy = 1 if self.direction.dy > 0 else -1
+        sign_dy = 1 if self.direction.dy >= 0 else -1
         new_pos = Coordinates(impact.x, -sign_dy * self.size + impact.y)
         self.position = new_pos
         self.direction = GetBounceDir(self.direction, GetNormal(Coordinates(0, y_wall), Coordinates(Const["BOARD_LEN"].value, y_wall), self.position))		
@@ -150,10 +145,6 @@ class Ball:
     
     def render(self) -> dict:
         return { "position": self.position.render(),
-        #   "top": self.top(),
-        #   "bot": self.bot(),
-        #   "front": self.front(),
-        #   "back": self.back(),
         }
     
 @define
@@ -202,14 +193,14 @@ class Config:
     
 class LocalEngine(threading.Thread):
     def __init__(self, game_id, **kwargs):
-        super().__init__()
-        self.config = Config()
+        super().__init__(daemon=True)
+        self.config = copy.deepcopy(Config())
         self.game_id = game_id
         self.channel_layer = get_channel_layer()
         self.end_lock = threading.Lock()
         self.end = False
         self.frame = copy.deepcopy(Frame())
-        self.state_rate = 1 / 10
+        self.state_rate = 1 / 60
         self.movement_lock = threading.Lock()
         self.start_lock = threading.Lock()
         self.begin = False
@@ -231,6 +222,7 @@ class LocalEngine(threading.Thread):
         self.send_config()
         self.wait_start()
         while True:
+            print("Thread game id = " + str(self.game_id) + " / score = " + str(self.frame.player_1.score))
             self.frame = self.get_next_frame()
             self.send_frame()
             if self.frame.end == True:
