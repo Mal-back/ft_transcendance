@@ -113,22 +113,33 @@ export default class extends AbstractView {
       console.log("drawPaddles");
       context.fillStyle = "white";
       // Scale paddle positions and sizes using the scale factors
-      context.fillRect(
-        leftPaddle.x * scaleX,
-        leftPaddle.y * scaleY,
-        leftPaddle.width * scaleX,
-        leftPaddle.height * scaleY,
+      // context.fillRect(
+      //   leftPaddle.x * scaleX,
+      //   leftPaddle.y * scaleY,
+      //   leftPaddle.width * scaleX,
+      //   leftPaddle.height * scaleY,
+      // );
+      console.log(
+        `LeftPaddle: ${leftPaddle.x * scaleX}, ${leftPaddle.y * scaleY}`,
       );
+      // context.fillRect(
+      //   rightPaddle.x * scaleX,
+      //   rightPaddle.y * scaleY,
+      //   rightPaddle.width * scaleX,
+      //   rightPaddle.height * scaleY,
+      // );
       context.fillRect(
-        rightPaddle.x * scaleX,
-        rightPaddle.y * scaleY,
+        472 - 20.8 - 20.8,
+        104 - 31.2,
         rightPaddle.width * scaleX,
         rightPaddle.height * scaleY,
+      );
+      console.log(
+        `RightPaddle: ${rightPaddle.x * scaleX}, ${rightPaddle.y * scaleY}`,
       );
     }
 
     function drawBall() {
-      console.log(`drawBall: ball.x = ${ball.x}; ball.radius = ${ball.radius}; scaleX = ${scaleX}, scaleY = ${scaleY}`);
       context.fillStyle = "white";
       context.beginPath();
       // Scale ball position and radius using the scale factors
@@ -140,6 +151,7 @@ export default class extends AbstractView {
         Math.PI * 2,
         false,
       );
+      console.log(`ball: ${ball.x * scaleX}, ${ball.y * scaleY}`);
       context.fill();
       context.closePath();
     }
@@ -222,16 +234,16 @@ export default class extends AbstractView {
         leftPaddle = {
           x: gameState.player_1[0],
           y: gameState.player_1[1],
-          width: gameState.Dimensions.pad_len/*  * 2 */,
-          height: gameState.Dimensions.pad_height/*  * 2 */,
+          width: gameState.Dimensions.pad_len * 2,
+          height: gameState.Dimensions.pad_height * 2,
         };
 
         console.log("leftPaddle", leftPaddle);
         rightPaddle = {
           x: gameState.player_2[0],
           y: gameState.player_2[1],
-          width: gameState.Dimensions.pad_len/*  * 2 */,
-          height: gameState.Dimensions.pad_height/*  * 2 */,
+          width: gameState.Dimensions.pad_len * 2,
+          height: gameState.Dimensions.pad_height * 2,
         };
 
         console.log("leftPaddle", rightPaddle);

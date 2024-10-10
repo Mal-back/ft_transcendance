@@ -2,6 +2,7 @@
 from .Const import Const
 import time
 import threading
+import copy
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import logging
@@ -207,7 +208,7 @@ class LocalEngine(threading.Thread):
         self.channel_layer = get_channel_layer()
         self.end_lock = threading.Lock()
         self.end = False
-        self.frame = Frame()
+        self.frame = copy.deepcopy(Frame())
         self.state_rate = 1 / 10
         self.movement_lock = threading.Lock()
         self.start_lock = threading.Lock()
