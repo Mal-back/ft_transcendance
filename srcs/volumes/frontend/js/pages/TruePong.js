@@ -111,29 +111,29 @@ export default class extends AbstractView {
     // Draw functions (apply scaling to server-sent coordinates)
     function drawPaddles() {
       console.log("drawPaddles");
-      context.fillStyle = "white";
+      context.fillStyle = "red";
       // Scale paddle positions and sizes using the scale factors
-      // context.fillRect(
-      //   leftPaddle.x * scaleX,
-      //   leftPaddle.y * scaleY,
-      //   leftPaddle.width * scaleX,
-      //   leftPaddle.height * scaleY,
-      // );
+      context.fillRect(
+        leftPaddle.x * scaleX,
+        leftPaddle.y * scaleY,
+        leftPaddle.width * scaleX,
+        leftPaddle.height * scaleY,
+      );
       console.log(
         `LeftPaddle: ${leftPaddle.x * scaleX}, ${leftPaddle.y * scaleY}`,
       );
-      // context.fillRect(
-      //   rightPaddle.x * scaleX,
-      //   rightPaddle.y * scaleY,
-      //   rightPaddle.width * scaleX,
-      //   rightPaddle.height * scaleY,
-      // );
       context.fillRect(
-        472 - 20.8 - 20.8,
-        104 - 31.2,
+        rightPaddle.x * scaleX,
+        rightPaddle.y * scaleY,
         rightPaddle.width * scaleX,
         rightPaddle.height * scaleY,
       );
+      // context.fillRect(
+      //   472 - 20.8 - 20.8,
+      //   104 - 31.2,
+      //   rightPaddle.width * scaleX,
+      //   rightPaddle.height * scaleY,
+      // );
       console.log(
         `RightPaddle: ${rightPaddle.x * scaleX}, ${rightPaddle.y * scaleY}`,
       );
@@ -312,5 +312,14 @@ export default class extends AbstractView {
         player2.downPressed = false;
       }
     });
+
+    window.addEventListener("beforeunload", function (event) {
+  // Close the WebSocket connection when the page is about to be unloaded
+    console.log("HERE");
+  if (websocket.readyState === WebSocket.OPEN) {
+    websocket.close();
+    console.log("WebSocket connection closed before page unload.");
+  }
+});
   }
 }

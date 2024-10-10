@@ -144,35 +144,35 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/auth
+      device: placeholder/srcs/volumes/auth
   data_django_users:
     name: data_django_users
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/users
+      device: placeholder/srcs/volumes/users
   data_django_game:
     name: data_django_game
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/game
+      device: placeholder/srcs/volumes/game
   data_frontend:
     name: data_frontend
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/frontend
+      device: placeholder/srcs/volumes/frontend
   data_static:
     name: data_static
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/auth/staticRoot
+      device: placeholder/srcs/volumes/auth/staticRoot
 
 
 networks:
