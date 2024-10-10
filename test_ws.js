@@ -1,18 +1,30 @@
-// Create a WebSocket instance and connect to the server
 const WebSocket = require('ws');
-const socket = new WebSocket('ws://localhost:8080/api/game/ws/145 ');
+const socket = new WebSocket('ws://localhost:8080/api/game/ws/4445');
 
-// Define event handlers for connection states
 socket.onopen = function(event) {
-  console.log('Connected to the WebSocket server');
-  // Send a message to the server when the connection is established
-  socket.send(JSON.stringify({type: "init.game", username: "random player"}));
-};
+	socket.send(JSON.stringify({
+		type : "init_game",
+		message : "Salut tout le monde",
+		name : "Jack",
+	}));
 
-socket.onmessage = function(event) {
-  console.log(`Received message: ${event.data}`);
-  // Process the received message
-};
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "start_game",
+		message : "Salut tout le monde",
+		name : "Jack",
+	})) }, 2000)
+}
+
+socket.onmessage = function(event){
+	const msg = event.data;
+	console.log(`${msg}`)
+	socket.send(JSON.stringify({
+		type : "move",
+		player : "player_1",
+		direction : "UP",
+	}));	
+
+}
 
 socket.onerror = function(event) {
   console.log('Error occurred while connecting to the WebSocket server');

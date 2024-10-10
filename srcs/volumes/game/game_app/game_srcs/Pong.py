@@ -25,7 +25,7 @@ class Player:
  
     def render(self) -> dict:
         return { "username": self.username,
-            "position": self.top_left.render(),
+            "position": self.top_left().render(),
             "score": self.score,
         #     "position": self.position.render(),
         #     "top": self.top(),
@@ -201,14 +201,14 @@ class Config:
     
 class LocalEngine(threading.Thread):
     def __init__(self, game_id, **kwargs):
-        super(LocalEngine, self).__init__(daemon=True, name=game_id, **kwargs)
+        super().__init__()
         self.config = Config()
         self.game_id = game_id
         self.channel_layer = get_channel_layer()
         self.end_lock = threading.Lock()
         self.end = False
         self.frame = Frame()
-        self.state_rate = 1 / 60
+        self.state_rate = 1 / 10
         self.movement_lock = threading.Lock()
         self.start_lock = threading.Lock()
         self.begin = False
@@ -241,6 +241,7 @@ class LocalEngine(threading.Thread):
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "end.game"
         })
+        print("End of run function for thread " + self.game_id)
         
     def receive_movement(self, player : str, direction : str):
         try:
@@ -293,7 +294,7 @@ class LocalEngine(threading.Thread):
     def end_thread(self) -> None:
         with self.end_lock:
             self.end = True
-            print("End function called")
+            print("End function called in thread" + self.game_id)
    
     def send_frame(self) -> None:
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
@@ -302,11 +303,11 @@ class LocalEngine(threading.Thread):
         })
         
     def send_config(self) -> None:
+        conf = {"Dimensions": self.config.render(),
+            "player_1" : self.frame.player_1.top_left().render(),
+            "player_2" : self.frame.player_2.top_left().render(),
+            "ball": self.frame.board.ball.position.render(),}
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "send.config",
-            "Config": {self.config.render(), {
-                "player_1": self.frame.player_1.top_left().render(),
-                "player_2": self.frame.player_2.top_left().render(),
-                "ball": self.frame.board.ball.render(),}
-            },
+            "Config": conf,
         })       
