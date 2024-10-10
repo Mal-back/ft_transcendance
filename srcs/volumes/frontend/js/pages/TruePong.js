@@ -256,8 +256,21 @@ export default class extends AbstractView {
         console.log("ball", ball);
         gameStart = true;
         draw();
+      const body = JSON.stringify({ type: "start_game" });
+      websocket.send(body);
       } else {
+        let updateGame = JSON.parse(ev.data);
+        leftPaddle = {
+          x: updateGame["Player 1"].position[0],
+          y: updateGame["Player 1"].position[1],
+
+        }
+        ball = {
+          x: updateGame.Board.Ball.position[0],
+          y: updateGame.Board.Ball.position[1],
+        }
       }
+      draw();
     });
 
     websocket.addEventListener("close", (ev) => {

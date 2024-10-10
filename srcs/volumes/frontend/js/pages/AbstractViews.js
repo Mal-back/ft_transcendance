@@ -182,7 +182,7 @@ export default class {
         //   `${errorMessages.join(", ")}`})
         //   .join("<br>");
         // return errorMessages;
-
+        console.log("ERROR", errorJSON);
         const errorMessages = Object.entries(errorJSON)
           .map(([field, errorMessage]) => {
             // Ensure errorMessage is an array; if not, make it an array
