@@ -94,12 +94,16 @@ class LocalGameConsumer(SyncConsumer):
         self.game_instances = {}
         
     def init_game(self, event):
-        print("Entering start_game() in LocalGameConsumer")
+        print("Nb thread = " + str(threading.active_count()))
+        print("Entering init_game() in LocalGameConsumer")
+        if self.game_instances.
         game_id = event["game_id"]
         self.game_instances[game_id] =  LocalEngine(game_id=game_id)
         self.game_instances[game_id].start()
+        print("Nb thread = " + str(threading.active_count()))
 
     def start_game(self, event):
+        print("Entering start_game() in LocalGameConsumer")
         game_id = event["game_id"]
         self.game_instances[game_id].start_game()
   
@@ -109,8 +113,10 @@ class LocalGameConsumer(SyncConsumer):
     def end_thread(self, event):
         game_id = event["game_id"]
         print("Ending thread " + game_id)
+        print("Nb thread = " + str(threading.active_count()))
         self.game_instances[game_id].end_thread()
         print("Waiting for thread to end")
         self.game_instances[game_id].join()
         self.game_instances.pop(game_id)
         print("Thread waited !")
+        print("Nb thread = " + str(threading.active_count()))

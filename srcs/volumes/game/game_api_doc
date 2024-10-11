@@ -5,5 +5,28 @@ A - Local game:
 1 - Join a room :
 
 	Establish a websocket connection to "ws://application_host/api/game/ws/room_id" where :
-		- application_host is the combination host-port of the application (ex: localhost:8080)
-		- room_id 
+		- application_host is the combination host-port of the application (ex: localhost:8080).
+		- room_id is the id given by the matchmaking (not working yet, you can put any ID you want to create a room).
+	
+	This will create a room in Django Channel to communicate with the game engine. You can not join a local game room if there is already a client in it.
+
+2 - Initialise the game :
+
+	Send via the websocket in JSON format {type: "init_game"}, this will :
+		- Create the game thread via the local_engine worker
+		- Send you the game configuration via the websocket :
+			{"Dimensions": {"board_len": value, "board_height": value, "ball_size": value, "pad_len": value, "pad_height": value},
+			"player_1": [x, y],
+			"player_2": [x, y],
+			"ball": [x, y]}
+		Where :
+			- board_len is the x maximum value
+			- board_height is the y maximum value
+			- ball size is the ball radius
+			- pad_len is the pad size on x axe
+			- pad_height is the pad size on y axe
+			- To access to initial x or y coordinate of an element, use [0] or [1] (ex: to get initial x of player 2, use player_2[0])
+
+	You can not initialise the game or get the configuration more than one time.
+
+	

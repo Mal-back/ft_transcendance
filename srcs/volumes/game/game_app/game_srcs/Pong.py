@@ -184,9 +184,8 @@ class Config:
         return { "board_len" : self.board_len,
                 "board_height" : self.board_height,
                 "ball_size" : self.ball_size,
-                "pad_len" : self.pad_len,
-                "pad_height" : self.pad_height,
-                "pad_offset" : self.pad_offset,
+                "pad_len" : self.pad_len * 2,
+                "pad_height" : self.pad_height * 2,
         }
     
     
@@ -227,7 +226,6 @@ class LocalEngine(threading.Thread):
             with self.end_lock:
                 if self.end == True:
                     break
-            print("Thread game id = " + str(self.game_id) + " / score = " + str(self.frame.player_1.score))
             self.frame = self.get_next_frame()
             self.send_frame()
             if self.frame.end == True:

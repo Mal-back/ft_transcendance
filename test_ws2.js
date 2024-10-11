@@ -9,7 +9,7 @@ socket.onopen = function(event) {
 	}));
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "start_game",
+		type : "init_game",
 		message : "Salut tout le monde",
 		name : "Jack",
 	})) }, 2000)
@@ -18,11 +18,11 @@ socket.onopen = function(event) {
 socket.onmessage = function(event){
 	const msg = event.data;
 	console.log(`${msg}`)
-	socket.send(JSON.stringify({
-		type : "move",
-		player : "player_1",
-		direction : "UP",
-	}));	
+	// socket.send(JSON.stringify({
+	// 	type : "move",
+	// 	player : "player_1",
+	// 	direction : "UP",
+	// }));	
 
 }
 
