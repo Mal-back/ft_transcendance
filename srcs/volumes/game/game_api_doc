@@ -14,8 +14,15 @@ A - Local game:
 
 	Send via the websocket in JSON format {type: "init_game"}, this will :
 		- Create the game thread via the local_engine worker
-		- Send you the game configuration via the websocket :
-			{"Dimensions": {"board_len": value, "board_height": value, "ball_size": value, "pad_len": value, "pad_height": value},
+		- The thread is ready to start or send configuration to the client
+
+	You can not initialise the game more than one time.
+		
+
+3 - Get game configuration
+
+	Send via the websocket in JSON format {type: "get_config"}, this will send you configuration to draw the base game :
+		{"Dimensions": {"board_len": value, "board_height": value, "ball_size": value, "pad_len": value, "pad_height": value},
 			"player_1": [x, y],
 			"player_2": [x, y],
 			"ball": [x, y]}
@@ -25,8 +32,9 @@ A - Local game:
 			- ball size is the ball radius
 			- pad_len is the pad size on x axe
 			- pad_height is the pad size on y axe
-			- To access to initial x or y coordinate of an element, use [0] or [1] (ex: to get initial x of player 2, use player_2[0])
+			- To access to initial x or y coordinate of an element, use [0] or [1] (ex: to get initial x of player 2, use player_2[0]).
 
-	You can not initialise the game or get the configuration more than one time.
+		Warning : If you get configuration while game runing, you can not access to players and ball positions with the configuration. It will always send you initiale coordinates.
+
 
 	

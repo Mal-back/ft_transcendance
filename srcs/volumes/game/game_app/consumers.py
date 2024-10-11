@@ -29,21 +29,31 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
             log.info("Local game already exists")
             self.delete = False
             await self.close()
+
+    async def clean_game(self):
+        log.info("Cleaning game " + str(self.group_name))
+        game = await sync_to_async(LocalGame.objects.get)(game_id=self.group_name)
+        await sync_to_async(game.delete)()
+        await self.channel_layer.send("local_engine", {
+            "type": "end.thread",
+            "game_id": self.group_name,
+        })
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)        
      
     async def disconnect(self, code):
         log.info("Player " + self.username + " disconnected")
         if self.delete == True:
-            game = await sync_to_async(LocalGame.objects.get)(game_id=self.group_name)
-            await sync_to_async(game.delete)()
-            await self.channel_layer.send("local_engine", {
-                "type": "end.thread",
-                "game_id": self.group_name,
-            })
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+            await self.clean_game()
     
     async def init_game(self):
         await self.channel_layer.send("local_engine", {
             "type": "init.game",
+            "game_id": self.group_name,
+        })
+        
+    async def get_config(self):
+        await self.channel_layer.send("local_engine", {
+            "type": "get.config",
             "game_id": self.group_name,
         })
 
@@ -61,6 +71,9 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
             "direction": content["direction"]
         })
 
+    async def send_error(self, event):
+        await self.send(dumps({"Error" : event["Error"],}))
+
     async def send_state(self, event):
         await self.send(dumps(event["Frame"]))
   
@@ -71,18 +84,16 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
         log.info("End game function called in WebsocketConsumer " + self.group_name)
         self.delete = True
         await self.close()
-  
-    async def channel_msg(self, event):
-        log.info("channel_msg triggered in LocalPlayerConsumer")
-        await self.send(event["msg"])
     
     async def receive(self, text_data=None, bytes_data=None):
         content = loads(text_data)
         type = content["type"]
-        if type == "start_game":
-            await self.start_game()
-        elif type == "init_game":
+        if type == "init_game":
             await self.init_game()
+        elif type == "get_config":
+            await self.get_config()
+        elif type == "start_game":
+            await self.start_game()
         elif type == "move":
             await self.move(content)
         else:
@@ -92,12 +103,19 @@ class LocalGameConsumer(SyncConsumer):
     def __init__(self, *args, **kwargs):
         print("LocalGameConsumer created")
         self.game_instances = {}
+    
+    def error(self, error_msg, game_id):
+        async_to_sync(self.channel_layer.group_send)(game_id,
+            {"type": "send.error", "Error" : error_msg})
         
     def init_game(self, event):
         print("Nb thread = " + str(threading.active_count()))
         print("Entering init_game() in LocalGameConsumer")
-        if self.game_instances.
         game_id = event["game_id"]
+        if game_id in self.game_instances:
+            print("Game thread for room " + str(game_id) + " is already initialized")
+            self.error("Game already initialized", game_id)
+            return
         self.game_instances[game_id] =  LocalEngine(game_id=game_id)
         self.game_instances[game_id].start()
         print("Nb thread = " + str(threading.active_count()))
@@ -105,7 +123,20 @@ class LocalGameConsumer(SyncConsumer):
     def start_game(self, event):
         print("Entering start_game() in LocalGameConsumer")
         game_id = event["game_id"]
+        if game_id not in self.game_instances:
+            print("Game thread for room " + str(game_id) + " is already initialized")
+            self.error("Game not initialized", game_id)
+            return
         self.game_instances[game_id].start_game()
+        
+    def get_config(self, event):
+        print("Entering get_config() in LocalGameConsumer")
+        game_id = event["game_id"]
+        if game_id not in self.game_instances:
+            print("Game thread " + str(game_id) + " can not send config because not initialized")
+            self.error("Game not initialized", game_id)
+            return
+        self.game_instances[game_id].send_config()
   
     def move(self, event):
         self.game_instances[event["game_id"]].receive_movement(event["player"], event["direction"])

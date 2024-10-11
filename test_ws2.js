@@ -1,7 +1,20 @@
 const WebSocket = require('ws');
-const socket = new WebSocket('ws://localhost:8080/api/game/ws/445');
+const socket = new WebSocket('ws://localhost:8080/api/game/ws/44575');
 
 socket.onopen = function(event) {
+
+	socket.send(JSON.stringify({
+		type : "get_config",
+		message : "Salut tout le monde",
+		name : "Jack",
+	}));
+
+	socket.send(JSON.stringify({
+		type : "start_game",
+		message : "Salut tout le monde",
+		name : "Jack",
+	}));
+
 	socket.send(JSON.stringify({
 		type : "init_game",
 		message : "Salut tout le monde",
@@ -13,6 +26,24 @@ socket.onopen = function(event) {
 		message : "Salut tout le monde",
 		name : "Jack",
 	})) }, 2000)
+
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "get_config",
+		message : "Salut tout le monde",
+		name : "Jack",
+	})) }, 3000)
+
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "start_game",
+		message : "Salut tout le monde",
+		name : "Jack",
+	})) }, 4000)
+
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "start_game",
+		message : "Salut tout le monde",
+		name : "Jack",
+	})) }, 5000)
 }
 
 socket.onmessage = function(event){
