@@ -200,7 +200,7 @@ class LocalEngine(threading.Thread):
         self.end_lock = threading.Lock()
         self.end = False
         self.frame = copy.deepcopy(Frame())
-        self.state_rate = 1 / 60
+        self.state_rate = 1 / 60 
         self.movement_lock = threading.Lock()
         self.start_lock = threading.Lock()
         self.begin = False

@@ -40,6 +40,7 @@ export default class extends AbstractView {
     canvas.height = (window.innerHeight - headerHeight) / 2; // 99% of the viewport height
 
     const scaleFactor = window.devicePixelRatio || 1;
+    console.log("SCALE FACTOR:", scaleFactor);
     canvas.width *= scaleFactor;
     canvas.height *= scaleFactor;
     context.scale(scaleFactor, scaleFactor);
@@ -109,6 +110,8 @@ export default class extends AbstractView {
     let serverGameHeight = 0;
 
     // Draw functions (apply scaling to server-sent coordinates)
+    //
+
     function drawPaddles() {
       console.log("drawPaddles");
       context.fillStyle = "red";
@@ -129,8 +132,8 @@ export default class extends AbstractView {
       //   Math.floor(rightPaddle.height * scaleY),
       // );
       context.fillRect(
-        357.05,
-        70,
+        333,
+        63,
         rightPaddle.width * scaleX,
         rightPaddle.height * scaleY,
       );
@@ -157,7 +160,22 @@ export default class extends AbstractView {
     }
     function draw() {
       console.log("DRAW");
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      console.log("Canvas z-index:", window.getComputedStyle(canvas).zIndex);
+      console.log(
+        "Canvas width:",
+        canvas.width,
+        "Canvas height:",
+        canvas.height,
+      );
+      if (canvas.checkVisibility() == false) {
+        console.log("NO CANVAS");
+      }
+      context.clearRect(
+        0,
+        0,
+        canvas.width / scaleFactor,
+        canvas.height / scaleFactor,
+      );
       drawPaddles();
       drawBall();
       // updateScore();
@@ -222,10 +240,12 @@ export default class extends AbstractView {
     }
 
     let counter = 0;
+    let intervalId = null;
     websocket.addEventListener("message", (ev) => {
-      // console.log("Message Socket: ", ev.data);
+      console.log("MessageSocket: ", ev.data);
       if (gameStart == false) {
         const gameState = JSON.parse(ev.data);
+
         serverGameWidth = gameState.Dimensions.board_len;
         serverGameHeight = gameState.Dimensions.board_height;
 
@@ -266,30 +286,39 @@ export default class extends AbstractView {
 
         console.log("Message Socket: ", ev.data);
         leftPaddle = {
-          x: updateGame["Player 1"].position[0],
-          y: updateGame["Player 1"].position[1],
+          x: updateGame.player_1.position[0],
+          y: updateGame.player_1.position[1],
         };
         console.log(
-          `leftPaddle: x = ${updateGame["Player 1"].position[0]}, y = ${updateGame["Player 1".position[1]]}`,
+          `leftPaddle: x = ${updateGame.player_1.position[0]}, y = ${updateGame.player_1.position[1]}`,
         );
         rightPaddle = {
-          x: updateGame["Player 2"].position[0],
-          y: updateGame["Player 2"].position[1],
+          x: updateGame.player_2.position[0],
+          y: updateGame.player_2.position[1],
         };
         ball = {
-          x: updateGame.Board.Ball.position[0],
-          y: updateGame.Board.Ball.position[1],
+          x: updateGame.ball.position[0],
+          y: updateGame.ball.position[1],
         };
         counter++;
         draw();
+        // intervalId = setInterval(draw, 1000 / 60);
+        // requestAnimationFrame(() => this.pongGame());
       }
     });
 
     websocket.addEventListener("close", (ev) => {
+      // if (intervalId) {
+      //   clearInterval(intervalId);
+      // }
+
       console.log("websocket is closed");
     });
 
     websocket.addEventListener("error", (ev) => {
+      // if (intervalId) {
+      //   clearInterval(intervalId);
+      // }
       console.error("Error in websocket: ", ev);
     });
 

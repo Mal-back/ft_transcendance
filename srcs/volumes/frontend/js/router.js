@@ -9,7 +9,7 @@ import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
 import Friends from "./pages/Friends.js";
 import Pong from "./pages/Pong.js";
-import TruePong from "./pages/TruePong.js";
+import PongLocal from "./pages/PongLocal.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -35,7 +35,7 @@ const router = async () => {
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
     { path: "/pong", view: Pong },
-    { path: "/pongLocal", view: TruePong },
+    { path: "/pongLocal", view: PongLocal },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -119,8 +119,8 @@ const router = async () => {
   try {
     await view.loadCss();
     document.querySelector("#app").innerHTML = await view.getHtml();
-    view.addEventListeners();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong") view.pongGame();
+    await view.addEventListeners();
   } catch (error) {
     if (error.message.split(" ")[0] === "Redirect") {
       view.showModalWithError("Redirect", error.message);
