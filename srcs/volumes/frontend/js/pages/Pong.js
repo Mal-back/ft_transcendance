@@ -144,6 +144,7 @@ export default class extends AbstractView {
 
     // Main draw loop
     function draw() {
+      console.log("Draw function called");
       context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
       drawPaddles(); // Draw paddles
       drawBall(); // Draw the ball
@@ -184,35 +185,35 @@ export default class extends AbstractView {
       context.scale(scaleFactor, scaleFactor);
     });
 
-    const websocket = new WebSocket(`ws://localhost:8080/api/game/ws/14845 `);
-
-    websocket.addEventListener(`open`, (ev) => {
-      console.log("Websocket is opened");
-      // const body = JSON.stringify({ type: "start_game" });
-      // websocket.send(body);
-    });
-
-    websocket.addEventListener("message", (ev) => {
-      console.log("Message Socket: ", ev.data);
-    });
-
-    websocket.addEventListener("close", (ev) => {
-      console.log("websocket is closed");
-    });
-
-    websocket.addEventListener("error", (ev) => {
-      console.error("Error in websocket: ", ev);
-    });
-
-  document.addEventListener("click", (ev) => {
-      const canvas = document.getElementById("ongoing-game");
-      const isClickInsideCanvas = canvas.contains(ev.target);
-      if (isClickInsideCanvas) {
-      const body = JSON.stringify({ type: "start_game" });
-      websocket.send(body);
-      }
-    })
-
+  //   const websocket = new WebSocket(`ws://localhost:8080/api/game/ws/14845 `);
+  //
+  //   websocket.addEventListener(`open`, (ev) => {
+  //     console.log("Websocket is opened");
+  //     // const body = JSON.stringify({ type: "start_game" });
+  //     // websocket.send(body);
+  //   });
+  //
+  //   websocket.addEventListener("message", (ev) => {
+  //     console.log("Message Socket: ", ev.data);
+  //   });
+  //
+  //   websocket.addEventListener("close", (ev) => {
+  //     console.log("websocket is closed");
+  //   });
+  //
+  //   websocket.addEventListener("error", (ev) => {
+  //     console.error("Error in websocket: ", ev);
+  //   });
+  //
+  // document.addEventListener("click", (ev) => {
+  //     const canvas = document.getElementById("ongoing-game");
+  //     const isClickInsideCanvas = canvas.contains(ev.target);
+  //     if (isClickInsideCanvas) {
+  //     const body = JSON.stringify({ type: "start_game" });
+  //     websocket.send(body);
+  //     }
+  //   })
+  //
   }
 
   async addEventListeners() {

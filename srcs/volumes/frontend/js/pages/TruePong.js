@@ -114,26 +114,26 @@ export default class extends AbstractView {
       context.fillStyle = "red";
       // Scale paddle positions and sizes using the scale factors
       context.fillRect(
-        leftPaddle.x * scaleX,
-        leftPaddle.y * scaleY,
-        leftPaddle.width * scaleX,
-        leftPaddle.height * scaleY,
+        Math.floor(leftPaddle.x * scaleX),
+        Math.floor(leftPaddle.y * scaleY),
+        Math.floor(leftPaddle.width * scaleX),
+        Math.floor(leftPaddle.height * scaleY),
       );
       console.log(
         `LeftPaddle: ${leftPaddle.x * scaleX}, ${leftPaddle.y * scaleY}`,
       );
+      // context.fillRect(
+      //   Math.floor(rightPaddle.x * scaleX),
+      //   Math.floor(rightPaddle.y * scaleY),
+      //   Math.floor(rightPaddle.width * scaleX),
+      //   Math.floor(rightPaddle.height * scaleY),
+      // );
       context.fillRect(
-        rightPaddle.x * scaleX,
-        rightPaddle.y * scaleY,
+        357.05,
+        70,
         rightPaddle.width * scaleX,
         rightPaddle.height * scaleY,
       );
-      // context.fillRect(
-      //   472 - 20.8 - 20.8,
-      //   104 - 31.2,
-      //   rightPaddle.width * scaleX,
-      //   rightPaddle.height * scaleY,
-      // );
       console.log(
         `RightPaddle: ${rightPaddle.x * scaleX}, ${rightPaddle.y * scaleY}`,
       );
@@ -156,6 +156,7 @@ export default class extends AbstractView {
       context.closePath();
     }
     function draw() {
+      console.log("DRAW");
       context.clearRect(0, 0, canvas.width, canvas.height);
       drawPaddles();
       drawBall();
@@ -219,8 +220,10 @@ export default class extends AbstractView {
         }
       }
     }
+
+    let counter = 0;
     websocket.addEventListener("message", (ev) => {
-      console.log("Message Socket: ", ev.data);
+      // console.log("Message Socket: ", ev.data);
       if (gameStart == false) {
         const gameState = JSON.parse(ev.data);
         serverGameWidth = gameState.Dimensions.board_len;
@@ -256,21 +259,30 @@ export default class extends AbstractView {
         console.log("ball", ball);
         gameStart = true;
         draw();
-      const body = JSON.stringify({ type: "start_game" });
-      websocket.send(body);
-      } else {
+        // const body = JSON.stringify({ type: "start_game" });
+        // websocket.send(body);
+      } else if (counter < 5) {
         let updateGame = JSON.parse(ev.data);
+
+        console.log("Message Socket: ", ev.data);
         leftPaddle = {
           x: updateGame["Player 1"].position[0],
           y: updateGame["Player 1"].position[1],
-
-        }
+        };
+        console.log(
+          `leftPaddle: x = ${updateGame["Player 1"].position[0]}, y = ${updateGame["Player 1".position[1]]}`,
+        );
+        rightPaddle = {
+          x: updateGame["Player 2"].position[0],
+          y: updateGame["Player 2"].position[1],
+        };
         ball = {
           x: updateGame.Board.Ball.position[0],
           y: updateGame.Board.Ball.position[1],
-        }
+        };
+        counter++;
+        draw();
       }
-      draw();
     });
 
     websocket.addEventListener("close", (ev) => {
@@ -286,7 +298,10 @@ export default class extends AbstractView {
       const canvas = document.getElementById("ongoing-game");
       const isClickInsideCanvas = canvas.contains(ev.target);
       if (isClickInsideCanvas) {
-        const body = JSON.stringify({ type: "init_game" });
+        console.log("gameStart", gameStart);
+        const body = gameStart
+          ? JSON.stringify({ type: "start_game" })
+          : JSON.stringify({ type: "init_game" });
         console.log("Sent:", body);
         websocket.send(body);
       } else {
@@ -327,12 +342,12 @@ export default class extends AbstractView {
     });
 
     window.addEventListener("beforeunload", function (event) {
-  // Close the WebSocket connection when the page is about to be unloaded
-    console.log("HERE");
-  if (websocket.readyState === WebSocket.OPEN) {
-    websocket.close();
-    console.log("WebSocket connection closed before page unload.");
-  }
-});
+      // Close the WebSocket connection when the page is about to be unloaded
+      console.log("HERE");
+      if (websocket.readyState === WebSocket.OPEN) {
+        websocket.close();
+        console.log("WebSocket connection closed before page unload.");
+      }
+    });
   }
 }
