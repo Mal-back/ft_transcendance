@@ -28,7 +28,6 @@ class MicroServiceClient:
             status_code = self._send_request(url, method, headers, body)
             if status_code not in expected_status:
                 self._on_failure(successed_requests, method, headers=headers, body=body, *args, **kwargs)
-                return False
             successed_requests.append(url)
         return True
 
@@ -60,10 +59,15 @@ class MicroServiceClient:
         return response.json()['token']
     
     def _on_failure(self, urls:list, method:str, headers={}, body={}, *args, **kwargs):
-        return
+        raise RequestsFailed()
 
 
 class InvalidCredentialsException(Exception):
+    def __init__(self, message, code=None):
+        super().__init__(message)
+        self.code(code)
+
+class RequestsFailed(Exception):
     def __init__(self, message, code=None):
         super().__init__(message)
         self.code(code)

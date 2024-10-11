@@ -154,8 +154,8 @@ SIMPLE_JWT = {
 
 MS_CLIENT_SETTINGS = {
         'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
-        'SERVICE_NAME':'avatar',
-        'SERVICE_SECRET':'acab1313',
+        'SERVICE_NAME':'avatar_manager',
+        'SERVICE_SECRET':'acab1315',
         }
 
 # Internationalization

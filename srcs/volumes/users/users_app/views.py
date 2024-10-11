@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
-from .permissions import IsAuth, IsOwner
+from .permissions import IsAuth, IsOwner, IsAvatarManager
 from .authentification import CustomAuthentication
 
 # Create your views here.
@@ -59,9 +59,9 @@ class PublicUserDelete(generics.DestroyAPIView):
 
 class PublicUserIncrement(APIView):
     lookup_field = 'username'
-    def patch(self, request, pk, lookupfield):
+    def patch(self, request, username, lookupfield):
         try:
-            user = PublicUser.objects.get(pk=pk)
+            user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -90,7 +90,7 @@ class PublicUserAddFriend(APIView):
     permission_classes = [IsOwner]
     def patch(self, request, username, friendusername):
         if username == friendusername:
-            return Response({'info': 'user can\'t add himself as a friend'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
@@ -101,7 +101,7 @@ class PublicUserAddFriend(APIView):
         except PublicUser.DoesNotExist:
             return Response({'error': 'New friend does not exists'}, status=status.HTTP_400_BAD_REQUEST)
         if user.friends.filter(username=friendusername).exists():
-            return Response({'info': 'new friend was already a friend'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         if cur_friends is None:
             return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
         user.friends.add(new_friend)
@@ -129,7 +129,7 @@ class PublicUserRemoveFriend(APIView):
     lookup_field = 'username'
     def delete(self,request, username, friendusername):
         if username == friendusername:
-            return Response({'info': 'user can\'t remove itself form friendlist'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
@@ -140,10 +140,26 @@ class PublicUserRemoveFriend(APIView):
         except PublicUser.DoesNotExist:
             return Response({'error': 'New friend does not exists'}, status=status.HTTP_400_BAD_REQUEST)
         if not user.friends.filter(username=friendusername).exists():
-            return Response({'info': 'this user is not your friend'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         if cur_friends is None:
             return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
         user.friends.remove(delete_friend)
         user.save()
 
         return Response({'OK' : 'Successefully delete the user from friend list'}, status=status.HTTP_204_NO_CONTENT)        
+
+class PublicUserUpdateAvatar(APIView):
+    permission_classes = [IsAvatarManager]
+    lookup_field = 'username'
+    def patch(self, request, username):
+        try:
+            user = PublicUser.objects.get(username=username)
+        except PublicUser.DoesNotExist:
+            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        path = request.data.get('avatar_path')
+        if path is None:
+            return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
+        user.profilePic = path
+        user.save()
+            
+
