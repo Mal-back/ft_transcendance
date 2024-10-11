@@ -166,7 +166,7 @@ class Frame:
     end : bool = False
  
     def render(self) -> dict:
-        return { "board" : self.board.render(),
+        return { "ball" : self.board.ball.render(),
                 "player_1" : self.player_1.render(),
                 "player_2" : self.player_2.render(),    
         }
