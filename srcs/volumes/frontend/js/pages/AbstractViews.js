@@ -1,8 +1,10 @@
 import { navigateTo } from "../router.js";
 import { removeSessionStorage, setSessionStorage } from "./Utils.js";
+import Language from "./Language.js";
 
 export default class {
   constructor() {
+    this.lang = new Language();
     this.loginToLogout();
     this.closeSidebarOnNavigate();
   }
@@ -46,7 +48,7 @@ export default class {
       loginOverlay.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout';
       loginOverlay.href = "/logout";
       logIcon.href = "/logout";
-      logIcon.title = "Logout";
+      logIcon.title = this.lang.getTranslation("logout");
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
     } else {
@@ -56,7 +58,7 @@ export default class {
       loginOverlay.innerHTML = '<i class="bi bi-box-arrow-left"></i> Login';
       loginOverlay.href = "/login";
       logIcon.href = "/login";
-      logIcon.title = "Login";
+      logIcon.title = this.lang.getTranslation("login");
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
     }
@@ -175,13 +177,6 @@ export default class {
           return "Empty response";
         }
         const errorJSON = JSON.parse(responseText);
-        // const errorMessages = Object.entries(errorJSON)
-        //   .map(([field, errorMessages]) => {
-        //   if (!Array.isArray(errorMessages))
-        //     return errorMessages;
-        //   `${errorMessages.join(", ")}`})
-        //   .join("<br>");
-        // return errorMessages;
         console.log("ERROR", errorJSON);
         const errorMessages = Object.entries(errorJSON)
           .map(([field, errorMessage]) => {

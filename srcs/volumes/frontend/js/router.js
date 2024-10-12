@@ -118,6 +118,7 @@ const router = async () => {
 
   try {
     await view.loadCss();
+    await view.lang.fetchJSONLanguage();
     document.querySelector("#app").innerHTML = await view.getHtml();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
       view.pongGame();
