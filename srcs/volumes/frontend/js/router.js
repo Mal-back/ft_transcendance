@@ -119,7 +119,8 @@ const router = async () => {
   try {
     await view.loadCss();
     document.querySelector("#app").innerHTML = await view.getHtml();
-    if (match.route.path == "/pongLocal" || match.route.path == "/pong") view.pongGame();
+    if (match.route.path == "/pongLocal" || match.route.path == "/pong")
+      view.pongGame();
     await view.addEventListeners();
   } catch (error) {
     if (error.message.split(" ")[0] === "Redirect") {

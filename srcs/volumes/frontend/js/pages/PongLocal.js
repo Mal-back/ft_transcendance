@@ -137,15 +137,19 @@ export default class extends AbstractView {
 
   throttleMovement(player, direction) {
     if (player == "player_1") {
+      console.info("throttleMovement: keypress", this.player1.keyPressTimeout);
       if (!this.player1.keyPressTimeout) {
         this.player1.keyPressTimeout = setTimeout(() => {
+          console.info("keyPressTimeout:", this.player1.keyPressTimeout);
           this.sendPlayerMovement(this.player1.name, direction);
           if (this.player1.upPressed || this.player1.downPressed) {
             this.throttleMovement(this.player1.name, direction);
           } else {
+            console.info("Remove keyPressTimeout");
             this.player1.keyPressTimeout = null;
           }
         }, 10);
+        this.player1.keyPressTimeout = null;
       }
     } else {
       if (!this.player2.keyPressTimeout) {
@@ -157,9 +161,9 @@ export default class extends AbstractView {
             this.player2.keyPressTimeout = null;
           }
         }, 10);
+        this.player2.keyPressTimeout = null;
       }
     }
-    const str = `coucou${this.webSocket}+${this.sendPlayerMovement(mivi)}\n`;
   }
 
   async addEventListeners() {
@@ -252,31 +256,36 @@ export default class extends AbstractView {
     document.addEventListener("keydown", (ev) => {
       if ((ev.key === "w" || ev.key === "W") && !this.player1.upPressed) {
         this.player1.upPressed = true;
+        console.info("Press up");
         this.throttleMovement(this.player1.name, "UP");
       }
-      if (ev.key === 38 && !this.player2.upPressed) {
+      if (ev.key === "ArrowUp" && !this.player2.upPressed) {
         this.player2.upPressed = true;
         this.throttleMovement(this.player2.name, "UP");
       }
       if ((ev.key === "s" || ev.key === "S") && !this.player1.downPressed) {
+        ev.preventDefault();
         this.player1.downPressed = true;
         this.throttleMovement(this.player1.name, "DOWN");
       }
-      if (ev.key === 40 && !this.player2.downPressed) {
+      if (ev.key === "ArrowDown" && !this.player2.downPressed) {
+        ev.preventDefault();
         this.player2.downPressed = true;
         this.throttleMovement(this.player2.name, "DOWN");
       }
+      console.info("key pressed:", ev.key);
     });
 
     document.addEventListener("keyup", (ev) => {
       if (ev.key === "w" || ev.key === "W") {
+        console.info("Remove press up");
         this.player1.upPressed = false;
       }
       if (ev.key === "s" || ev.key === "S") {
         this.player1.downPressed = false;
       }
-      if (ev.key === 38) this.player2.upPressed = false;
-      if (ev.key === 40) {
+      if (ev.key === "ArrowUp") this.player2.upPressed = false;
+      if (ev.key === "ArrowDown") {
         this.player2.downPressed = false;
       }
     });
