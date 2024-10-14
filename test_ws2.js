@@ -4,51 +4,43 @@ const socket = new WebSocket('ws://localhost:8080/api/game/ws/44575');
 socket.onopen = function(event) {
 
 	socket.send(JSON.stringify({
+		type : "init_game",
+		message : "Salut tout le monde",
+		name : "Jack",
+	}));
+
+
+	setTimeout(() => { 	socket.send(JSON.stringify({
 		type : "get_config",
 		message : "Salut tout le monde",
 		name : "Jack",
-	}));
-
-	socket.send(JSON.stringify({
-		type : "start_game",
-		message : "Salut tout le monde",
-		name : "Jack",
-	}));
-
-	socket.send(JSON.stringify({
-		type : "init_game",
-		message : "Salut tout le monde",
-		name : "Jack",
-	}));
+	})) }, 100)
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "init_game",
+		type : "start_game",
 		message : "Salut tout le monde",
 		name : "Jack",
 	})) }, 2000)
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "get_config",
-		message : "Salut tout le monde",
-		name : "Jack",
+		type : "move",
+		player : "player_1",
+		direction : "UP",
 	})) }, 3000)
 
-	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "start_game",
-		message : "Salut tout le monde",
-		name : "Jack",
-	})) }, 4000)
 
-	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "start_game",
-		message : "Salut tout le monde",
-		name : "Jack",
-	})) }, 5000)
 }
 
 socket.onmessage = function(event){
 	const msg = event.data;
 	console.log(`${msg}`)
+
+	socket.send(JSON.stringify({
+		type : "move",
+		player : "player_1",
+		direction : "DOWN",
+	}));
+
 	// socket.send(JSON.stringify({
 	// 	type : "move",
 	// 	player : "player_1",

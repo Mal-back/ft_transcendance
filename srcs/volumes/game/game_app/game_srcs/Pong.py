@@ -54,9 +54,9 @@ class Player:
 	def correct_direction(self) -> Direction:
 		new_dy = self.direction.dy
 		if self.bot() + self.direction.dy > Const["BOARD_HEIGHT"].value:
-			new_dy = Const["BOARD_HEIGHT"].value - self.top()
-		elif self.top() - self.direction.dy < 0:
-			new_dy = -self.bot()
+			new_dy = Const["BOARD_HEIGHT"].value - self.bot()
+		elif self.top() + self.direction.dy < 0:
+			new_dy = -self.top()
 		return Direction(self.direction.dx, new_dy)
 
 	def reset_direction(self) -> None:
@@ -75,7 +75,9 @@ class Player:
 		self.direction = self.read_movement()
 		self.direction = self.correct_direction()
 		self.position = self.position.move(self.direction)
+		self.reset_direction()
 	
+ 
 @define
 class Ball:
 	position: Coordinates = field(validator=validators.instance_of(Coordinates), default=Const["CENTER"].value)
