@@ -23,8 +23,10 @@ export default class Language {
     if (sessionStorage.getItem("accessJWT_transcendence")) {
       loginOverlay.innerHTML = `<i class="bi bi=box-arrow-in-right"></i> ${this.getTranslation(["menu", "logout"])}`;
     } else {
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${this.getTranslation(["menu", "login", "wrong"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${this.getTranslation(["menu", "login"])}`;
     }
+    const alertLabel = document.getElementById("alertLabel");
+    alertLabel.innerText = this.getTranslation(["modal", "error"]);
   }
 
   async fetchJSONLanguage() {
@@ -40,7 +42,7 @@ export default class Language {
       this.JSONLanguage = await response.json();
       this.currentLanguage = lang;
       sessionStorage.setItem("transcendence_language", lang);
-      console.debug("Get JSON Language");
+      console.debug("Get JSON Language:", this.JSONLanguage);
       this.translateIndex();
     } catch (error) {
       console.error("Error in Language", error);
@@ -75,12 +77,15 @@ export default class Language {
   }
 
   getTranslation(arrayKey) {
+    console.log("getTranslation")
     let translation = null;
     if (this.JSONLanguage) {
       translation = this.findKey(this.JSONLanguage, arrayKey);
       if (!translation) {
         translation = arrayKey.at(-1);
       }
+    } else {
+      console.log("NO JSON");
     }
     return translation;
   }

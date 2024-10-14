@@ -5,10 +5,10 @@ import AbstractView from "./AbstractViews.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Login");
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["menu", "login"])}`);
     const username = sessionStorage.getItem("username_transcendance");
     if (username) {
       // const loginOverlay = document.querySelector("#overlayLogin");
@@ -22,26 +22,26 @@ export default class extends AbstractView {
                     <div class="p-5 bg-*">
                         <div class="black-txt bg-form login-form p-4">
                             <h1 class="mb-3 text-center login-title text-decoration-underline">
-                                Login
+                              ${this.lang.getTranslation(["login", "loginBtn"])};
                             </h1>
                             <form id="loginForm">
                                 <div class="form-group">
-                                    <label for="Username">Username:</label>
+                                    <label for="Username" id="UsernameTitle">${this.lang.getTranslation(["login", "usernameLabel"])}</label>
                                     <input class="form-control" name="Username" type="text" />
                                 </div>
                                 <br />
                                 <div class="form-group">
-                                    <label for="Password">Password</label>
+                                    <label for="Password" id="PasswordTitle">${this.lang.getTranslation(["login", "passwordLabel"])}</label>
                                     <input class="form-control" name="Password" type="password" />
                                 </div>
                                 <br />
-                                <button id="loginButton" type="submit" class="btn bg-silver">Login</button>
+                                <button id="loginButton" type="submit" class="btn bg-silver">${this.lang.getTranslation(["login", "loginBtn"])}</button>
                                 <br />
                                 <br />
                             </form>
                         </div>
                         <div class="d-flex justify-content-center mt-3">
-                            <a id="createUser" type="button" class="btn bg-blue login42 white-txt me-2" href="/createUser" data-link="view">Create New User
+                            <a id="createUser" type="button" class="btn bg-blue login42 white-txt me-2" href="/createUser" data-link="view">${this.lang.getTranslation(["login", "createUserTitle"])}
                             </a>
                             <a type="button" class="btn bg-blue login42 white-txt">
                                 42 Connect
@@ -101,7 +101,7 @@ export default class extends AbstractView {
       }
     } catch (Error) {
       console.error("Error fetching login:", Error.message);
-        this.showModalWithError("Error", Error.message);
+      this.showModalWithError("Error", Error.message);
     }
   }
 

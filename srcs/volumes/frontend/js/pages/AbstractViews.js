@@ -45,20 +45,20 @@ export default class {
     const logIcon = document.querySelector("#logIconRef");
     const logIconImg = document.querySelector("#logIconImg");
     if (username && accessToken && refreshToken) {
-      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout';
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
       loginOverlay.href = "/logout";
       logIcon.href = "/logout";
-      logIcon.title = this.lang.getTranslation("logout");
+      logIcon.title = this.lang.getTranslation(["menu", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
       }
-      loginOverlay.innerHTML = '<i class="bi bi-box-arrow-left"></i> Login';
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
       loginOverlay.href = "/login";
       logIcon.href = "/login";
-      logIcon.title = this.lang.getTranslation("login");
+      logIcon.title = this.lang.getTranslation(["menu", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
     }

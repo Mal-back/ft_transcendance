@@ -8,6 +8,9 @@
     "logout": "Déconnexion",
     "login": "Connexion"
   },
+  "modal": {
+    "error": "Erreur"
+  },
   "homePage": {
     "homeTitle": "Bienvenue à Notre Pong !",
     "descriptionHomeMessage": "Explorez la profondeur du jeu Pong, jouez avec des amis et personnalisez votre profil à votre guise !",

@@ -4,7 +4,6 @@ import AbstractView from "./AbstractViews.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Create new user");
   }
 
   async loadCss() {
@@ -12,33 +11,34 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["login", "createProfileBtn"])}`);
     return `
       <div class="background">
         <div class="p-5 bg-*">
             <div class="black-txt bg-form create-user-form p-4">
-                <h1 class="mb-3 text-center create-user-title text-decoration-underline">Create User</h1>
+                <h1 class="mb-3 text-center create-user-title text-decoration-underline">${this.lang.getTranslation(["login", "createUserTitle"])}</h1>
                 <form id="createUser">
                     <div class="form-group">
-                        <label for="Username">Username:</label>
+                        <label for="Username">${this.lang.getTranslation(["login", "usernameLabel"])}</label>
                         <input class="form-control" name="Username" id="Username" type="text">
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="Mail">Mail:</label>
+                        <label for="Mail">${this.lang.getTranslation(["login", "mailLabel"])}</label>
                         <input class="form-control" name="Mail" id="Mail" type="text">
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="Password">Password</label>
+                        <label for="Password">${this.lang.getTranslation(["login", "passwordLabel"])}</label>
                         <input class="form-control" name="Password" id="Password" type="password">
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="Password-2">Password 2</label>
+                        <label for="Password-2">${this.lang.getTranslation(["login", "password2Label"])}</label>
                         <input class="form-control" name="Password-2" id="Password-2" type="password">
                     </div>
                     <br>
-                    <button id="createUserButton" type="submit" class="btn bg-silver">Create New Profile</button>
+                    <button id="createUserButton" type="submit" class="btn bg-silver">${this.lang.getTranslation(["login", "createProfileBtn"])}</button>
                     <br>
                     <br>
                 </form>
@@ -76,23 +76,23 @@ export default class extends AbstractView {
 
       if (response.ok) {
         this.showModalWithError(
-          "Account creation",
-          "New account successfuly created",
+          `${this.lang.getTranslation(["login", "accountCreatedTitle"])}`,
+          `${this.lang.getTranslation(["login", "accountCreatedMessage"])}`,
         );
         navigateTo("/login");
       } else {
         const log = await this.getErrorLogfromServer(response);
         this.showModalWithError(
-          "Error",
-          `${log || "Submission failed."}`,
+          `${this.lang.getTranslation(["modal", "error"])}`,
+          `${log}`,
         );
         console.debug("Server response:", log);
       }
     } catch (error) {
       console.error("Error in Request:", error.message);
       this.showModalWithError(
-        "Error",
-        "Unable to connect to the server, please wait",
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        `${this.lang.getTranslation(["error", "failConnectServer"])}`,
       );
       navigateTo("/");
       // throw new Error("Redirect to /home, server is dead, good luck");

@@ -8,6 +8,13 @@
     "logout": "Logout",
     "login": "Login"
   },
+  "modal": {
+    "error": "Error",
+    "submissionFailed": "Submission failed"
+  },
+  "error": {
+    "failConnectServer": "Unable to connect to the server, please wait",
+  }
   "homePage": {
     "homeTitle": "Welcome to Our Pong!",
     "descriptionHomeMessage": "Explore the depth of the Pong game, play with friends, and personalize your profile as you desire!",
@@ -22,7 +29,9 @@
     "mailLabel": "Mail:",
     "passwordLabel": "Password:",
     "password2Label": "Confirm Password:",
-    "Connect42Btn": "42 Connect"
+    "Connect42Btn": "42 Connect",
+    "accountCreatedTitle": "Account created",
+    "accountCreatedMessage": "New account Successfuly Created"
   },
   "profile": {
     "winRateLabel": "Win Rate:",
