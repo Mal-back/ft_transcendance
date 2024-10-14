@@ -308,7 +308,7 @@ class LocalEngine(threading.Thread):
 		})
 		
 	def send_config(self) -> None:
-		conf = {"Dimensions": self.config.render(),}
+		conf = self.config.render()
 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
 			"type": "send.config",
 			"Config": conf,

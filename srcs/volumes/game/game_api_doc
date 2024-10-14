@@ -19,7 +19,7 @@ A - Local game:
 	You can not initialise the game more than one time.
 		
 
-3 - Get game configuration
+3 - Get game configuration : 
 
 	Send via the websocket in JSON format {type: "get_config"}, this will send you configuration to draw the base game :
 		{"Dimensions": {"board_len": value, "board_height": value, "ball_size": value, "pad_len": value, "pad_height": value},
@@ -34,7 +34,12 @@ A - Local game:
 			- pad_height is the pad size on y axe
 			- To access to initial x or y coordinate of an element, use [0] or [1] (ex: to get initial x of player 2, use player_2[0]).
 
+		Info : coordinates [0, 0] is at top-left of the board.
 		Warning : If you get configuration while game runing, you can not access to players and ball positions with the configuration. It will always send you initiale coordinates.
 
+4 - Start the game :
+
+	Send via the websocket in JSON format {type: "start_game"}, this will start the game and send you each frame periodically :
+	
 
 	
