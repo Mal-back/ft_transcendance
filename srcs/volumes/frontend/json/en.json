@@ -1,7 +1,7 @@
 {
   "menu": {
     "label": "Menu",
-    "home": "HOME",
+    "home": "Home",
     "game": "Game",
     "profile": "Profile",
     "friends": "Friends",
@@ -14,7 +14,10 @@
   },
   "error": {
     "failConnectServer": "Unable to connect to the server, please wait",
-  }
+    "notAuthentified": "You're not authentified yet, please login to access this page",
+    "failRefresh": "Fail to refresh your credentials, re-login please, sorry for the inconvenience",
+    "invalidChar": "Invalid characters! Allowed: alphanumeric, +, -, ., _, @"
+  },
   "homePage": {
     "homeTitle": "Welcome to Our Pong!",
     "descriptionHomeMessage": "Explore the depth of the Pong game, play with friends, and personalize your profile as you desire!",
@@ -31,7 +34,8 @@
     "password2Label": "Confirm Password:",
     "Connect42Btn": "42 Connect",
     "accountCreatedTitle": "Account created",
-    "accountCreatedMessage": "New account Successfuly Created"
+    "accountCreatedMessage": "New account Successfuly Created",
+    "goodbyeMessage": "Goodbye, "
   },
   "profile": {
     "winRateLabel": "Win Rate:",

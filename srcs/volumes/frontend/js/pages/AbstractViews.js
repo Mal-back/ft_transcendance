@@ -1,6 +1,7 @@
 import { navigateTo } from "../router.js";
-import { removeSessionStorage, setSessionStorage } from "./Utils.js";
-import Language from "./Language.js";
+import { removeSessionStorage, setSessionStorage } from "../Utils/Utils.js";
+import Language from "../Utils/Language.js";
+import ModalError from "../Utils/CustomError.js";
 
 export default class {
   constructor() {
@@ -64,44 +65,32 @@ export default class {
     }
   }
 
-  showModalWithError(title, message) {
-    console.log("SHOW MODALE");
-    const modalTitleElement = document.getElementById("alertLabel");
-    const errorMessageElement = document.getElementById("alertMessage");
-
-    modalTitleElement.textContent = title;
-    if (title == "Error") {
-      modalTitleElement.style.color = "red";
-    } else {
-      modalTitleElement.style.color = "black";
-    }
-
-    errorMessageElement.innerHTML = message;
-
-    const modalId = document.getElementById("alertModal");
-
-    let modal = bootstrap.Modal.getInstance(modalId);
-    if (!modal) {
-      modal = new bootstrap.Modal(modalId);
-    }
-    modal.show();
-    modalId.querySelector(".btn-close").onclick = (ev) => {
-      ev.preventDefault();
-      this.closeModal();
-    };
-  }
-
-  closeModal() {
-    const modalId = document.getElementById("alertModal");
-    const modal = bootstrap.Modal.getInstance(modalId);
-    if (modal) {
-      modal.hide();
-      const backdrop = document.querySelector(".modal-backdrop");
-      if (backdrop) {
-        backdrop.remove();
-      }
-    }
-  }
+  // showModalWithError(title, message) {
+  //   console.log("SHOW MODALE");
+  //   const modalTitleElement = document.getElementById("alertLabel");
+  //   const errorMessageElement = document.getElementById("alertMessage");
+  //
+  //   modalTitleElement.textContent = title;
+  //   if (title == "Error") {
+  //     modalTitleElement.style.color = "red";
+  //   } else {
+  //     modalTitleElement.style.color = "black";
+  //   }
+  //
+  //   errorMessageElement.innerHTML = message;
+  //
+  //   const modalId = document.getElementById("alertModal");
+  //
+  //   let modal = bootstrap.Modal.getInstance(modalId);
+  //   if (!modal) {
+  //     modal = new bootstrap.Modal(modalId);
+  //   }
+  //   modal.show();
+  //   modalId.querySelector(".btn-close").onclick = (ev) => {
+  //     ev.preventDefault();
+  //     this.closeModal();
+  //   };
+  // }
 
   cleanModal() {
     const modal = document.querySelectorAll(".modal");
@@ -128,7 +117,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function (c) {
+        .map(function(c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -142,9 +131,9 @@ export default class {
       const input = inputList[i];
       console.log("input = ", input);
       if (!whitelist.test(input)) {
-        this.showModalWithError(
-          "Error",
-          "Invalid characters! Allowed: alphanumeric, +, -, ., _, @ on ",
+        showModalWith(
+          `${this.lang.getTranslation(["modal", "error"])}`,
+          `${this.lang.getTranslation(["error", "invalidChar"])}`,
         );
         return false;
       }
@@ -152,9 +141,9 @@ export default class {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -222,13 +211,12 @@ export default class {
     // console.log("refreshJWT before = ", refreshJWT);
     // console.log("accessJWT before = ", accessToken);
     if (!refreshJWT) {
-      this.showModalWithError(
-        "Error",
-        "Error in authentification, relog please",
-      );
       removeSessionStorage();
-      navigateTo("/");
-      // throw new Error("Redirect to login, invalid token");
+      throw new ModalError(
+        `${this.lang.getTranslation("modal", "error")}`,
+        `${this.lang.getTranslation(["error", "failRefresh"])}`,
+        "/login",
+      );
     }
     try {
       const myHeaders = this.makeHeaders(accessToken, true);
@@ -246,27 +234,40 @@ export default class {
       } else {
         const log = this.getErrorLogfromServer(response);
         console.log(log);
-        this.showModalWithError("Error", log);
         removeSessionStorage();
-        navigateTo("/");
+        throw new ModalError(
+          `${this.lang.getTranslation("modal", "error")}`,
+          `${this.lang.getTranslation(["error", "failRefresh"])}`,
+          "/login",
+        );
       }
     } catch (error) {
-      console.error("Error refreshing token:", error.message);
-      this.showModalWithError("Error", error.message);
+      if (error instanceof ModalError) throw error;
+      console.debug("Error refreshing token:", error.message);
       removeSessionStorage();
-      navigateTo("/login");
-      throw error;
+      throw new ModalError(
+        `${this.lang.getTranslation("modal", "error")}`,
+        `${this.lang.getTranslation(["error", "failRefresh"])}`,
+        "/login",
+      );
     }
   }
 
   async getToken() {
     let authToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
-    if (!authToken || !refreshToken) {
+    if (
+      !authToken ||
+      !refreshToken ||
+      sessionStorage("username_transcendence")
+    ) {
       console.log("User is not authentified", authToken);
       removeSessionStorage();
-      navigateTo("/login");
-      return null;
+      throw new ModalError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        `${this.lang.getTranslation(["error", "notAuthentified"])}`,
+        "/login",
+      );
     }
     const parseToken = this.parseJwt(authToken);
     const currentTime = Math.floor(Date.now() / 1000);
@@ -274,6 +275,7 @@ export default class {
       try {
         await this.refreshToken(authToken);
       } catch (error) {
+        if (error instanceof ModalError) throw error;
         console.error("getToken", error.message);
         throw error;
       }
@@ -281,5 +283,5 @@ export default class {
     }
     return authToken;
   }
-  destroy() {}
+  destroy() { }
 }

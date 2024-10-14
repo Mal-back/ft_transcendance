@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { removeSessionStorage, setSessionStorage } from "./Utils.js";
+import { removeSessionStorage, setSessionStorage, showModal } from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
 
 export default class extends AbstractView {
@@ -22,7 +22,7 @@ export default class extends AbstractView {
                     <div class="p-5 bg-*">
                         <div class="black-txt bg-form login-form p-4">
                             <h1 class="mb-3 text-center login-title text-decoration-underline">
-                              ${this.lang.getTranslation(["login", "loginBtn"])};
+                              ${this.lang.getTranslation(["login", "loginBtn"])}
                             </h1>
                             <form id="loginForm">
                                 <div class="form-group">
@@ -96,12 +96,14 @@ export default class extends AbstractView {
         navigateTo("/");
       } else {
         const log = await this.getErrorLogfromServer(response);
-        this.showModalWithError("Error", log);
+        showModal(`${this.lang.getTranslation(["modal", "error"])}`, log);
         console.log(log);
       }
     } catch (Error) {
-      console.error("Error fetching login:", Error.message);
-      this.showModalWithError("Error", Error.message);
+      console.error("Error fetching login:", Error);
+      showModal(
+        `${this.lang.getTranslation(["modal", "error"])}`, 
+        Error.message);
     }
   }
 

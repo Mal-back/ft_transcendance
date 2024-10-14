@@ -1,6 +1,6 @@
 import AbstractView from "./AbstractViews.js";
 import { navigateTo } from "../router.js";
-import { removeSessionStorage, setSessionStorage } from "./Utils.js";
+import { removeSessionStorage, setSessionStorage } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
     constructor() {

@@ -15,7 +15,7 @@ export default class extends AbstractView {
           <div class="container">
               <section class="home text-center p-5">
                   <h1 class="welcome">${this.lang.getTranslation(["homePage", "homeTitle"])}</h1>
-                  <p class="welcome-msg">E${this.lang.getTranslation(["homePage", "descriptionHomeMessage"])}</p>
+                  <p class="welcome-msg">${this.lang.getTranslation(["homePage", "descriptionHomeMessage"])}</p>
                   <p class="welcome-msg">${this.lang.getTranslation(["homePage", "descriptionHomeMessage2"])}</p>
               </section>
           </div>

@@ -1,11 +1,15 @@
 import { navigateTo } from "../router.js";
-import { removeSessionStorage, setSessionStorage } from "./Utils.js";
+import {
+  removeSessionStorage,
+  setSessionStorage,
+  showModal,
+} from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
+import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Logout");
   }
   async getHtml() {
     const username = sessionStorage.getItem("username_transcendence");
@@ -27,8 +31,10 @@ export default class extends AbstractView {
       }
     }
     removeSessionStorage();
-    this.showModalWithError("Logout", "Goodbye, " + username);
-    navigateTo("/");
-    throw new Error("Redirect to /home, user is logging out");
+    throw new CustomError(
+      `${this.lang.getTranslation(["menu", "logout"])}`,
+      `${this.lang.getTranslation(["login", "goodbyeMessage"])}` + username,
+      "/",
+    );
   }
 }

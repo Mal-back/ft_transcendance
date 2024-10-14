@@ -1,11 +1,11 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
-import { removeSessionStorage } from "./Utils.js";
+import CustomError from "../Utils/CustomError.js";
+import { removeSessionStorage, showModal } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Profile");
   }
 
   async loadCss() {
@@ -51,55 +51,49 @@ export default class extends AbstractView {
         return null;
       }
     } catch (error) {
-      console.error("Error: ", error.message);
-      return null;
+      if (error instanceof CustomError) throw error;
+      console.debug("Error: ", error);
+      throw error;
     }
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["menu", "profile"])}`);
+    let userData = null;
     try {
       const tokenProfile = await this.getToken();
-      if (tokenProfile == null) {
-        this.showModalWithError("Error", "User is not authentified");
-        navigateTo("/login");
-        throw new Error("Redirect to login");
-      }
-      const userData = await this.loadUserData();
-      if (!userData) {
-        removeSessionStorage();
-        navigateTo("/login");
-        throw new Error("Redirect to login");
-      }
+      userData = await this.loadUserData();
     } catch (error) {
-      console.error("Error", error.message);
+      if (error instanceof CustomError) throw error;
+      console.debug("Error", error);
       throw error;
     }
     let winRate = "No game played yet";
     let battleHistory = "No history yet";
     if (userData.single_games_win_rate != undefined) {
-      winRate = `${userData.single_games_win_rate}%`;
+      winRate = `${userData.single_games_win_rate} % `;
       battleHistory = "Battle History:";
     }
 
-    const htmlContent = `<div class="background">
-                    <div class="Profile container">
-                        <div class="d-flex justify-content-center w-100">
-                            <!-- Top profile section (centered) -->
-                            <div class="top-profile d-flex flex-column justify-content-center align-items-center">
-                                <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: ${userData.profilePic}"></div>
-                                <a class="black-txt">${userData.username}</a>
-                            </div>
-                        </div>
+    const htmlContent = `< div class= "background" >
+        <div class="Profile container">
+          <div class="d-flex justify-content-center w-100">
+            <!-- Top profile section (centered) -->
+            <div class="top-profile d-flex flex-column justify-content-center align-items-center">
+              <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: ${userData.profilePic}"></div>
+              <a class="black-txt">${userData.username}</a>
+            </div>
+          </div>
 
-                        <!-- Left-aligned profile info -->
-                        <div class="align-items-left mt-3 w-100">
-                            <p class="black-txt">Win Rate: ${winRate}</p>
-                        </div>
-                        <div class="align-items-left mt-3 w-100">
-                            <p class="black-txt">${battleHistory}</p>
-                        </div>
-                        <div id="battleHistory"></div>
-                        `;
+          <!-- Left-aligned profile info -->
+          <div class="align-items-left mt-3 w-100">
+            <p class="black-txt">Win Rate: ${winRate}</p>
+          </div>
+          <div class="align-items-left mt-3 w-100">
+            <p class="black-txt">${battleHistory}</p>
+          </div>
+          <div id="battleHistory"></div>
+          `;
     const app = document.querySelector("#app");
     app.innerHTML = htmlContent;
     try {

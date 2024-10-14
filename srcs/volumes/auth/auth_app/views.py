@@ -38,7 +38,7 @@ class UserCreateView(generics.ListCreateAPIView) :
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data.get('username')
         req_urls = ['http://users:8443/api/users/create/',
-                   'http://matchmaking:8443/api/matchmaking/create/',
+                   # 'http://matchmaking:8443/api/matchmaking/create/',
                     ]
         if send_create_requests(urls=req_urls, body={'username':username}) == False:
             raise MicroServiceError

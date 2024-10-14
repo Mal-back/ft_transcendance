@@ -10,6 +10,7 @@ import Settings from "./pages/settings.js";
 import Friends from "./pages/Friends.js";
 import Pong from "./pages/Pong.js";
 import PongLocal from "./pages/PongLocal.js";
+import CustomError from "./Utils/CustomError.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -124,9 +125,9 @@ const router = async () => {
       view.pongGame();
     await view.addEventListeners();
   } catch (error) {
-    if (error.message.split(" ")[0] === "Redirect") {
-      view.showModalWithError("Redirect", error.message);
-      console.log("MyError:", error.message);
+    if (error instanceof CustomError){
+      error.showModalCustom();
+      navigateTo(error.redirect);
     } else {
       console.error("Error in get Html():", error.message);
       console.trace();
