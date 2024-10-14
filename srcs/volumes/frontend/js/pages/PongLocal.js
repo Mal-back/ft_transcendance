@@ -182,11 +182,12 @@ export default class extends AbstractView {
     document.addEventListener("click", (ev) => {
       const isClickInsideCanvas = this.canvas.contains(ev.target);
       if (isClickInsideCanvas) {
-        const body = this.gameStart
-          ? JSON.stringify({ type: "start_game" })
-          : JSON.stringify({ type: "init_game" });
-        console.log("Sent", body);
-        this.webSocket.send(body);
+        if (!this.gameStart) {
+          this.webSocket.send(JSON.stringify({ type: "init_game" }));
+          this.webSocket.send(JSON.stringify({ type: "get_config" }));
+        } else {
+          this.webSocket.send(JSON.stringify({ type: "start_game" }));
+        }
       }
     });
 
