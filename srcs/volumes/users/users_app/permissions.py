@@ -6,29 +6,51 @@ class IsAuth(permissions.BasePermission):
     def has_permission(self, request, view):
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return False  # No authorization header means permission denied
+            return False
 
         try:
             token_type, token = auth_header.split()
             if token_type != 'Bearer':
-                return False  # Invalid token type
+                return False
 
-            # Decode the JWT token
             decoded_token = jwt.decode(
                 token,
                 settings.SIMPLE_JWT['VERIFYING_KEY'],
                 algorithms=[settings.SIMPLE_JWT['ALGORITHM']]
             )
 
-            # Check if the service_name is "Auth"
             service_name = decoded_token.get('service_name')
             if service_name != 'auth':
-                return False  # Service name does not match
-
-            return True  # Service name matches "Auth"
+                return False
+            return True
 
         except (ValueError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-            return False  # Invalid token or error during decoding
+            return False
+
+class IsAvatarManager(permissions.BasePermission):
+    def has_permission(self, request, view):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return False
+
+        try:
+            token_type, token = auth_header.split()
+            if token_type != 'Bearer':
+                return False
+
+            decoded_token = jwt.decode(
+                token,
+                settings.SIMPLE_JWT['VERIFYING_KEY'],
+                algorithms=[settings.SIMPLE_JWT['ALGORITHM']]
+            )
+
+            service_name = decoded_token.get('service_name')
+            if service_name != 'avatar_manager':
+                return False
+            return True
+
+        except (ValueError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            return False
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):

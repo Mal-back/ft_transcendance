@@ -5,10 +5,12 @@
 DJANGO_AUTH=./srcs/requirements/django_auth/certs
 DJANGO_USERS=./srcs/requirements/django_users/certs
 DJANGO_MATCHMAKING=./srcs/requirements/django_matchmaking/certs/
+DJANGO_AVATAR=./srcs/requirements/django_media/certs/
 NGINX=./srcs/requirements/nginx/certs
 PGSQL_AUTH=./srcs/requirements/postgreSQL_auth/certs
 PGSQL_USERS=./srcs/requirements/postgreSQL_users/certs
 PGSQL_MATCHMAKING=./srcs/requirements/postgreSQL_matchmaking/certs
+PGSQL_AVATAR=./srcs/requirements/postgreSQL_avatar/certs/
 FRONTEND=./srcs/requirements/frontend/certs
 GEN_CSR="openssl req -new -newkey rsa:4096 -nodes -out"
 GEN_CRT="openssl x509 -req -days 365000 -in"
@@ -23,11 +25,13 @@ openssl req -new -x509 -nodes -days 365000 -key ca.key -out ca.crt -subj "/C=FR/
 mkdir -p $DJANGO_AUTH
 mkdir -p $DJANGO_USERS
 mkdir -p $DJANGO_MATCHMAKING
+mkdir -p $DJANGO_AVATAR
 mkdir -p $NGINX
 mkdir -p $PGSQL_AUTH
 mkdir -p $FRONTEND
 mkdir -p $PGSQL_USERS
 mkdir -p $PGSQL_MATCHMAKING
+mkdir -p $PGSQL_AVATAR
 
 $GEN_CSR $NGINX/nginx_client.csr -keyout $NGINX/nginx_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=nginx_client/UID=vlevy" 
 $GEN_CRT $NGINX/nginx_client.csr -out $NGINX/nginx_client.crt -CA ca.crt -CAkey ca.key
@@ -62,6 +66,12 @@ $GEN_CRT $DJANGO_MATCHMAKING/matchmaking_client.csr -out $DJANGO_MATCHMAKING/mat
 $GEN_CSR $PGSQL_MATCHMAKING/pgsql_matchmaking.csr -keyout $PGSQL_MATCHMAKING/pgsql_matchmaking.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=pgsql/UID=vlevy" 
 $GEN_CRT $PGSQL_MATCHMAKING/pgsql_matchmaking.csr -out $PGSQL_MATCHMAKING/pgsql_matchmaking.crt -CA ca.crt -CAkey ca.key
 
+$GEN_CSR $DJANGO_AVATAR/avatar.csr -keyout $DJANGO_AVATAR/avatar.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=avatars/UID=vlevy" 
+$GEN_CRT $DJANGO_AVATAR/avatar.csr -out $DJANGO_AVATAR/avatar.crt -CA ./ca.crt -CAkey ./ca.key
+
+$GEN_CSR $PGSQL_AVATAR/pgsql_avatar.csr -keyout $PGSQL_AVATAR/pgsql_avatar.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=pgsql/UID=vlevy" 
+$GEN_CRT $PGSQL_AVATAR/pgsql_avatar.csr -out $PGSQL_AVATAR/pgsql_avatar.crt -CA ca.crt -CAkey ca.key
+
 cp ./ca.crt $DJANGO_AUTH/ca.crt
 cp ./ca.crt $NGINX/ca.crt
 cp ./ca.crt $FRONTEND/ca.crt
@@ -70,6 +80,8 @@ cp ./ca.crt $PGSQL_USERS/ca.crt
 cp ./ca.crt $DJANGO_USERS/ca.crt
 cp ./ca.crt $PGSQL_MATCHMAKING/ca.crt
 cp ./ca.crt $DJANGO_MATCHMAKING/ca.crt
+cp ./ca.crt $DJANGO_AVATAR/ca.crt
+cp ./ca.crt $PGSQL_AVATAR/ca.crt
 rm ./ca.crt ./ca.key
 
 # generating JWT key pair
@@ -77,3 +89,4 @@ openssl genpkey -algorithm RSA -out $DJANGO_AUTH/jwt_private.pem -pkeyopt rsa_ke
 openssl rsa -pubout -in $DJANGO_AUTH/jwt_private.pem -out $DJANGO_AUTH/jwt_public.pem
 cp $DJANGO_AUTH/jwt_public.pem $DJANGO_USERS/jwt_public.pem
 cp $DJANGO_AUTH/jwt_public.pem $DJANGO_MATCHMAKING/jwt_public.pem
+cp $DJANGO_AUTH/jwt_public.pem $DJANGO_AVATAR/jwt_public.pem
