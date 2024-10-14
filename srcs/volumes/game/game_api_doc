@@ -1,3 +1,5 @@
+Important : when a KeyValue Error is receive from your websocket, the game will ignore it and not send anything, please follow the correct JSON formats described bellow to have the best experience possible with our game.
+
 I - Pong:
 
 A - Local game:
@@ -52,7 +54,7 @@ A - Local game:
 			- To access to initial x or y coordinate of an element, use [0] or [1] (ex: to get initial x of player 2, use player_2[0]).
 
 		Info : coordinates [0, 0] is at top-left of the board.
-		Warning : If you get configuration while game runing, you can not access to players and ball positions with the configuration. It will always send you initial coordinates.
+		Warning : If you get configuration while game runing, you can not access to current player's and ball's positions with the configuration. It will always send you initial coordinates.
 
 4 - Start the game :
 
@@ -82,9 +84,10 @@ A - Local game:
 
 	Where : 
 		- player is either "player_1" or "player_2"
-		- move is "UP" or "DOWN
+		- move is "UP" or "DOWN"
 
 	This will save the player's movement for the next frame. Player's movement is reset after each frame.
+	Sending a movement while game is not started or paused does nothing
 
 6 - Pause the game :
 
@@ -98,10 +101,9 @@ A - Local game:
 		- action is either "stop" or "start"
 
 	Stopping a stopped game or starting a started game does nothing.
+	If you send "start" via the "pause" type after "init_game" and before "start_game", it will start the game the same way "start_game" does.
 
-
-
-6 - End state of the game :
+7 - End state of the game :
 
 	When the game finished (a player obtains the maximum score or a player surrenders), the game sends you a last message :
 
@@ -111,7 +113,7 @@ A - Local game:
 			"score_2" : value,
 		}
 
-		Where : 
-			- score_1 is the first players's score at the end of the game
-			- score_2 is the second players's score at the end of the game
-			- winner is either "player_1" or "player_2"
+	Where : 
+		- score_1 is the first players's score at the end of the game
+		- score_2 is the second players's score at the end of the game
+		- winner is either "player_1" or "player_2"

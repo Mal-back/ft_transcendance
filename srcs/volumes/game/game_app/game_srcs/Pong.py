@@ -252,6 +252,9 @@ class LocalEngine(threading.Thread):
 		print("End of run function for thread " + self.game_id)
 		
 	def receive_movement(self, player : str, direction : str):
+		with self.start_lock:
+			if self.runing == False:
+				return
 		try:
 			with self.movement_lock:
 				if player == "player_1":
@@ -263,10 +266,10 @@ class LocalEngine(threading.Thread):
    
 	def receive_pause(self, action):
 		with self.start_lock:
-			if action == "start":
+			if action == "start" and self.runing == False:
 				print("Unpausing game instance " + str(self.game_id))
 				self.runing = True
-			elif action == "stop":
+			elif action == "stop" and self.runing == True:
 				print("Pausing game instance " + str(self.game_id))
 				self.runing = False
 					 

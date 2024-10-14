@@ -11,23 +11,21 @@ socket.onopen = function(event) {
 
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
-		// type : "get_config",
+		type : "get_config",
 		message : "Salut tout le monde",
 		name : "Jack",
 	})) }, 100)
 
-	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "start_game",
-		message : "Salut tout le monde",
-		name : "Jack",
-	})) }, 2000)
+	// setTimeout(() => { 	socket.send(JSON.stringify({
+	// 	type : "start_game",
+	// 	message : "Salut tout le monde",
+	// 	name : "Jack",
+	// })) }, 2000)
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
 		type : "pause",
-		// action : "stop",
+		action : "stop",
 	})) }, 4000)
-
-
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
 		type : "pause",
