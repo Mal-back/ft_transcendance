@@ -125,7 +125,7 @@ const router = async () => {
       view.pongGame();
     await view.addEventListeners();
   } catch (error) {
-    if (error instanceof CustomError){
+    if (error instanceof CustomError) {
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {
@@ -185,4 +185,18 @@ document.addEventListener("click", (ev) => {
     sidebar.classList.contains("show")
   )
     closeSidebar(sidebar);
+});
+
+document.querySelector("#headerEnglish").addEventListener("click", (ev) => {
+  ev.preventDefault();
+  sessionStorage.setItem("transcendence_language", "en");
+  const currentUrl = new URL(window.location.href);
+  navigateTo(currentUrl.toString());
+});
+
+document.querySelector("#headerFrench").addEventListener("click", (ev) => {
+  ev.preventDefault();
+  sessionStorage.setItem("transcendence_language", "fr");
+  const currentUrl = new URL(window.location.href);
+  navigateTo(currentUrl.toString());
 });

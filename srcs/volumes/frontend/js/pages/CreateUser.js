@@ -1,4 +1,5 @@
 import { navigateTo } from "../router.js";
+import { showModal } from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
 
 export default class extends AbstractView {
@@ -61,6 +62,7 @@ export default class extends AbstractView {
       "input[name='Password-2']",
     ).value;
 
+    //TO-DO change error in input to inline validation
     if (this.sanitizeInput([username, email, password, password2]) == false)
       return;
     console.debug("trying fetch");
@@ -75,26 +77,22 @@ export default class extends AbstractView {
       const response = await fetch(request);
 
       if (response.ok) {
-        this.showModalWithError(
+        showModal(
           `${this.lang.getTranslation(["login", "accountCreatedTitle"])}`,
           `${this.lang.getTranslation(["login", "accountCreatedMessage"])}`,
         );
         navigateTo("/login");
       } else {
         const log = await this.getErrorLogfromServer(response);
-        this.showModalWithError(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          `${log}`,
-        );
+        showModal(`${this.lang.getTranslation(["modal", "error"])}`, `${log}`);
         console.debug("Server response:", log);
       }
     } catch (error) {
-      console.error("Error in Request:", error.message);
-      this.showModalWithError(
+      console.error("Error in Request:", error);
+      showModal(
         `${this.lang.getTranslation(["modal", "error"])}`,
         `${this.lang.getTranslation(["error", "failConnectServer"])}`,
       );
-      navigateTo("/");
       // throw new Error("Redirect to /home, server is dead, good luck");
     }
   }
@@ -108,7 +106,7 @@ export default class extends AbstractView {
         try {
           await this.submitNewUser();
         } catch (error) {
-          console.error("Caught in Event Listener:", error.message);
+          console.error("Caught in Event Listener:", error);
         }
       });
     }

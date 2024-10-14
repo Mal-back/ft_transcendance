@@ -1,5 +1,9 @@
 import { navigateTo } from "../router.js";
-import { removeSessionStorage, setSessionStorage } from "../Utils/Utils.js";
+import {
+  removeSessionStorage,
+  setSessionStorage,
+  showModal,
+} from "../Utils/Utils.js";
 import Language from "../Utils/Language.js";
 import ModalError from "../Utils/CustomError.js";
 
@@ -117,7 +121,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -131,7 +135,7 @@ export default class {
       const input = inputList[i];
       console.log("input = ", input);
       if (!whitelist.test(input)) {
-        showModalWith(
+        showModal(
           `${this.lang.getTranslation(["modal", "error"])}`,
           `${this.lang.getTranslation(["error", "invalidChar"])}`,
         );
@@ -141,9 +145,9 @@ export default class {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -283,5 +287,5 @@ export default class {
     }
     return authToken;
   }
-  destroy() { }
+  destroy() {}
 }

@@ -1,9 +1,13 @@
+import { setSessionStorage } from "./Utils.js";
+
 let instance = null;
 
 export default class Language {
   constructor() {
     if (!instance) {
       console.log("New Language");
+      if (sessionStorage.getItem("transcendence_language") == null)
+        sessionStorage.setItem("transcendence_language", "en");
       this.currentLanguage = sessionStorage.getItem("transcendence_language");
       this.JSONLanguage = null;
       instance = this;
@@ -30,8 +34,7 @@ export default class Language {
   }
 
   async fetchJSONLanguage() {
-    const lang = this.getCurrentLanguage();
-    if (!lang || (lang != "en" && lang != "fr")) lang = "en";
+    const lang = sessionStorage.getItem("transcendence_language");
     if (lang == this.currentLanguage && this.JSONLanguage) return;
     try {
       const myHeaders = new Headers();
@@ -41,7 +44,6 @@ export default class Language {
       });
       this.JSONLanguage = await response.json();
       this.currentLanguage = lang;
-      sessionStorage.setItem("transcendence_language", lang);
       console.debug("Get JSON Language:", this.JSONLanguage);
       this.translateIndex();
     } catch (error) {
@@ -72,12 +74,12 @@ export default class Language {
 
   getCurrentLanguage() {
     const params = new URLSearchParams(window.location.search);
-    const lang = params.get("lang") || this.currentLanguage || "en";
+    const lang = this.currentLanguage || "en";
     return lang;
   }
 
   getTranslation(arrayKey) {
-    console.log("getTranslation")
+    console.log("getTranslation");
     let translation = null;
     if (this.JSONLanguage) {
       translation = this.findKey(this.JSONLanguage, arrayKey);
