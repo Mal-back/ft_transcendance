@@ -272,6 +272,9 @@ class LocalEngine(threading.Thread):
 			elif action == "stop" and self.runing == True:
 				print("Pausing game instance " + str(self.game_id))
 				self.runing = False
+	
+	def receive_surrend(self, action) -> None:
+		return
 					 
 	def move_players(self, frame : Frame) -> Frame:
 		frame.player_1.move()
@@ -313,7 +316,7 @@ class LocalEngine(threading.Thread):
 				if self.end == True:
 					break
 			time.sleep(self.frame_rate)
-       
+	   
 
 	def get_next_frame(self) -> Frame:
 		new_frame = self.frame
@@ -346,8 +349,8 @@ class LocalEngine(threading.Thread):
   
 	def send_end_state(self, last_frame) -> None:
 		data = {"winner" : self.winner,
-          "score_1" : last_frame.player_1.score,
-          "score_2" : last_frame.player_2.score,
+		  "score_1" : last_frame.player_1.score,
+		  "score_2" : last_frame.player_2.score,
 		}
 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
 			"type" : "send.end.state",
