@@ -12,7 +12,11 @@ A - Local game:
 
 2 - Initialise the game :
 
-	Send via the websocket in JSON format {type: "init_game"}, this will :
+	Send via the websocket in JSON format : 
+	
+		{type: "init_game"}
+		
+	This will :
 		- Create the game thread via the local_engine worker
 		- The thread is ready to start or send configuration to the client
 
@@ -21,25 +25,93 @@ A - Local game:
 
 3 - Get game configuration : 
 
-	Send via the websocket in JSON format {type: "get_config"}, this will send you configuration to draw the base game :
-		{"Dimensions": {"board_len": value, "board_height": value, "ball_size": value, "pad_len": value, "pad_height": value},
-			"player_1": [x, y],
-			"player_2": [x, y],
-			"ball": [x, y]}
+	Send via the websocket in JSON format :
+
+		{type: "get_config"}
+
+	This will send you configuration to draw the base game :
+
+		{"type : "config",
+		"board_len": value,
+		"board_height": value,
+		"ball_size": value,
+		"pad_len": value,
+		"pad_height": value,
+		"player_1": [x, y],
+		"player_2": [x, y],
+		"ball": [x, y]}
+
 		Where :
 			- board_len is the x maximum value
 			- board_height is the y maximum value
 			- ball size is the ball radius
 			- pad_len is the pad size on x axe
 			- pad_height is the pad size on y axe
+			- player's coordinates are the top-left coordinates of the pad
+			- ball's coordinates are the center of the ball
 			- To access to initial x or y coordinate of an element, use [0] or [1] (ex: to get initial x of player 2, use player_2[0]).
 
 		Info : coordinates [0, 0] is at top-left of the board.
-		Warning : If you get configuration while game runing, you can not access to players and ball positions with the configuration. It will always send you initiale coordinates.
+		Warning : If you get configuration while game runing, you can not access to players and ball positions with the configuration. It will always send you initial coordinates.
 
 4 - Start the game :
 
-	Send via the websocket in JSON format {type: "start_game"}, this will start the game and send you each frame periodically :
-	
+	Send via the websocket in JSON format :
 
+		{type: "start_game"}
+		
+	This will start the game and send you each frame periodically :
+
+		{"type" : "frame",
+			"ball" : {"position" : [x, y]},
+			"player_1" : {"username" : value, "position" : [x, y], "score" : value},
+			"player_2" : {"username" : value, "position" : [x, y], "score" : value},
+		}
+
+	Player's coordinates are the top-left coordinates of the pad.
+	Ball's coordinates are the center of the ball.
 	
+5 - Move a player :
+
+	Send via the websocket in JSON format the following message :
+
+		{"type" : "move",
+		"player" : value,
+		"direction" value,
+		}
+
+	Where : 
+		- player is either "player_1" or "player_2"
+		- move is "UP" or "DOWN
+
+	This will save the player's movement for the next frame. Player's movement is reset after each frame.
+
+6 - Pause the game :
+
+	Send via the websocket in JSON format the following message :
+
+		{"type" : "pause",
+		"action" : value,
+		}
+
+	Where :
+		- action is either "stop" or "start"
+
+	Stopping a stopped game or starting a started game does nothing.
+
+
+
+6 - End state of the game :
+
+	When the game finished (a player obtains the maximum score or a player surrenders), the game sends you a last message :
+
+		{"type" : "end_state",
+			"winner" : value,
+			"score_1" : value,
+			"score_2" : value,
+		}
+
+		Where : 
+			- score_1 is the first players's score at the end of the game
+			- score_2 is the second players's score at the end of the game
+			- winner is either "player_1" or "player_2"

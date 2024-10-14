@@ -11,7 +11,7 @@ socket.onopen = function(event) {
 
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "get_config",
+		// type : "get_config",
 		message : "Salut tout le monde",
 		name : "Jack",
 	})) }, 100)
@@ -23,10 +23,16 @@ socket.onopen = function(event) {
 	})) }, 2000)
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "move",
-		player : "player_1",
-		direction : "UP",
-	})) }, 3000)
+		type : "pause",
+		// action : "stop",
+	})) }, 4000)
+
+
+
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "pause",
+		action : "start",
+	})) }, 8000)
 
 
 }
@@ -35,11 +41,11 @@ socket.onmessage = function(event){
 	const msg = event.data;
 	console.log(`${msg}`)
 
-	socket.send(JSON.stringify({
-		type : "move",
-		player : "player_1",
-		direction : "DOWN",
-	}));
+	// socket.send(JSON.stringify({
+	// 	type : "move",
+	// 	player : "player_1",
+	// 	direction : "DOWN",
+	// }));
 
 	// socket.send(JSON.stringify({
 	// 	type : "move",

@@ -192,7 +192,7 @@ class Config:
 				"pad_len" : self.pad_len * 2,
 				"pad_height" : self.pad_height * 2,
 				"player_1" : self.player_1_pos.render(),
-		   		"player_2" : self.player_2_pos.render(),
+				"player_2" : self.player_2_pos.render(),
 				"ball": self.ball_pos.render(),
 		}
 	
@@ -202,22 +202,23 @@ class LocalEngine(threading.Thread):
 		super().__init__(daemon=True)
 		self.game_id = game_id
 		self.channel_layer = get_channel_layer()
-		self.end_lock = threading.Lock()
-		self.end = False
 		self.frame = copy.deepcopy(Frame())
 		self.config = copy.deepcopy(Config(player_1_pos=self.frame.player_1.top_left(),
 			player_2_pos=self.frame.player_2.top_left(),
 			ball_pos=self.frame.board.ball.position))
-		self.state_rate = 1 / 60
+		self.frame_rate = 1 / 60
 		self.movement_lock = threading.Lock()
 		self.start_lock = threading.Lock()
-		self.begin = False
+		self.runing = False
+		self.end_lock = threading.Lock()
+		self.end = False
+		self.winner = None
 		
 	def wait_start(self):
 		print("Waiting for game instance " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
-				if self.begin == True:
+				if self.runing == True:
 					break
 			with self.end_lock:
 				if self.end == True:
@@ -226,11 +227,11 @@ class LocalEngine(threading.Thread):
 
 	def start_game(self):
 		with self.start_lock:
-			if self.begin == True:
+			if self.runing == True:
 				print("Game instance " + self.game_id + "is already runing, this function returns without doing anything")
 			else:
 				print("Starting game instance " + self.game_id)
-				self.begin = True
+				self.runing = True
 
 	def run(self) -> None:
 		self.wait_start()
@@ -242,7 +243,9 @@ class LocalEngine(threading.Thread):
 			self.send_frame()
 			if self.frame.end == True:
 				break;
-			time.sleep(self.state_rate)
+			time.sleep(self.frame_rate)
+			self.check_pause()
+		self.send_end_state(self.frame)
 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
 			"type": "end.game"
 		})
@@ -257,6 +260,15 @@ class LocalEngine(threading.Thread):
 					self.frame.player_2.movement = direction
 		except ValueError:
 			print("Invalid movement received from " + player)
+   
+	def receive_pause(self, action):
+		with self.start_lock:
+			if action == "start":
+				print("Unpausing game instance " + str(self.game_id))
+				self.runing = True
+			elif action == "stop":
+				print("Pausing game instance " + str(self.game_id))
+				self.runing = False
 					 
 	def move_players(self, frame : Frame) -> Frame:
 		frame.player_1.move()
@@ -281,9 +293,24 @@ class LocalEngine(threading.Thread):
 			frame.board.ball.reset()
 			frame.reset = True
 		
-		if frame.player_1.score == Const["MAX_SCORE"].value or frame.player_2.score == Const["MAX_SCORE"].value:
+		if frame.player_1.score == Const["MAX_SCORE"].value:
 			frame.end = True
+			self.winner = "player_1"
+		elif frame.player_2.score == Const["MAX_SCORE"].value:
+			frame.end = True
+			self.winner = "player_2"
 		return frame
+
+	def check_pause(self) -> None :
+		while True:
+			with self.start_lock:
+				if self.runing == True:
+					break
+			with self.end_lock:
+				if self.end == True:
+					break
+			time.sleep(self.frame_rate)
+       
 
 	def get_next_frame(self) -> Frame:
 		new_frame = self.frame
@@ -303,7 +330,7 @@ class LocalEngine(threading.Thread):
    
 	def send_frame(self) -> None:
 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
-			"type": "send.state",
+			"type": "send.frame",
 			"Frame": self.frame.render(),
 		})
 		
@@ -312,4 +339,15 @@ class LocalEngine(threading.Thread):
 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
 			"type": "send.config",
 			"Config": conf,
-		})       
+		})
+  
+	def send_end_state(self, last_frame) -> None:
+		data = {"winner" : self.winner,
+          "score_1" : last_frame.player_1.score,
+          "score_2" : last_frame.player_2.score,
+		}
+		async_to_sync(self.channel_layer.group_send)(self.game_id, {
+			"type" : "send.end.state",
+			"End_state" : data,
+		})
+		return
