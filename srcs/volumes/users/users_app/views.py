@@ -8,7 +8,7 @@ from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
 from .permissions import IsAuth, IsOwner, IsAvatarManager
 from .authentification import CustomAuthentication
-from ms_client import MicroServiceClient, RequestsFailed
+from ms_client.ms_client import MicroServiceClient, RequestsFailed
 
 # Create your views here.
 
@@ -168,21 +168,23 @@ class PublicUserSetDefaultAvatar(APIView):
     lookup_field = 'username'
     def patch(self, request, username):
         try:
-            user = PublicUser.object.get(username=username)
+            user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
         path = request.data.get('profile_pic')
         if path is None:
             return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
-        if 'users_avatars' in user.profilePic:
-            try:
-                sender = MicroServiceClient()
-                sender.send_requests(
-                        urls=[f'http://avatar_manager/api/avatar_manager/',],
-                        method='delete',
-                        expected_status=[200],
-                        )
-            except RequestsFailed:
-                return Response({'error': 'Could not update avatar. Plz try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # if 'users_avatars' in user.profilePic:
+        try:
+            sender = MicroServiceClient()
+            sender.send_requests(
+                    urls=[f'http://avatars:8443/api/avatars/',],
+                    method='delete',
+                    expected_status=[204, 304],
+                    body={'username':f'{user.username}'}
+                    )
+        except RequestsFailed:
+            return Response({'error': 'Could not update avatar. Plz try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user.profilePic = path
         user.save()
+        return Response({'OK':'Successefully reset the avatar'}, status=status.HTTP_200_OK)

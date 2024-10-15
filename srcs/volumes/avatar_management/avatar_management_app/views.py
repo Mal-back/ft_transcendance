@@ -5,7 +5,7 @@ from avatar_management_app.permissions import UserIsAuthenticated
 from .serializers import UserAvatarSerializer
 import os
 from django.conf import settings
-from ms_client import MicroServiceClient, RequestsFailed
+from ms_client.ms_client import MicroServiceClient, RequestsFailed
 
 # Create your views here
 
@@ -37,7 +37,7 @@ class AvatarView(APIView):
         return Response(serializer.errors, status=400)
 
     def delete(self, request, *args, **kwargs):
-        if reset_avatar(request.user_username) == True:
+        if reset_avatar(request.data.get('username')) == True:
             return Response({'OK' : 'Successefully reset the avatar'}, status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_304_NOT_MODIFIED)
 

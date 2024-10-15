@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from PIL import Image
-import os
 
 class UserAvatarSerializer(serializers.Serializer):
     avatar = serializers.ImageField(required=True)

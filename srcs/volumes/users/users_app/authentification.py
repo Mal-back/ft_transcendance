@@ -2,7 +2,7 @@ from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
 from django.conf import settings
-from .models import MatchUser
+from .models import PublicUser
 
 class CustomAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -31,5 +31,5 @@ class CustomAuthentication(BaseAuthentication):
         user = clear_token.get('username')
         if user is None:
             return(None, None)
-        user_obj = MatchUser.objects.get(username=user)
+        user_obj = PublicUser.objects.get(username=user)
         return(user_obj, token)

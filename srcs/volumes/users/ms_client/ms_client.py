@@ -5,11 +5,6 @@ from rest_framework_simplejwt.exceptions import TokenError
 from .models import Token
 import requests
 
-# Need : 
-# A method for getting a token and retrieving if not present
-# A method for sending a request
-# A method for reacting on failure
-
 class MicroServiceClient:
     def __init__(self):
         ms_settings = getattr(settings, 'MS_CLIENT_SETTINGS', {})
@@ -24,8 +19,9 @@ class MicroServiceClient:
     def send_requests(self, urls:list, method:str, expected_status:list, headers={}, body={}, *args, **kwargs):
         headers.update({'Authorization': f'Bearer {self._getToken()}'})
         successed_requests=[]
+        print(headers)
         for url in urls:
-            status_code = self._send_request(url, method, headers, body)
+            status_code = self._send_request(url, method, body=body, headers=headers)
             if status_code not in expected_status:
                 self._on_failure(successed_requests, method, headers=headers, body=body, *args, **kwargs)
             successed_requests.append(url)
@@ -51,23 +47,23 @@ class MicroServiceClient:
     def _getFreshToken(self):
         body = {
                 'serviceName': self.service_name,
-                'password': self.service_secret
+                'password': self.service_secret,
                 }
         response = requests.post(self.auth_url, json=body)
+        print(response.status_code)
         if response.status_code != 200:
             raise InvalidCredentialsException('Auth refused to issue a token for the microservice')
+        print(response.json())
         return response.json()['token']
     
     def _on_failure(self, urls:list, method:str, headers={}, body={}, *args, **kwargs):
-        raise RequestsFailed()
+        raise RequestsFailed('Communication between microservices failed')
 
 
 class InvalidCredentialsException(Exception):
     def __init__(self, message, code=None):
         super().__init__(message)
-        self.code(code)
 
 class RequestsFailed(Exception):
     def __init__(self, message, code=None):
         super().__init__(message)
-        self.code(code)
