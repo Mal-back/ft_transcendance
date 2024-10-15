@@ -1,5 +1,9 @@
 import { navigateTo } from "../router.js";
-import { removeSessionStorage, setSessionStorage, showModal } from "../Utils/Utils.js";
+import {
+  removeSessionStorage,
+  setSessionStorage,
+  showModal,
+} from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
 
 export default class extends AbstractView {
@@ -15,7 +19,7 @@ export default class extends AbstractView {
       // loginOverlay.innerText = "Logout";
       // loginOverlay.href = "/logout";
       navigateTo("/");
-      throw new Error("Redirect to Home, User already logged in");
+      throw new CustomError("Redirect to Home, User already logged in");
     }
     return `
                 <div class="background">
@@ -78,21 +82,22 @@ export default class extends AbstractView {
     const nameForm = loginForm.querySelector("input[name='Username']").value;
     const paswordForm = loginForm.querySelector("input[name='Password']").value;
 
-    if (this.sanitizeInput([nameForm, paswordForm]) == false) {
+    if (this.sanitizeInput([nameForm]) == false) {
       console.log("Wrong input");
       return;
     }
     try {
+      const usernameURIencoded = encodeURIComponent(nameForm);
       console.log("login before make request");
       const request = await this.makeRequest("/api/auth/login", "POST", {
-        username: nameForm,
+        username: usernameURIencoded,
         password: paswordForm,
       });
       const response = await fetch(request);
       console.log("Response: ", response);
       if (response.ok) {
         const data = await response.json();
-        setSessionStorage(data, nameForm);
+        setSessionStorage(data, usernameURIencoded);
         navigateTo("/");
       } else {
         const log = await this.getErrorLogfromServer(response);
@@ -102,8 +107,9 @@ export default class extends AbstractView {
     } catch (Error) {
       console.error("Error fetching login:", Error);
       showModal(
-        `${this.lang.getTranslation(["modal", "error"])}`, 
-        Error.message);
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        Error.message,
+      );
     }
   }
 

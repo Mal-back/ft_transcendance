@@ -63,12 +63,11 @@ export default class extends AbstractView {
     ).value;
 
     //TO-DO change error in input to inline validation
-    if (this.sanitizeInput([username, email, password, password2]) == false)
-      return;
+    if (this.sanitizeInput([username, email]) == false) return;
     console.debug("trying fetch");
     try {
       const request = await this.makeRequest("/api/auth/", "POST", {
-        username: username,
+        username: encodeURIComponent(username),
         password: password,
         password2: password2,
         email: email,

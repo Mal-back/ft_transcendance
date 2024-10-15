@@ -15,6 +15,34 @@ export default class Language {
     return instance;
   }
 
+  loginToLogout() {
+    console.log("LOGIN");
+    const username = sessionStorage.getItem("username_transcendence");
+    const accessToken = sessionStorage.getItem("accessJWT_transcendence");
+    const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
+    const loginOverlay = document.querySelector("#overlayLogin");
+    const logIcon = document.querySelector("#logIconRef");
+    const logIconImg = document.querySelector("#logIconImg");
+    if (username && accessToken && refreshToken) {
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
+      loginOverlay.href = "/logout";
+      logIcon.href = "/logout";
+      logIcon.title = this.lang.getTranslation(["menu", "logout"]);
+      logIconImg.classList.remove("bi-box-arrow-left");
+      logIconImg.classList.add("bi-box-arrow-right");
+    } else {
+      if (username || accessToken || refreshToken) {
+        removeSessionStorage();
+      }
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["menu", "login"])}`;
+      loginOverlay.href = "/login";
+      logIcon.href = "/login";
+      logIcon.title = this.lang.getTranslation(["menu", "login"]);
+      logIconImg.classList.remove("bi-box-arrow-right");
+      logIconImg.classList.add("bi-box-arrow-left");
+    }
+  }
+
   translateIndex() {
     console.log(`MENU: ${this.getTranslation(["menu", "profile"])}`);
     const menuGame = document.getElementById("menuGame");
@@ -26,8 +54,16 @@ export default class Language {
     const loginOverlay = document.querySelector("#overlayLogin");
     if (sessionStorage.getItem("accessJWT_transcendence")) {
       loginOverlay.innerHTML = `<i class="bi bi=box-arrow-in-right"></i> ${this.getTranslation(["menu", "logout"])}`;
+      document.querySelector("#logIconRef").title = this.getTranslation([
+        "menu",
+        "logout",
+      ]);
     } else {
       loginOverlay.innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${this.getTranslation(["menu", "login"])}`;
+      document.querySelector("#logIconRef").title = this.getTranslation([
+        "menu",
+        "login",
+      ]);
     }
     const alertLabel = document.getElementById("alertLabel");
     alertLabel.innerText = this.getTranslation(["modal", "error"]);

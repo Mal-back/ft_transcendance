@@ -1,6 +1,7 @@
 import AbstractView from "./AbstractViews.js";
 import { navigateTo } from "../router.js";
 import { removeSessionStorage, setSessionStorage } from "../Utils/Utils.js";
+import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -16,6 +17,13 @@ export default class extends AbstractView {
     }
 
     async getHtml() {
+        if (!sessionStorage.getItem("username_transcendence")) {
+            throw new CustomError(
+                this.lang.getTranslation(["modal", "error"]),
+                this.lang.getTranslation(["error", "notAuthentified"]),
+                "/",
+            );
+        }
         return `
     <div class="background">
     <div class="Profile container">
@@ -354,11 +362,11 @@ export default class extends AbstractView {
         const confirmPassword = document.querySelector(
             "input[name='confirmPassword']",
         ).value;
-        if (
-            this.sanitizeInput([newPassword, oldPassword, confirmPassword]) == false
-        ) {
-            return;
-        }
+        // if (
+        // this.sanitizeInput([newPassword, oldPassword, confirmPassword]) == false
+        // ) {
+        // return;
+        // }
         if (newPassword != confirmPassword) {
             this.showModalWithError(
                 "Error",

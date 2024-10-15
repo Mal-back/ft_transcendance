@@ -47,7 +47,7 @@ export default class extends AbstractView {
         return userData;
       } else {
         const log = await this.getErrorLogfromServer(response);
-        console.log(log);
+        console.debug(log);
         return null;
       }
     } catch (error) {
@@ -64,8 +64,6 @@ export default class extends AbstractView {
       const tokenProfile = await this.getToken();
       userData = await this.loadUserData();
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      console.debug("Error", error);
       throw error;
     }
     let winRate = "No game played yet";
@@ -81,7 +79,7 @@ export default class extends AbstractView {
             <!-- Top profile section (centered) -->
             <div class="top-profile d-flex flex-column justify-content-center align-items-center">
               <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: ${userData.profilePic}"></div>
-              <a class="black-txt">${userData.username}</a>
+              <a class="black-txt">${decodeURIComponent(userData.username)}</a>
             </div>
           </div>
 
