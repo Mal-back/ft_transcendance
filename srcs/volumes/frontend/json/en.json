@@ -39,7 +39,9 @@
   },
   "profile": {
     "winRateLabel": "Win Rate:",
+    "noGamePlayed": "No game played yet",
     "battleHistoryLabel": "Battle History:",
+    "noHistory": "No history yet",
     "matchDate": "DATE",
     "WIN": "WIN",
     "LOSE": "LOSE"
@@ -68,7 +70,17 @@
     },
     "Background": {
       "label": "Profile Background",
-      "changeButton": "Change Profile Background"
+      "changeButton": "Change Profile Background",
+      "current": "Current Profile Background:",
+      "choose": "Choose a Profile Background:",
+      "upload": "Or Upload your own:",
+      "select": "Select or Upload Profile Background",
+      "set": "Set Profile Background"
+    },
+    "modalButtons": {
+      "Close": "Close",
+      "Confirm": "Confirm Changes",
+      "Cancel": "Cancel"
     },
     "Email": {
       "buttonLabel": "Handle Email",
@@ -78,13 +90,15 @@
         "NewEmail": "new-email@google.com",
         "ConfirmNewEmail": "new-email@google.com"
       },
-      "modalButtons": ["Close", "Confirm Changes"]
     },
     "Password": {
       "buttonLabel": "Handle Password",
       "changeButton": "Change Password",
-      "modalFields": ["Old Password", "New Password", "Confirm New Password"],
-      "modalButtons": ["Close", "Confirm Changes"]
+      "modalFields": {
+        "old": "Old Password",
+        "new": "New Password", 
+        "confirm": "Confirm New Password"
+      },
     },
     "Language": {
       "label": "Language",
@@ -94,8 +108,13 @@
     "DataHandler": {
       "buttonLabel": "Handle Data",
       "modalTitle": "Handle Data",
-      "modalFields": ["Send All Data", "Delete Account", "Delete All Data"],
-      "modalButtons": ["Close"]
+      "modalFields": {
+        "send": "Send All Data",
+        "deleteAccount": "Delete Account",
+        "deleteData": "Delete All Data",
+        "confirmDeleteAccount": "Confirm Account Deletion",
+        "questionDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone."
+      },
     },
     "footerButtonSettings": {
       "label": "Save All Changes"
