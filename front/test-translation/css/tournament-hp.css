@@ -1,0 +1,24 @@
+.custom-button {
+    width: 100%;
+    /* Full width button */
+    max-width: 300px;
+    /* Limit button width */
+    height: 100px;
+    /* Button height */
+    margin-bottom: 40px;
+    /* Space between buttons */
+    font-size: 24px;
+    /* Text size */
+}
+
+.custom-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 89vh;
+}
+
+.btn-primary:hover {
+    background-color: rgb(0, 0, 214);
+}

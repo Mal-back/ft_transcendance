@@ -52,12 +52,12 @@ function drawBall() {
 
 // Function to draw scores
 function drawScores() {
-    context.fillStyle = 'white'; // Set color to white for scores
-    context.font = '24px Arial'; // Increase font size for clarity
-    context.textAlign = 'left'; // Align left for left player score
-    context.fillText(`Left: ${leftScore}`, 20, 30); // Draw left score
-    context.textAlign = 'right'; // Align right for right player score
-    context.fillText(`Right: ${rightScore}`, canvas.width - 20, 30); // Draw right score
+    // context.fillStyle = 'white'; // Set color to white for scores
+    // context.font = '24px Arial'; // Increase font size for clarity
+    // context.textAlign = 'left'; // Align left for left player score
+    // context.fillText(`Left: ${leftScore}`, 20, 30); // Draw left score
+    // context.textAlign = 'right'; // Align right for right player score
+    // context.fillText(`Right: ${rightScore}`, canvas.width - 20, 30); // Draw right score
 }
 
 // Update the ball position

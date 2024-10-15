@@ -71,352 +71,41 @@
                     <div class="container mt-4">
                         <!-- Search Bar -->
                         <div class="bg-* text-white text-center p-3 rounded">
-                            <h3 class="mb-0">Friends</h3>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 class="mb-0">Friends</h3>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFriendModal">
+                                    <i class="bi bi-person-plus"></i> Add Friend
+                                </button>
+                            </div>
                         </div>
-
+                        <div class="modal fade" id="addFriendModal" tabindex="-1" aria-labelledby="addFriendModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addFriendModalLabel">Add Friend</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="addFriendForm">
+                                            <div class="mb-3">
+                                                <label for="friendUsername" class="form-label">Enter Username</label>
+                                                <input type="text" class="form-control" id="friendUsername" required>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" form="addFriendForm">Add
+                                            Friend</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Friend List -->
                         <div class="list-group">
-                            <!-- Friend 1: TTPD : The Anthology -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/TTPD.jpeg);" alt="Avatar"></div>
-
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">TTPD : The Anthology</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalTTPD">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto">
-                                        <i class="bi bi-x-circle"></i> Remove
-                                    </button>
-                                </div>
-                                <!-- Modal for TTPD -->
-                                <div class="modal fade" id="modalTTPD" tabindex="-1" aria-labelledby="modalTTPDLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalTTPDLabel">TTPD : The Anthology</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/TTPD.jpeg);"></div>
-                                                    <h3>TTPD : The Anthology</h3>
-                                                    <p class="black-txt">Win Rate: 75%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                            <!-- Friend 2: 1989 -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/1989.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">1989</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modal1989">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for 1989 -->
-                                <div class="modal fade" id="modal1989" tabindex="-1" aria-labelledby="modal1989Label"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modal1989Label">1989</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/1989.jpeg);"></div>
-                                                    <h3>1989</h3>
-                                                    <p class="black-txt">Win Rate: 80%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Friend 3: EVERMORE -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/EVERMORE.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">EVERMORE</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalEVERMORE">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for EVERMORE -->
-                                <div class="modal fade" id="modalEVERMORE" tabindex="-1"
-                                    aria-labelledby="modalEVERMORELabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalEVERMORELabel">EVERMORE</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/EVERMORE.jpeg);">
-                                                    </div>
-                                                    <h3>EVERMORE</h3>
-                                                    <p class="black-txt">Win Rate: 85%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Friend 4: FOLKLORE -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/FOLKLORE.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">FOLKLORE</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalFOLKLORE">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for FOLKLORE -->
-                                <div class="modal fade" id="modalFOLKLORE" tabindex="-1"
-                                    aria-labelledby="modalFOLKLORELabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalFOLKLORELabel">FOLKLORE</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/FOLKLORE.jpeg);">
-                                                    </div>
-                                                    <h3>FOLKLORE</h3>
-                                                    <p class="black-txt">Win Rate: 90%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Friend 5: MIDNIGHTS -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/MIDNIGHTS.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">MIDNIGHTS</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalMIDNIGHTS">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for MIDNIGHTS -->
-                                <div class="modal fade" id="modalMIDNIGHTS" tabindex="-1"
-                                    aria-labelledby="modalMIDNIGHTSLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalMIDNIGHTSLabel">MIDNIGHTS</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/MIDNIGHTS.jpeg);">
-                                                    </div>
-                                                    <h3>MIDNIGHTS</h3>
-                                                    <p class="black-txt">Win Rate: 88%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Friend 6: REPUTATION -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/REPUTATION.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">REPUTATION</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalREPUTATION">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for REPUTATION -->
-                                <div class="modal fade" id="modalREPUTATION" tabindex="-1"
-                                    aria-labelledby="modalREPUTATIONLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalREPUTATIONLabel">REPUTATION</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/REPUTATION.jpeg);">
-                                                    </div>
-                                                    <h3>REPUTATION</h3>
-                                                    <p class="black-txt">Win Rate: 82%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Friend 7: DEBUT -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/DEBUT.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">DEBUT</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalDEBUT">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for DEBUT -->
-                                <div class="modal fade" id="modalDEBUT" tabindex="-1" aria-labelledby="modalDEBUTLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalDEBUTLabel">DEBUT</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/DEBUT.jpeg);"></div>
-                                                    <h3>DEBUT</h3>
-                                                    <p class="black-txt">Win Rate: 78%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Friend 8: FEARLESS -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/FEARLESS.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">FEARLESS</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalFEARLESS">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for FEARLESS -->
-                                <div class="modal fade" id="modalFEARLESS" tabindex="-1"
-                                    aria-labelledby="modalFEARLESSLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalFEARLESSLabel">FEARLESS</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/FEARLESS.jpeg);">
-                                                    </div>
-                                                    <h3>FEARLESS</h3>
-                                                    <p class="black-txt">Win Rate: 80%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Friend 9: LOVER -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/LOVER.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">LOVER</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalLOVER">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-                                <!-- Modal for LOVER -->
-                                <div class="modal fade" id="modalLOVER" tabindex="-1" aria-labelledby="modalLOVERLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalLOVERLabel">LOVER</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/LOVER.jpeg);"></div>
-                                                    <h3>LOVER</h3>
-                                                    <p class="black-txt">Win Rate: 86%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Friend 10: RED -->
                             <div>
                                 <div class="list-group-item d-flex align-items-center mb-3 rounded">
@@ -454,59 +143,23 @@
                                     </div>
                                 </div>
                             </div>
+                            <div
+                                class="list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
+                                <p class="h4">✨ <i>Maidenless</i> ✨</p>
 
-                            <!-- Friend 11: SPEAK NOW -->
-                            <div>
-                                <div class="list-group-item d-flex align-items-center mb-3 rounded">
-                                    <div class="rounded-circle Avatar status-online me-3"
-                                        style="background-image: url(../../img/ts/SPEAK_NOW.jpeg);" alt="Avatar"></div>
-                                    <div class="flex-fill">
-                                        <h5 class="mb-0">SPEAK NOW</h5>
-                                        <button class="text-decoration-none text-primary" data-bs-toggle="modal"
-                                            data-bs-target="#modalSPEAKNOW">Show profile</button>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
-                                        Remove</button>
-                                </div>
-
-                                <!-- Modal for SPEAK NOW -->
-                                <div class="modal fade" id="modalSPEAKNOW" tabindex="-1"
-                                    aria-labelledby="modalSPEAKNOWLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalSPEAKNOWLabel">SPEAK NOW</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div
-                                                    class="d-flex flex-column justify-content-center align-items-center">
-                                                    <div class="rounded-circle Avatar status-online mb-3"
-                                                        style="background-image: url(../../img/ts/SPEAK_NOW.jpeg);">
-                                                    </div>
-                                                    <h3>SPEAK NOW</h3>
-                                                    <p class="black-txt">Win Rate: 77%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <p class="h4">Please, add friends</p>
                             </div>
                         </div>
-                        <!-- Repeat for more friends -->
                     </div>
-
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script src="js/router.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+        <script src="js/router.js"></script>
 </body>
 
 </html>

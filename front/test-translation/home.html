@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/background-basic.css">
     <title>Home</title>
-
 </head>
 
 <body>
@@ -62,16 +61,17 @@
                 </div>
                 <div class="offcanvas-body">
                     <div class="nav flex-column">
-                        <a class="nav-link text-white my-4" href="/" data-link><i class="bi bi-house-fill"></i> HOME</a>
-                        <a class="nav-link text-white my-4" href="/game" data-link><i class="bi bi-controller"></i>
-                            Game</a>
-                        <a class="nav-link text-white my-4" href="/profile" data-link><i class="bi bi-person"></i>
-                            Profile</a>
-                        <a class="nav-link text-white my-4" href="/friends" data-link><i class="bi bi-person-heart"></i>
-                            Friends</a>
-                        <a class="nav-link text-white my-4" href="/authentification" data-link><i
+                        <a class="nav-link text-white my-4" href="/" data-link id="menuHome"><i
+                                class="bi bi-house-fill"></i> HOME</a>
+                        <a class="nav-link text-white my-4" href="/game" data-link id="menuGame"><i
+                                class="bi bi-controller"></i> Game</a>
+                        <a class="nav-link text-white my-4" href="/profile" data-link id="menuProfile"><i
+                                class="bi bi-person"></i> Profile</a>
+                        <a class="nav-link text-white my-4" href="/friends" data-link id="menuFriends"><i
+                                class="bi bi-person-heart"></i> Friends</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogout"><i
                                 class="bi bi-box-arrow-in-right"></i> Logout</a>
-                        <a class="nav-link text-white my-4" href="/authentification" data-link><i
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogin"><i
                                 class="bi bi-box-arrow-in-left"></i> Login</a>
                     </div>
                 </div>
@@ -98,35 +98,47 @@
         crossorigin="anonymous"></script>
 
     <script>
-        // Language translations
-        const translations = {
-            en: {
-                welcomeMessage: "Welcome to Our Pong!",
-                description1: "Explore the depth of the Pong game, play with friends, and personalize your profile as you desire!",
-                description2: "✨ Have fun! ✨"
-            },
-            fr: {
-                welcomeMessage: "Bienvenue dans Notre Pong !",
-                description1: "Explorez la profondeur du jeu Pong, jouez avec des amis et personnalisez votre profil à votre guise!",
-                description2: "✨ Amusez-vous bien ! ✨"
-            }
-        };
-
-        // Function to change the language based on URL parameter
-        function changeLanguage(language) {
-            const translation = translations[language];
+        // Function to change the language based on loaded translations
+        function changeLanguage(translations) {
+            const translation = translations;
+            console.log(translation);
             if (translation) {
+                // Update main content translations
                 document.getElementById('welcomeMessage').textContent = translation.welcomeMessage;
                 document.getElementById('description1').textContent = translation.description1;
                 document.getElementById('description2').textContent = translation.description2;
+
+                // Update menu translations using innerHTML
+                document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
+                document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
+                document.getElementById('menuProfile').innerHTML = `<i class="bi bi-person"></i> ${translation.menu.profile}`;
+                document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
+                document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
+                document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
             }
         }
 
-        // On page load, check the URL parameter and apply the selected language
+
+        // On page load, fetch the translations and apply the selected language
         document.addEventListener('DOMContentLoaded', function () {
             const params = new URLSearchParams(window.location.search);
             const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
-            changeLanguage(selectedLang);
+            console.log(selectedLang);
+            const translationFile = selectedLang === 'fr' ? './fr.json' : './en.json';
+
+            fetch(translationFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(translations => {
+                    changeLanguage(translations);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
         });
     </script>
 </body>

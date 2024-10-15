@@ -1,0 +1,10 @@
+.background {
+    background-image: url("../img/bg-profile.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
