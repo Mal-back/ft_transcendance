@@ -4,7 +4,7 @@ from django.db import models
 
 class PublicUser(models.Model):
     username = models.CharField(max_length=128, unique=True)
-    profilePic = models.URLField(default='http://localhost:8080/media/default.jpg')
+    profilePic = models.URLField(default='http://localhost:8080/media/default_avatars/default_00.jpg')
     account_creation = models.DateTimeField(auto_now_add=True)
     last_seen_online = models.DateTimeField(null=True)
     friends = models.ManyToManyField('self', symmetrical=False, blank=True)

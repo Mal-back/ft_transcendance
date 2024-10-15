@@ -3,7 +3,6 @@ from rest_framework.exceptions import AuthenticationFailed
 import jwt
 from django.conf import settings
 from .models import PublicUser
-from django.utils.timezone import now
 
 class CustomAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -33,8 +32,4 @@ class CustomAuthentication(BaseAuthentication):
         if user is None:
             return(None, None)
         user_obj = PublicUser.objects.get(username=user)
-        user_obj.last_seen_online = now()
-        user_obj.save()
         return(user_obj, token)
-
-

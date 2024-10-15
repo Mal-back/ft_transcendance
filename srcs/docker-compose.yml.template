@@ -4,11 +4,15 @@ services:
     container_name: 'transcendance_nginx'
     volumes:
       - data_static:/var/www/static
+      - data_avatar_media:/var/www/media
     networks:
       - transcendance
     depends_on: 
       - auth
       - frontend
+      - users
+      - matchmaking
+      - avatars
     build :
       context: requirements/nginx
       dockerfile: Dockerfile
@@ -82,6 +86,24 @@ services:
       - '6379'
     restart: on-failure
 
+  avatars:
+    image: transcendance_django_avatars
+    container_name: 'transcendance_django_avatars'
+    volumes:
+      - data_django_avatar_management:/code
+      - data_avatar_media:/media
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_avatar
+    build:
+      context: requirements/django_media
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '8443'
+    restart: on-failure
+
   frontend:
     image: transcendance_frontend
     container_name: 'transcendance_frontend'
@@ -136,6 +158,18 @@ services:
       - '5432'
     restart: on-failure
 
+  postgresql_avatar:
+    image: transcendance_postgresql_avatar
+    container_name: 'transcendance_postgresql_avatar'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_avatar
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '5432'
+    restart: on-failure
 
 volumes:
   data_django_auth:
@@ -154,11 +188,28 @@ volumes:
       device: placeholder/srcs/volumes/users
   data_django_game:
     name: data_django_game
+      device: placeholder/srcs/volumes/game
+  data_django_matchmaking:
+    name: data_django_matchmaking
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: placeholder/srcs/volumes/game
+      device: placeholder/srcs/volumes/matchmaking
+  data_django_avatar_management:
+    name: data_django_avatar_management
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/avatar_management
+  data_avatar_media:
+    name: data_avatar_media
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/avatar_media
   data_frontend:
     name: data_frontend
     driver: local
