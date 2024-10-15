@@ -36,15 +36,15 @@ socket.onopen = function(event) {
 		action : "stop",
 	})) }, 4000)
 
-	setTimeout(() => { 	socket.send(JSON.stringify({
-		type : "pause",
-		action : "start",
-	})) }, 6000)
+	// setTimeout(() => { 	socket.send(JSON.stringify({
+	// 	type : "pause",
+	// 	action : "start",
+	// })) }, 6000)
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
 		type : "surrend",
 		surrender : "player_1",
-	})) }, 6500)
+	})) }, 5000)
 
 
 }
