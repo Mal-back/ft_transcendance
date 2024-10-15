@@ -12,6 +12,7 @@ from attrs import define, field, validators
 from .Math import CollisionCircleSegment, ImpactProjection, Circle, GetBounceDir, GetNormal
 
 allowed_movement = ["UP", "DOWN", "NONE"]
+allowed_pause = ["stop", "start"]
 		
 @define
 class Player:
@@ -76,7 +77,6 @@ class Player:
 		self.direction = self.correct_direction()
 		self.position = self.position.move(self.direction)
 		self.reset_direction()
-	
  
 @define
 class Ball:
@@ -196,7 +196,6 @@ class Config:
 				"ball": self.ball_pos.render(),
 		}
 	
-	
 class LocalEngine(threading.Thread):
 	def __init__(self, game_id, **kwargs):
 		super().__init__(daemon=True)
@@ -212,7 +211,9 @@ class LocalEngine(threading.Thread):
 		self.runing = False
 		self.end_lock = threading.Lock()
 		self.end = False
-		self.winner = None
+		self.surrender = "None"
+		self.surrender_lock = threading.Lock()
+		self.winner = "None"
 		
 	def wait_start(self):
 		print("Waiting for game instance " + self.game_id + " to start")
@@ -245,6 +246,8 @@ class LocalEngine(threading.Thread):
 				break;
 			time.sleep(self.frame_rate)
 			self.check_pause()
+			if self.check_surrender() == True:
+				break
 		self.send_end_state(self.frame)
 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
 			"type": "end.game"
@@ -264,7 +267,7 @@ class LocalEngine(threading.Thread):
 		except ValueError:
 			print("Invalid movement received from " + player)
    
-	def receive_pause(self, action):
+	def receive_pause(self, action : str):
 		with self.start_lock:
 			if action == "start" and self.runing == False:
 				print("Unpausing game instance " + str(self.game_id))
@@ -273,8 +276,10 @@ class LocalEngine(threading.Thread):
 				print("Pausing game instance " + str(self.game_id))
 				self.runing = False
 	
-	def receive_surrend(self, action) -> None:
-		return
+	def receive_surrend(self, surrender : str) -> None:
+		with self.surrender_lock:
+			if surrender == "player_1" or surrender == "player_2":
+				self.surrender = surrender
 					 
 	def move_players(self, frame : Frame) -> Frame:
 		frame.player_1.move()
@@ -317,6 +322,12 @@ class LocalEngine(threading.Thread):
 					break
 			time.sleep(self.frame_rate)
 	   
+	def check_surrender(self) -> bool:
+		with self.surrender_lock:
+			if self.surrender == "player_1" or self.surrender == "player_2":
+				self.winner = "player_1" if self.surrender == "player_2" else "player_2"
+				return True
+		return False
 
 	def get_next_frame(self) -> Frame:
 		new_frame = self.frame
@@ -356,4 +367,3 @@ class LocalEngine(threading.Thread):
 			"type" : "send.end.state",
 			"End_state" : data,
 		})
-		return

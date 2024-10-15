@@ -3,6 +3,13 @@ const socket = new WebSocket('ws://localhost:8080/api/game/ws/44575');
 
 socket.onopen = function(event) {
 
+	// socket.send(JSON.stringify({
+	// 	type : "move",
+	// 	player : "player_1",
+	// 	direction : "UP"
+	// }));
+
+
 	socket.send(JSON.stringify({
 		type : "init_game",
 		message : "Salut tout le monde",
@@ -12,15 +19,17 @@ socket.onopen = function(event) {
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
 		type : "get_config",
-		message : "Salut tout le monde",
-		name : "Jack",
 	})) }, 100)
 
-	// setTimeout(() => { 	socket.send(JSON.stringify({
-	// 	type : "start_game",
-	// 	message : "Salut tout le monde",
-	// 	name : "Jack",
-	// })) }, 2000)
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "start_game",
+	})) }, 2000)
+
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "move",
+		player : "player_1",
+		direction: "UP",
+	})) }, 3000)
 
 	setTimeout(() => { 	socket.send(JSON.stringify({
 		type : "pause",
@@ -30,7 +39,12 @@ socket.onopen = function(event) {
 	setTimeout(() => { 	socket.send(JSON.stringify({
 		type : "pause",
 		action : "start",
-	})) }, 8000)
+	})) }, 6000)
+
+	setTimeout(() => { 	socket.send(JSON.stringify({
+		type : "surrend",
+		surrender : "player_1",
+	})) }, 6500)
 
 
 }
