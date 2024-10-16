@@ -89,16 +89,16 @@
         "OldEmail": "old-email@google.com",
         "NewEmail": "new-email@google.com",
         "ConfirmNewEmail": "new-email@google.com"
-      },
+      }
     },
     "Password": {
       "buttonLabel": "Handle Password",
       "changeButton": "Change Password",
       "modalFields": {
         "old": "Old Password",
-        "new": "New Password", 
+        "new": "New Password",
         "confirm": "Confirm New Password"
-      },
+      }
     },
     "Language": {
       "label": "Language",
@@ -114,7 +114,7 @@
         "deleteData": "Delete All Data",
         "confirmDeleteAccount": "Confirm Account Deletion",
         "questionDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone."
-      },
+      }
     },
     "footerButtonSettings": {
       "label": "Save All Changes"
