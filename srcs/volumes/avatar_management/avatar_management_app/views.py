@@ -42,6 +42,7 @@ class AvatarView(APIView):
         return Response(status=status.HTTP_304_NOT_MODIFIED)
 
 def save_image(username:str, validated_data) -> bool:
+    os.mkdir(os.path.join(settings.MEDIA_ROOT, 'users_avatars'))
     file_path = os.path.join(settings.MEDIA_ROOT, 'users_avatars', f"{username}.{validated_data['image_type']}")
     with open(file_path, 'wb') as f:
         for chunk in validated_data['avatar'].chunks():
