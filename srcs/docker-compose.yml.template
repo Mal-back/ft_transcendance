@@ -34,7 +34,7 @@ services:
       context: requirements/django_auth
       dockerfile: Dockerfile
     env_file: .env
-    expose:
+    ports:
       - '8443'
     restart: on-failure
 
@@ -51,8 +51,38 @@ services:
       context: requirements/django_users
       dockerfile: Dockerfile
     env_file: .env
-    expose:
+    ports:
       - '8443'
+    restart: on-failure
+
+  matchmaking:
+    image: transcendance_django_matchmaking
+    container_name: 'transcendance_django_matchmaking'
+    volumes:
+      - data_django_matchmaking:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_matchmaking 
+    build:
+      context: requirements/django_matchmaking
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '8443'
+    restart: on-failure
+
+  postgresql_game:
+    image: transcendance_postgresql_game
+    container_name: 'transcendance_postgresql_game'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_game
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '5432'
     restart: on-failure
 
   game:
@@ -84,6 +114,25 @@ services:
     env_file: .env
     expose:
       - '6379'
+    restart: on-failure
+
+  worker:
+    image: transcendance_worker
+    container_name: 'transcendance_worker'
+    volumes:
+      - data_django_game:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_game
+      - redis
+      - game
+    build:
+      context: requirements/worker
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '8443'
     restart: on-failure
 
   avatars:
@@ -128,20 +177,7 @@ services:
       context: requirements/postgreSQL_auth
       dockerfile: Dockerfile
     env_file: .env
-    expose:
-      - '5432'
-    restart: on-failure
-
-  postgresql_game:
-    image: transcendance_postgresql_game
-    container_name: 'transcendance_postgresql_game'
-    networks:
-      - transcendance
-    build:
-      context: requirements/postgreSQL_game
-      dockerfile: Dockerfile
-    env_file: .env
-    expose:
+    ports:
       - '5432'
     restart: on-failure
 
@@ -154,7 +190,20 @@ services:
       context: requirements/postgreSQL_users
       dockerfile: Dockerfile
     env_file: .env
-    expose:
+    ports:
+      - '5432'
+    restart: on-failure
+
+  postgresql_matchmaking:
+    image: transcendance_postgresql_matchmaking
+    container_name: 'transcendance_postgresql_matchmaking'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_matchmaking
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
       - '5432'
     restart: on-failure
 
@@ -186,9 +235,6 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/users
-  data_django_game:
-    name: data_django_game
-      device: placeholder/srcs/volumes/game
   data_django_matchmaking:
     name: data_django_matchmaking
     driver: local
@@ -196,6 +242,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/matchmaking
+  data_django_game:
+    name: data_django_game
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/game
   data_django_avatar_management:
     name: data_django_avatar_management
     driver: local
