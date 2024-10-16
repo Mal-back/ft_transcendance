@@ -10,11 +10,13 @@
   },
   "modal": {
     "error": "Error",
-    "submissionFailed": "Submission failed"
+    "submissionFailed": "Submission failed",
+    "success": "Success"
   },
   "error": {
     "failConnectServer": "Unable to connect to the server, please wait",
     "notAuthentified": "You're not authentified yet, please login to access this page",
+    "errorAuthentification": "Authentification error, re-login please",
     "failRefresh": "Fail to refresh your credentials, re-login please, sorry for the inconvenience",
     "invalidChar": "Invalid characters! Allowed: alphanumeric, +, -, ., _, @"
   },
@@ -66,7 +68,8 @@
       "label": "Username",
       "inputType": "text",
       "currentValue": "CurrentUsername",
-      "saveButton": "Save Username"
+      "saveButton": "Save Username",
+      "successMessage": "Successfuly, changed your username!"
     },
     "Background": {
       "label": "Profile Background",
@@ -89,6 +92,8 @@
         "OldEmail": "old-email@google.com",
         "NewEmail": "new-email@google.com",
         "ConfirmNewEmail": "new-email@google.com"
+        "confirmationDifferent": "New e-mail and it's confirmation do not match",
+        "success": "E-mail changed successfuly"
       }
     },
     "Password": {
@@ -97,7 +102,9 @@
       "modalFields": {
         "old": "Old Password",
         "new": "New Password",
-        "confirm": "Confirm New Password"
+        "confirm": "Confirm New Password",
+        "confirmationDifferent": "New password and it's confirmation do not match",
+        "success": "Password successfuly changed"
       }
     },
     "Language": {
@@ -113,7 +120,8 @@
         "deleteAccount": "Delete Account",
         "deleteData": "Delete All Data",
         "confirmDeleteAccount": "Confirm Account Deletion",
-        "questionDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone."
+        "questionDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone.",
+        "successDeleteAccount": "Account successfuly deleted!, Goodbye"
       }
     },
     "footerButtonSettings": {
