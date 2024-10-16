@@ -1,4 +1,4 @@
-import { setSessionStorage } from "./Utils.js";
+import { setSessionStorage, removeSessionStorage } from "./Utils.js";
 
 let instance = null;
 
@@ -118,6 +118,7 @@ export default class Language {
     console.log("getTranslation");
     let translation = null;
     if (this.JSONLanguage) {
+      // console.log(`Searching: ${arrayKey.join(" -> ")}`);
       translation = this.findKey(this.JSONLanguage, arrayKey);
       if (!translation) {
         translation = arrayKey.at(-1);

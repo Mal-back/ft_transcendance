@@ -58,6 +58,13 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    if (!sessionStorage.getItem("username_transcendence")) {
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        `${this.lang.getTranslation(["error", "notAuthentified"])}`,
+        "/",
+      )
+    }
     this.setTitle(`${this.lang.getTranslation(["menu", "profile"])}`);
     let userData = null;
     try {
@@ -66,11 +73,11 @@ export default class extends AbstractView {
     } catch (error) {
       throw error;
     }
-    let winRate = "No game played yet";
-    let battleHistory = "No history yet";
+    let winRate = this.lang.getTranslation(["profile", "noGamePlayed"]);
+    let battleHistory = this.lang.getTranslation(["profile", "noHistory"])
     if (userData.single_games_win_rate != undefined) {
       winRate = `${userData.single_games_win_rate} % `;
-      battleHistory = "Battle History:";
+      battleHistory = this.lang.getTranslation(["profile", "battleHistoryLabel"]);
     }
 
     const htmlContent = `< div class= "background" >
@@ -79,27 +86,24 @@ export default class extends AbstractView {
             <!-- Top profile section (centered) -->
             <div class="top-profile d-flex flex-column justify-content-center align-items-center">
               <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: ${userData.profilePic}"></div>
-              <a class="black-txt">${decodeURIComponent(userData.username)}</a>
+              <a class="black-txt">${userData.username}</a>
             </div>
           </div>
 
           <!-- Left-aligned profile info -->
           <div class="align-items-left mt-3 w-100">
-            <p class="black-txt">Win Rate: ${winRate}</p>
+            <p class="black-txt">${this.lang.getTranslation(["profile", "winRateLabel"])} ${winRate}</p>
           </div>
           <div class="align-items-left mt-3 w-100">
             <p class="black-txt">${battleHistory}</p>
           </div>
           <div id="battleHistory"></div>
+          <div class="align-items-right mt-3 w-100">
+            <a id=settingsButton type="button" class="btn bg-lightgray" href="/settings">Settings</a>
+          </div>
           `;
     const app = document.querySelector("#app");
     app.innerHTML = htmlContent;
-    try {
-      // await this.loadBattleHistory();
-    } catch (error) {
-      console.error("error", error.message);
-      throw error;
-    }
     return htmlContent;
     //         return `
     // <div class="background">
@@ -180,17 +184,17 @@ export default class extends AbstractView {
   }
 
   async addEventListeners() {
-    // const button = document.querySelector("#settingsButton");
-    // if (button) {
-    // button.addEventListener("click", async (ev) => {
-    // ev.preventDefault();
-    // console.debug("Submit button clicked!");
-    // });
-    // }
+    const button = document.querySelector("#settingsButton");
+    if (button) {
+    button.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+        navigateTo("/settings");
+    });
+    }
   }
 
   removeEventListeners() {
-    const button = document.querySelector("#createUserButton");
+    const button = document.querySelector("#settingsButton");
     if (button) {
       console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.loginEvent);

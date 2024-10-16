@@ -237,7 +237,7 @@ export default class {
     if (
       !authToken ||
       !refreshToken ||
-      sessionStorage.getItem("username_transcendence")
+      !sessionStorage.getItem("username_transcendence")
     ) {
       console.log("User is not authentified", authToken);
       removeSessionStorage();
