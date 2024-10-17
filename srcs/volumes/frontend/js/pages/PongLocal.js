@@ -59,10 +59,10 @@ export default class extends AbstractView {
     const computedStyle = window.getComputedStyle(this.canvas);
     this.canvas.width = parseFloat(computedStyle.width);
     this.canvas.height = parseFloat(computedStyle.height);
-    // console.log("CANVAS:", {
-    //   width: this.canvas.width,
-    //   height: this.canvas.height,
-    // });
+    console.log("CANVAS:", {
+      width: this.canvas.width,
+      height: this.canvas.height,
+    });
 
     //     const scaleFactor = window.devicePixelRatio || 1;
     // console.log("SCALE FACTOR:", scaleFactor);
@@ -70,8 +70,7 @@ export default class extends AbstractView {
     // canvas.height *= scaleFactor;
     // context.scale(scaleFactor, scaleFactor);
     this.context = this.canvas.getContext("2d");
-    console.log(`url: ${window.location.host}`);
-    this.webSocket = new WebSocket(`ws://${window.location.host}/api/game/ws/14846`);
+    this.webSocket = new WebSocket(`ws://localhost:8080/api/game/ws/14845`);
   }
 
   drawPaddles() {
@@ -82,12 +81,12 @@ export default class extends AbstractView {
       this.paddleWidth * this.scaleX,
       this.paddleHeight * this.scaleY,
     );
-    // console.log("LeftPaddleInCanvas:", {
-    //   x: this.leftPaddle.x * this.scaleX,
-    //   y: this.leftPaddle.y * this.scaleY,
-    //   width: this.paddleWidth * this.scaleX,
-    //   height: this.paddleHeight * this.scaleY,
-    // });
+    console.log("LeftPaddleInCanvas:", {
+      x: this.leftPaddle.x * this.scaleX,
+      y: this.leftPaddle.y * this.scaleY,
+      width: this.paddleWidth * this.scaleX,
+      height: this.paddleHeight * this.scaleY,
+    });
 
     this.context.fillStyle = "red";
     this.context.fillRect(
@@ -96,12 +95,12 @@ export default class extends AbstractView {
       this.paddleWidth * this.scaleX,
       this.paddleHeight * this.scaleY,
     );
-    // console.log("rightPaddleInCanvas:", {
-    //   x: this.rightPaddle.x * this.scaleX,
-    //   y: this.rightPaddle.y * this.scaleY,
-    //   width: this.paddleWidth * this.scaleX,
-    //   height: this.paddleHeight * this.scaleY,
-    // });
+    console.log("rightPaddleInCanvas:", {
+      x: this.rightPaddle.x * this.scaleX,
+      y: this.rightPaddle.y * this.scaleY,
+      width: this.paddleWidth * this.scaleX,
+      height: this.paddleHeight * this.scaleY,
+    });
     this.context.fillStyle = "white";
     this.context.beginPath();
     this.context.arc(
@@ -111,11 +110,11 @@ export default class extends AbstractView {
       0,
       Math.PI * 2,
     );
-    // console.log("BallInCanvas:", {
-    //   x: this.ball.x * this.scaleX,
-    //   y: this.ball.y * this.scaleY,
-    //   radius: this.ballRadius * this.scaleX,
-    // });
+    console.log("BallInCanvas:", {
+      x: this.ball.x * this.scaleX,
+      y: this.ball.y * this.scaleY,
+      radius: this.ballRadius * this.scaleX,
+    });
     this.context.fill();
     this.context.closePath();
   }
@@ -196,10 +195,10 @@ export default class extends AbstractView {
       const data = JSON.parse(ev.data);
       console.log("MessageFromSocket:", ev.data);
       if (this.gameStart === false) {
-        this.serverWidth = data.board_len;
-        this.serverHeight = data.board_height;
+        this.serverWidth = data.Dimensions.board_len;
+        this.serverHeight = data.Dimensions.board_height;
         console.log(
-          `Board  ${this.serverWidth} * ${this.serverHeight}`,
+          `Board Dimensions: ${this.serverWidth} * ${this.serverHeight}`,
         );
 
         this.scaleX = this.canvas.width / this.serverWidth;
@@ -211,25 +210,25 @@ export default class extends AbstractView {
           x: data.player_1[0],
           y: data.player_1[1],
         };
-        this.paddleHeight = data.pad_height;
-        this.paddleWidth = data.pad_len;
-        // console.log("paddleHeight:", this.paddleHeight);
-        // console.log("paddleWidth:", this.paddleWidth);
-        // console.log("LeftPaddle:", this.leftPaddle);
+        this.paddleHeight = data.Dimensions.pad_height * 2;
+        this.paddleWidth = data.Dimensions.pad_len * 2;
+        console.log("paddleHeight:", this.paddleHeight);
+        console.log("paddleWidth:", this.paddleWidth);
+        console.log("LeftPaddle:", this.leftPaddle);
 
         this.rightPaddle = {
           x: data.player_2[0],
           y: data.player_2[1],
         };
-        // console.log("RightPaddle:", this.rightPaddle);
+        console.log("RightPaddle:", this.rightPaddle);
 
         this.ball = {
           x: data.ball[0],
           y: data.ball[1],
         };
-        this.ballRadius = data.ball_size;
-        // console.log("BallRadius:", this.ballRadius);
-        // console.log("Ball:", this.ball);
+        this.ballRadius = data.Dimensions.ball_size;
+        console.log("BallRadius:", this.ballRadius);
+        console.log("Ball:", this.ball);
         this.gameStart = true;
         this.draw();
       } else {
@@ -237,19 +236,19 @@ export default class extends AbstractView {
           x: data.player_1.position[0],
           y: data.player_1.position[1],
         };
-        // console.log("UpdatedLeftPaddle:", this.leftPaddle);
+        console.log("UpdatedLeftPaddle:", this.leftPaddle);
 
         this.rightPaddle = {
           x: data.player_2.position[0],
           y: data.player_2.position[1],
         };
-        // console.log("UpdatedRightPaddle:", this.rightPaddle);
+        console.log("UpdatedRightPaddle:", this.rightPaddle);
 
         this.ball = {
           x: data.ball.position[0],
           y: data.ball.position[1],
         };
-        // console.log("UpdatedBall:", this.ball);
+        console.log("UpdatedBall:", this.ball);
 
         this.draw();
       }
