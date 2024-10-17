@@ -4,11 +4,15 @@ services:
     container_name: 'transcendance_nginx'
     volumes:
       - data_static:/var/www/static
+      # - data_avatar_media:/var/www/media
     networks:
       - transcendance
     depends_on: 
       - auth
       - frontend
+      - users
+      - matchmaking
+      # - avatars
     build :
       context: requirements/nginx
       dockerfile: Dockerfile
@@ -30,7 +34,7 @@ services:
       context: requirements/django_auth
       dockerfile: Dockerfile
     env_file: .env
-    expose:
+    ports:
       - '8443'
     restart: on-failure
 
@@ -47,8 +51,38 @@ services:
       context: requirements/django_users
       dockerfile: Dockerfile
     env_file: .env
-    expose:
+    ports:
       - '8443'
+    restart: on-failure
+
+  matchmaking:
+    image: transcendance_django_matchmaking
+    container_name: 'transcendance_django_matchmaking'
+    volumes:
+      - data_django_matchmaking:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_matchmaking 
+    build:
+      context: requirements/django_matchmaking
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '8443'
+    restart: on-failure
+
+  postgresql_game:
+    image: transcendance_postgresql_game
+    container_name: 'transcendance_postgresql_game'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_game
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '5432'
     restart: on-failure
 
   game:
@@ -82,6 +116,43 @@ services:
       - '6379'
     restart: on-failure
 
+  worker:
+    image: transcendance_worker
+    container_name: 'transcendance_worker'
+    volumes:
+      - data_django_game:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_game
+      - redis
+      - game
+    build:
+      context: requirements/worker
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '8443'
+    restart: on-failure
+
+  # avatars:
+  #   image: transcendance_django_avatars
+  #   container_name: 'transcendance_django_avatars'
+  #   volumes:
+  #     - data_django_avatar_management:/code
+  #     - data_avatar_media:/media
+  #   networks:
+  #     - transcendance
+  #   depends_on:
+  #     - postgresql_avatar
+  #   build:
+  #     context: requirements/django_media
+  #     dockerfile: Dockerfile
+  #   env_file: .env
+  #   ports:
+  #     - '8443'
+  #   restart: on-failure
+  #
   frontend:
     image: transcendance_frontend
     container_name: 'transcendance_frontend'
@@ -106,20 +177,7 @@ services:
       context: requirements/postgreSQL_auth
       dockerfile: Dockerfile
     env_file: .env
-    expose:
-      - '5432'
-    restart: on-failure
-
-  postgresql_game:
-    image: transcendance_postgresql_game
-    container_name: 'transcendance_postgresql_game'
-    networks:
-      - transcendance
-    build:
-      context: requirements/postgreSQL_game
-      dockerfile: Dockerfile
-    env_file: .env
-    expose:
+    ports:
       - '5432'
     restart: on-failure
 
@@ -132,10 +190,35 @@ services:
       context: requirements/postgreSQL_users
       dockerfile: Dockerfile
     env_file: .env
-    expose:
+    ports:
       - '5432'
     restart: on-failure
 
+  postgresql_matchmaking:
+    image: transcendance_postgresql_matchmaking
+    container_name: 'transcendance_postgresql_matchmaking'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_matchmaking
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '5432'
+    restart: on-failure
+
+  # postgresql_avatar:
+  #   image: transcendance_postgresql_avatar
+  #   container_name: 'transcendance_postgresql_avatar'
+  #   networks:
+  #     - transcendance
+  #   build:
+  #     context: requirements/postgreSQL_avatar
+  #     dockerfile: Dockerfile
+  #   env_file: .env
+  #   ports:
+  #     - '5432'
+  #   restart: on-failure
 
 volumes:
   data_django_auth:
@@ -144,35 +227,56 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/auth
+      device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/auth
   data_django_users:
     name: data_django_users
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/users
+      device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/users
+  data_django_matchmaking:
+    name: data_django_matchmaking
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/matchmaking
   data_django_game:
     name: data_django_game
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/game
+      device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/game
+  # data_django_avatar_management:
+  #   name: data_django_avatar_management
+  #   driver: local
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/avatar_management
+  # # data_avatar_media:
+  #   name: data_avatar_media
+  #   driver: local
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/avatar_media
   data_frontend:
     name: data_frontend
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/frontend
+      device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/frontend
   data_static:
     name: data_static
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/ldoyen--/Project_42/transcendance/transcendance_git/srcs/volumes/auth/staticRoot
+      device: /home/xbaudhuin/project_42/ft_transcendance/srcs/volumes/auth/staticRoot
 
 
 networks:
