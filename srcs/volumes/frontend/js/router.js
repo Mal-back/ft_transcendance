@@ -8,7 +8,7 @@ import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
 import Friends from "./pages/Friends.js";
-import Pong from "./pages/Pong.js";
+// import Pong from "./pages/Pong.js";
 import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
 
@@ -35,7 +35,7 @@ const router = async () => {
     { path: "/epic-mode", view: EpicMode },
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
-    { path: "/pong", view: Pong },
+    // { path: "/pong", view: Pong },
     { path: "/pongLocal", view: PongLocal },
   ];
 
@@ -199,4 +199,12 @@ document.querySelector("#headerFrench").addEventListener("click", (ev) => {
   sessionStorage.setItem("transcendence_language", "fr");
   const currentUrl = new URL(window.location.href);
   navigateTo(currentUrl.toString());
+});
+
+document.addEventListener("keydown", (ev) => {
+  const modal = document.querySelector("#alertModal");
+  if (modal.classList.contains("show")) {
+    const modalInstance = bootstrap.Modal.getInstance(modal);
+    modalInstance.hide();
+  }
 });

@@ -22,14 +22,12 @@ export default class {
     return "";
   }
 
-  // Add an event listener to your SPA navigation logic
   closeSidebarOnNavigate() {
     const sidebar = document.getElementById("sidebar");
-    // Ensure the sidebar is open before attempting to close
     if (sidebar.classList.contains("show")) {
       const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
       if (offcanvasInstance) {
-        offcanvasInstance.hide(); // Close the sidebar
+        offcanvasInstance.hide(); 
       }
     }
   }
@@ -109,10 +107,10 @@ export default class {
       const input = inputList[i];
       console.log("input = ", input);
       if (!whitelist.test(input)) {
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          `${this.lang.getTranslation(["error", "invalidChar"])}`,
-        );
+        // showModal(
+        //   `${this.lang.getTranslation(["modal", "error"])}`,
+        //   `${this.lang.getTranslation(["error", "invalidChar"])}`,
+        // );
         return false;
       }
     }
@@ -261,5 +259,6 @@ export default class {
     }
     return authToken;
   }
+
   destroy() { }
 }

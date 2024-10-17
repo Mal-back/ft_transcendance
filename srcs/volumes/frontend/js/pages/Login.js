@@ -9,6 +9,9 @@ import AbstractView from "./AbstractViews.js";
 export default class extends AbstractView {
   constructor() {
     super();
+    this.handleInputUsername = this.handleInputUsername.bind(this);
+    this.handleInputPassword = this.handleInputPassword.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
   }
 
   async getHtml() {
@@ -28,15 +31,21 @@ export default class extends AbstractView {
                             <h1 class="mb-3 text-center login-title text-decoration-underline">
                               ${this.lang.getTranslation(["login", "loginBtn"])}
                             </h1>
-                            <form id="loginForm">
+                            <form id="loginForm" novalidate>
                                 <div class="form-group">
                                     <label for="Username" id="UsernameTitle">${this.lang.getTranslation(["login", "usernameLabel"])}</label>
-                                    <input class="form-control" name="Username" type="text" />
+                                    <input class="form-control" name="Username" type="text" id="usernameInput" required />
+                                    <div class="invalid-feedback">
+                                      Username is required.
+                                    </div>
                                 </div>
                                 <br />
                                 <div class="form-group">
                                     <label for="Password" id="PasswordTitle">${this.lang.getTranslation(["login", "passwordLabel"])}</label>
-                                    <input class="form-control" name="Password" type="password" />
+                                    <input class="form-control" name="Password" type="password" id="passwordInput" required/>
+                                    <div class="invalid-feedback">
+                                      Password contains invalid characters.
+                                    </div>
                                 </div>
                                 <br />
                                 <button id="loginButton" type="submit" class="btn bg-silver">${this.lang.getTranslation(["login", "loginBtn"])}</button>
@@ -62,17 +71,66 @@ export default class extends AbstractView {
     console.log("adding login.css");
   }
 
-  async loginEvent(ev) {
+  validateUsername(usernameInput) {
+    usernameInput.setCustomValidity("");
+    if (usernameInput.value.trim() === "") {
+      usernameInput.setCustomValidity("Empty Username");
+    } else if (this.sanitizeInput(usernameInput.value) == false) {
+      usernameInput.setCustomValidity("Username contains invalid characters");
+    }
+    usernameInput.reportValidity();
+  }
+
+  validatePassword(passwordInput) {
+    passwordInput.setCustomValidity("");
+    if (passwordInput.value.trim() === "") {
+      passwordInput.setCustomValidity("Empty Password");
+    } else if (passwordInput.value.length < 2) {
+      passwordInput.setCustomValidity("Password is too short");
+    }
+    passwordInput.reportValidity();
+  }
+
+  handleInputUsername(ev) {
     ev.preventDefault();
-    console.debug("Submit button clicked");
-    await this.login();
+    const usernameInput = document.querySelector("#usernameInput");
+    this.validateUsername(usernameInput);
+  }
+
+  handleInputPassword(ev) {
+    ev.preventDefault();
+    const passwordInput = document.querySelector("#passwordInput");
+    this.validatePassword(passwordInput);
+  }
+
+  async handleLogin(ev) {
+    try {
+      ev.preventDefault();
+      const loginForm = document.querySelector("#loginForm");
+      const usernameInput = document.querySelector("#usernameInput");
+      const passwordInput = document.querySelector("#passwordInput");
+      this.validateUsername(usernameInput);
+      this.validatePassword(passwordInput);
+      if (!loginForm.reportValidity()) return;
+      await this.login();
+    } catch (error) {
+      console.debug("Error in login:", error);
+    }
   }
 
   async addEventListeners() {
     console.log("adding event addEventListeners");
     const button = document.querySelector("#loginButton");
+    const usernameInput = document.querySelector("#usernameInput");
+    const passwordInput = document.querySelector("#passwordInput");
+    if (usernameInput) {
+      usernameInput.addEventListener("input", this.handleInputUsername);
+    }
+    if (passwordInput)
+      passwordInput.addEventListener("input", this.handleInputPassword);
+
     if (button) {
-      button.addEventListener("click", (ev) => this.loginEvent(ev));
+      button.addEventListener("click", this.handleLogin);
     }
   }
 
@@ -117,12 +175,20 @@ export default class extends AbstractView {
     const button = document.querySelector("#loginButton");
     if (button) {
       console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.loginEvent);
+      button.removeEventListener("click", this.handleLogin);
     }
-    document.querySelectorAll('[data-link="view"]').forEach((button) => {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.handleClick);
-    });
+    // document.querySelectorAll('[data-link="view"]').forEach((button) => {
+    //   console.info("removing event click on button : " + button.innerText);
+    //   button.removeEventListener("click", this.handleClick);
+    // });
+    const usernameInput = document.querySelector("#usernameInput");
+    const passwordInput = document.querySelector("#passwordInput");
+    if (usernameInput) {
+      usernameInput.removeEventListener("input", this.validateUsername);
+    }
+    if (passwordInput) {
+      passwordInput.removeEventListener("input", this.handleInputPassword);
+    }
   }
 
   removeCss() {

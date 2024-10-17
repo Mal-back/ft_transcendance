@@ -96,18 +96,19 @@ export default class extends AbstractView {
     }
   }
 
+  async handleSubmitNewUser(ev) {
+    ev.preventDefault();
+    try {
+      await this.submitNewUser();
+    } catch (error) {
+      console.error("Caught in Event Listener:", error);
+    }
+  }
+
   async addEventListeners() {
     const button = document.querySelector("#createUserButton");
     if (button) {
-      button.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        console.debug("Submit button clicked!");
-        try {
-          await this.submitNewUser();
-        } catch (error) {
-          console.error("Caught in Event Listener:", error);
-        }
-      });
+      button.addEventListener("click", this.handleSubmitNewUser);
     }
   }
 

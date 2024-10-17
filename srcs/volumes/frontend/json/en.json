@@ -91,7 +91,7 @@
       "modalFields": {
         "OldEmail": "old-email@google.com",
         "NewEmail": "new-email@google.com",
-        "ConfirmNewEmail": "new-email@google.com"
+        "ConfirmNewEmail": "new-email@google.com",
         "confirmationDifferent": "New e-mail and it's confirmation do not match",
         "success": "E-mail changed successfuly"
       }
