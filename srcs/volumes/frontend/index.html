@@ -18,18 +18,18 @@
 		<div style="background-color: gray">
 			<div class="container d-flex align-items-center py-2">
 				<div class="icon-container d-flex align-items-center">
-					<button class="btn btn-light" id="toggleSidebar" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-						aria-controls="sidebar" data-bs-backdrop="true">
+					<button class="btn btn-light clickable-element" id="toggleSidebar" data-bs-toggle="offcanvas"
+						data-bs-target="#sidebar" aria-controls="sidebar" data-bs-backdrop="true">
 						<i class="bi bi-list"></i>
 					</button>
-					<a href="/" class="btn btn-light" id="HomeIcon" title="Home">
+					<a href="/" class="btn btn-light clickable-element" id="HomeIcon" title="Home" data-link>
 						<i class="bi bi-house-fill"></i>
 					</a>
-					<a id="logIconRef" href="/login" class="btn btn-light" title="Login">
+					<a id="logIconRef" href="/login" class="btn btn-light clickable-element" title="Login" data-link>
 						<i id="logIconImg" class="bi bi-box-arrow-in-right"></i>
 					</a>
 				</div>
-				<div class="text-black text-center flex-grow-1" style="font-size: 3.5vh">
+				<div class="text-black text-center flex-grow-1 overlay-element" style="font-size: 3.5vh">
 					FT_TRANSCENDENCE
 				</div>
 				<div class="icon-container-right dropdown d-flex align-items-center p">

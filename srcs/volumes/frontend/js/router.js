@@ -12,8 +12,25 @@ import Friends from "./pages/Friends.js";
 import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
 
+// Store the original attachShadow method
+const originalAttachShadow = Element.prototype.attachShadow;
+
+// Override the attachShadow method to add custom behavior
+Element.prototype.attachShadow = function (init) {
+  console.log("Shadow root created on:", this);
+  console.log("Initialization options:", init);
+
+  // Call the original attachShadow method to actually create the shadow root
+  return originalAttachShadow.apply(this, arguments);
+};
+
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
+  if (isNavigating) {
+    console, log("STILL LOADING");
+    return;
+  }
+  isNavigating = true;
   if (view) {
     view.destroy();
   }
@@ -22,6 +39,7 @@ export const navigateTo = (url) => {
 };
 
 let view = null;
+let isNavigating = false;
 
 const router = async () => {
   console.info("Router is on");
@@ -67,6 +85,7 @@ const router = async () => {
 
   if (previousView) {
     previousView.destroy();
+    previousView = null;
   }
 
   // const pathToRegex = (path) =>
@@ -120,10 +139,13 @@ const router = async () => {
   try {
     await view.loadCss();
     await view.lang.fetchJSONLanguage();
+
+    document.querySelector("#app").innerHTML = "";
     document.querySelector("#app").innerHTML = await view.getHtml();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
       view.pongGame();
     await view.addEventListeners();
+    isNavigating = false;
   } catch (error) {
     if (error instanceof CustomError) {
       error.showModalCustom();
@@ -155,16 +177,27 @@ const router = async () => {
 
 window.addEventListener("popstate", router);
 
-document.addEventListener("DOMContentLoaded", async () => {
-  document.body.addEventListener("click", (e) => {
-    console.info("Event");
-    if (e.target.matches("[data-link]")) {
-      e.preventDefault();
-      navigateTo(e.target.href);
-    }
-  });
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.addEventListener("click", handleClick);
   router();
 });
+
+export function handleClick(e) {
+  console.info("Event");
+  if (e.target.closest("[data-link]")) {
+    console.log("REDIRECT");
+    e.preventDefault();
+    if (!e.target.href) {
+      const closestHref = e.target.closest("a");
+      navigateTo(closestHref);
+    } else {
+      console.log(`NavigatingTo href:${e.target.href}`, e.target);
+      navigateTo(e.target.href);
+    }
+  } else {
+    console.log("e.target = ", e.target);
+  }
+}
 
 function closeSidebar(sidebar) {
   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);

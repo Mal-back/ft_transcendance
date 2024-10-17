@@ -54,3 +54,15 @@
     /* Hides overflowed content */
     text-overflow: ellipsis;
 }
+
+.clickable-element {
+    position: relative;
+    z-index: 10;
+    /* Higher value means the element is in front */
+}
+
+.overlay-element {
+    position: absolute;
+    z-index: 5;
+    /* Lower value means this element is behind */
+}
