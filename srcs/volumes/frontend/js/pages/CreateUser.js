@@ -81,6 +81,7 @@ export default class extends AbstractView {
         );
         navigateTo("/login");
       } else {
+        console.log("RESPONSE", response)
         const log = await this.getErrorLogfromServer(response);
         this.showModalWithError(
           "Error",
