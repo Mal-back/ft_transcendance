@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Set title attribute when hovering over user names
     document.getElementById('User1').setAttribute('title', `${p1.username} is ${p1.color}`);
     document.getElementById('User2').setAttribute('title', `${p2.username} is ${p2.color}`);
+    document.getElementById('user1-modal').innerHTML = `<p>${p1.username} is <span class="user1-txt">${p1.color}</span></p>`;
+    document.getElementById('user2-modal').innerHTML = `<p>${p2.username} is <span class="user2-txt">${p2.color}</span></p>`;
     document.getElementById("Turn").innerHTML = `<h3>It's ${p1.username}'s turn!</h3>`;
 });
 
@@ -35,6 +37,7 @@ function placePiece(col) {
     if (!gameActive) return;
 
     // Find the lowest empty row in the clicked column
+    console.log(col);
     for (let row = rows - 1; row >= 0; row--) {
         if (!board[row][col]) {
             board[row][col] = currentPlayer;
