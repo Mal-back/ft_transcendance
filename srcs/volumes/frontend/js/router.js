@@ -12,25 +12,8 @@ import Friends from "./pages/Friends.js";
 import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
 
-// Store the original attachShadow method
-const originalAttachShadow = Element.prototype.attachShadow;
-
-// Override the attachShadow method to add custom behavior
-Element.prototype.attachShadow = function (init) {
-  console.log("Shadow root created on:", this);
-  console.log("Initialization options:", init);
-
-  // Call the original attachShadow method to actually create the shadow root
-  return originalAttachShadow.apply(this, arguments);
-};
-
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
-  if (isNavigating) {
-    console, log("STILL LOADING");
-    return;
-  }
-  isNavigating = true;
   if (view) {
     view.destroy();
   }
@@ -39,7 +22,6 @@ export const navigateTo = (url) => {
 };
 
 let view = null;
-let isNavigating = false;
 
 const router = async () => {
   console.info("Router is on");
@@ -76,17 +58,17 @@ const router = async () => {
   }
   console.info("route = " + match.route.path);
 
-  let previousView = null;
-  if (view) {
-    previousView = view;
-  }
+  // let previousView = null;
+  // if (view) {
+  //   previousView = view;
+  // }
   view = null;
   view = new match.route.view();
 
-  if (previousView) {
-    previousView.destroy();
-    previousView = null;
-  }
+  // if (previousView) {
+  //   previousView.destroy();
+  //   previousView = null;
+  // }
 
   // const pathToRegex = (path) =>
   //   new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
@@ -145,7 +127,6 @@ const router = async () => {
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
       view.pongGame();
     await view.addEventListeners();
-    isNavigating = false;
   } catch (error) {
     if (error instanceof CustomError) {
       error.showModalCustom();
@@ -199,10 +180,25 @@ export function handleClick(e) {
   }
 }
 
-function closeSidebar(sidebar) {
+// function closeSidebar(sidebar) {
+//   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
+//   if (offcanvasInstance) {
+//     offcanvasInstance.hide();
+//   }
+//   }
+  function closeSidebar(sidebar) {
   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
-  if (offcanvasInstance) {
+
+  if (offcanvasInstance && sidebar.classList.contains("show")) {
     offcanvasInstance.hide();
+    
+    // Clean up the backdrop after it's fully hidden
+    sidebar.addEventListener('hidden.bs.offcanvas', function () {
+      const backdrop = document.querySelector('.offcanvas-backdrop');
+      if (backdrop) {
+        backdrop.remove(); // Ensure backdrop is removed
+      }
+    }, { once: true }); // Remove listener after it's executed once
   }
 }
 

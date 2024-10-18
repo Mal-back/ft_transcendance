@@ -27,7 +27,7 @@ export default class {
     if (sidebar.classList.contains("show")) {
       const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
       if (offcanvasInstance) {
-        offcanvasInstance.hide(); 
+        offcanvasInstance.hide();
       }
     }
   }
@@ -40,6 +40,32 @@ export default class {
     document.head.appendChild(linkElement);
   }
 
+  removeElem() {
+    const elementsToRemove = document.querySelectorAll(".removeElem");
+    const reversedElements = Array.from(elementsToRemove).reverse();
+    reversedElements.forEach((elem) => {
+      elem.parentNode.removeChild(elem);
+    });
+  }
+  removeCss() {
+    for (let i = document.styleSheets.length - 1; i >= 0; i--) {
+      let styleSheet = document.styleSheets[i];
+      if (
+        styleSheet.ownerNode &&
+        styleSheet.ownerNode.classList.contains("page-css")
+      ) {
+        console.log("remove .page-css");
+        styleSheet.ownerNode.remove();
+      }
+    }
+    document.querySelectorAll(".page-css").forEach((e) => {
+      console.log("removing: ", e);
+      e.href = null;
+      e.remove();
+      e = null;
+    });
+  }
+
   loginToLogout() {
     console.log("LOGIN");
     const username = sessionStorage.getItem("username_transcendence");
@@ -49,8 +75,11 @@ export default class {
     const logIcon = document.querySelector("#logIconRef");
     const logIconImg = document.querySelector("#logIconImg");
     if (username && accessToken && refreshToken) {
+      loginOverlay.innerHTML = "";
       loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
+      loginOverlay.href = "";
       loginOverlay.href = "/logout";
+      logIcon.href = "";
       logIcon.href = "/logout";
       logIcon.title = this.lang.getTranslation(["menu", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
@@ -59,8 +88,11 @@ export default class {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
       }
+      loginOverlay.innerHTML = "";
       loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["menu", "login"])}`;
+      loginOverlay.href = "";
       loginOverlay.href = "/login";
+      logIcon.href = "";
       logIcon.href = "/login";
       logIcon.title = this.lang.getTranslation(["menu", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
@@ -93,7 +125,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -117,9 +149,9 @@ export default class {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -260,5 +292,5 @@ export default class {
     return authToken;
   }
 
-  destroy() { }
+  destroy() {}
 }

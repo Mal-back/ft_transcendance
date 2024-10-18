@@ -11,27 +11,20 @@ export default class extends AbstractView {
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["menu", "home"])}`);
     return `
-        <div class="background">
-          <div class="container">
-              <section class="home text-center p-5">
-                  <h1 class="welcome">${this.lang.getTranslation(["homePage", "homeTitle"])}</h1>
-                  <p class="welcome-msg">${this.lang.getTranslation(["homePage", "descriptionHomeMessage"])}</p>
-                  <p class="welcome-msg">${this.lang.getTranslation(["homePage", "descriptionHomeMessage2"])}</p>
+        <div class="background removeElem">
+          <div class="container removeElem">
+              <section class="home text-center p-5 removeElem">
+                  <h1 class="welcome removeElem">${this.lang.getTranslation(["homePage", "homeTitle"])}</h1>
+                  <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage"])}</p>
+                  <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage2"])}</p>
               </section>
           </div>
         </div>
   `;
   }
 
-  removeCss() {
-    document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
-      e.remove();
-    });
-  }
-
   destroy() {
     this.removeCss();
+    this.removeElem();
   }
 }
-
