@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import choices
 
 # Create your models here.
 
@@ -24,8 +25,15 @@ class Match(models.Model):
                                 on_delete=models.PROTECT)
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
-    matchId = models.IntegerField()
-    date = models.DateTimeField(auto_now_add=True)
+    game_ms_url = models.URLField(choices=[('https://lala.com', 'pong'),
+                                           ('https://lili.com', 'power4')])
+    matchId = models.IntegerField(null=True)
+    status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
+                                                                         ('accepted', 'Accepted'),
+                                                                         ('declined', 'Declined'),
+                                                                         ('in_progess', 'In progress'),
+                                                                         ('finished', 'Finished')])
+    created_at = models.DateTimeField(auto_now_add=True)
     tournament = models.ForeignKey('Tournament',
                                    related_name='tournament',
                                    on_delete=models.CASCADE,
