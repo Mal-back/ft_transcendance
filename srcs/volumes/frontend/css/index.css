@@ -34,3 +34,13 @@ p {
     font-size: 1.2rem;
     margin-top: -10px;
 }
+
+.icon-container {
+    display: flex;
+    align-items: center;
+}
+
+.icon-container-right {
+    margin-left: auto;
+    /* Ensure it moves to the right */
+}

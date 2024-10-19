@@ -14,9 +14,45 @@
 </head>
 
 <body>
+	<!-- <header id="header"> -->
+	<!-- 	<div style="background-color: gray"> -->
+	<!-- 		<div class="container d-flex align-items-center py-2"> -->
+	<!-- 			<div class="icon-container d-flex align-items-center"> -->
+	<!-- 				<button class="btn btn-light clickable-element" id="toggleSidebar" data-bs-toggle="offcanvas" -->
+	<!-- 					data-bs-target="#sidebar" aria-controls="sidebar" data-bs-backdrop="true"> -->
+	<!-- 					<i class="bi bi-list"></i> -->
+	<!-- 				</button> -->
+	<!-- 				<a href="/" class="btn btn-light clickable-element" id="HomeIcon" title="Home" data-link> -->
+	<!-- 					<i class="bi bi-house-fill"></i> -->
+	<!-- 				</a> -->
+	<!-- 				<a id="logIconRef" href="/login" class="btn btn-light clickable-element" title="Login" data-link> -->
+	<!-- 					<i id="logIconImg" class="bi bi-box-arrow-in-right"></i> -->
+	<!-- 				</a> -->
+	<!-- 			</div> -->
+	<!-- 			<div class="text-black text-center flex-grow-1 overlay-element" style="font-size: 3.5vh"> -->
+	<!-- 				FT_TRANSCENDENCE -->
+	<!-- 			</div> -->
+	<!-- 			<div class="icon-container-right dropdown d-flex align-items-center p"> -->
+	<!-- 				<button class="btn btn-light dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" -->
+	<!-- 					aria-expanded="false"> -->
+	<!-- 					<i class="bi bi-translate"></i> -->
+	<!-- 				</button> -->
+	<!-- 				<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"> -->
+	<!-- 					<li> -->
+	<!-- 						<a class="dropdown-item" href="?lang=en" id="headerEnglish">English</a> -->
+	<!-- 					</li> -->
+	<!-- 					<li> -->
+	<!-- 						<a class="dropdown-item" href="?lang=fr" id="headerFrench">Français</a> -->
+	<!-- 					</li> -->
+	<!-- 				</ul> -->
+	<!-- 			</div> -->
+	<!-- 		</div> -->
+	<!-- 	</div> -->
+	<!-- </header> -->
+
 	<header id="header">
 		<div style="background-color: gray">
-			<div class="container d-flex align-items-center py-2">
+			<div class="container d-flex align-items-center justify-content-between py-2">
 				<div class="icon-container d-flex align-items-center">
 					<button class="btn btn-light clickable-element" id="toggleSidebar" data-bs-toggle="offcanvas"
 						data-bs-target="#sidebar" aria-controls="sidebar" data-bs-backdrop="true">
@@ -29,15 +65,17 @@
 						<i id="logIconImg" class="bi bi-box-arrow-in-right"></i>
 					</a>
 				</div>
-				<div class="text-black text-center flex-grow-1 overlay-element" style="font-size: 3.5vh">
-					FT_TRANSCENDENCE
+				<div class="flex-grow-1 d-flex justify-content-center">
+					<div class="text-black text-center" style="font-size: 3.5vh">
+						FT_TRANSCENDENCE
+					</div>
 				</div>
-				<div class="icon-container-right dropdown d-flex align-items-center p">
+				<div class="icon-container-right dropdown d-flex align-items-center">
 					<button class="btn btn-light dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown"
 						aria-expanded="false">
 						<i class="bi bi-translate"></i>
 					</button>
-					<ul class="dropdown-menu" aria-labelledby="languageDropdown">
+					<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
 						<li>
 							<a class="dropdown-item" href="?lang=en" id="headerEnglish">English</a>
 						</li>

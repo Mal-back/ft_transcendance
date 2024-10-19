@@ -30,7 +30,6 @@
     "createProfileBtn": "Create New Profile",
     "loginBtn": "Login",
     "createUserTitle": "Create User",
-    "usernameLabel": "Username:",
     "mailLabel": "Mail:",
     "passwordLabel": "Password:",
     "password2Label": "Confirm Password:",
@@ -61,7 +60,12 @@
       "password": "Password:",
       "confirmPass": "Confirm Password:",
       "mail": "E-mail:",
-      "confirmMail": "Confirm E-mail"
+      "oldMail": "Old E-mail:",
+      "newMail": "New E-mail:",
+      "confirmMail": "Confirm new E-mail:",
+      "oldPass": "Old Password:",
+      "newPass": "New Password:",
+      "confirmNewPass": "Confirm new Password:"
     }
   },
   "profile": {

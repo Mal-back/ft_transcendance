@@ -33,21 +33,17 @@ export default class extends AbstractView {
                             <h1 class="mb-3 text-center login-title text-decoration-underline removeElem">
                               ${this.lang.getTranslation(["login", "loginBtn"])}
                             </h1>
-                            <form id="loginForm" class="removeElem" novalidate>
+                            <form id="loginForm" class="removeElem">
                                 <div class="form-group removeElem">
-                                    <label class="removeElem" for="Username" id="UsernameTitle">${this.lang.getTranslation(["login", "usernameLabel"])}</label>
-                                    <input class="form-control removeElem" name="Username" type="text" id="usernameInput" required />
-                                    <div class="invalid-feedback removeElem">
-                                      Username is required.
-                                    </div>
+                                    <label class="removeElem" for="Username" id="UsernameTitle">${this.lang.getTranslation(["input", "label", "username"])}</label>
+                                    <input class="form-control removeElem" name="Username" type="text" id="usernameInput"/>
+                                    <div id="loginUsernameError" class="removeElem"></div>
                                 </div>
                                 <br />
                                 <div class="form-group removeElem">
-                                    <label class="removeElem" for="Password" id="PasswordTitle">${this.lang.getTranslation(["login", "passwordLabel"])}</label>
-                                    <input class="form-control removeElem" name="Password" type="password" id="passwordInput" autocomplete="off" required/>
-                                    <div class="invalid-feedback removeElem">
-                                      Password contains invalid characters.
-                                    </div>
+                                    <label class="removeElem" for="Password" id="PasswordTitle">${this.lang.getTranslation(["input", "label", "password"])}</label>
+                                    <input class="form-control removeElem" name="Password" type="password" id="passwordInput" autocomplete="off"/>
+                                    <div id="loginPasswordError" class="removeElem"></div>
                                 </div>
                                 <br />
                                 <button id="loginButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["login", "loginBtn"])}</button>
@@ -74,23 +70,37 @@ export default class extends AbstractView {
   }
 
   validateUsername(usernameInput) {
-    usernameInput.setCustomValidity("");
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#loginUsernameError");
+    errorDiv.innerHTML = "";
     if (usernameInput.value.trim() === "") {
-      usernameInput.setCustomValidity("Empty Username");
-    } else if (this.sanitizeInput(usernameInput.value) == false) {
-      usernameInput.setCustomValidity("Username contains invalid characters");
+      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+    } else if (!this.sanitizeInput(usernameInput.value)) {
+      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
     }
-    usernameInput.reportValidity();
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
   }
 
   validatePassword(passwordInput) {
-    passwordInput.setCustomValidity("");
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#loginPasswordError");
+    errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      passwordInput.setCustomValidity("Empty Password");
-    } else if (passwordInput.value.length < 2) {
-      passwordInput.setCustomValidity("Password is too short");
+      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
     }
-    passwordInput.reportValidity();
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
   }
 
   handleInputUsername(ev) {
@@ -108,12 +118,12 @@ export default class extends AbstractView {
   async handleLogin(ev) {
     try {
       ev.preventDefault();
-      const loginForm = document.querySelector("#loginForm");
       const usernameInput = document.querySelector("#usernameInput");
       const passwordInput = document.querySelector("#passwordInput");
-      this.validateUsername(usernameInput);
-      this.validatePassword(passwordInput);
-      if (!loginForm.reportValidity()) return;
+      let isValid = true;
+      if (this.validateUsername(usernameInput)) isValid = false;
+      if (this.validatePassword(passwordInput)) isValid = false;
+      if (!isValid) return;
       await this.login();
     } catch (error) {
       console.debug("Error in login:", error);

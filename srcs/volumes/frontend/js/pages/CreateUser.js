@@ -106,6 +106,7 @@ export default class extends AbstractView {
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";
     }
+    errorDiv.classList.add("removeElem");
     return errorMessage;
   }
 
@@ -123,6 +124,7 @@ export default class extends AbstractView {
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";
     }
+    errorDiv.classList.add("removeElem");
     return errorMessage;
   }
 
@@ -140,6 +142,7 @@ export default class extends AbstractView {
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";
     }
+    errorDiv.classList.add("removeElem");
     return errorMessage;
   }
 
@@ -158,14 +161,12 @@ export default class extends AbstractView {
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";
     }
+    errorDiv.classList.add("removeElem");
     return errorMessage;
   }
 
   async handleSubmitNewUser(ev) {
     ev.preventDefault();
-    const buttons = document.querySelectorAll("#createUserButton");
-    console.info("Number of createUserButton instances:", buttons.length);
-
     try {
       const usernameInput = document.querySelector("#Username");
       const passwordInput = document.querySelector("#Password");
