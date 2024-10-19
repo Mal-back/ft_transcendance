@@ -11,7 +11,7 @@ export default class extends AbstractView {
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["menu", "home"])}`);
     return `
-        <div class="background removeElem">
+        <div class="background Home removeElem">
           <div class="container removeElem">
               <section class="home text-center p-5 removeElem">
                   <h1 class="welcome removeElem">${this.lang.getTranslation(["homePage", "homeTitle"])}</h1>

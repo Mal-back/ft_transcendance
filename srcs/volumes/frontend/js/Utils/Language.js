@@ -44,7 +44,6 @@ export default class Language {
   }
 
   translateIndex() {
-    console.log(`MENU: ${this.getTranslation(["menu", "profile"])}`);
     const menuGame = document.getElementById("menuGame");
     menuGame.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["menu", "game"])}`;
     document.getElementById("menuProfile").innerHTML =
@@ -70,7 +69,7 @@ export default class Language {
   }
 
   async fetchJSONLanguage() {
-    const lang = sessionStorage.getItem("transcendence_language");
+    const lang = sessionStorage.getItem("transcendence_language") || "en";
     if (lang == this.currentLanguage && this.JSONLanguage) return;
     try {
       const myHeaders = new Headers();
@@ -83,7 +82,7 @@ export default class Language {
       console.debug("Get JSON Language:", this.JSONLanguage);
       this.translateIndex();
     } catch (error) {
-      console.error("Error in Language", error);
+      console.error(`Error in Language: /json/${lang}.json`, error);
     }
   }
 
@@ -109,16 +108,13 @@ export default class Language {
   }
 
   getCurrentLanguage() {
-    const params = new URLSearchParams(window.location.search);
     const lang = this.currentLanguage || "en";
     return lang;
   }
 
   getTranslation(arrayKey) {
-    console.log("getTranslation");
     let translation = null;
     if (this.JSONLanguage) {
-      // console.log(`Searching: ${arrayKey.join(" -> ")}`);
       translation = this.findKey(this.JSONLanguage, arrayKey);
       if (!translation) {
         translation = arrayKey.at(-1);

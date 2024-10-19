@@ -39,6 +39,31 @@
     "accountCreatedMessage": "New account Successfuly Created",
     "goodbyeMessage": "Goodbye, "
   },
+  "input": {
+    "username": {
+      "empty": "Username is empty",
+      "short": "Username is too short",
+      "invalid": "Username contains invalid characters"
+    },
+    "mail": {
+      "empty": "E-mail is empty",
+      "invalid": "E-mail is not a valid adress mail",
+      "match": "Both e-mails doesn't match"
+    },
+    "password": {
+      "empty": "Password is empty",
+      "short": "Password is too short",
+      "weak": "Password is too weak",
+      "match": "Both password doesn't match"
+    },
+    "label": {
+      "username": "Username:",
+      "password": "Password:",
+      "confirmPass": "Confirm Password:",
+      "mail": "E-mail:",
+      "confirmMail": "Confirm E-mail"
+    }
+  },
   "profile": {
     "winRateLabel": "Win Rate:",
     "noGamePlayed": "No game played yet",

@@ -44,7 +44,10 @@ export default class {
     const elementsToRemove = document.querySelectorAll(".removeElem");
     const reversedElements = Array.from(elementsToRemove).reverse();
     reversedElements.forEach((elem) => {
-      elem.parentNode.removeChild(elem);
+      if (elem.parentNode) {
+        elem.innerHTML = "";
+        elem.parentNode.removeChild(elem);
+      } else console.log("Elem not removed", elem);
     });
   }
   removeCss() {
@@ -56,12 +59,14 @@ export default class {
       ) {
         console.log("remove .page-css");
         styleSheet.ownerNode.remove();
+        styleSheet = null;
       }
     }
+
     document.querySelectorAll(".page-css").forEach((e) => {
       console.log("removing: ", e);
       e.href = null;
-      e.remove();
+      e.parentNode.removeChild(e);
       e = null;
     });
   }
@@ -125,7 +130,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function (c) {
+        .map(function(c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -149,9 +154,9 @@ export default class {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -292,5 +297,5 @@ export default class {
     return authToken;
   }
 
-  destroy() {}
+  destroy() { }
 }

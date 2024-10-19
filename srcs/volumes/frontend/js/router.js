@@ -124,9 +124,9 @@ const router = async () => {
 
     document.querySelector("#app").innerHTML = "";
     document.querySelector("#app").innerHTML = await view.getHtml();
+    await view.addEventListeners();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
       view.pongGame();
-    await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
       error.showModalCustom();
@@ -186,19 +186,23 @@ export function handleClick(e) {
 //     offcanvasInstance.hide();
 //   }
 //   }
-  function closeSidebar(sidebar) {
+function closeSidebar(sidebar) {
   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
 
   if (offcanvasInstance && sidebar.classList.contains("show")) {
     offcanvasInstance.hide();
-    
+
     // Clean up the backdrop after it's fully hidden
-    sidebar.addEventListener('hidden.bs.offcanvas', function () {
-      const backdrop = document.querySelector('.offcanvas-backdrop');
-      if (backdrop) {
-        backdrop.remove(); // Ensure backdrop is removed
-      }
-    }, { once: true }); // Remove listener after it's executed once
+    sidebar.addEventListener(
+      "hidden.bs.offcanvas",
+      function() {
+        const backdrop = document.querySelector(".offcanvas-backdrop");
+        if (backdrop) {
+          backdrop.remove(); // Ensure backdrop is removed
+        }
+      },
+      { once: true },
+    ); // Remove listener after it's executed once
   }
 }
 

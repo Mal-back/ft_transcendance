@@ -12,6 +12,7 @@ export default class extends AbstractView {
     this.handleInputUsername = this.handleInputUsername.bind(this);
     this.handleInputPassword = this.handleInputPassword.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
+    this.handleCreateUserRedir = this.handleCreateUserRedir.bind(this);
   }
 
   async getHtml() {
@@ -26,7 +27,7 @@ export default class extends AbstractView {
     }
 
     return `
-                <div class="background removeElem">
+                <div class="background login removeElem">
                     <div class="p-5 bg-* removeElem">
                         <div class="black-txt bg-form login-form p-4 removeElem">
                             <h1 class="mb-3 text-center login-title text-decoration-underline removeElem">
@@ -55,8 +56,8 @@ export default class extends AbstractView {
                             </form>
                         </div>
                         <div class="d-flex justify-content-center mt-3 removeElem">
-                            <a id="createUser" type="button" class="btn bg-blue login42 white-txt me-2 removeElem" href="/createUser" data-link="view">${this.lang.getTranslation(["login", "createUserTitle"])}
-                            </a>
+                            <button id="createUser" type="button" class="btn bg-blue login42 white-txt me-2 removeElem" href="/createUser">${this.lang.getTranslation(["login", "createUserTitle"])}
+                            </button>
                             <a type="button" class="btn bg-blue login42 white-txt removeElem">
                                 42 Connect
                             </a>
@@ -119,11 +120,16 @@ export default class extends AbstractView {
     }
   }
 
+  handleCreateUserRedir(ev) {
+    navigateTo("/createUser");
+  }
+
   async addEventListeners() {
     console.log("adding event addEventListeners");
     const button = document.querySelector("#loginButton");
     const usernameInput = document.querySelector("#usernameInput");
     const passwordInput = document.querySelector("#passwordInput");
+    const createUser = document.querySelector("#createUser");
     if (usernameInput) {
       usernameInput.addEventListener("input", this.handleInputUsername);
     }
@@ -132,6 +138,9 @@ export default class extends AbstractView {
 
     if (button) {
       button.addEventListener("click", this.handleLogin);
+    }
+    if (createUser) {
+      createUser.addEventListener("click", this.handleCreateUserRedir);
     }
   }
 
@@ -178,10 +187,6 @@ export default class extends AbstractView {
       console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.handleLogin);
     }
-    document.querySelectorAll('[data-link="view"]').forEach((button) => {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", handleClick);
-    });
     const usernameInput = document.querySelector("#usernameInput");
     const passwordInput = document.querySelector("#passwordInput");
     if (usernameInput) {
@@ -192,9 +197,14 @@ export default class extends AbstractView {
       passwordInput.removeEventListener("input", null); // Example: if you have 'input' event listeners
       passwordInput.value = "";
     }
+    const createUser = document.querySelector("#createUser");
+    if (createUser) {
+      createUser.removeEventListener("click", this.handleCreateUserRedir);
+    }
   }
 
   destroy() {
+    console.log("Destroy Login");
     this.cleanModal();
     this.removeEventListeners();
     this.removeCss();

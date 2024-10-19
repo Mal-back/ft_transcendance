@@ -8,7 +8,6 @@ export default class extends AbstractView {
     this.handleSubmitNewUser = this.handleSubmitNewUser.bind(this);
     this.handleInputUsername = this.handleInputUsername.bind(this);
     this.handleInputPassword = this.handleInputPassword.bind(this);
-    this.handleInputPassword2 = this.handleInputPassword2.bind(this);
     this.handleInputMail = this.handleInputMail.bind(this);
   }
 
@@ -19,41 +18,33 @@ export default class extends AbstractView {
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["login", "createProfileBtn"])}`);
     return `
-      <div class="background removeElem">
+      <div class="background createUser removeElem">
         <div class="p-5 bg-* removeElem">
             <div class="black-txt bg-form create-user-form p-4 removeElem">
                 <h1 class="mb-3 text-center create-user-title text-decoration-underline removeElem">${this.lang.getTranslation(["login", "createUserTitle"])}</h1>
                 <form id="createUser" class="removeElem">
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Username">${this.lang.getTranslation(["login", "usernameLabel"])}</label>
-                        <input class="form-control" name="Username removeElem" id="Username" type="text" required>
-                        <div class="invalid-feedback removeElem">
-                          Username is required.
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group" removeElem>
-                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["login", "mailLabel"])}</label>
-                        <input class="form-control removeElem" name="Mail" id="Mail" type="text" required>
-                        <div class="invalid-feedback removeElem">
-                          E-Mail is required.
-                        </div>
+                        <label class="removeElem" for="Username">${this.lang.getTranslation(["input", "label", "username"])}</label>
+                        <input class="form-control" name="Username removeElem" id="Username" type="text">
+                        <div id="usernameError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Password">${this.lang.getTranslation(["login", "passwordLabel"])}</label>
-                        <input class="form-control removeElem" name="Password" id="Password" type="password" autocomplete="off" required>
-                        <div class="invalid-feedback removeElem">
-                          Password is required.
-                        </div>
+                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "mail"])}</label>
+                        <input class="form-control removeElem" name="Mail" id="Mail" type="text">
+                        <div id="mailError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["login", "password2Label"])}</label>
-                        <input class="form-control removeElem" name="Password-2" id="Password-2" type="password" autocomplete="off" required>
-                        <div class="invalid-feedback removeElem">
-                          Confirmation is required.
-                        </div>
+                        <label class="removeElem" for="Password">${this.lang.getTranslation(["input", "label", "password"])}</label>
+                        <input class="form-control removeElem" name="Password" id="Password" type="password" autocomplete="off">
+                        <div id="passwordError" class="removeElem"></div>
+                    </div>
+                    <br>
+                    <div class="form-group removeElem">
+                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirmPass"])}</label>
+                        <input class="form-control removeElem" name="Password-2" id="Password-2" type="password" autocomplete="off">
+                        <div id="password2Error" class="removeElem"></div>
                     </div>
                     <br>
                     <button id="createUserButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["login", "createProfileBtn"])}</button>
@@ -70,8 +61,6 @@ export default class extends AbstractView {
   }
 
   async submitNewUser(username, email, password, password2) {
-    //TO-DO change error in input to inline validation
-    // if (this.sanitizeInput([username, email]) == false) return;
     try {
       const request = await this.makeRequest("/api/auth/", "POST", {
         username: encodeURIComponent(username),
@@ -104,53 +93,96 @@ export default class extends AbstractView {
   }
 
   validateUsername(usernameInput) {
-    usernameInput.setCustomValidity("");
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#usernameError");
+    errorDiv.innerHTML = "";
     if (usernameInput.value.trim() === "") {
-      usernameInput.setCustomValidity("Empty Username");
-    } else if (this.sanitizeInput(usernameInput.value) == false) {
-      usernameInput.setCustomValidity("Username contains invalid characters");
+      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+    } else if (!this.sanitizeInput(usernameInput.value)) {
+      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
     }
-    usernameInput.reportValidity();
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    return errorMessage;
   }
 
   validatePassword(passwordInput) {
-    passwordInput.setCustomValidity("");
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#passwordError");
+    errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      passwordInput.setCustomValidity("Empty Password");
+      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
     } else if (passwordInput.value.length < 2) {
-      passwordInput.setCustomValidity("Password is too short.");
+      errorMessage = `${this.lang.getTranslation(["input", "password", "short"])}`;
     }
-    passwordInput.reportValidity();
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    return errorMessage;
   }
 
   validateMail(mailInput) {
-    mailInput.setCustomValidity("");
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#mailError");
+    errorDiv.innerHTML = "";
     if (mailInput.value.trim() === "") {
-      mailInput.setCustomValidity("Empty E-mail");
-    } else if (this.sanitizeInput(mailInput.value) == false) {
-      mailInput.setCustomValidity("Mail contains invalid characters.");
+      errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
+    } else if (!this.sanitizeInput(mailInput.value)) {
+      errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
     }
-    mailInput.reportValidity();
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    return errorMessage;
+  }
+
+  validatePasswordMatch(passwordInput, password2Input) {
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#password2Error");
+    errorDiv.innerHTML = "";
+    if (passwordInput.value.trim() === "") {
+      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+    }
+    if (password2Input.value !== passwordInput.value) {
+      errorMessage = `${this.lang.getTranslation(["input", "password", "match"])}`;
+    }
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    return errorMessage;
   }
 
   async handleSubmitNewUser(ev) {
     ev.preventDefault();
+    const buttons = document.querySelectorAll("#createUserButton");
+    console.info("Number of createUserButton instances:", buttons.length);
+
     try {
-      const createUserForm = document.querySelector("createUser");
       const usernameInput = document.querySelector("#Username");
       const passwordInput = document.querySelector("#Password");
       const password2Input = document.querySelector("#Password-2");
       const mailInput = document.querySelector("#Mail");
-      this.validateUsername(usernameInput);
-      this.validateMail(mailInput);
-      this.validatePassword(passwordInput);
-      this.validatePassword(password2Input);
-      this.validateMail(mail);
-      if (password2Input.value != passwordInput.value) {
-        password2Input.setCustomValidity("Both password doesn't match");
-        password2Input.reportValidity();
+
+      let isValid = true;
+
+      if (this.validateUsername(usernameInput)) isValid = false;
+      if (this.validateMail(mailInput)) isValid = false;
+      if (this.validatePassword(passwordInput)) isValid = false;
+      if (this.validatePasswordMatch(passwordInput, password2Input))
+        isValid = false;
+      if (!isValid) {
+        return;
       }
-      if (!createUserForm.reportValidity()) return;
+
       await this.submitNewUser(
         usernameInput.value,
         mailInput.value,
@@ -172,12 +204,8 @@ export default class extends AbstractView {
     ev.preventDefault();
     const passwordInput = document.querySelector("#Password");
     this.validatePassword(passwordInput);
-  }
-
-  handleInputPassword2(ev) {
-    ev.preventDefault();
     const password2Input = document.querySelector("#Password-2");
-    this.validatePassword(password2Input);
+    this.validatePasswordMatch(passwordInput, password2Input);
   }
 
   handleInputMail(ev) {
@@ -197,7 +225,7 @@ export default class extends AbstractView {
     }
     usernameInput.addEventListener("input", this.handleInputUsername);
     passwordInput.addEventListener("input", this.handleInputPassword);
-    password2Input.addEventListener("input", this.handleInputPassword2);
+    password2Input.addEventListener("input", this.handleInputPassword);
     mailInput.addEventListener("input", this.handleInputMail);
   }
 
@@ -206,14 +234,35 @@ export default class extends AbstractView {
     if (button) {
       console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.handleSubmitNewUser);
+      button.innerHTML = "";
+      button.parentNode.removeChild(button);
+      this.createUserButton = null;
     }
-    document.querySelectorAll('[data-link="view"]').forEach((button) => {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.handleClick);
-    });
+    const usernameInput = document.querySelector("#Username");
+    const passwordInput = document.querySelector("#Password");
+    const password2Input = document.querySelector("#Password-2");
+    const mailInput = document.querySelector("#Mail");
+    usernameInput.removeEventListener("input", this.handleInputUsername);
+    passwordInput.removeEventListener("input", this.handleInputPassword);
+    password2Input.removeEventListener("input", this.handleInputPassword);
+    mailInput.removeEventListener("input", this.handleInputMail);
+    passwordInput.value = "";
+    password2Input.value = "";
+    mailInput.value = "";
+    usernameInput.value = "";
+    document.querySelector("#usernameError").innerHTML = "";
+    document.querySelector("#passwordError").innerHTML = "";
+    document.querySelector("#password2Error").innerHTML = "";
+    document.querySelector("#mailError").innerHTML = "";
+
+    // document.querySelectorAll('[data-link="view"]').forEach((button) => {
+    //   console.info("removing event click on button : " + button.innerText);
+    //   button.removeEventListener("click", this.handleClick);
+    // });
   }
 
   destroy() {
+    console.log("Destroy Create User");
     this.cleanModal();
     this.removeEventListeners();
     this.removeCss();
