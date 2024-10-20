@@ -33,3 +33,13 @@ class IsAuth(permissions.BasePermission):
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.username == request.user.username 
+
+
+class IsInvitedPlayer(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.player2 == request.user.username 
+
+class IsAuthenticated(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user is not None
+

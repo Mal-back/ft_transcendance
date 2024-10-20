@@ -6,8 +6,9 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
-from .permissions import IsAuth, IsOwner
+from .permissions import IsAuth, IsOwner, IsAvatarManager
 from .authentification import CustomAuthentication
+from ms_client.ms_client import MicroServiceClient, RequestsFailed
 
 # Create your views here.
 
@@ -41,7 +42,7 @@ class PublicUserRetrieveDetail(generics.RetrieveAPIView):
 
 
 class PublicUserCreate(generics.CreateAPIView) :
-    # permission_classes = [IsAuth]
+    permission_classes = [IsAuth]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
 
@@ -59,9 +60,9 @@ class PublicUserDelete(generics.DestroyAPIView):
 
 class PublicUserIncrement(APIView):
     lookup_field = 'username'
-    def patch(self, request, pk, lookupfield):
+    def patch(self, request, username, lookupfield):
         try:
-            user = PublicUser.objects.get(pk=pk)
+            user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -90,7 +91,7 @@ class PublicUserAddFriend(APIView):
     permission_classes = [IsOwner]
     def patch(self, request, username, friendusername):
         if username == friendusername:
-            return Response({'info': 'user can\'t add himself as a friend'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
@@ -129,7 +130,7 @@ class PublicUserRemoveFriend(APIView):
     lookup_field = 'username'
     def delete(self,request, username, friendusername):
         if username == friendusername:
-            return Response({'info': 'user can\'t remove itself form friendlist'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
@@ -140,10 +141,50 @@ class PublicUserRemoveFriend(APIView):
         except PublicUser.DoesNotExist:
             return Response({'error': 'New friend does not exists'}, status=status.HTTP_400_BAD_REQUEST)
         if not user.friends.filter(username=friendusername).exists():
-            return Response({'info': 'this user is not your friend'}, status=status.HTTP_304_NOT_MODIFIED)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         if cur_friends is None:
             return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
         user.friends.remove(delete_friend)
         user.save()
 
         return Response({'OK' : 'Successefully delete the user from friend list'}, status=status.HTTP_200_OK)        
+
+class PublicUserUpdateAvatar(APIView):
+    permission_classes = [IsAvatarManager]
+    lookup_field = 'username'
+    def patch(self, request, username):
+        try:
+            user = PublicUser.objects.get(username=username)
+        except PublicUser.DoesNotExist:
+            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        path = request.data.get('avatar_path')
+        if path is None:
+            return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
+        user.profilePic = path
+        user.save()
+
+class PublicUserSetDefaultAvatar(APIView):
+    permission_classes = [IsOwner]
+    lookup_field = 'username'
+    def patch(self, request, username):
+        try:
+            user = PublicUser.objects.get(username=username)
+        except PublicUser.DoesNotExist:
+            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        path = request.data.get('profile_pic')
+        if path is None:
+            return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
+        # if 'users_avatars' in user.profilePic:
+        try:
+            sender = MicroServiceClient()
+            sender.send_requests(
+                    urls=[f'http://avatars:8443/api/avatars/',],
+                    method='delete',
+                    expected_status=[204, 304],
+                    body={'username':f'{user.username}'}
+                    )
+        except RequestsFailed:
+            return Response({'error': 'Could not update avatar. Plz try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        user.profilePic = path
+        user.save()
+        return Response({'OK':'Successefully reset the avatar'}, status=status.HTTP_200_OK)

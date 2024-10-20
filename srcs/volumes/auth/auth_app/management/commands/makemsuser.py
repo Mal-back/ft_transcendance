@@ -10,6 +10,8 @@ class Command(BaseCommand):
         microservices = [
                 {'serviceName' : 'auth', 'password': 'acab1312'},
                 {'serviceName' : 'users', 'password': 'acab1313'},
+                {'serviceName' : 'matchmaking', 'password': 'acab1314'},
+                {'serviceName' : 'avatar_manager', 'password': 'acab1315'},
                 ]
         for microservice in microservices:
             serviceName = microservice['serviceName']

@@ -47,6 +47,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
             raise ValidationError('Forbidden user name')
         if 'israel' in value.lower():
             raise ValidationError("You can't choose a non-existing country as username. Free Palestine !")
+        for char in value:
+            if char not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_':
+                raise ValidationError('Username should only contain letters, numbers, "-", "_" and "."')
         return value
 
     def validate(self, data):
