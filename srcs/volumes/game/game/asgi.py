@@ -14,6 +14,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
 from channels.auth import AuthMiddlewareStack
 from game_app.routing import websocket_urlpatterns
 from game_app.consumers import LocalGameConsumer
+import signal
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game.settings')
 application =  ProtocolTypeRouter(
@@ -23,3 +24,11 @@ application =  ProtocolTypeRouter(
 		"channel": ChannelNameRouter({"local_engine": LocalGameConsumer.as_asgi()}),
 	}
 )
+
+# Handle shutdown signals (SIGTERM, SIGINT)
+def handle_exit(*args):
+    print("Gracefully shutting down...")
+    # Perform any cleanup here (if necessary)
+    exit(0)
+
+signal.signal(signal.SIGTERM, handle_exit)

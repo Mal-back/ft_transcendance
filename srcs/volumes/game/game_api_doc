@@ -101,6 +101,7 @@ A - Local game:
 		- action is either "stop" or "start"
 
 	Stopping a stopped game or starting a started game does nothing.
+	You must unpause the game if you send a surrend while the game is paused to end the game.
 	If you send "start" via the "pause" type after "init_game" and before "start_game", it will start the game the same way "start_game" does.
 
 7 - End state of the game :
