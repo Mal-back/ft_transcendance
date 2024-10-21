@@ -18,6 +18,7 @@ export default class extends AbstractView {
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleInputMail = this.handleInputMail.bind(this);
     this.handleChangeMail = this.handleChangeMail.bind(this);
+    this.handleUploadAvatar = this.handleUploadAvatar.bind(this);
   }
 
   async loadCss() {
@@ -269,7 +270,7 @@ export default class extends AbstractView {
                 <div class="mb-3 removeElem">
                     <h6 class="removeElem">${this.lang.getTranslation(["settings", "Background", "upload"])}</h6>
                     <input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">
-                    <button type="button" class="btn btn-success removeElem">Upload</button>
+                    <button type="button" class="btn btn-success removeElem" id="uploadButton">Upload</button>
                 </div>
             </div>
             <div class="modal-footer removeElem">
@@ -643,7 +644,55 @@ export default class extends AbstractView {
     this.validateMail(newMail);
     this.validateConfirmMail(newMail, confirmMail);
   }
-
+  // const formData = new FormData();
+  //     formData.append('image', file); // Append the file to the form data
+  //
+  //     try {
+  //         // Make a POST request to the API
+  //         const response = await fetch('https://your-api-endpoint.com/upload', {
+  //             method: 'POST',
+  //             body: formData, // Send the FormData object with the file
+  //         });
+  //
+  //         if (response.ok) {
+  //             const result = await response.json();
+  //             alert('Image uploaded successfully!');
+  //             console.log(result); // Handle the response from the server
+  //         } else {
+  //             alert('Failed to upload image!');
+  //             console.error(response.statusText);
+  //         }
+  async handleUploadAvatar(ev) {
+    ev.preventDefault();
+    // if (this.validateAvatar()) return;
+    try {
+      const fileInput = document.getElementById("uploadProfileBackground");
+      const file = fileInput.files[0]; // Get the selected file
+        const formatImage = "image/jpeg";
+      const formData = new FormData();
+      formData.append('image', file);
+        const request = await this.makeRequest(`/api/avatar_manager`, "POST", {avatar: formData}, formatImage);
+            console.log("REQUEST:", request);
+            const response = await fetch(request);
+            if (response.ok) {
+                console.log("RESPONSE OK:", response);
+                const data = await response.json();
+                console.log("DATA: ", data);
+                showModal("Success", "Image successfully uploaded");
+            }
+            else {
+                console.log("RESPONSE FAIL:", response);
+                const data = await response.json();
+                console.log("DATA: ", data);
+            }
+    } catch (error) {
+            if (error instanceof CustomError) throw error;
+            else {
+            console.log("Error", error);
+                    showModal("ERROR", error.message);
+                }
+        }
+  }
   async addEventListeners() {
     try {
       const usernameInput = document.querySelector("#username-settings");
@@ -679,6 +728,9 @@ export default class extends AbstractView {
       console.error("error: ", error.message);
       // throw error;
     }
+
+    const uploadFile = document.querySelector("#uploadButton");
+    uploadFile.addEventListener("click", this.handleUploadAvatar);
 
     const deleteAccountButton = document.querySelector(
       "#confirmDeleteAccountBtn",

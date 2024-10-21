@@ -130,7 +130,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -154,18 +154,25 @@ export default class {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
-  makeHeaders(accessToken, boolJSON) {
+  makeHeaders(accessToken, boolJSON, formatImage) {
     const myHeaders = new Headers();
     if (accessToken != null) {
       myHeaders.append("Authorization", "Bearer " + accessToken);
     }
     if (boolJSON === true) {
+      // if (formatImage) {
+      // myHeaders.append("Content-Type", formatImage);
+      // } else {
       myHeaders.append("Content-Type", "application/json");
+      // }
     }
+    // myHeaders.forEach((value, key) => {
+    //   console.log(key + ": " + value);
+    // });
     return myHeaders;
   }
 
@@ -199,7 +206,7 @@ export default class {
       return `${response.status} ${response.statusText}`;
     }
   }
-  async makeRequest(url, myMethod, myBody) {
+  async makeRequest(url, myMethod, myBody, formatImage) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
@@ -212,9 +219,12 @@ export default class {
     console.log("myMethod:", myMethod);
     const options = {
       method: myMethod.toString(),
-      headers: this.makeHeaders(accessToken, myBody != null),
+      headers: this.makeHeaders(accessToken, myBody != null, formatImage),
     };
-    if (myBody) options.body = JSON.stringify(myBody);
+    if (myBody) {
+      if (formatImage) options.body = myBody;
+      else options.body = JSON.stringify(myBody);
+    }
     const myRequest = new Request(url, options);
     return myRequest;
   }
@@ -297,5 +307,5 @@ export default class {
     return authToken;
   }
 
-  destroy() { }
+  destroy() {}
 }
