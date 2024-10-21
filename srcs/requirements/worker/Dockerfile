@@ -17,5 +17,8 @@ WORKDIR /code
 # RUN cat /certs/ca.crt >> /etc/ssl/certs/ca-certificates.crt
 # ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
+# ENTRYPOINT [ "/bin/bash" ]
+# CMD [ "/init/init.sh" ]
+
 ENTRYPOINT [ "/bin/bash" ]
 CMD [ "/init/init.sh" ]

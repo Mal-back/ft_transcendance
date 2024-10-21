@@ -51,6 +51,19 @@ services:
       - '8443'
     restart: on-failure
 
+  redis:
+    image: transcendance_redis
+    container_name: 'transcendance_redis'
+    networks:
+      - transcendance
+    build:
+      context: requirements/redis
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '6379'
+    restart: on-failure
+
   game:
     image: transcendance_django_game
     container_name: 'transcendance_django_game'
@@ -69,19 +82,6 @@ services:
       - '8443'
     restart: on-failure
 
-  redis:
-    image: transcendance_redis
-    container_name: 'transcendance_redis'
-    networks:
-      - transcendance
-    build:
-      context: requirements/redis
-      dockerfile: Dockerfile
-    env_file: .env
-    expose:
-      - '6379'
-    restart: on-failure
-
   worker:
     image: transcendance_worker
     container_name: 'transcendance_worker'
@@ -91,14 +91,7 @@ services:
       - transcendance
     depends_on:
       - redis
-      - game
-    build:
-      context: requirements/worker
-      dockerfile: Dockerfile
-    env_file: .env
-    expose:
-      - '8443'
-    restart: on-failure
+      - postgresql_game
 
   frontend:
     image: transcendance_frontend
