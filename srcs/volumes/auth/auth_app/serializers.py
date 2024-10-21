@@ -78,8 +78,14 @@ class PasswordModficationSerializer(serializers.Serializer):
             raise serializers.ValidationError('Old password is incorrect')
         return value
     def validate(self, data):
-        if data['new_password'] != data['new_password2']:
+        new1 = data.get('new_password')
+        new2 = data.get('new_password2')
+        if new1 != new2 :
             raise serializers.ValidationError("Passwords dont't match")
+        elif new1 is None:
+            raise serializers.ValidationError("Missign fields")
+        elif new1 == '':
+            raise serializers.ValidationError("Can't save an empty password")
         return data
     def update(self, instance, validated_data):
         instance.set_password(validated_data['new_password'])
