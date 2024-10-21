@@ -130,7 +130,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function (c) {
+        .map(function(c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -154,9 +154,9 @@ export default class {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -204,28 +204,28 @@ export default class {
     }
   }
 
-  async makeRequest(url, myMethod, myBody, boolImage = false) {
+  async makeRequest(url, myMethod, myBody = null, boolImage = false) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
       try {
         accessToken = await this.getToken();
       } catch (error) {
-        if (error instanceof CustomError) throw error
+        if (error instanceof CustomError) throw error;
         console.error("Error in getToken:", error.message);
       }
     }
     console.log("myMethod:", myMethod);
     const options = {
       method: myMethod.toString(),
-      headers: this.makeHeaders(accessToken, (myBody != null && !boolImage)),
+      headers: this.makeHeaders(accessToken, myBody != null && !boolImage),
     };
     if (myBody) {
-      if (boolImage){
+      if (boolImage) {
         options.body = myBody;
-      } else
-      options.body = JSON.stringify(myBody);
+      } else options.body = JSON.stringify(myBody);
     }
+    console.log(JSON.stringify(myBody));
     const myRequest = new Request(url, options);
     return myRequest;
   }
@@ -309,5 +309,5 @@ export default class {
     return authToken;
   }
 
-  destroy() {}
+  destroy() { }
 }
