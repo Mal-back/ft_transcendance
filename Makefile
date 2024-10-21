@@ -16,7 +16,7 @@ env :
 	fi
 
 down :
-	docker compose -f ./srcs/docker-compose.yml down -t 2
+	docker compose -f ./srcs/docker-compose.yml down -t 10
 
 re : down all
 
