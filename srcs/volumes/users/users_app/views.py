@@ -162,6 +162,7 @@ class PublicUserUpdateAvatar(APIView):
             return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
         user.profilePic = path
         user.save()
+        return Response({'OK': 'Successefully update the avatar'}, status=status.HTTP_200_OK)
 
 class PublicUserSetDefaultAvatar(APIView):
     permission_classes = [IsOwner]
