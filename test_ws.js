@@ -4,6 +4,7 @@ function testInit() {
 	const socket = new WebSocket('ws://localhost:8080/api/game/ws/44575');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
+		// socket.close()
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "get_config",
 		})) }, 100)

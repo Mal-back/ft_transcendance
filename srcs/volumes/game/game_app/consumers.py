@@ -210,9 +210,12 @@ class LocalGameConsumer(SyncConsumer):
 
 	def end_thread(self, event):
 		game_id = event["game_id"]
-		print("Ending thread " + game_id)
-		self.game_instances[game_id].end_thread()
-		print("Waiting for thread to end")
-		self.game_instances[game_id].join()
-		self.game_instances.pop(game_id)
-		print("Thread waited !")
+		try :
+			print("Ending thread " + game_id)
+			self.game_instances[game_id].end_thread()
+			print("Waiting for thread to end")
+			self.game_instances[game_id].join()
+			self.game_instances.pop(game_id)
+			print("Thread waited !")
+		except Exception:
+			print("Error: Can not end thread " + str(game_id))
