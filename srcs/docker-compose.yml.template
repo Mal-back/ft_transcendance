@@ -92,6 +92,13 @@ services:
     depends_on:
       - redis
       - postgresql_game
+    build:
+      context: requirements/worker
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '8443'
+    restart: on-failure
 
   frontend:
     image: transcendance_frontend
