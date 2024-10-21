@@ -18,5 +18,5 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('api/avatar_managemer/', include('avatar_management_app.urls')),
+    path('api/avatars/', include('avatar_management_app.urls')),
 ]
