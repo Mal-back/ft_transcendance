@@ -158,17 +158,14 @@ export default class {
 
   async addEventListeners() {}
 
-  makeHeaders(accessToken, boolJSON, formatImage) {
+  makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
     if (accessToken != null) {
       myHeaders.append("Authorization", "Bearer " + accessToken);
     }
     if (boolJSON === true) {
-      // if (formatImage) {
-      // myHeaders.append("Content-Type", formatImage);
-      // } else {
+      console.log("manual header");
       myHeaders.append("Content-Type", "application/json");
-      // }
     }
     // myHeaders.forEach((value, key) => {
     //   console.log(key + ": " + value);
@@ -206,24 +203,28 @@ export default class {
       return `${response.status} ${response.statusText}`;
     }
   }
-  async makeRequest(url, myMethod, myBody, formatImage) {
+
+  async makeRequest(url, myMethod, myBody, boolImage = false) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
       try {
         accessToken = await this.getToken();
       } catch (error) {
+        if (error instanceof CustomError) throw error
         console.error("Error in getToken:", error.message);
       }
     }
     console.log("myMethod:", myMethod);
     const options = {
       method: myMethod.toString(),
-      headers: this.makeHeaders(accessToken, myBody != null, formatImage),
+      headers: this.makeHeaders(accessToken, (myBody != null && !boolImage)),
     };
     if (myBody) {
-      if (formatImage) options.body = myBody;
-      else options.body = JSON.stringify(myBody);
+      if (boolImage){
+        options.body = myBody;
+      } else
+      options.body = JSON.stringify(myBody);
     }
     const myRequest = new Request(url, options);
     return myRequest;
@@ -256,7 +257,8 @@ export default class {
         setSessionStorage(data);
       } else {
         const log = this.getErrorLogfromServer(response);
-        console.log(log);
+        console.log("ERROR REFRESH:", response);
+        console.log("log: ", log);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation("modal", "error")}`,

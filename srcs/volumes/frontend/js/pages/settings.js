@@ -1,41 +1,41 @@
 import AbstractView from "./AbstractViews.js";
 import { navigateTo } from "../router.js";
 import {
-  removeSessionStorage,
-  setSessionStorage,
-  showModal,
+    removeSessionStorage,
+    setSessionStorage,
+    showModal,
 } from "../Utils/Utils.js";
 import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
-  constructor() {
-    super();
-    this.setTitle("Settings");
-    this.selectedBackground = null;
-    this.handleChangeUsername = this.handleChangeUsername.bind(this);
-    this.handleInputUsername = this.handleInputUsername.bind(this);
-    this.handleInputNewPassword = this.handleInputNewPassword.bind(this);
-    this.handleChangePassword = this.handleChangePassword.bind(this);
-    this.handleInputMail = this.handleInputMail.bind(this);
-    this.handleChangeMail = this.handleChangeMail.bind(this);
-    this.handleUploadAvatar = this.handleUploadAvatar.bind(this);
-  }
-
-  async loadCss() {
-    this.createPageCss("../css/profile.css");
-    this.createPageCss("../css/background-profile.css");
-    this.createPageCss("../css/buttons.css");
-  }
-
-  async getHtml() {
-    if (!sessionStorage.getItem("username_transcendence")) {
-      throw new CustomError(
-        this.lang.getTranslation(["modal", "error"]),
-        this.lang.getTranslation(["error", "notAuthentified"]),
-        "/",
-      );
+    constructor() {
+        super();
+        this.setTitle("Settings");
+        this.selectedBackground = null;
+        this.handleChangeUsername = this.handleChangeUsername.bind(this);
+        this.handleInputUsername = this.handleInputUsername.bind(this);
+        this.handleInputNewPassword = this.handleInputNewPassword.bind(this);
+        this.handleChangePassword = this.handleChangePassword.bind(this);
+        this.handleInputMail = this.handleInputMail.bind(this);
+        this.handleChangeMail = this.handleChangeMail.bind(this);
+        this.handleUploadAvatar = this.handleUploadAvatar.bind(this);
     }
-    return `
+
+    async loadCss() {
+        this.createPageCss("../css/profile.css");
+        this.createPageCss("../css/background-profile.css");
+        this.createPageCss("../css/buttons.css");
+    }
+
+    async getHtml() {
+        if (!sessionStorage.getItem("username_transcendence")) {
+            throw new CustomError(
+                this.lang.getTranslation(["modal", "error"]),
+                this.lang.getTranslation(["error", "notAuthentified"]),
+                "/",
+            );
+        }
+        return `
 <div class="background removeElem">
     <div class="Profile container removeElem">
         <div class="container mt-4 removeElem">
@@ -284,542 +284,564 @@ export default class extends AbstractView {
 </div>
 
 `;
-  }
-
-  async changeUsername() {
-    const username = sessionStorage.getItem("username_transcendence");
-    const newUsername = document.querySelector(
-      "input[name='UsernameChange']",
-    ).value;
-    if (this.sanitizeInput([newUsername]) == false) {
-      return;
     }
-    try {
-      const request = await this.makeRequest(
-        "/api/auth/update/" + username,
-        "PATCH",
-        {
-          username: newUsername,
-        },
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        showModal(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "Username", "successMessage"])}`,
+
+    async changeUsername() {
+        const username = sessionStorage.getItem("username_transcendence");
+        const newUsername = document.querySelector(
+            "input[name='UsernameChange']",
+        ).value;
+        if (this.sanitizeInput([newUsername]) == false) {
+            return;
+        }
+        try {
+            const request = await this.makeRequest(
+                "/api/auth/update/" + username,
+                "PATCH",
+                {
+                    username: newUsername,
+                },
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                showModal(
+                    `${this.lang.getTranslation(["modal", "success"])}`,
+                    `${this.lang.getTranslation(["settings", "Username", "successMessage"])}`,
+                );
+                sessionStorage.setItem("username_transcendence", newUsername);
+                console.log("response", response);
+                const data = await response.json();
+                setSessionStorage(data, newUsername);
+            } else {
+                const log = await this.getErrorLogfromServer(response);
+                console.log(log);
+                showModal(this.lang.getTranslation(["modal", "error"]), log);
+            }
+        } catch (error) {
+            console.debug("Error in changeUsername Request", error);
+            showModal(this.lang.getTranslation(["modal", "error"]), error.message);
+        }
+    }
+
+    async checkoldMail(mailTocheck) {
+        const username = sessionStorage.getItem("username_transcendence");
+        try {
+            const request = await this.makeRequest("/api/auth/" + username, "GET");
+            const response = await fetch(request);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(
+                    "old mail = " + data.email + "oldMail == data.mail :",
+                    data.email == mailTocheck,
+                );
+                return data.email == mailTocheck;
+            } else {
+                removeSessionStorage();
+                throw new CustomError(
+                    `${this.lang.getTranslation(["modal", "error"])}`,
+                    `${this.lang.getTranslation(["error", "errorAuthentification"])}`,
+                    "/login",
+                );
+            }
+        } catch (error) {
+            if (!(error instanceof CustomError)) {
+                showModal(
+                    `${this.lang.getTranslation(["modal", "error"])}`,
+                    error.message,
+                );
+                console.debug("Error in checkoldMail:", error);
+            }
+            throw error;
+        }
+    }
+
+    async changePassword(oldPassword, newPassword, confirmPassword) {
+        const username = sessionStorage.getItem("username_transcendence");
+        try {
+            const request = await this.makeRequest(
+                "/api/auth/password/" + username,
+                "PATCH",
+                {
+                    password: oldPassword,
+                    new_password: newPassword,
+                    new_password2: confirmPassword,
+                },
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                showModal(
+                    `${this.lang.getTranslation(["modal", "success"])}`,
+                    `${this.lang.getTranslation(["settings", "Password", "modalFields", "success"])}`,
+                );
+                console.log("response", response);
+                // const data = await response.json();
+                // console.log("data after change =", data);
+            } else {
+                const logError = await this.getErrorLogfromServer(response);
+                console.log("ERROR", response);
+                showModal(`${this.lang.getTranslation(["modal", "error"])}`, logError);
+            }
+        } catch (error) {
+            if (!(error instanceof CustomError)) {
+                console.debug("Error", error);
+                showModal(
+                    `${this.lang.getTranslation(["modal", "error"])}`,
+                    error.message,
+                );
+            }
+            throw error;
+        }
+    }
+
+    async changeMail(oldMail, newMail) {
+        const username = sessionStorage.getItem("username_transcendence");
+        try {
+            if ((await this.checkoldMail(oldMail)) == false) {
+                this.showModalWithError("Error", "Incorrect old E-mail address");
+                return;
+            }
+        } catch (error) {
+            throw error;
+        }
+        try {
+            const request = await this.makeRequest(
+                "/api/auth/update/" + username,
+                "PATCH",
+                {
+                    email: newMail,
+                },
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                showModal(
+                    `${this.lang.getTranslation(["modal", "success"])}`,
+                    `${this.lang.getTranslation(["settings", "Email", "modalFields", "success"])}`,
+                );
+                const data = await response.json();
+                console.log("data after change =", data);
+            } else {
+                const dataError = await this.getErrorLogfromServer(response);
+                showModal(`${this.lang.getTranslation(["modal", "error"])}`, dataError);
+            }
+        } catch (error) {
+            if (!(error instanceof CustomError)) {
+                console.debug("Error in changeMail Request", error);
+                showModal(
+                    `${this.lang.getTranslation(["modal", "error"])}`,
+                    error.message,
+                );
+            }
+            throw error;
+        }
+    }
+
+    async deleteAccount() {
+        const username = sessionStorage.getItem("username_transcendence");
+        try {
+            const request = await this.makeRequest(
+                `/api/auth/delete/${username}`,
+                "DELETE",
+            );
+            const response = await fetch(request);
+            if (response.ok) {
+                removeSessionStorage();
+                this.cleanModal();
+                throw new CustomError(
+                    `${this.lang.getTranslation(["modal", "success"])}`,
+                    `${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "successDeleteAccount"])}`,
+                    "/",
+                );
+            } else {
+                const dataError = await response.json();
+                showModal(`${this.lang.getTranslation(["modal", "error"])}`, dataError);
+            }
+        } catch (error) {
+            if (!(error instanceof CustomError)) {
+                console.error("Error during account deletion request:", error);
+                showModal(
+                    `${this.lang.getTranslation(["modal", "error"])}`,
+                    error.message,
+                );
+            } else {
+                throw CustomError;
+            }
+        }
+    }
+
+    selectProfileBackground(imagePath, element) {
+        this.selectedBackground = imagePath;
+        document.getElementById(
+            "currentProfileBackgroundPreview",
+        ).style.backgroundImage = `url(${imagePath})`;
+        // Deselect other images
+        let images = document.querySelectorAll(".img-fluid");
+        images.forEach((img) => img.classList.remove("border-success"));
+        element.classList.add("border-success");
+    }
+
+    validateUsername(usernameInput) {
+        let errorMessage = "";
+        const errorDiv = document.querySelector("#settingsUsernameError");
+        errorDiv.innerHTML = "";
+        if (usernameInput.value.trim() === "") {
+            errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+        } else if (!this.sanitizeInput(usernameInput.value)) {
+            errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+        }
+        if (errorMessage) {
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.color = "red";
+            errorDiv.style.fontStyle = "italic";
+        }
+        errorDiv.classList.add("removeElem");
+        return errorMessage;
+    }
+
+    handleInputUsername(ev) {
+        ev.preventDefault();
+        const usernameInput = document.querySelector("#username-settings");
+        this.validateUsername(usernameInput);
+    }
+
+    async handleChangeUsername(ev) {
+        ev.preventDefault();
+        try {
+            const usernameInput = document.querySelector("#username-settings");
+            if (this.validateUsername(usernameInput)) return;
+            await this.changeUsername();
+        } catch (error) {
+            console.error("handleChangeUsername: ", error);
+        }
+    }
+
+    validatePassword(passwordInput) {
+        let errorMessage = "";
+        const errorDiv = document.querySelector("#newPassError");
+        errorDiv.innerHTML = "";
+        if (passwordInput.value.trim() === "") {
+            errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+        }
+        if (errorMessage) {
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.color = "red";
+            errorDiv.style.fontStyle = "italic";
+        }
+        errorDiv.classList.add("removeElem");
+        return errorMessage;
+    }
+
+    validatePasswordMatch(passwordInput, password2Input) {
+        let errorMessage = "";
+        const errorDiv = document.querySelector("#confirmPassError");
+        errorDiv.innerHTML = "";
+        if (passwordInput.value.trim() === "") {
+            errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+        }
+        if (password2Input.value !== passwordInput.value) {
+            errorMessage = `${this.lang.getTranslation(["input", "password", "match"])}`;
+        }
+        if (errorMessage) {
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.color = "red";
+            errorDiv.style.fontStyle = "italic";
+        }
+        errorDiv.classList.add("removeElem");
+        return errorMessage;
+    }
+
+    validateMail(mailInput) {
+        let errorMessage = "";
+        const errorDiv = document.querySelector("#newMailError");
+        errorDiv.innerHTML = "";
+        if (mailInput.value.trim() === "") {
+            errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
+        } else if (!this.sanitizeInput(mailInput.value)) {
+            errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
+        }
+        if (errorMessage) {
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.color = "red";
+            errorDiv.style.fontStyle = "italic";
+        }
+        errorDiv.classList.add("removeElem");
+        return errorMessage;
+    }
+
+    validateConfirmMail(mailInput, confirmMailInput) {
+        let errorMessage = "";
+        const errorDiv = document.querySelector("#confirmMailError");
+        errorDiv.innerHTML = "";
+        if (mailInput.value.trim() === "") {
+            errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
+        } else if (!this.sanitizeInput(mailInput.value)) {
+            errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
+        } else if (mailInput.value != confirmMailInput.value) {
+            errorMessage = `${this.lang.getTranslation(["input", "mail", "match"])}`;
+        }
+        if (errorMessage) {
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.color = "red";
+            errorDiv.style.fontStyle = "italic";
+        }
+        errorDiv.classList.add("removeElem");
+        return errorMessage;
+    }
+
+    handleInputNewPassword(ev) {
+        ev.preventDefault();
+        const newPasswordInput = document.querySelector("#new-password-settings");
+        this.validatePassword(newPasswordInput);
+        const confirmPasswordInput = document.querySelector(
+            "#confirm-new-password-settings",
         );
-        sessionStorage.setItem("username_transcendence", newUsername);
-        console.log("response", response);
-        const data = await response.json();
-        setSessionStorage(data, newUsername);
-      } else {
-        const log = await this.getErrorLogfromServer(response);
-        console.log(log);
-        showModal(this.lang.getTranslation(["modal", "error"]), log);
-      }
-    } catch (error) {
-      console.debug("Error in changeUsername Request", error);
-      showModal(this.lang.getTranslation(["modal", "error"]), error.message);
+        this.validatePasswordMatch(confirmPasswordInput);
     }
-  }
 
-  async checkoldMail(mailTocheck) {
-    const username = sessionStorage.getItem("username_transcendence");
-    try {
-      const request = await this.makeRequest("/api/auth/" + username, "GET");
-      const response = await fetch(request);
-      if (response.ok) {
-        const data = await response.json();
-        console.log(
-          "old mail = " + data.email + "oldMail == data.mail :",
-          data.email == mailTocheck,
-        );
-        return data.email == mailTocheck;
-      } else {
-        removeSessionStorage();
-        throw new CustomError(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          `${this.lang.getTranslation(["error", "errorAuthentification"])}`,
-          "/login",
-        );
-      }
-    } catch (error) {
-      if (!(error instanceof CustomError)) {
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-        console.debug("Error in checkoldMail:", error);
-      }
-      throw error;
+    async handleChangePassword(ev) {
+        ev.preventDefault();
+        try {
+            const oldPass = document.querySelector("#old-password-settings");
+            const newPass = document.querySelector("#new-password-settings");
+            const confirmPass = document.querySelector(
+                "#confirm-new-password-settings",
+            );
+            let isValid = true;
+            if (this.validatePassword(newPass)) isValid = false;
+            if (this.validatePasswordMatch(newPass, confirmPass)) isValid = false;
+            if (!isValid) return;
+            // 500 ERROR ?
+            await this.changePassword(
+                oldPass.value,
+                newPass.value,
+                confirmPass.value,
+            );
+        } catch (error) {
+            if (error instanceof CustomError) throw error;
+            else {
+                console.error("HandleChangePassword:", error);
+            }
+        }
     }
-  }
 
-  async changePassword(oldPassword, newPassword, confirmPassword) {
-    const username = sessionStorage.getItem("username_transcendence");
-    try {
-      const request = await this.makeRequest(
-        "/api/auth/password/" + username,
-        "PATCH",
-        {
-          password: oldPassword,
-          new_password: newPassword,
-          new_password2: confirmPassword,
-        },
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        showModal(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "Password", "modalFields", "success"])}`,
-        );
-        console.log("response", response);
-        // const data = await response.json();
-        // console.log("data after change =", data);
-      } else {
-        const logError = await this.getErrorLogfromServer(response);
-        console.log("ERROR", response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, logError);
-      }
-    } catch (error) {
-      if (!(error instanceof CustomError)) {
-        console.debug("Error", error);
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-      }
-      throw error;
+    async handleChangeMail(ev) {
+        ev.preventDefault();
+        try {
+            const oldMail = document.querySelector("#email-old");
+            const newMail = document.querySelector("#email-new");
+            const confirmMail = document.querySelector("#email-confirm");
+            let isValid = true;
+            if (this.validateMail(newMail)) isValid = false;
+            if (this.validateConfirmMail(newMail, confirmMail)) isValid = false;
+            if (!isValid) return;
+            await this.changeMail(oldMail.value, newMail.value, confirmMail.value);
+        } catch (error) { }
     }
-  }
 
-  async changeMail(oldMail, newMail) {
-    const username = sessionStorage.getItem("username_transcendence");
-    try {
-      if ((await this.checkoldMail(oldMail)) == false) {
-        this.showModalWithError("Error", "Incorrect old E-mail address");
-        return;
-      }
-    } catch (error) {
-      throw error;
+    handleInputMail(ev) {
+        ev.preventDefault();
+        const newMail = document.querySelector("#email-new");
+        const confirmMail = document.querySelector("#email-confirm");
+        this.validateMail(newMail);
+        this.validateConfirmMail(newMail, confirmMail);
     }
-    try {
-      const request = await this.makeRequest(
-        "/api/auth/update/" + username,
-        "PATCH",
-        {
-          email: newMail,
-        },
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        showModal(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "Email", "modalFields", "success"])}`,
-        );
-        const data = await response.json();
-        console.log("data after change =", data);
-      } else {
-        const dataError = await this.getErrorLogfromServer(response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, dataError);
-      }
-    } catch (error) {
-      if (!(error instanceof CustomError)) {
-        console.debug("Error in changeMail Request", error);
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-      }
-      throw error;
-    }
-  }
-
-  async deleteAccount() {
-    const username = sessionStorage.getItem("username_transcendence");
-    try {
-      const request = await this.makeRequest(
-        `/api/auth/delete/${username}`,
-        "DELETE",
-      );
-      const response = await fetch(request);
-      if (response.ok) {
-        removeSessionStorage();
-        this.cleanModal();
-        throw new CustomError(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "successDeleteAccount"])}`,
-          "/",
-        );
-      } else {
-        const dataError = await response.json();
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, dataError);
-      }
-    } catch (error) {
-      if (!(error instanceof CustomError)) {
-        console.error("Error during account deletion request:", error);
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-      } else {
-        throw CustomError;
-      }
-    }
-  }
-
-  selectProfileBackground(imagePath, element) {
-    this.selectedBackground = imagePath;
-    document.getElementById(
-      "currentProfileBackgroundPreview",
-    ).style.backgroundImage = `url(${imagePath})`;
-    // Deselect other images
-    let images = document.querySelectorAll(".img-fluid");
-    images.forEach((img) => img.classList.remove("border-success"));
-    element.classList.add("border-success");
-  }
-
-  validateUsername(usernameInput) {
-    let errorMessage = "";
-    const errorDiv = document.querySelector("#settingsUsernameError");
-    errorDiv.innerHTML = "";
-    if (usernameInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
-    } else if (!this.sanitizeInput(usernameInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
-    }
-    if (errorMessage) {
-      errorDiv.textContent = errorMessage;
-      errorDiv.style.color = "red";
-      errorDiv.style.fontStyle = "italic";
-    }
-    errorDiv.classList.add("removeElem");
-    return errorMessage;
-  }
-
-  handleInputUsername(ev) {
-    ev.preventDefault();
-    const usernameInput = document.querySelector("#username-settings");
-    this.validateUsername(usernameInput);
-  }
-
-  async handleChangeUsername(ev) {
-    ev.preventDefault();
-    try {
-      const usernameInput = document.querySelector("#username-settings");
-      if (this.validateUsername(usernameInput)) return;
-      await this.changeUsername();
-    } catch (error) {
-      console.error("handleChangeUsername: ", error);
-    }
-  }
-
-  validatePassword(passwordInput) {
-    let errorMessage = "";
-    const errorDiv = document.querySelector("#newPassError");
-    errorDiv.innerHTML = "";
-    if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
-    }
-    if (errorMessage) {
-      errorDiv.textContent = errorMessage;
-      errorDiv.style.color = "red";
-      errorDiv.style.fontStyle = "italic";
-    }
-    errorDiv.classList.add("removeElem");
-    return errorMessage;
-  }
-
-  validatePasswordMatch(passwordInput, password2Input) {
-    let errorMessage = "";
-    const errorDiv = document.querySelector("#confirmPassError");
-    errorDiv.innerHTML = "";
-    if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
-    }
-    if (password2Input.value !== passwordInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "match"])}`;
-    }
-    if (errorMessage) {
-      errorDiv.textContent = errorMessage;
-      errorDiv.style.color = "red";
-      errorDiv.style.fontStyle = "italic";
-    }
-    errorDiv.classList.add("removeElem");
-    return errorMessage;
-  }
-
-  validateMail(mailInput) {
-    let errorMessage = "";
-    const errorDiv = document.querySelector("#newMailError");
-    errorDiv.innerHTML = "";
-    if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
-    } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
-    }
-    if (errorMessage) {
-      errorDiv.textContent = errorMessage;
-      errorDiv.style.color = "red";
-      errorDiv.style.fontStyle = "italic";
-    }
-    errorDiv.classList.add("removeElem");
-    return errorMessage;
-  }
-
-  validateConfirmMail(mailInput, confirmMailInput) {
-    let errorMessage = "";
-    const errorDiv = document.querySelector("#confirmMailError");
-    errorDiv.innerHTML = "";
-    if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
-    } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
-    } else if (mailInput.value != confirmMailInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "match"])}`;
-    }
-    if (errorMessage) {
-      errorDiv.textContent = errorMessage;
-      errorDiv.style.color = "red";
-      errorDiv.style.fontStyle = "italic";
-    }
-    errorDiv.classList.add("removeElem");
-    return errorMessage;
-  }
-
-  handleInputNewPassword(ev) {
-    ev.preventDefault();
-    const newPasswordInput = document.querySelector("#new-password-settings");
-    this.validatePassword(newPasswordInput);
-    const confirmPasswordInput = document.querySelector(
-      "#confirm-new-password-settings",
-    );
-    this.validatePasswordMatch(confirmPasswordInput);
-  }
-
-  async handleChangePassword(ev) {
-    ev.preventDefault();
-    try {
-      const oldPass = document.querySelector("#old-password-settings");
-      const newPass = document.querySelector("#new-password-settings");
-      const confirmPass = document.querySelector(
-        "#confirm-new-password-settings",
-      );
-      let isValid = true;
-      if (this.validatePassword(newPass)) isValid = false;
-      if (this.validatePasswordMatch(newPass, confirmPass)) isValid = false;
-      if (!isValid) return;
-      // 500 ERROR ?
-      await this.changePassword(
-        oldPass.value,
-        newPass.value,
-        confirmPass.value,
-      );
-    } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("HandleChangePassword:", error);
-      }
-    }
-  }
-
-  async handleChangeMail(ev) {
-    ev.preventDefault();
-    try {
-      const oldMail = document.querySelector("#email-old");
-      const newMail = document.querySelector("#email-new");
-      const confirmMail = document.querySelector("#email-confirm");
-      let isValid = true;
-      if (this.validateMail(newMail)) isValid = false;
-      if (this.validateConfirmMail(newMail, confirmMail)) isValid = false;
-      if (!isValid) return;
-      await this.changeMail(oldMail.value, newMail.value, confirmMail.value);
-    } catch (error) {}
-  }
-
-  handleInputMail(ev) {
-    ev.preventDefault();
-    const newMail = document.querySelector("#email-new");
-    const confirmMail = document.querySelector("#email-confirm");
-    this.validateMail(newMail);
-    this.validateConfirmMail(newMail, confirmMail);
-  }
-  // const formData = new FormData();
-  //     formData.append('image', file); // Append the file to the form data
-  //
-  //     try {
-  //         // Make a POST request to the API
-  //         const response = await fetch('https://your-api-endpoint.com/upload', {
-  //             method: 'POST',
-  //             body: formData, // Send the FormData object with the file
-  //         });
-  //
-  //         if (response.ok) {
-  //             const result = await response.json();
-  //             alert('Image uploaded successfully!');
-  //             console.log(result); // Handle the response from the server
-  //         } else {
-  //             alert('Failed to upload image!');
-  //             console.error(response.statusText);
-  //         }
-  async handleUploadAvatar(ev) {
-    ev.preventDefault();
-    // if (this.validateAvatar()) return;
-    try {
-      const fileInput = document.getElementById("uploadProfileBackground");
-      const file = fileInput.files[0]; // Get the selected file
-        const formatImage = "image/jpeg";
-      const formData = new FormData();
-      formData.append('image', file);
-        const request = await this.makeRequest(`/api/avatar_manager`, "POST", {avatar: formData}, formatImage);
+    // const formData = new FormData();
+    //     formData.append('image', file); // Append the file to the form data
+    //
+    //     try {
+    //         // Make a POST request to the API
+    //         const response = await fetch('https://your-api-endpoint.com/upload', {
+    //             method: 'POST',
+    //             body: formData, // Send the FormData object with the file
+    //         });
+    //
+    //         if (response.ok) {
+    //             const result = await response.json();
+    //             alert('Image uploaded successfully!');
+    //             console.log(result); // Handle the response from the server
+    //         } else {
+    //             alert('Failed to upload image!');
+    //             console.error(response.statusText);
+    //         }
+    async handleUploadAvatar(ev) {
+        ev.preventDefault();
+        // if (this.validateAvatar()) return;
+        try {
+            const fileInput = document.getElementById("uploadProfileBackground");
+            const file = fileInput.files[0]; // Get the selected file
+            const formatImage = "image/jpeg";
+            const formData = new FormData();
+            formData.append("image", file);
+            const request = await this.makeRequest(
+                `/api/avatars/`,
+                "POST",
+                {
+                    avatar: formData,
+                },
+                true,
+            );
             console.log("REQUEST:", request);
+            console.log("Logging the full request object before sending:");
+            console.log("URL:", request.url);
+            console.log("Method:", request.method);
+            console.log("Headers:", [...request.headers.entries()]); // Convert headers to an array to log properly
+            console.log("Body:", request.body ? request.body : "No body provided");
+            console.log("Logging FormData content before sending:");
+            for (let [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    // Log specific file details
+                    console.log(
+                        `${key}: ${value.name} (${value.type}), size: ${value.size} bytes`,
+                    );
+                } else {
+                    console.log(`${key}: ${value}`);
+                }
+            }
             const response = await fetch(request);
             if (response.ok) {
                 console.log("RESPONSE OK:", response);
                 const data = await response.json();
                 console.log("DATA: ", data);
                 showModal("Success", "Image successfully uploaded");
-            }
-            else {
+            } else {
                 console.log("RESPONSE FAIL:", response);
                 const data = await response.json();
                 console.log("DATA: ", data);
             }
-    } catch (error) {
+        } catch (error) {
             if (error instanceof CustomError) throw error;
             else {
-            console.log("Error", error);
-                    showModal("ERROR", error.message);
-                }
+                console.log("Error", error);
+                showModal("ERROR", error.message);
+            }
         }
-  }
-  async addEventListeners() {
-    try {
-      const usernameInput = document.querySelector("#username-settings");
-      usernameInput.addEventListener("input", this.handleInputUsername);
-
-      const button = document.querySelector("#changeUsername");
-      button.addEventListener("click", this.handleChangeUsername);
-
-      const buttonPass = document.querySelector(
-        "#confirm-changes-password-btn",
-      );
-      buttonPass.addEventListener("click", this.handleChangePassword);
-
-      const passwordInput = document.querySelector("#new-password-settings");
-      passwordInput.addEventListener("input", this.handleInputNewPassword);
-
-      const confirmPasswordInput = document.querySelector(
-        "#confirm-new-password-settings",
-      );
-      confirmPasswordInput.addEventListener(
-        "input",
-        this.handleInputNewPassword,
-      );
-
-      const newMailInput = document.querySelector("#email-new");
-      newMailInput.addEventListener("input", this.handleInputMail);
-
-      const confirmMailInput = document.querySelector("#email-confirm");
-      confirmMailInput.addEventListener("input", this.handleInputMail);
-      const buttonMail = document.querySelector("#confirmChangesMail");
-      buttonMail.addEventListener("click", this.handleChangeMail);
-    } catch (error) {
-      console.error("error: ", error.message);
-      // throw error;
     }
-
-    const uploadFile = document.querySelector("#uploadButton");
-    uploadFile.addEventListener("click", this.handleUploadAvatar);
-
-    const deleteAccountButton = document.querySelector(
-      "#confirmDeleteAccountBtn",
-    );
-    if (deleteAccountButton) {
-      deleteAccountButton.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        console.debug("Delete Account confirmed!");
+    async addEventListeners() {
         try {
-          await this.deleteAccount();
+            const usernameInput = document.querySelector("#username-settings");
+            usernameInput.addEventListener("input", this.handleInputUsername);
+
+            const button = document.querySelector("#changeUsername");
+            button.addEventListener("click", this.handleChangeUsername);
+
+            const buttonPass = document.querySelector(
+                "#confirm-changes-password-btn",
+            );
+            buttonPass.addEventListener("click", this.handleChangePassword);
+
+            const passwordInput = document.querySelector("#new-password-settings");
+            passwordInput.addEventListener("input", this.handleInputNewPassword);
+
+            const confirmPasswordInput = document.querySelector(
+                "#confirm-new-password-settings",
+            );
+            confirmPasswordInput.addEventListener(
+                "input",
+                this.handleInputNewPassword,
+            );
+
+            const newMailInput = document.querySelector("#email-new");
+            newMailInput.addEventListener("input", this.handleInputMail);
+
+            const confirmMailInput = document.querySelector("#email-confirm");
+            confirmMailInput.addEventListener("input", this.handleInputMail);
+            const buttonMail = document.querySelector("#confirmChangesMail");
+            buttonMail.addEventListener("click", this.handleChangeMail);
         } catch (error) {
-          console.error("Error while deleting account:", error.message);
+            console.error("error: ", error.message);
+            // throw error;
         }
-      });
+
+        const uploadFile = document.querySelector("#uploadButton");
+        uploadFile.addEventListener("click", this.handleUploadAvatar);
+
+        const deleteAccountButton = document.querySelector(
+            "#confirmDeleteAccountBtn",
+        );
+        if (deleteAccountButton) {
+            deleteAccountButton.addEventListener("click", async (ev) => {
+                ev.preventDefault();
+                console.debug("Delete Account confirmed!");
+                try {
+                    await this.deleteAccount();
+                } catch (error) {
+                    console.error("Error while deleting account:", error.message);
+                }
+            });
+        }
+
+        const openDeleteAccountModalButton = document.querySelector(".btn-warning"); // Assuming the "Delete Account" button is the warning button
+        if (openDeleteAccountModalButton) {
+            openDeleteAccountModalButton.addEventListener("click", (ev) => {
+                ev.preventDefault();
+                console.debug("Delete Account button pressed!");
+            });
+        }
+        // Handle the profile background confirmation
+        const images = document.querySelectorAll(".img-fluid");
+        images.forEach((img) => {
+            img.addEventListener("click", (event) => {
+                this.selectProfileBackground(img.src, img); // Call the method using 'this'
+            });
+        });
     }
 
-    const openDeleteAccountModalButton = document.querySelector(".btn-warning"); // Assuming the "Delete Account" button is the warning button
-    if (openDeleteAccountModalButton) {
-      openDeleteAccountModalButton.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        console.debug("Delete Account button pressed!");
-      });
-    }
-    // Handle the profile background confirmation
-    const images = document.querySelectorAll(".img-fluid");
-    images.forEach((img) => {
-      img.addEventListener("click", (event) => {
-        this.selectProfileBackground(img.src, img); // Call the method using 'this'
-      });
-    });
-  }
+    removeEventListeners() {
+        const changeUsernameButton = document.querySelector("#changeUsername");
+        if (changeUsernameButton) {
+            changeUsernameButton.removeEventListener(
+                "click",
+                this.handleChangeUsername,
+            );
+        }
+        const usernameInput = document.querySelector("#username-settings");
+        if (usernameInput) {
+            usernameInput.removeEventListener("input", this.handleInputUsername);
+        }
 
-  removeEventListeners() {
-    const changeUsernameButton = document.querySelector("#changeUsername");
-    if (changeUsernameButton) {
-      changeUsernameButton.removeEventListener(
-        "click",
-        this.handleChangeUsername,
-      );
-    }
-    const usernameInput = document.querySelector("#username-settings");
-    if (usernameInput) {
-      usernameInput.removeEventListener("input", this.handleInputUsername);
+        const deleteAccountButton = document.querySelector(
+            "#confirmDeleteAccountBtn",
+        );
+        if (deleteAccountButton) {
+            deleteAccountButton.removeEventListener("click", this.deleteAccount);
+        }
+
+        const openDeleteAccountModalButton = document.querySelector(".btn-warning");
+        if (openDeleteAccountModalButton) {
+            openDeleteAccountModalButton.removeEventListener(
+                "click",
+                this.openDeleteAccountModal,
+            );
+        }
+        const confirmProfileBackgroundButton = document.querySelector(
+            "#confirm-profile-background-btn",
+        );
+        if (confirmProfileBackgroundButton) {
+            confirmProfileBackgroundButton.removeEventListener(
+                "click",
+                this.confirmProfileBackground,
+            );
+        }
+        const uploadProfileBackgroundInput = document.querySelector(
+            "#uploadProfileBackground",
+        );
+        if (uploadProfileBackgroundInput) {
+            uploadProfileBackgroundInput.removeEventListener(
+                "change",
+                this.uploadProfileBackground,
+            );
+        }
+        const changeMailButton = document.querySelector("#confirmChangesMail");
+        if (changeMailButton) {
+            changeMailButton.removeEventListener("click", this.changeMail);
+        }
     }
 
-    const deleteAccountButton = document.querySelector(
-      "#confirmDeleteAccountBtn",
-    );
-    if (deleteAccountButton) {
-      deleteAccountButton.removeEventListener("click", this.deleteAccount);
+    destroy() {
+        this.cleanModal();
+        this.removeEventListeners();
+        this.removeCss();
+        this.removeElem();
     }
-
-    const openDeleteAccountModalButton = document.querySelector(".btn-warning");
-    if (openDeleteAccountModalButton) {
-      openDeleteAccountModalButton.removeEventListener(
-        "click",
-        this.openDeleteAccountModal,
-      );
-    }
-    const confirmProfileBackgroundButton = document.querySelector(
-      "#confirm-profile-background-btn",
-    );
-    if (confirmProfileBackgroundButton) {
-      confirmProfileBackgroundButton.removeEventListener(
-        "click",
-        this.confirmProfileBackground,
-      );
-    }
-    const uploadProfileBackgroundInput = document.querySelector(
-      "#uploadProfileBackground",
-    );
-    if (uploadProfileBackgroundInput) {
-      uploadProfileBackgroundInput.removeEventListener(
-        "change",
-        this.uploadProfileBackground,
-      );
-    }
-    const changeMailButton = document.querySelector("#confirmChangesMail");
-    if (changeMailButton) {
-      changeMailButton.removeEventListener("click", this.changeMail);
-    }
-  }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
-  }
 }
 // const confirmButton = document.getElementById('confirm-profile-background-btn');
 // if (confirmButton) {
