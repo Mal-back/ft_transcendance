@@ -104,7 +104,22 @@ A - Local game:
 	You must unpause the game if you send a surrend while the game is paused to end the game.
 	If you send "start" via the "pause" type after "init_game" and before "start_game", it will start the game the same way "start_game" does.
 
-7 - End state of the game :
+
+7 - Surrend :
+
+	Send via the websocket in JSON format the following message :
+
+	{"type" : "surrend",
+	"surrender" : value,
+	}
+
+	Where :
+		value is either "player_1" or "player_2" (the surrender).
+	
+	If you send a surrender while the game is stopped with pause, you must unpause the game to end the game and receive the final state.
+
+
+8 - End state of the game :
 
 	When the game finished (a player obtains the maximum score or a player surrenders), the game sends you a last message :
 
@@ -118,3 +133,14 @@ A - Local game:
 		- score_1 is the first players's score at the end of the game
 		- score_2 is the second players's score at the end of the game
 		- winner is either "player_1" or "player_2"
+
+9 - Error messages from server :
+
+	For debuging purpose, the game may send you error messages in some contexts (for example starting the game before its initialization). You can choose to catch these messages to understand what is wrong.
+	The format is :
+
+	{"type" : "error",
+	"error_msg" : value
+	}
+
+	Where value is the full error message.

@@ -104,7 +104,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 
 	async def send_error(self, event):
 		data = {"type" : "error"}
-		data.update(event["Error"])
+		data.update({"error_msg" : event["Error"]})
 		await self.send(dumps(data))
 
 	async def send_frame(self, event):
@@ -162,7 +162,7 @@ class LocalGameConsumer(SyncConsumer):
 		game_id = event["game_id"]
 		if game_id in self.game_instances:
 			print("Game thread for room " + str(game_id) + " is already initialized")
-			self.error("Game already initialized", game_id)
+			self.error("init_game : game already initialized", game_id)
 			return
 		self.game_instances[game_id] = LocalEngine(game_id=game_id)
 		self.game_instances[game_id].start()
@@ -173,6 +173,7 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].start_game()
 		except Exception:
 			print("Game thread for room " + str(game_id) + " can not start because not initialized")
+			self.error("start_game : game not initialized", game_id)
   
 	def pause(self, event):
 		game_id = event["game_id"]
@@ -180,6 +181,7 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].receive_pause(event["action"])
 		except Exception:
 			print("Game thread for room " + str(game_id) + " can not pause because not initialized")
+			self.error("pause: game not initialized", game_id)
 		
 	def get_config(self, event):
 		game_id = event["game_id"]
@@ -187,6 +189,7 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].send_config()
 		except Exception:
 			print("Game thread " + str(game_id) + " can not send config because not initialized")
+			self.error("get_config: game not initialized", game_id)
   
 	def move(self, event):
 		game_id = event["game_id"]
@@ -194,6 +197,7 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].receive_movement(event["player"], event["direction"])
 		except Exception:
 			print("Game thread " + str(game_id) + " can not move because not initialized")
+			self.error("move: game not initialized", game_id)
 			
 	def surrend(self, event):
 		print("Surrend function in LocalGameConsumer")
@@ -201,7 +205,8 @@ class LocalGameConsumer(SyncConsumer):
 		try:
 			self.game_instances[game_id].receive_surrend(event["surrender"])
 		except Exception:
-			print("Game thread " + str(game_id) + " can not surrend because not initialized")    
+			print("Game thread " + str(game_id) + " can not surrend because not initialized")
+			self.error("surrend: game not initialized", game_id) 
 
 	def end_thread(self, event):
 		game_id = event["game_id"]
