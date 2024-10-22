@@ -278,7 +278,7 @@ class LocalEngine(threading.Thread):
 	
 	def receive_surrend(self, surrender : str) -> None:
 		with self.surrender_lock:
-			if surrender == "player_1" or surrender == "player_2":
+			if (surrender == "player_1" or surrender == "player_2") and self.surrender == "None":
 				self.surrender = surrender
 					 
 	def move_players(self, frame : Frame) -> Frame:

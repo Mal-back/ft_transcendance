@@ -25,10 +25,7 @@ application =  ProtocolTypeRouter(
 	}
 )
 
-# Handle shutdown signals (SIGTERM, SIGINT)
 def handle_exit(*args):
-    print("Gracefully shutting down...")
-    # Perform any cleanup here (if necessary)
     exit(0)
 
 signal.signal(signal.SIGTERM, handle_exit)

@@ -1,12 +1,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.consumer import SyncConsumer, AsyncConsumer
+from channels.consumer import SyncConsumer
 from game_app.game_srcs.Pong import LocalEngine
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
 import django
 django.setup()
-import threading
 from game_app.models import LocalGame
 
 
@@ -17,19 +16,17 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		path = self.scope["path"]
 		self.group_name = path.rsplit('/', 1)[1]
 		self.username = "Random Player"
-		game_object = await sync_to_async(LocalGame.objects.filter)(game_id=self.group_name)
-		game_exists = await sync_to_async(game_object.exists)()
-		if not game_exists:
-			await self.channel_layer.group_add(self.group_name, self.channel_name)
-			log.info("Player added to room " + self.group_name)
+		try:
 			game = await sync_to_async(LocalGame.objects.create)(game_creator=self.username, game_id=self.group_name)
 			await sync_to_async(game.save)()
+			await self.channel_layer.group_add(self.group_name, self.channel_name)
+			log.info("Player added to room " + self.group_name)
 			await self.accept()
 			self.delete = True
-		else:
+		except Exception:
 			log.info("Local game already exists")
 			self.delete = False
-			await self.close()
+			await self.close()			
 
 	async def clean_game(self):
 		log.info("Cleaning game " + str(self.group_name))
