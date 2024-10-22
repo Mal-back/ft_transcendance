@@ -1,5 +1,11 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
+import {
+  removeSessionStorage,
+  setSessionStorage,
+  showModal,
+} from "../Utils/Utils.js";
+import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -17,25 +23,24 @@ export default class extends AbstractView {
     try {
       const username = sessionStorage.getItem("username_transcendence");
       const request = await this.makeRequest(
-        `/api/users/${username}/friend/add/${friendname}`,
+        `/api/users/${username}/friend/add/${friendname}/`,
         "PATCH",
-        null,
       );
       console.log("Request:", request);
 
       const response = await fetch(request);
       if (response.ok) {
         const data = await this.getErrorLogfromServer(response);
-        this.showModalWithError("Success", data);
+        showModal("Success", data);
         navigateTo("/friends");
       } else {
         console.info("RESPONSE: ", response);
         const dataError = await this.getErrorLogfromServer(response);
-        this.showModalWithError("Error", dataError);
+        showModal("Error", dataError);
       }
     } catch (error) {
       console.error("error makefriends:", error.message);
-      this.showModalWithError("Error", error.message);
+      showModal("Error", error.message);
     }
   }
 
@@ -56,7 +61,7 @@ export default class extends AbstractView {
     }
     if (tokenProfile == null) {
       console.log("token = ", tokenProfile);
-      this.showModalWithError("Error", "User is not authentified");
+      showModal("Error", "User is not authentified");
       navigateTo("/login");
       throw new Error("Redirect to login");
     }
@@ -103,7 +108,8 @@ export default class extends AbstractView {
     }
     container.appendChild(list);
     background.appendChild(container);
-    // console.info("BACKGROUND", background.outerHTML);
+    console.info("BACKGROUND", background.outerHTML);
+
     return background.outerHTML;
   }
 
@@ -365,7 +371,7 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     try {
       const request = await this.makeRequest(
-        `/api/users/${username}/friend/delete/${friendUsername}`,
+        `/api/users/${username}/friend/delete/${friendUsername}/`,
         "DELETE",
         null,
       );
@@ -376,9 +382,14 @@ export default class extends AbstractView {
         navigateTo("/friends");
       } else {
         console.log("response:", response);
+        showModal(
+          this.lang.getTranslation(["modal", "error"]),
+          await this.getErrorLogfromServer(response),
+        );
       }
     } catch (error) {
       console.error("Error in removeFriends: ", error.message);
+      showModal(this.lang.getTranslation(["modal", "error"]), error.message);
     }
   }
 

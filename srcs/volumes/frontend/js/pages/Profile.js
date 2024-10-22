@@ -80,7 +80,7 @@ export default class extends AbstractView {
       ]);
     }
 
-    const htmlContent = `< div class= "background" >
+    const htmlContent = `<div class="background">
         <div class="Profile container">
           <div class="d-flex justify-content-center w-100">
             <!-- Top profile section (centered) -->
@@ -102,8 +102,6 @@ export default class extends AbstractView {
             <a id=settingsButton type="button" class="btn bg-lightgray" href="/settings">Settings</a>
           </div>
           `;
-    const app = document.querySelector("#app");
-    app.innerHTML = htmlContent;
     return htmlContent;
     //         return `
     // <div class="background">
@@ -205,12 +203,6 @@ export default class extends AbstractView {
     });
   }
 
-  removeCss() {
-    document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
-      e.remove();
-    });
-  }
   destroy() {
     this.cleanModal();
     this.removeEventListeners();
