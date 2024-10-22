@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/colors/colors.css">
+    <link rel="stylesheet" href="../../css/profile.css">
+    <link rel="stylesheet" href="../../css/background-basic.css">
+    <link rel="stylesheet" href="../../css/background-profile.css">
+    <link rel="stylesheet" href="../../css/buttons.css">
+    <title>Settings</title>
+</head>
+
+<body>
+    <header>
+        <div style="background-color: gray;">
+            <div class="container d-flex align-items-center py-2">
+                <div class="icon-container d-flex align-items-center">
+                    <button class="btn btn-light" id="toggleSidebar" data-bs-toggle="offcanvas"
+                        data-bs-target="#sidebar" aria-controls="sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <a href="/" class="btn btn-light" title="Home">
+                        <i class="bi bi-house-fill"></i>
+                    </a>
+                    <a href="/authentification" class="btn btn-light" title="Logout">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+                </div>
+
+                <div id="mainTitle" class="text-black text-center flex-grow-1" style="font-size: 3.5vh;">
+                    FT_TRANSCENDENCE
+                </div>
+
+                <div class="icon-container-right dropdown d-flex align-items-center p">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="languageDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                        <li><a class="dropdown-item" href="?lang=fr">Français</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="offcanvas offcanvas-start bg-dark text-white" id="sidebar" tabindex="-1"
+                aria-labelledby="sidebarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="nav flex-column">
+                        <a class="nav-link text-white my-4" href="/" data-link id="menuHome"><i
+                                class="bi bi-house-fill"></i> HOME</a>
+                        <a class="nav-link text-white my-4" href="/game" data-link id="menuGame"><i
+                                class="bi bi-controller"></i> Game</a>
+                        <a class="nav-link text-white my-4" href="/profile" data-link id="menuProfile"><i
+                                class="bi bi-person"></i> Profile</a>
+                        <a class="nav-link text-white my-4" href="/friends" data-link id="menuFriends"><i
+                                class="bi bi-person-heart"></i> Friends</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogout"><i
+                                class="bi bi-box-arrow-in-right"></i> Logout</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogin"><i
+                                class="bi bi-box-arrow-in-left"></i> Login</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="col d-flex justify-content-center">
+                <div class="background">
+                    <div class="Profile container">
+                        <div class="container mt-4">
+                            <h1>Settings</h1>
+                            <form>
+
+                                <!-- USERNAME -->
+                                <div class="mb-3">
+                                    <label for="username-settings" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username-settings" name="UsernameChange"
+                                        value="CurrentUsername">
+                                    <button id="changeUsername" type="button" class="btn btn-success custom-button">
+                                        Save Username
+                                    </button>
+                                </div>
+
+                                <!-- PROFILE BACKGROUND SECTION -->
+                                <div class="mb-3">
+                                    <label for="uploadProfileBackground" class="form-label">Profile Background</label>
+                                    <div id="currentProfileBackground" class="rounded mb-3 Avatar"
+                                        style="background-image: url(../../img/ts/TTPD.jpeg);">
+                                    </div>
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#changeProfileBackground">Change Profile Background</button>
+                                </div>
+                                <!-- MAIL HANDLER -->
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <br />
+                                    <button type="button" id="email" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#handleEmail">
+                                        Handle Email
+                                    </button>
+                                </div>
+                                <div class="modal fade" id="handleEmail" tabindex="-1"
+                                    aria-labelledby="handleEmailLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="handleEmailLabel">
+                                                    Change Mail
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+
+                                                    <div class="mb-3">
+                                                        <label for="email-old" class="form-label">Old Email</label>
+                                                        <input type="email" class="form-control" id="email-old"
+                                                            name="oldMail" value="old-email@google.com">
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="email-new" class="form-label">New Email</label>
+                                                        <input type="email" class="form-control" id="email-new"
+                                                            name="mailChange" value="new-email@google.com">
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="email-confirm" class="form-label">Confirm New
+                                                            Email</label>
+                                                        <input type="email" class="form-control" id="email-confirm"
+                                                            name="checkMail" value="new-email@google.com">
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" class="btn btn-success" id="confirmChangesMail">
+                                                    Confirm Changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PASSWORD -->
+                                <div class="mb-3">
+                                    <label for="password-label" class="form-label">Password</label>
+                                    <br />
+                                    <button type="button" id="password-label" class="btn btn-secondary"
+                                        data-bs-toggle="modal" data-bs-target="#handlePassword">
+                                        Handle Password
+                                    </button>
+                                </div>
+                                <div class="modal fade" id="handlePassword" tabindex="-1"
+                                    aria-labelledby="handlePasswordLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="handlePasswordLabel">
+                                                    Change password
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label for="old-password-settings" class="form-label">Old
+                                                            Password</label>
+                                                        <input type="password" class="form-control" name="oldPassword"
+                                                            id="old-password-settings" />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="new-password-settings" class="form-label">New
+                                                            Password</label>
+                                                        <input type="password" class="form-control" name="newPassword"
+                                                            id="new-password-settings" />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="confirm-new-password-settings"
+                                                            class="form-label">Confirm New
+                                                            Password</label>
+                                                        <input type="password" class="form-control"
+                                                            name="confirmPassword" id="confirm-new-password-settings" />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" class="btn btn-success"
+                                                    id="confirm-changes-password-btn">
+                                                    Confirm Changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- LANGUAGE -->
+                                <div class="mb-3">
+                                    <label for="language" class="form-label">Language</label>
+                                    <select class="form-select" id="language">
+                                        <option selected>English</option>
+                                        <option value="1">Spanish</option>
+                                        <option value="2">French</option>
+                                    </select>
+                                    <button type="button" class="btn btn-success custom-button">
+                                        Save Language
+                                    </button>
+                                </div>
+
+                                <!-- DATA HANDLER -->
+                                <!-- <br> -->
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-info white-txt" data-bs-toggle="modal"
+                                        data-bs-target="#handleData">
+                                        Handle Data
+                                    </button>
+                                </div>
+                                <!-- <br> -->
+                                <div class="modal fade" id="handleData" tabindex="-1" aria-labelledby="handleDataLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="handleDataLabel">
+                                                    Handle Data
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <button type="button" class="btn btn-success">
+                                                            Send All Data
+                                                        </button>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <button type="button" class="btn btn-warning"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmDeleteAccountModal">
+                                                            Delete Account
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Account Modal -->
+                                <div class="modal fade" id="confirmDeleteAccountModal" tabindex="-1"
+                                    aria-labelledby="confirmDeleteAccountModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmDeleteAccountModalLabel">Confirm
+                                                    Account Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to delete your account? This action cannot be
+                                                    undone.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-danger"
+                                                    id="confirmDeleteAccountBtn">Delete Account</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="modal fade" id="changeProfileBackground" tabindex="-1"
+                    aria-labelledby="changeProfileBackgroundLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="changeProfileBackgroundLabel">Select or Upload Profile
+                                    Background</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <h6>Current Profile Background:</h6>
+                                    <div id="currentProfileBackgroundPreview" class="rounded"
+                                        style="width: 11vh; height: 11vh; background-size: cover; background-position: center; background-image: url(../../img/ts/TTPD.jpeg);">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6>Choose a Profile Background:</h6>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <img src="../../img/ts/TTPD.jpeg" class="img-fluid rounded border "
+                                                alt="Background 1" style="cursor: pointer;">
+                                        </div>
+                                        <div class="col-4">
+                                            <img src="../../img/ts/RED.jpeg" class="img-fluid rounded border"
+                                                alt="Background 2" style="cursor: pointer;">
+                                        </div>
+                                        <div class="col-4">
+                                            <img src="../../img/ts/MIDNIGHTS.jpeg" class="img-fluid rounded border"
+                                                alt="Background 3" style="cursor: pointer;">
+                                        </div>
+                                        <div class="col-4">
+                                            <img src="../../img/ts/EVERMORE.jpeg" class="img-fluid rounded border"
+                                                alt="Background 4" style="cursor: pointer;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6>Or Upload Your Own:</h6>
+                                    <input type="file" class="form-control" accept="image/*"
+                                        id="uploadProfileBackground">
+                                    <button type="button" class="btn btn-success">Upload</button>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success" id="confirm-profile-background-btn">Set
+                                    Profile
+                                    Background</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Profile Background Modal -->
+    <div class="modal fade" id="changeProfileBackground" tabindex="-1" aria-labelledby="changeProfileBackgroundLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeProfileBackgroundLabel">Select or Upload Profile Background</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Current Profile Background Display -->
+                    <div class="mb-3">
+                        <h6>Current Profile Background:</h6>
+                        <div id="currentProfileBackgroundPreview" class="rounded"
+                            style="width: 11vh; height: 11vh; background-size: cover; background-position: center; background-image: url(../../img/ts/TTPD.jpeg);">
+                        </div>
+                    </div>
+
+                    <!-- Choose a Profile Background -->
+                    <div class="mb-3">
+                        <h6>Choose a Profile Background:</h6>
+                        <div class="row">
+                            <div class="col-4">
+                                <img src="../../img/ts/TTPD.jpeg" class="img-fluid rounded border " alt="Background 1"
+                                    style="cursor: pointer;"
+                                    onclick="selectProfileBackground('../../img/ts/TTPD.jpeg', this)">
+                            </div>
+                            <div class="col-4">
+                                <img src="../../img/ts/RED.jpeg" class="img-fluid rounded border" alt="Background 2"
+                                    style="cursor: pointer;"
+                                    onclick="selectProfileBackground('../../img/ts/RED.jpeg', this)">
+                            </div>
+                            <div class="col-4">
+                                <img src="../../img/ts/MIDNIGHTS.jpeg" class="img-fluid rounded border"
+                                    alt="Background 3" style="cursor: pointer;"
+                                    onclick="selectProfileBackground('../../img/ts/MIDNIGHTS.jpeg', this)">
+                            </div>
+                            <div class="col-4">
+                                <img src="../../img/ts/EVERMORE.jpeg" class="img-fluid rounded border"
+                                    alt="Background 4" style="cursor: pointer;"
+                                    onclick="selectProfileBackground('../../img/ts/EVERMORE.jpeg', this)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Your Own Profile Background -->
+                    <div class="mb-3">
+                        <h6>Or Upload Your Own:</h6>
+                        <input type="file" class="form-control" accept="image/*" id="uploadProfileBackground">
+                        <button type="button" class="btn btn-success">Upload</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="confirm-profile-background-btn">Set Profile
+                        Background</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script>
+        function changeLanguage(translations) {
+            const translation = translations;
+            console.log(translation);
+            if (translation) {
+                document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
+                document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
+                document.getElementById('menuProfile').innerHTML = `<i class="bi bi-person"></i> ${translation.menu.profile}`;
+                document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
+                document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
+                document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
+
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
+            console.log(selectedLang);
+            const translationFile = selectedLang === 'fr' ? '../../json/fr.json' : '../../json/en.json';
+
+            fetch(translationFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(translations => {
+                    changeLanguage(translations);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+        let selectedBackground = null;
+        function selectProfileBackground(imagePath, element) {
+            selectedBackground = imagePath;
+            document.getElementById('currentProfileBackgroundPreview').style.backgroundImage = `url(${imagePath})`;
+            let images = document.querySelectorAll('.img-fluid');
+            images.forEach(img => img.classList.remove('border-success'));
+            element.classList.add('border-success');
+        }
+        document.getElementById('confirm-profile-background-btn').addEventListener('click', function () {
+            if (selectedBackground) {
+                document.getElementById('currentProfileBackground').style.backgroundImage = `url(${selectedBackground})`;
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('changeProfileBackground'));
+                modalInstance.hide();
+            }
+        });
+        document.getElementById('uploadProfileBackground').addEventListener('change', function (event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    selectedBackground = e.target.result;
+                    document.getElementById('currentProfileBackgroundPreview').style.backgroundImage = `url(${selectedBackground})`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+
+</html>

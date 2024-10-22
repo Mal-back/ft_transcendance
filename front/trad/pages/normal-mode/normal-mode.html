@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/colors/colors.css">
+    <link rel="stylesheet" href="../../css/normal-mode.css">
+    <link rel="stylesheet" href="../../css/background-basic.css">
+    <title>Normal-Mode</title>
+</head>
+
+<body>
+    <header>
+        <div style="background-color: gray;">
+            <div class="container d-flex align-items-center py-2">
+                <div class="icon-container d-flex align-items-center">
+                    <button class="btn btn-light" id="toggleSidebar" data-bs-toggle="offcanvas"
+                        data-bs-target="#sidebar" aria-controls="sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <a href="/" class="btn btn-light" title="Home">
+                        <i class="bi bi-house-fill"></i>
+                    </a>
+                    <a href="/authentification" class="btn btn-light" title="Logout">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+                </div>
+
+                <div id="mainTitle" class="text-black text-center flex-grow-1" style="font-size: 3.5vh;">
+                    FT_TRANSCENDENCE
+                </div>
+
+                <div class="icon-container-right dropdown d-flex align-items-center p">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="languageDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                        <li><a class="dropdown-item" href="?lang=fr">Français</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="offcanvas offcanvas-start bg-dark text-white" id="sidebar" tabindex="-1"
+                aria-labelledby="sidebarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="nav flex-column">
+                        <a class="nav-link text-white my-4" href="/" data-link id="menuHome"><i
+                                class="bi bi-house-fill"></i> HOME</a>
+                        <a class="nav-link text-white my-4" href="/game" data-link id="menuGame"><i
+                                class="bi bi-controller"></i> Game</a>
+                        <a class="nav-link text-white my-4" href="/profile" data-link id="menuProfile"><i
+                                class="bi bi-person"></i> Profile</a>
+                        <a class="nav-link text-white my-4" href="/friends" data-link id="menuFriends"><i
+                                class="bi bi-person-heart"></i> Friends</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogout"><i
+                                class="bi bi-box-arrow-in-right"></i> Logout</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogin"><i
+                                class="bi bi-box-arrow-in-left"></i> Login</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="col d-flex justify-content-center">
+                <div class="background">
+                    <div class="custom-container d-flex flex-column justify-content-center align-items-center">
+                        <h1 class="mb-3 text-center title white-txt text-decoration-underline" id="NormalModeTitle">
+                            Normal
+                            Mode</h1>
+                        <br>
+                        <button type="button" class="btn btn-light white-txt btn-lg bg-green  custom-button"
+                            id="LocalModeButton" </button>>LOCAL
+                            MODE</button>
+                        <br>
+                        <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
+                            id="RandomModeButton">RANDOM
+                            MATCH</button>
+                        <br>
+                        <button type="button" class="btn btn-light white-txt btn-lg bg-orchid custom-button"
+                            id="FriendlyMatchButton">FRIENDLY
+                            MATCH</button>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="js/router.js"></script>
+    <script>
+        // Function to change the language based on loaded translations
+        function changeLanguage(translations) {
+            const translation = translations;
+            console.log(translation);
+            if (translation) {
+                // Update main content translations
+                // document.getElementById('homeTitle').textContent = translation.homeTitle;
+                // document.getElementById('descriptionHomeMessage').textContent = translation.descriptionHomeMessage;
+                // document.getElementById('descriptionHomeMessage2').textContent = translation.descriptionHomeMessage2;
+
+                // Update menu translations using innerHTML
+                document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
+                document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
+                document.getElementById('menuProfile').innerHTML = `<i class="bi bi-person"></i> ${translation.menu.profile}`;
+                document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
+                document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
+                document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
+
+                // Update inner content
+                document.getElementById('NormalModeTitle').textContent = translation.Matchmaking.NormalModeTitle;
+                document.getElementById('LocalModeButton').textContent = translation.Matchmaking.LocalMatch;
+                document.getElementById('RandomModeButton').textContent = translation.Matchmaking.RandomMatch;
+                document.getElementById('FriendlyMatchButton').textContent = translation.Matchmaking.FriendlyMatch;
+
+            }
+        }
+
+
+        // On page load, fetch the translations and apply the selected language
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
+            console.log(selectedLang);
+            const translationFile = selectedLang === 'fr' ? '../../json/fr.json' : '../../json/en.json';
+
+            fetch(translationFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(translations => {
+                    changeLanguage(translations);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

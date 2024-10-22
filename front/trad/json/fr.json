@@ -1,0 +1,119 @@
+{
+    "menu": {
+        "label": "Menu",
+        "home": "ACCUEIL",
+        "game": "Jeu",
+        "profile": "Profil",
+        "friends": "Amis",
+        "logout": "Déconnexion",
+        "login": "Connexion"
+    },
+    "homePage": {
+        "homeTitle": "Bienvenue à Notre Pong !",
+        "descriptionHomeMessage": "Explorez la profondeur du jeu Pong, jouez avec des amis et personnalisez votre profil à votre guise !",
+        "descriptionHomeMessage2": "✨ Amusez-vous bien ! ✨"
+    },
+    "login": {
+        "authTitle": "Vous n'êtes pas encore connecté",
+        "createProfileBtn": "Créer un Nouveau Profil",
+        "loginBtn": "Connexion",
+        "createUserTitle": "Créer un Utilisateur",
+        "usernameLabel": "Nom d'utilisateur :",
+        "mailLabel": "Email :",
+        "passwordLabel": "Mot de passe :",
+        "password2Label": "Confirmer le mot de passe :",
+        "Connect42Btn": "Connexion 42"
+    },
+    "profile": {
+        "winRateLabel": "Taux de Victoire :",
+        "battleHistoryLabel": "Historique des Batailles :",
+        "matchDate": "DATE",
+        "WIN": "VICTOIRE",
+        "LOSE": "DÉFAITE"
+    },
+    "Matchmaking": {
+        "Label": "Matchmaking",
+        "NormalMode": "MODE NORMAL",
+        "NormalModeTitle": "Mode Normal",
+        "EpicMode": "MODE ÉPIQUE",
+        "EpicModeTitle": "Mode Épique",
+        "Tournament": "Tournoi",
+        "LocalMatch": "MODE LOCAL",
+        "RandomMatch": "MATCH ALÉATOIRE",
+        "FriendlyMatch": "MATCH AMICAL",
+        "CreateNew": "CRÉER UN NOUVEAU",
+        "Join": "REJOINDRE",
+        "PendingInvites": "INVITATIONS EN ATTENTE"
+    },
+    "settings": {
+        "settingsLabel": "Paramètres",
+        "Username": {
+            "label": "Nom d'utilisateur",
+            "inputType": "texte",
+            "currentValue": "NomUtilisateurActuel",
+            "saveButton": "Sauvegarder le Nom d'Utilisateur"
+        },
+        "Background": {
+            "label": "Fond de Profil",
+            "changeButton": "Changer le Fond de Profil"
+        },
+        "Email": {
+            "buttonLabel": "Gérer l'Email",
+            "changeButton": "Changer l'Email",
+            "modalFields": {
+                "OldEmail": "ancien-email@google.com",
+                "NewEmail": "nouveau-email@google.com",
+                "ConfirmNewEmail": "nouveau-email@google.com"
+            },
+            "modalButtons": [
+                "Fermer",
+                "Confirmer les Modifications"
+            ]
+        },
+        "Password": {
+            "buttonLabel": "Gérer le Mot de Passe",
+            "changeButton": "Changer le Mot de Passe",
+            "modalFields": [
+                "Ancien Mot de Passe",
+                "Nouveau Mot de Passe",
+                "Confirmer le Nouveau Mot de Passe"
+            ],
+            "modalButtons": [
+                "Fermer",
+                "Confirmer les Modifications"
+            ]
+        },
+        "Language": {
+            "label": "Langue",
+            "options": [
+                "Anglais",
+                "Espagnol",
+                "Français"
+            ],
+            "saveButton": "Sauvegarder la Langue"
+        },
+        "DataHandler": {
+            "buttonLabel": "Gérer les Données",
+            "modalTitle": "Gérer les Données",
+            "modalFields": [
+                "Envoyer Toutes les Données",
+                "Supprimer le Compte",
+                "Supprimer Toutes les Données"
+            ],
+            "modalButtons": [
+                "Fermer"
+            ]
+        },
+        "footerButtonSettings": {
+            "label": "Sauvegarder Tous les Changements"
+        }
+    },
+    "Friends": {
+        "label": "Amis",
+        "addButton": "Ajouter un Ami",
+        "removeButton": "Supprimer",
+        "showProfile": "Afficher le Profil",
+        "winRateLabel": "Taux de Victoire :",
+        "warning": "Veuillez ajouter des amis"
+    }
+}
