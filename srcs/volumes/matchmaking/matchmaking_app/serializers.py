@@ -9,4 +9,10 @@ class MatchUserSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta :
         model = Match
-        fields = ['id', 'player1', 'player2', 'status', 'created_at']
+        fields = ['id', 'player1', 'player2', 'matchId', 'status', 'game_type', 'created_at']
+        extra_kwargs = {
+                    'matchId': {'read_only': True},
+                    'status': {'read_only': True},
+                    'created_at': {'read_only': True},
+                    'id': {'read_only': True},
+                }

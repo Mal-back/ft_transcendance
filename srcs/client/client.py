@@ -47,14 +47,11 @@ def getUserProfile(userPk):
                 'Authorization' : f'Bearer {access}'
                 }
         refresh = json.loads(creds.read_text())['refresh']
-        body = {
-                'profile_pic':'http://localhost:8080/media/default_avatars/default_00.jpg',
-                }
         # response = requests.get(f'http://localhost:8080/api/users/val/', headers=headers)
         # response = requests.patch(f'http://localhost:8080/api/auth/update/{userPk}', headers=headers, data=body)
         # response = requests.delete(f'http://localhost:8080/api/auth/delete/{userPk}', headers=headers)
         # response = requests.post(f'http://localhost:8080/api/auth/logout', headers=headers, data=body)
-        response = requests.patch(f'http://localhost:8080/api/users/val/default_pic/', headers=headers,data=body)
+        response = requests.patch(f'http://localhost:8080/api/users/val/default_pic/', headers=headers)
         if response.status_code == 401 :
             print(response.status_code)
             print(response.text)
