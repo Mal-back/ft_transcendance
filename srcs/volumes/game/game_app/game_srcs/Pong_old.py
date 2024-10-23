@@ -199,7 +199,7 @@ class LocalEngine(threading.Thread):
         self.end_lock = threading.Lock()
         self.end = False
         self.frame = copy.deepcopy(Frame())
-        self.state_rate = 1 / 60
+        self.frame_rate = 1 / 60
         self.movement_lock = threading.Lock()
         self.start_lock = threading.Lock()
         self.begin = False
@@ -229,7 +229,7 @@ class LocalEngine(threading.Thread):
             with self.end_lock:
                 if self.end == True:
                     break
-            time.sleep(self.state_rate)
+            time.sleep(self.frame_rate)
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "end.game"
         })
@@ -290,7 +290,7 @@ class LocalEngine(threading.Thread):
    
     def send_frame(self) -> None:
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
-            "type": "send.state",
+            "type": "send.frame",
             "Frame": self.frame.render(),
         })
         

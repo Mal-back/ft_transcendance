@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('DJANGO_GAME_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['game', 'localhost', 'auth']
+ALLOWED_HOSTS = ['game', 'localhost', 'auth', 'worker']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -66,6 +66,7 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": ["redis://:" + os.getenv("REDIS_PASSWORD") + "@" + os.getenv("REDIS_HOST") + ":" + os.getenv("REDIS_PORT")],
+            "capacity" : 10000,
         },
     },
 }
@@ -100,7 +101,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_AP1PLICATION = 'game.wsgi.application'
+WSGI_APPLICATION = 'game.wsgi.application'
 ASGI_APPLICATION = 'game.asgi.application'
 
 

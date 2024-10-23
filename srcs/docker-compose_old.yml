@@ -103,17 +103,23 @@ services:
       - '8443'
     restart: on-failure
 
-  redis:
-    image: transcendance_redis
-    container_name: 'transcendance_redis'
+  worker:
+    image: transcendance_worker
+    container_name: 'transcendance_worker'
+    volumes:
+      - data_django_game:/code
     networks:
       - transcendance
+    depends_on:
+      - redis
+      - postgresql_game
+
     build:
-      context: requirements/redis
+      context: requirements/worker
       dockerfile: Dockerfile
     env_file: .env
     expose:
-      - '6379'
+      - '8443'
     restart: on-failure
 
   worker:
@@ -219,6 +225,7 @@ services:
   #   ports:
   #     - '5432'
   #   restart: on-failure
+
 
 volumes:
   data_django_auth:
