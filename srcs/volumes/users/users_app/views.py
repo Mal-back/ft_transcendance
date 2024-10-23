@@ -172,10 +172,7 @@ class PublicUserSetDefaultAvatar(APIView):
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
-        path = request.data.get('profile_pic')
-        if path is None:
-            return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
-        # if 'users_avatars' in user.profilePic:
+        path = 'http://localhost:8080/media/default_avatars/default_00.jpg'
         try:
             sender = MicroServiceClient()
             sender.send_requests(
