@@ -1,0 +1,115 @@
+{
+    "menu": {
+        "label": "Menu",
+        "home": "HOME",
+        "game": "Game",
+        "profile": "Profile",
+        "friends": "Friends",
+        "logout": "Logout",
+        "login": "Login"
+    },
+    "homePage": {
+        "homeTitle": "Welcome to Our Pong!",
+        "descriptionHomeMessage": "Explore the depth of the Pong game, play with friends, and personalize your profile as you desire!",
+        "descriptionHomeMessage2": "✨ Have fun! ✨"
+    },
+    "login": {
+        "authTitle": "You're not connected yet",
+        "createProfileBtn": "Create New Profile",
+        "loginBtn": "Login",
+        "createUserTitle": "Create User",
+        "usernameLabel": "Username:",
+        "mailLabel": "Mail:",
+        "passwordLabel": "Password:",
+        "password2Label": "Confirm Password:",
+        "Connect42Btn": "42 Connect"
+    },
+    "profile": {
+        "winRateLabel": "Win Rate:",
+        "battleHistoryLabel": "Battle History:",
+        "matchDate": "DATE",
+        "WIN": "WIN",
+        "LOSE": "LOSE"
+    },
+    "Room": {
+        "Game": "Game",
+        "PickGame": "PICK GAME",
+        "PongTitle": "PONG",
+        "Connect4Title": "CONNECT 4",
+        "Play": "PLAY",
+        "TournamentTitle": "TOURNAMENT",
+        "LocalTitle": "LOCAL",
+        "RemoteTitle": "REMOTE"
+    },
+    "settings": {
+        "settingsLabel": "Settings",
+        "Username": {
+            "label": "Username",
+            "inputType": "text",
+            "currentValue": "CurrentUsername",
+            "saveButton": "Save Username"
+        },
+        "Background": {
+            "label": "Profile Background",
+            "changeButton": "Change Profile Background"
+        },
+        "Email": {
+            "buttonLabel": "Handle Email",
+            "changeButton": "Change Email",
+            "modalFields": {
+                "OldEmail": "old-email@google.com",
+                "NewEmail": "new-email@google.com",
+                "ConfirmNewEmail": "new-email@google.com"
+            },
+            "modalButtons": [
+                "Close",
+                "Confirm Changes"
+            ]
+        },
+        "Password": {
+            "buttonLabel": "Handle Password",
+            "changeButton": "Change Password",
+            "modalFields": [
+                "Old Password",
+                "New Password",
+                "Confirm New Password"
+            ],
+            "modalButtons": [
+                "Close",
+                "Confirm Changes"
+            ]
+        },
+        "Language": {
+            "label": "Language",
+            "options": [
+                "English",
+                "Spanish",
+                "French"
+            ],
+            "saveButton": "Save Language"
+        },
+        "DataHandler": {
+            "buttonLabel": "Handle Data",
+            "modalTitle": "Handle Data",
+            "modalFields": [
+                "Send All Data",
+                "Delete Account",
+                "Delete All Data"
+            ],
+            "modalButtons": [
+                "Close"
+            ]
+        },
+        "footerButtonSettings": {
+            "label": "Save All Changes"
+        }
+    },
+    "Friends": {
+        "label": "Friends",
+        "addButton": "Add Friend",
+        "removeButton": "Remove",
+        "showProfile": "Show profile",
+        "winRateLabel": "Win Rate:",
+        "warning": "Please add friends"
+    }
+}
