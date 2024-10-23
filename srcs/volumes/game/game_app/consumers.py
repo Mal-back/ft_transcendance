@@ -5,7 +5,7 @@ from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
 import django
-django.setup()
+# django.setup()
 from game_app.models import LocalGame
 import uuid
 

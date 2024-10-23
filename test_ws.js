@@ -1,7 +1,7 @@
 function testInit() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/44575');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -58,7 +58,7 @@ function testInit() {
 function testStart() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/445');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -103,7 +103,7 @@ function testStart() {
 function testGetConfig() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/222');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -151,7 +151,7 @@ function testGetConfig() {
 function testPause() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/98798987');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -211,7 +211,7 @@ function testPause() {
 function testMove() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/99999999999');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -303,7 +303,7 @@ function testMove() {
 function testSurrend() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/111111');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -350,7 +350,7 @@ function testSurrend() {
 
 function testChannelFUll() {
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/1');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket.onopen = function(event) {
 		console.log("Socket 1 connected")
 		socket.send(JSON.stringify({
@@ -370,7 +370,7 @@ function testChannelFUll() {
 	socket.onclose = function(event) {
 	  console.log('Socket 1 Disconnected from the WebSocket server');
 	};
-	const socket_2 = new WebSocket('ws://localhost:8080/api/game/ws/2');
+	const socket_2 = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket_2.onopen = function(event) {
 		console.log("Socket 2 connected")
 		socket_2.send(JSON.stringify({
@@ -390,7 +390,7 @@ function testChannelFUll() {
 	socket_2.onclose = function(event) {
 	  console.log('Disconnected from the WebSocket server');
 	};
-	const socket_3 = new WebSocket('ws://localhost:8080/api/game/ws/3');
+	const socket_3 = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket_3.onopen = function(event) {
 		console.log("Socket 3 connected")
 		socket_3.send(JSON.stringify({
@@ -410,7 +410,7 @@ function testChannelFUll() {
 	socket_3.onclose = function(event) {
 	  console.log('Disconnected from the WebSocket server');
 	};
-	const socket_4 = new WebSocket('ws://localhost:8080/api/game/ws/4');
+	const socket_4 = new WebSocket('ws://localhost:8080/api/game/ws/');
 	socket_4.onopen = function(event) {
 		console.log("Socket 4 connected")
 		socket_4.send(JSON.stringify({
