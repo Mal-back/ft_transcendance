@@ -7,6 +7,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 import django
 django.setup()
 from game_app.models import LocalGame
+import uuid
 
 
 log = logging.getLogger(__name__)
@@ -22,29 +23,29 @@ from channels.exceptions import AcceptConnection, DenyConnection, StopConsumer, 
 logger = getLogger()
 
 def apply_wrappers(consumer_class):
-    for method_name, method in list(consumer_class.__dict__.items()):
-        if iscoroutinefunction(method):  # an async method
-            # wrap the method with a decorator that propagate exceptions
-            setattr(consumer_class, method_name, propagate_exceptions(method))
-    return consumer_class
+	for method_name, method in list(consumer_class.__dict__.items()):
+		if iscoroutinefunction(method):  # an async method
+			# wrap the method with a decorator that propagate exceptions
+			setattr(consumer_class, method_name, propagate_exceptions(method))
+	return consumer_class
 
 
 def propagate_exceptions(func):
-    async def wrapper(*args, **kwargs):  # we're wrapping an async function
-        try:
-            return await func(*args, **kwargs)
-        except (AcceptConnection, DenyConnection, StopConsumer, ChannelFull):  # these are handled by channels
-            raise
-        except Exception as exception:  # any other exception
-            # avoid logging the same exception multiple times
-            if not getattr(exception, "caught", False):
-                setattr(exception, "caught", True)
-                logger.error(
-                    "Exception occurred in {}:".format(func.__qualname__),
-                    exc_info=exception,
-                )
-            raise  # propagate the exception
-    return wraps(func)(wrapper)
+	async def wrapper(*args, **kwargs):  # we're wrapping an async function
+		try:
+			return await func(*args, **kwargs)
+		except (AcceptConnection, DenyConnection, StopConsumer, ChannelFull):  # these are handled by channels
+			raise
+		except Exception as exception:  # any other exception
+			# avoid logging the same exception multiple times
+			if not getattr(exception, "caught", False):
+				setattr(exception, "caught", True)
+				logger.error(
+					"Exception occurred in {}:".format(func.__qualname__),
+					exc_info=exception,
+				)
+			raise  # propagate the exception
+	return wraps(func)(wrapper)
 ####### WARNING #####
 
 @apply_wrappers
@@ -53,22 +54,28 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		path = self.scope["path"]
 		self.group_name = path.rsplit('/', 1)[1]
 		self.username = "Random Player"
+
 		try:
+			self.group_name = str(uuid.uuid4())
 			game = await sync_to_async(LocalGame.objects.create)(game_creator=self.username, game_id=self.group_name)
 			await sync_to_async(game.save)()
 			await self.channel_layer.group_add(self.group_name, self.channel_name)
-			log.info("Player added to room " + self.group_name)
+			log.info("Player " + self.username+ " added to room " + self.group_name)
 			await self.accept()
 			self.delete = True
+	   
 		except Exception:
 			log.info("Local game already exists")
 			self.delete = False
-			await self.close()			
+			await self.close()	
 
 	async def clean_game(self):
 		log.info("Cleaning game " + str(self.group_name))
-		game = await sync_to_async(LocalGame.objects.get)(game_id=self.group_name)
-		await sync_to_async(game.delete)()
+		try:
+			game = await sync_to_async(LocalGame.objects.get)(game_id=self.group_name)
+			await sync_to_async(game.delete)()
+		except Exception:
+			log.info("Cannot delet game model id " + self.group_name)
 		await self.channel_layer.send("local_engine", {
 			"type": "end.thread",
 			"game_id": self.group_name,
@@ -139,22 +146,42 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def send_error(self, event):
 		data = {"type" : "error"}
 		data.update({"error_msg" : event["Error"]})
-		await self.send(dumps(data))
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
 
 	async def send_frame(self, event):
 		data = {"type" : "frame"}
 		data.update(event["Frame"])
-		await self.send(dumps(data))
-  
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
+
+	async def send_pause(self, event):
+		data = {"type" : "pause"}
+		data.update({"action" : event["Pause"]})
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
+
 	async def send_config(self, event):
 		data = {"type" : "config"}
 		data.update(event["Config"])
-		await self.send(dumps(data))
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
 		
 	async def send_end_state(self, event):
 		data = {"type" : "end_state"}
 		data.update(event["End_state"])
-		await self.send(dumps(data))
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
   
 	async def end_game(self, event):
 		log.info("End game function called in WebsocketConsumer " + self.group_name)
