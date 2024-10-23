@@ -103,7 +103,7 @@ function testStart() {
 function testGetConfig() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/19');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/222');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -432,10 +432,10 @@ function testChannelFUll() {
 	};
 }
 
-testInit();
-testStart();
+// testInit();
+// testStart();
 testGetConfig();
-testPause();
-testMove();
-testSurrend();
-testChannelFUll();
+// testPause();
+// testMove();
+// testSurrend();
+// testChannelFUll();

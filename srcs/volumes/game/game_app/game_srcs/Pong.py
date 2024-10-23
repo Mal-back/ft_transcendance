@@ -26,8 +26,7 @@ class Player:
 	movement: str = field(validator=[validators.instance_of(str), validators.in_(allowed_movement),], default="NONE")
  
 	def render(self) -> dict:
-		return { "username": self.username,
-			"position": self.top_left().render(),
+		return { "position": self.top_left().render(),
 			"score": self.score,
 		}
 	
@@ -177,6 +176,8 @@ class Frame:
 class Config:
 	player_1_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
 	player_2_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
+	player_1_username : str = field(validator=validators.instance_of(str))
+	player_2_username : str = field(validator=validators.instance_of(str))
 	ball_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
 	board_len : int = field(validator=validators.instance_of(int), default=Const["BOARD_LEN"].value)
 	board_height : int = field(validator=validators.instance_of(int), default=Const["BOARD_HEIGHT"].value)
@@ -191,8 +192,8 @@ class Config:
 				"ball_size" : self.ball_size,
 				"pad_len" : self.pad_len * 2,
 				"pad_height" : self.pad_height * 2,
-				"player_1" : self.player_1_pos.render(),
-				"player_2" : self.player_2_pos.render(),
+				"player_1" : {"pos" : self.player_1_pos.render(), "username" : self.player_1_username},
+				"player_2" : {"pos" : self.player_2_pos.render(), "username" : self.player_2_username},
 				"ball": self.ball_pos.render(),
 		}
 	
@@ -204,6 +205,8 @@ class LocalEngine(threading.Thread):
 		self.frame = copy.deepcopy(Frame())
 		self.config = copy.deepcopy(Config(player_1_pos=self.frame.player_1.top_left(),
 			player_2_pos=self.frame.player_2.top_left(),
+			player_1_username=self.frame.player_1.username,
+			player_2_username=self.frame.player_2.username,
 			ball_pos=self.frame.board.ball.position))
 		self.frame_rate = 1 / 60
 		self.movement_lock = threading.Lock()
@@ -357,6 +360,9 @@ class LocalEngine(threading.Thread):
 			"type": "send.config",
 			"Config": conf,
 		})
+  
+	# def send_pause(self, ) -> None:
+		
   
 	def send_end_state(self, last_frame) -> None:
 		data = {"winner" : self.winner,
