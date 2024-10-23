@@ -124,9 +124,9 @@ const router = async () => {
 
     document.querySelector("#app").innerHTML = "";
     document.querySelector("#app").innerHTML = await view.getHtml();
-    await view.addEventListeners();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
-      view.pongGame();
+		view.pongGame();
+	await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
       error.showModalCustom();

@@ -94,23 +94,6 @@ services:
     networks:
       - transcendance
     depends_on:
-      - game
-    build:
-      context: requirements/worker
-      dockerfile: Dockerfile
-    env_file: .env
-    expose:
-      - '8443'
-    restart: on-failure
-
-  worker:
-    image: transcendance_worker
-    container_name: 'transcendance_worker'
-    volumes:
-      - data_django_game:/code
-    networks:
-      - transcendance
-    depends_on:
       - redis
       - game
     build:
