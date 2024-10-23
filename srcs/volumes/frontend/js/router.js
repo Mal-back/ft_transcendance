@@ -154,7 +154,7 @@ const router = async () => {
 
   // Call the function to print all CSS links
 
-  //print all html
+  // print all html
   // console.log(document.documentElement.outerHTML);
 };
 

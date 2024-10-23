@@ -199,37 +199,7 @@ class Config:
         }
     
 class LocalEngine(threading.Thread):
-<<<<<<< HEAD
 
-	def __init__(self, game_id, **kwargs):
-		super().__init__(daemon=True)
-		self.game_id = game_id
-		self.channel_layer = get_channel_layer()
-		self.frame = copy.deepcopy(Frame())
-		self.config = copy.deepcopy(Config(player_1_pos=self.frame.player_1.top_left(),
-			player_2_pos=self.frame.player_2.top_left(),
-			ball_pos=self.frame.board.ball.position))
-		self.frame_rate = 1 / 60
-		self.movement_lock = threading.Lock()
-		self.start_lock = threading.Lock()
-		self.runing = False
-		self.end_lock = threading.Lock()
-		self.end = False
-		self.surrender = "None"
-		self.surrender_lock = threading.Lock()
-		self.winner = "None"
-		
-	def wait_start(self):
-		print("Waiting for game instance " + self.game_id + " to start")
-		while True:
-			with self.start_lock:
-				if self.runing == True:
-					break
-			with self.end_lock:
-				if self.end == True:
-					break
-			time.sleep(1/60)
-=======
     def __init__(self, game_id, **kwargs):
         super().__init__(daemon=True)
         self.game_id = game_id
@@ -260,7 +230,6 @@ class LocalEngine(threading.Thread):
                 if self.end == True:
                     break
             time.sleep(1/60)
->>>>>>> game-branch-leo
 
     def start_game(self):
         with self.start_lock:
@@ -303,27 +272,6 @@ class LocalEngine(threading.Thread):
         except ValueError:
             print("Invalid movement received from " + player)
    
-<<<<<<< HEAD
-
-	def receive_pause(self, action : str):
-		with self.start_lock:
-			if action == "start" and self.runing == False:
-				print("Unpausing game instance " + str(self.game_id))
-				self.runing = True
-			elif action == "stop" and self.runing == True:
-				print("Pausing game instance " + str(self.game_id))
-				self.runing = False
-	
-	def receive_surrend(self, surrender : str) -> None:
-		with self.surrender_lock:
-			if (surrender == "player_1" or surrender == "player_2") and self.surrender == "None":
-				self.surrender = surrender
-					 
-	def move_players(self, frame : Frame) -> Frame:
-		frame.player_1.move()
-		frame.player_2.move()
-		return frame
-=======
     def receive_pause(self, action : str):
         with self.start_lock:
             if action == "start" and self.runing == False:
@@ -418,17 +366,7 @@ class LocalEngine(threading.Thread):
             "Config": conf,
         })
   
-<<<<<<< HEAD
-	def send_end_state(self, last_frame) -> None:
-		data = {"winner" : self.winner,
-		  "score_1" : last_frame.player_1.score,
-		  "score_2" : last_frame.player_2.score,
-		}
-		async_to_sync(self.channel_layer.group_send)(self.game_id, {
-			"type" : "send.end.state",
-			"End_state" : data,
-		})
-=======
+
     def send_pause(self, action : str) -> None:
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "send.pause",
@@ -445,4 +383,3 @@ class LocalEngine(threading.Thread):
             "type" : "send.end.state",
             "End_state" : data,
         })
->>>>>>> game-branch-leo

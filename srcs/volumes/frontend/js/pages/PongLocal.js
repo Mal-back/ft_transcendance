@@ -82,7 +82,7 @@ export default class extends AbstractView {
     // canvas.height *= scaleFactor;
     // context.scale(scaleFactor, scaleFactor);
     this.context = this.canvas.getContext("2d");
-    this.webSocket = new WebSocket(`ws://localhost:8080/api/game/ws/14845`);
+    this.webSocket = new WebSocket(`ws://localhost:8080/api/game/ws/14844`);
   }
 
   drawPaddles() {
@@ -191,6 +191,7 @@ export default class extends AbstractView {
 
     this.webSocket.addEventListener(`error`, (ev) => {
       console.error("Error in WebSocket", ev);
+      navigateTo("/");
     });
 
     document.addEventListener("click", (ev) => {
