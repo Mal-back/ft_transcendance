@@ -11,6 +11,8 @@ export default class extends AbstractView {
   constructor() {
     super();
     this.setTitle("Friends");
+    this.handleRemoveFriends = this.handleRemoveFriends.bind(this);
+    this.handleAddFriend = this.handleAddFriend.bind(this);
   }
 
   async loadCss() {
@@ -288,34 +290,42 @@ export default class extends AbstractView {
     }
   }
 
+  async handleRemoveFriends(ev) {
+    const button = ev.currentTarget;
+    const friendUsername = button
+      .closest(".list-group-item")
+      .querySelector("h5").textContent;
+    console.log("Removing:", friendUsername);
+
+    ev.preventDefault();
+    try {
+      await this.removeFriends(friendUsername);
+    } catch (error) {
+      console.error("Error in remove button:", error.message);
+    }
+  }
+
+  async handleAddFriend(ev) {
+    ev.preventDefault();
+    const addFriendUsername = document.querySelector(
+      "input[name='friendRequest']",
+    ).value;
+    try {
+      await this.addFriendRequest(addFriendUsername);
+    } catch (error) {
+      console.error("Error in Request Friend", error.message);
+    }
+  }
+
   async addEventListeners() {
     document.querySelectorAll(".btn-danger").forEach((button) => {
-      button.addEventListener("click", async (ev) => {
-        const friendUsername = button
-          .closest(".list-group-item")
-          .querySelector("h5").textContent;
-        console.log("Removing:", friendUsername);
-        ev.preventDefault();
-        try {
-          await this.removeFriends(friendUsername);
-        } catch (error) {
-          console.error("Error In remove Button: ", error.message);
-        }
-      });
+      button.addEventListener("click", this.handleRemoveFriends);
     });
+
     const addFriendButton = document.querySelector("#addFriendRequest");
-    addFriendButton.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      const addFriendUsername = document.querySelector(
-        "input[name='friendRequest']",
-      ).value;
-      try {
-        await this.addFriendRequest(addFriendUsername);
-      } catch (error) {
-        console.error("Error in Request Friend", error.message);
-      }
-    });
+    addFriendButton.addEventListener("click", this.handleAddFriend);
   }
+
   removeEventListeners() {
     const changeUsernameButton = document.querySelector("#changeUsername");
     if (changeUsernameButton) {

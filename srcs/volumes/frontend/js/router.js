@@ -126,15 +126,15 @@ const router = async () => {
 
     document.querySelector("#app").innerHTML = "";
     document.querySelector("#app").innerHTML = await view.getHtml();
-    await view.addEventListeners();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
       view.pongGame();
+    await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {
-      console.error("Error in get Html():", error.message);
+      console.error("Error in get Html():", error);
       console.trace();
       navigateTo("/");
     }

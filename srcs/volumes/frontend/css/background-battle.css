@@ -1,13 +1,35 @@
+/* .background-battle { */
+/*     background-image: url("../img/bg-space.png"); */
+/*     background-position: center; */
+/*     background-repeat: no-repeat; */
+/*     background-size: cover; */
+/*     min-height: 95vh; */
+/*     max-height: 95vh; */
+/*     height: 100%; */
+/*     width: 100%; */
+/*     position: relative; */
+/* } */
+
 .background-battle {
     background-image: url("../img/bg-space.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     min-height: 95vh;
-    max-height: 95vh;
-    height: 100%;
     width: 100%;
-    position: relative;
+}
+.canvas-container {
+    display: flex;
+    /* Center canvas horizontally */
+    justify-content: center;
+    /* Center canvas horizontally */
+    align-items: center;
+    /* Center canvas vertically within its container */
+}
+
+
+.w-80 {
+    width: 80%;
 }
 
 canvas {
@@ -16,7 +38,7 @@ canvas {
     display: block;
     width: 80vw;
     height: 40vw;
-    position: absolute;
+    /* position: absolute; */
     top: 0;
     bottom: 0;
     left: 0;
