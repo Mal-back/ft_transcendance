@@ -11,7 +11,8 @@
   "modal": {
     "error": "Error",
     "submissionFailed": "Submission failed",
-    "success": "Success"
+    "success": "Success",
+    "close": "Close"
   },
   "error": {
     "failConnectServer": "Unable to connect to the server, please wait",
@@ -105,9 +106,14 @@
       "changeButton": "Change Profile Background",
       "current": "Current Profile Background:",
       "choose": "Choose a Profile Background:",
+      "chooseFile": "Choose a file",
+      "noFile": "No File chosen",
       "upload": "Or Upload your own:",
       "select": "Select or Upload Profile Background",
-      "set": "Set Profile Background"
+      "set": "Set Profile Background",
+      "uploadSuccess": "Image successfully uploaded, profile's picture set to newly uploaded Image",
+      "already": "this is already your profile Image",
+      "changeSuccess": "Image successfully uploaded, profile's picture set to newly uploaded Image"
     },
     "modalButtons": {
       "Close": "Close",
@@ -122,7 +128,8 @@
         "NewEmail": "new-email@google.com",
         "ConfirmNewEmail": "new-email@google.com",
         "confirmationDifferent": "New e-mail and it's confirmation do not match",
-        "success": "E-mail changed successfuly"
+        "success": "E-mail changed successfuly",
+        "incorrectOld": "Incorrect old mail adress"
       }
     },
     "Password": {
@@ -160,9 +167,14 @@
   "Friends": {
     "label": "Friends",
     "addButton": "Add Friend",
+    "enterUsername": "enter Username",
     "removeButton": "Remove",
     "showProfile": "Show profile",
     "winRateLabel": "Win Rate:",
-    "warning": "Please add friends"
+    "warning": "Please add friends",
+    "error": {
+      "yourself": "You can't add yourself as a friend",
+      "failList": "Sorry, we couldn't get your friends list"
+    }
   }
 }

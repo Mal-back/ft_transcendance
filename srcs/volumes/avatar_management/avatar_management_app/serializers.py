@@ -3,7 +3,7 @@ from PIL import Image
 
 class UserAvatarSerializer(serializers.Serializer):
     avatar = serializers.ImageField(required=True)
-    image_type = serializers.CharField(required=True)
+    image_type = serializers.CharField(read_only=True)
 
     def validate_avatar(self, value):
         cur = value.tell()

@@ -20,6 +20,7 @@ export default class extends AbstractView {
     this.serverHeight = 0;
     this.webSocket = null;
     this.gameStart = false;
+    this.gamePause = false;
     this.player1 = {
       keyPressTimeout: null,
       name: "player_1",
@@ -41,17 +42,27 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    const mainDiv = document.createElement("div");
-    mainDiv.classList.add("background", "background-battle");
-
-    const divFlex = document.createElement("div");
-    divFlex.classList.add("d-flex", "justify-content-center");
-
-    const canvasElement = document.createElement("canvas");
-    canvasElement.id = "ongoing-game";
-    divFlex.appendChild(canvasElement);
-    mainDiv.appendChild(divFlex);
-    return mainDiv.outerHTML;
+    const htmlContent = `<div class="col d-flex flex-column align-items-center justify-content-center">
+                <div class="background background-battle d-flex flex-column align-items-center">
+                    <div class="d-flex flex-row justify-content-between text-white text-section mt-3 w-80">
+                        <div class="text-center d-flex"> 
+                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar"></div>
+                          <h3>${this.lang.getTranslation(["game", "leftPlayer"])}</h3>
+                        </div>
+                        <div class="text-center">
+                            <h3>0 - 0</h3>
+                        </div>
+                        <div class="text-center d-flex">
+                          <h3>${this.lang.getTranslation(["game", "rightPlayer"])}</h3>
+                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar"></div>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                      <canvas id="ongoing-game"></canvas>
+                    </div>
+                </div>
+            </div>`;
+    return htmlContent;
   }
 
   pongGame() {
@@ -71,6 +82,7 @@ export default class extends AbstractView {
     // context.scale(scaleFactor, scaleFactor);
     this.context = this.canvas.getContext("2d");
     this.webSocket = new WebSocket(`ws://localhost:8080/api/game/ws/`);
+
   }
 
   drawPaddles() {
@@ -168,7 +180,9 @@ export default class extends AbstractView {
 
   async addEventListeners() {
     this.webSocket.addEventListener(`open`, (ev) => {
+      this.webSocket.send(JSON.stringify({ type: "init_game" }));
       console.log("Websocket is opened");
+      this.webSocket.send(JSON.stringify({ type: "get_config" }));
     });
 
     this.webSocket.addEventListener(`close`, (ev) => {
@@ -177,14 +191,25 @@ export default class extends AbstractView {
 
     this.webSocket.addEventListener(`error`, (ev) => {
       console.error("Error in WebSocket", ev);
+      navigateTo("/");
     });
 
     document.addEventListener("click", (ev) => {
       const isClickInsideCanvas = this.canvas.contains(ev.target);
       if (isClickInsideCanvas) {
-        const body = this.gameStart
-          ? JSON.stringify({ type: "start_game" })
-          : JSON.stringify({ type: "init_game" });
+        let body = null;
+        if (!this.gameStart) {
+          body = JSON.stringify({ type: "start_game" });
+          this.gameStart = true;
+        } else {
+          if (!this.gamePause) {
+            body = JSON.stringify({ type: "pause", action: "stop" });
+            this.gamePause = true;
+          } else {
+            body = JSON.stringify({ type: "pause", action: "start" });
+            this.gamePause = false;
+          }
+        }
         console.log("Sent", body);
         this.webSocket.send(body);
       }
@@ -193,63 +218,73 @@ export default class extends AbstractView {
     this.webSocket.addEventListener("message", (ev) => {
       const data = JSON.parse(ev.data);
       console.log("MessageFromSocket:", ev.data);
-      if (this.gameStart === false) {
-        this.serverWidth = data.Dimensions.board_len;
-        this.serverHeight = data.Dimensions.board_height;
-        console.log(
-          `Board Dimensions: ${this.serverWidth} * ${this.serverHeight}`,
-        );
+      switch (data.type) {
+        case "config": {
+          this.serverWidth = data.board_len;
+          this.serverHeight = data.board_height;
+          console.log(
+            `Board Dimensions: ${this.serverWidth} * ${this.serverHeight}`,
+          );
 
-        this.scaleX = this.canvas.width / this.serverWidth;
-        this.scaleY = this.canvas.height / this.serverHeight;
-        console.log("scaleX", this.scaleX);
-        console.log("scaleY", this.scaleY);
+          this.scaleX = this.canvas.width / this.serverWidth;
+          this.scaleY = this.canvas.height / this.serverHeight;
+          console.log("scaleX", this.scaleX);
+          console.log("scaleY", this.scaleY);
 
-        this.leftPaddle = {
-          x: data.player_1[0],
-          y: data.player_1[1],
-        };
-        this.paddleHeight = data.Dimensions.pad_height * 2;
-        this.paddleWidth = data.Dimensions.pad_len * 2;
-        console.log("paddleHeight:", this.paddleHeight);
-        console.log("paddleWidth:", this.paddleWidth);
-        console.log("LeftPaddle:", this.leftPaddle);
+          this.leftPaddle = {
+            x: data.player_1[0],
+            y: data.player_1[1],
+          };
+          this.paddleHeight = data.pad_height;
+          this.paddleWidth = data.pad_len;
+          console.log("paddleHeight:", this.paddleHeight);
+          console.log("paddleWidth:", this.paddleWidth);
+          console.log("LeftPaddle:", this.leftPaddle);
 
-        this.rightPaddle = {
-          x: data.player_2[0],
-          y: data.player_2[1],
-        };
-        console.log("RightPaddle:", this.rightPaddle);
+          this.rightPaddle = {
+            x: data.player_2[0],
+            y: data.player_2[1],
+          };
+          console.log("RightPaddle:", this.rightPaddle);
 
-        this.ball = {
-          x: data.ball[0],
-          y: data.ball[1],
-        };
-        this.ballRadius = data.Dimensions.ball_size;
-        console.log("BallRadius:", this.ballRadius);
-        console.log("Ball:", this.ball);
-        this.gameStart = true;
-        this.draw();
-      } else {
-        this.leftPaddle = {
-          x: data.player_1.position[0],
-          y: data.player_1.position[1],
-        };
-        console.log("UpdatedLeftPaddle:", this.leftPaddle);
+          this.ball = {
+            x: data.ball[0],
+            y: data.ball[1],
+          };
+          this.ballRadius = data.ball_size;
+          console.log("BallRadius:", this.ballRadius);
+          console.log("Ball:", this.ball);
+          this.draw();
+          break;
+        }
+        case "frame": {
+          this.leftPaddle = {
+            x: data.player_1.position[0],
+            y: data.player_1.position[1],
+          };
+          console.log("UpdatedLeftPaddle:", this.leftPaddle);
 
-        this.rightPaddle = {
-          x: data.player_2.position[0],
-          y: data.player_2.position[1],
-        };
-        console.log("UpdatedRightPaddle:", this.rightPaddle);
+          this.rightPaddle = {
+            x: data.player_2.position[0],
+            y: data.player_2.position[1],
+          };
+          console.log("UpdatedRightPaddle:", this.rightPaddle);
 
-        this.ball = {
-          x: data.ball.position[0],
-          y: data.ball.position[1],
-        };
-        console.log("UpdatedBall:", this.ball);
-
-        this.draw();
+          this.ball = {
+            x: data.ball.position[0],
+            y: data.ball.position[1],
+          };
+          console.log("UpdatedBall:", this.ball);
+          this.draw();
+          break;
+        }
+        case "pause": {
+          this.gamePause = true;
+          break;
+        }
+        default: {
+          console.log("Unknown message:", data);
+        }
       }
     });
 

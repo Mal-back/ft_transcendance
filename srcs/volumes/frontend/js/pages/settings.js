@@ -18,6 +18,10 @@ export default class extends AbstractView {
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleInputMail = this.handleInputMail.bind(this);
     this.handleChangeMail = this.handleChangeMail.bind(this);
+    this.handleUploadAvatar = this.handleUploadAvatar.bind(this);
+    this.changeProfilePic = this.changeProfilePic.bind(this);
+    this.showFileUpload = this.showFileUpload.bind(this);
+    this.handleSaveLanguage = this.handleSaveLanguage.bind(this);
   }
 
   async loadCss() {
@@ -34,7 +38,9 @@ export default class extends AbstractView {
         "/",
       );
     }
-    return `
+    const currentAvatar = await this.getCurrentAvatar();
+    const defaultAvatar = await this.getDefaultAvatar(currentAvatar);
+    const htmlContent = `
 <div class="background removeElem">
     <div class="Profile container removeElem">
         <div class="container mt-4 removeElem">
@@ -54,7 +60,7 @@ export default class extends AbstractView {
                 <div class="mb-3 removeElem">
                     <label for="uploadProfileBackground" class="form-label removeElem">${this.lang.getTranslation(["settings", "Background", "label"])}</label>
                     <div id="currentProfileBackground" class="rounded mb-3 Avatar removeElem"
-                        style="background-image: url(../../img/ts/TTPD.jpeg);">
+                        style="background-image: url(${currentAvatar});">
                     </div>
                     <button type="button" class="btn btn-secondary removeElem" data-bs-toggle="modal"
                         data-bs-target="#changeProfileBackground">${this.lang.getTranslation(["settings", "Background", "changeButton"])}</button>
@@ -170,11 +176,11 @@ export default class extends AbstractView {
                 <div class="mb-3 removeElem">
                     <label for="language" class="form-label removeElem">${this.lang.getTranslation(["settings", "Language", "label"])}</label>
                     <select class="form-select removeElem" id="language">
-                        <option class="removeElem" selected>English</option>
-                        <option class="removeElem" value="1">Spanish</option>
-                        <option class="removeElem" value="2">French</option>
+                        <option class="removeElem" value="en" selected>English</option>
+                        <option class="removeElem" value="es">Spanish</option>
+                        <option class="removeElem" value="fr">French</option>
                     </select>
-                    <button type="button" class="btn btn-success custom-button removeElem">
+                    <button id="saveLanguageButton" type="button" class="btn btn-success custom-button removeElem">
                         ${this.lang.getTranslation(["settings", "Language", "saveButton"])}
                     </button>
                 </div>
@@ -238,38 +244,26 @@ export default class extends AbstractView {
                 <div class="mb-3 removeElem">
                     <h6 class="removeElem">${this.lang.getTranslation(["settings", "Background", "current"])}</h6>
                     <div id="currentProfileBackgroundPreview" class="rounded removeElem"
-                        style="width: 11vh; height: 11vh; background-size: cover; background-position: center; background-image: url(../../img/ts/TTPD.jpeg);">
+                        style="width: 11vh; height: 11vh; background-size: cover; background-position: center; background-image: url(${currentAvatar});">
                     </div>
                 </div>
 
                 <!-- Choose a Profile Background -->
                 <div class="mb-3 removeElem">
-                    <h6 class="removeElem">${this.lang.getTranslation(["settings", "Background", "current"])}</h6>
-                    <div class="row removeElem">
-                        <div class="col-4 removeElem">
-                            <img src="../../img/ts/TTPD.jpeg" class="img-fluid rounded border removeElem" alt="Background 1"
-                                style="cursor: pointer;">
-                        </div>
-                        <div class="col-4 removeElem">
-                            <img src="../../img/ts/RED.jpeg" class="img-fluid rounded border removeElem" alt="Background 2"
-                                style="cursor: pointer;">
-                        </div>
-                        <div class="col-4 removeElem">
-                            <img src="../../img/ts/MIDNIGHTS.jpeg" class="img-fluid rounded border removeElem" alt="Background 3"
-                                style="cursor: pointer;">
-                        </div>
-                        <div class="col-4 removeElem">
-                            <img src="../../img/ts/EVERMORE.jpeg" class="img-fluid rounded border removeElem" alt="Background 4"
-                                style="cursor: pointer;">
-                        </div>
+                    <h6 class="removeElem">${this.lang.getTranslation(["settings", "Background", "choose"])}</h6>
+                    <div class="row removeElem" id="availableBackground">
+                    ${defaultAvatar.outerHTML}
                     </div>
-                </div>
 
                 <!-- Upload Your Own Profile Background -->
                 <div class="mb-3 removeElem">
                     <h6 class="removeElem">${this.lang.getTranslation(["settings", "Background", "upload"])}</h6>
-                    <input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">
-                    <button type="button" class="btn btn-success removeElem">Upload</button>
+                    <div class="custom-file-upload removeElem">
+                        <label for="uploadProfileBackground" class="custom-upload-btn removeElem">${this.lang.getTranslation(["settings", "Background", "chooseFile"])}</label>
+                        <span class="removeElem" id="file-chosen">${this.lang.getTranslation(["settings", "Background", "noFile"])}</span>
+                        <input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground" hidden>
+                    </div>
+                    <button type="button" class="btn btn-success removeElem" id="uploadButton">Upload</button>
                 </div>
             </div>
             <div class="modal-footer removeElem">
@@ -281,8 +275,60 @@ export default class extends AbstractView {
         </div>
     </div>
 </div>
-
 `;
+    const previous = `<input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">`;
+    return htmlContent;
+  }
+  appendAvatar(mainDiv, imageUrl) {
+    const avatar = document.createElement("div");
+    avatar.innerHTML = `<div class="col-4 removeElem">
+        <img src=${imageUrl} class="img-fluid rounded border removeElem" alt="Background 1"
+            style="cursor: pointer;">
+    </div>`;
+    mainDiv.appendChild(avatar);
+  }
+
+  async getCurrentAvatar() {
+    try {
+      const username = sessionStorage.getItem("username_transcendence");
+      const request = await this.makeRequest(`api/users/${username}`, "GET");
+      const response = await fetch(request);
+      if (!response.ok) {
+        const dataError = this.getErrorLogfromServer(response);
+        console.log("Request", request);
+        console.log("Response", response);
+        console.log("dataError", dataError);
+        showModal("error", dataError);
+      }
+      const data = await response.json();
+      console.log(data);
+      return data.profilePic;
+    } catch (error) {}
+  }
+
+  async getDefaultAvatar(currentAvatar) {
+    try {
+      const defaultAvatarMainDiv = document.createElement("div");
+      defaultAvatarMainDiv.classList.add("removeElem", "row");
+      const request = await this.makeRequest("api/avatars", "GET", null);
+      const response = await fetch(request);
+      if (!response.ok) {
+        showModal("Error", "Fail to get Default Avatar");
+      }
+      const data = await response.json();
+      console.log("data:", data);
+      let length = data.length;
+      for (let count = 0; count < length; count++) {
+        this.appendAvatar(defaultAvatarMainDiv, data[count]);
+      }
+      console.log("CURRENT AVATAR", currentAvatar);
+      if (!currentAvatar.includes("/media/default_avatars/"))
+        this.appendAvatar(defaultAvatarMainDiv, currentAvatar);
+      return defaultAvatarMainDiv;
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      console.error("Error:", error);
+    }
   }
 
   async changeUsername() {
@@ -396,7 +442,13 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     try {
       if ((await this.checkoldMail(oldMail)) == false) {
-        this.showModalWithError("Error", "Incorrect old E-mail address");
+        showModal(
+          this.lang.getTranslation(["modal", "error"]),
+          this.lang.getTranslation(
+            ["modal", "error"],
+            ["settings", "Email", "modalFields", "incorrectOld"],
+          ),
+        );
         return;
       }
     } catch (error) {
@@ -643,6 +695,151 @@ export default class extends AbstractView {
     this.validateMail(newMail);
     this.validateConfirmMail(newMail, confirmMail);
   }
+  // const formData = new FormData();
+  //     formData.append('image', file); // Append the file to the form data
+  //
+  //     try {
+  //         // Make a POST request to the API
+  //         const response = await fetch('https://your-api-endpoint.com/upload', {
+  //             method: 'POST',
+  //             body: formData, // Send the FormData object with the file
+  //         });
+  //
+  //         if (response.ok) {
+  //             const result = await response.json();
+  //             alert('Image uploaded successfully!');
+  //             console.log(result); // Handle the response from the server
+  //         } else {
+  //             alert('Failed to upload image!');
+  //             console.error(response.statusText);
+  //         }
+  async handleUploadAvatar(ev) {
+    ev.preventDefault();
+    // if (this.validateAvatar()) return;
+    try {
+      const fileInput = document.getElementById("uploadProfileBackground");
+      const file = fileInput.files[0]; // Get the selected file
+      if (!file) return;
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const request = await this.makeRequest(
+        `/api/avatars/`,
+        "POST",
+        formData,
+        true,
+      );
+      const response = await fetch(request);
+      if (response.ok) {
+        console.log("RESPONSE OK:", response);
+        const data = await response.json();
+        console.log("DATA: ", data);
+        showModal(
+          this.lang.getTranslation(["modal", "success"]),
+          this.lang.getTranslation(["settings", "Background", "uploadSuccess"]),
+        );
+        navigateTo("/settings");
+      } else {
+        console.log("RESPONSE FAIL:", response);
+        const data = await this.getErrorLogfromServer(response);
+        showModal(this.lang.getTranslation(["modal", "error"]), data);
+        console.log("DATA: ", data);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.log("Error", error);
+        showModal("ERROR", error.message);
+      }
+    }
+  }
+
+  getUrlImage(divImage) {
+    const divImageStyle = window
+      .getComputedStyle(divImage)
+      .getPropertyValue("background-image");
+    const urlPattern = /url\(["']?([^"']*)["']?\)/;
+    const matches = divImageStyle.match(urlPattern);
+    if (matches && matches[1]) {
+      return matches[1];
+    } else return null;
+  }
+
+  async changeProfilePic(ev) {
+    ev.preventDefault();
+    try {
+      const profileChosen = document.querySelector(
+        "#currentProfileBackgroundPreview",
+      );
+      const chosenImageUrl = this.getUrlImage(profileChosen);
+      const currentProfile = document.querySelector(
+        "#currentProfileBackground",
+      );
+      const currentImageUrl = this.getUrlImage(currentProfile);
+      console.log(`currentImageUrl=${currentImageUrl}
+    chosenImageUrl=${chosenImageUrl}`);
+      if (currentImageUrl === chosenImageUrl) {
+        showModal(
+          this.lang.getTranslation(["modal", "error"]),
+          this.lang.getTranslation(["settings", "Background", "already"]),
+        );
+        return;
+      }
+      const username = sessionStorage.getItem("username_transcendence");
+      console.log(
+        "body request:",
+        JSON.stringify(`{profile_pic: ${chosenImageUrl}}`),
+      );
+      const request = await this.makeRequest(
+        `/api/users/${username}/default_pic/`,
+        "PATCH",
+        { profile_pic: `${chosenImageUrl}` },
+      );
+      const response = await fetch(request);
+      if (response.ok) {
+        showModal(
+          this.lang.getTranslation(["modal", "success"]),
+          this.lang.getTranslation(["settings", "Background", "changeSuccess"]),
+        );
+        navigateTo("/settings");
+      } else {
+        console.log("Request", request);
+        console.log("Response:", response);
+        const dataError = this.getErrorLogfromServer(response);
+        console.log("dataError", dataError);
+        showModal(this.lang.getTranslation(["modal", "error"]), dataError);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
+        console.error("ChangeProfilePic: ", error);
+      }
+    }
+  }
+
+  showFileUpload(ev) {
+    const fileInput = document.getElementById("uploadProfileBackground");
+    const fileChosen = document.getElementById("file-chosen");
+
+    if (fileInput.files.length > 0) {
+      fileChosen.textContent = fileInput.files[0].name;
+    } else {
+      fileChosen.textContent = this.lang.getTranslation([
+        "settings",
+        "Background",
+        "noFile",
+      ]);
+    }
+  }
+
+  handleSaveLanguage(ev) {
+    ev.preventDefault();
+    const chosenLanguage = document.querySelector("#language").value;
+    if (chosenLanguage != sessionStorage.getItem("transcendence_language")) {
+      sessionStorage.setItem("transcendence_language", chosenLanguage);
+      navigateTo("/settings");
+    }
+  }
 
   async addEventListeners() {
     try {
@@ -675,10 +872,23 @@ export default class extends AbstractView {
       confirmMailInput.addEventListener("input", this.handleInputMail);
       const buttonMail = document.querySelector("#confirmChangesMail");
       buttonMail.addEventListener("click", this.handleChangeMail);
+      const changeProfilePic = document.querySelector(
+        "#confirm-profile-background-btn",
+      );
+      changeProfilePic.addEventListener("click", this.changeProfilePic);
     } catch (error) {
       console.error("error: ", error.message);
       // throw error;
     }
+
+    const uploadFile = document.querySelector("#uploadButton");
+    uploadFile.addEventListener("click", this.handleUploadAvatar);
+
+    const fileInput = document.getElementById("uploadProfileBackground");
+    fileInput.addEventListener("change", this.showFileUpload);
+
+    const saveLanguage = document.querySelector("#saveLanguageButton");
+    saveLanguage.addEventListener("click", this.handleSaveLanguage);
 
     const deleteAccountButton = document.querySelector(
       "#confirmDeleteAccountBtn",

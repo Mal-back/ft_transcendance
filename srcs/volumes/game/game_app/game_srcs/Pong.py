@@ -197,6 +197,7 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #         }
     
 class LocalEngine(threading.Thread):
+
     def __init__(self, game_id, **kwargs):
         super().__init__(daemon=True)
         self.game_id = game_id
@@ -362,6 +363,7 @@ class LocalEngine(threading.Thread):
             "Config": conf,
         })
   
+
     def send_pause(self, action : str) -> None:
         async_to_sync(self.channel_layer.group_send)(self.game_id, {
             "type": "send.pause",

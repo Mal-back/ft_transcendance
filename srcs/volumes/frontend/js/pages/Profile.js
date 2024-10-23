@@ -36,14 +36,11 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     console.log("username = ", username);
     try {
-      const request = await this.makeRequest(
-        `/api/auth/${username}`,
-        "GET",
-        null,
-      );
+      const request = await this.makeRequest(`/api/users/${username}`, "GET");
       const response = await fetch(request);
       if (response.ok) {
         const userData = await response.json();
+        console.log("userData", userData);
         return userData;
       } else {
         const log = await this.getErrorLogfromServer(response);
@@ -63,7 +60,7 @@ export default class extends AbstractView {
         `${this.lang.getTranslation(["modal", "error"])}`,
         `${this.lang.getTranslation(["error", "notAuthentified"])}`,
         "/",
-      )
+      );
     }
     this.setTitle(`${this.lang.getTranslation(["menu", "profile"])}`);
     let userData = null;
@@ -74,18 +71,21 @@ export default class extends AbstractView {
       throw error;
     }
     let winRate = this.lang.getTranslation(["profile", "noGamePlayed"]);
-    let battleHistory = this.lang.getTranslation(["profile", "noHistory"])
+    let battleHistory = this.lang.getTranslation(["profile", "noHistory"]);
     if (userData.single_games_win_rate != undefined) {
       winRate = `${userData.single_games_win_rate} % `;
-      battleHistory = this.lang.getTranslation(["profile", "battleHistoryLabel"]);
+      battleHistory = this.lang.getTranslation([
+        "profile",
+        "battleHistoryLabel",
+      ]);
     }
 
-    const htmlContent = `< div class= "background" >
+    const htmlContent = `<div class="background">
         <div class="Profile container">
           <div class="d-flex justify-content-center w-100">
             <!-- Top profile section (centered) -->
             <div class="top-profile d-flex flex-column justify-content-center align-items-center">
-              <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: ${userData.profilePic}"></div>
+              <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: url(${userData.profilePic})"></div>
               <a class="black-txt">${userData.username}</a>
             </div>
           </div>
@@ -102,8 +102,6 @@ export default class extends AbstractView {
             <a id=settingsButton type="button" class="btn bg-lightgray" href="/settings">Settings</a>
           </div>
           `;
-    const app = document.querySelector("#app");
-    app.innerHTML = htmlContent;
     return htmlContent;
     //         return `
     // <div class="background">
@@ -186,10 +184,10 @@ export default class extends AbstractView {
   async addEventListeners() {
     const button = document.querySelector("#settingsButton");
     if (button) {
-    button.addEventListener("click", async (ev) => {
-    ev.preventDefault();
+      button.addEventListener("click", async (ev) => {
+        ev.preventDefault();
         navigateTo("/settings");
-    });
+      });
     }
   }
 
@@ -205,12 +203,6 @@ export default class extends AbstractView {
     });
   }
 
-  removeCss() {
-    document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
-      e.remove();
-    });
-  }
   destroy() {
     this.cleanModal();
     this.removeEventListeners();

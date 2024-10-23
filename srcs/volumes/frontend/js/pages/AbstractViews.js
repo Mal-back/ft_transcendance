@@ -164,8 +164,12 @@ export default class {
       myHeaders.append("Authorization", "Bearer " + accessToken);
     }
     if (boolJSON === true) {
+      console.log("manual header");
       myHeaders.append("Content-Type", "application/json");
     }
+    // myHeaders.forEach((value, key) => {
+    //   console.log(key + ": " + value);
+    // });
     return myHeaders;
   }
 
@@ -199,22 +203,29 @@ export default class {
       return `${response.status} ${response.statusText}`;
     }
   }
-  async makeRequest(url, myMethod, myBody) {
+
+  async makeRequest(url, myMethod, myBody = null, boolImage = false) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
       try {
         accessToken = await this.getToken();
       } catch (error) {
+        if (error instanceof CustomError) throw error;
         console.error("Error in getToken:", error.message);
       }
     }
     console.log("myMethod:", myMethod);
     const options = {
       method: myMethod.toString(),
-      headers: this.makeHeaders(accessToken, myBody != null),
+      headers: this.makeHeaders(accessToken, myBody != null && !boolImage),
     };
-    if (myBody) options.body = JSON.stringify(myBody);
+    if (myBody) {
+      if (boolImage) {
+        options.body = myBody;
+      } else options.body = JSON.stringify(myBody);
+    }
+    console.log(JSON.stringify(myBody));
     const myRequest = new Request(url, options);
     return myRequest;
   }
@@ -246,7 +257,8 @@ export default class {
         setSessionStorage(data);
       } else {
         const log = this.getErrorLogfromServer(response);
-        console.log(log);
+        console.log("ERROR REFRESH:", response);
+        console.log("log: ", log);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation("modal", "error")}`,

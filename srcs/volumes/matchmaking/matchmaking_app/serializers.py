@@ -10,11 +10,3 @@ class MatchSerializer(serializers.ModelSerializer):
     class Meta :
         model = Match
         fields = ['id', 'player1', 'player2', 'status', 'created_at']
-
-
-
-
-
-        POST 
-        palyer1 : fvdgfd
-        

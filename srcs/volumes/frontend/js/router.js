@@ -7,7 +7,8 @@ import Matchmaking from "./pages/Matchmaking.js";
 import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
-import Friends from "./pages/Friends.js";
+import TrueFriends from "./pages/Friends.js";
+import Friends from "./pages/TrueFriends.js";
 // import Pong from "./pages/Pong.js";
 import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
@@ -35,6 +36,7 @@ const router = async () => {
     { path: "/epic-mode", view: EpicMode },
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
+    { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
     { path: "/pongLocal", view: PongLocal },
   ];
@@ -125,14 +127,14 @@ const router = async () => {
     document.querySelector("#app").innerHTML = "";
     document.querySelector("#app").innerHTML = await view.getHtml();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
-		view.pongGame();
-	await view.addEventListeners();
+      view.pongGame();
+    await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {
-      console.error("Error in get Html():", error.message);
+      console.error("Error in get Html():", error);
       console.trace();
       navigateTo("/");
     }
@@ -152,7 +154,7 @@ const router = async () => {
 
   // Call the function to print all CSS links
 
-  //print all html
+  // print all html
   // console.log(document.documentElement.outerHTML);
 };
 
@@ -195,7 +197,7 @@ function closeSidebar(sidebar) {
     // Clean up the backdrop after it's fully hidden
     sidebar.addEventListener(
       "hidden.bs.offcanvas",
-      function() {
+      function () {
         const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
           backdrop.remove(); // Ensure backdrop is removed

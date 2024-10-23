@@ -7,10 +7,10 @@ class Const(Enum):
     DIMENSION = Coordinates(BOARD_LEN,BOARD_HEIGHT)
     CENTER = Coordinates(int(BOARD_LEN / 2), int(BOARD_HEIGHT / 2))
     BALL_DIR = Direction(4, 6)
-    PAD_LEN = int(BOARD_LEN * 5 / 100 / 2)
-    PAD_HEIGHT = int(BOARD_HEIGHT * 30 / 100 / 2)
-    PAD_SPEED = int(BOARD_HEIGHT / 200)
-    BALL_SIZE = int((BOARD_HEIGHT + BOARD_LEN) / 100)
+    PAD_LEN = int(BOARD_LEN * 2 / 100 / 2)
+    PAD_HEIGHT = int(BOARD_HEIGHT * 20 / 100 / 2)
+    PAD_SPEED = int(BOARD_HEIGHT / 200 * 2)
+    BALL_SIZE = int((BOARD_HEIGHT + BOARD_LEN) / 100 / 2)
     MAX_SCORE = 3
     PAD_OFFSET = int(BOARD_LEN * 5 / 100)
     X_PLAYER_1 = PAD_OFFSET
