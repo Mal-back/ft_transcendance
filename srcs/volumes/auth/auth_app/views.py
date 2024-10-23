@@ -3,10 +3,12 @@ from django.utils.decorators import method_decorator
 from rest_framework import generics, status
 from rest_framework.response import Serializer
 from rest_framework.views import APIView, Response, csrf_exempt
-from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, createServiceToken
+from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, MyTokenObtainPairSerializer, PasswordModficationSerializer
 from .permissions import IsOwner
-from .models import CustomUser, Service
+from .models import CustomUser
+from .requests_manager import send_delete_requests, send_create_requests, send_update_requests
 from rest_framework import serializers
+from rest_framework.exceptions import APIException
 # Create your views here.
 
 class UserDetailView(generics.RetrieveAPIView) :
@@ -22,12 +24,8 @@ class UserDeleteView(generics.DestroyAPIView) :
     permission_classes = [IsOwner]
 
     def perform_destroy(self, instance):
-        token = createServiceToken(Service.objects.get('auth'))
-        headers = {'Authorization': f'Bearer {token}'}
-        req_url = f'http://users:8443/api/users/{instance.username}/delete/'
-        response = requests.delete(req_url, headers=headers)
-        if response.status != 204:
-            raise serializers.ValidationError('Invalid data sent to users ms')
+        req_url = [f'http://users:8443/api/users/delete/{instance.username}/',]
+        send_delete_requests(url=req_url)
         instance.delete()
 
 
@@ -39,12 +37,11 @@ class UserCreateView(generics.ListCreateAPIView) :
     def perform_create(self, serializer):
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data.get('username')
-        token = createServiceToken(Service.objects.get(serviceName='auth'))
-        headers = {'Authorization' : f'Bearer {token}'}
-        service_url = 'http://users:8443/api/users/create/'
-        response = requests.post(service_url, json={'username': username}, headers=headers)
-        if response.status_code != 201:
-            raise serializers.ValidationError('Invalid data sent to users ms')
+        req_urls = ['http://users:8443/api/users/create/',
+                   # 'http://matchmaking:8443/api/matchmaking/create/',
+                    ]
+        if send_create_requests(urls=req_urls, body={'username':username}) == False:
+            raise MicroServiceError
         user = serializer.save()
         return user
         
@@ -61,18 +58,38 @@ class UserUpdateView(generics.UpdateAPIView):
         old_username = instance.username
         new_username = serializer.validated_data.get('username', old_username)
         if old_username != new_username:
-            token = createServiceToken(Service.objects.get(serviceName='auth'))
-            headers = {'Authorization' : f'Bearer {token}'}
-            service_url = f'http://users:8443/api/users/{old_username}/update'
-            response = requests.patch(service_url, json={'username': new_username}, headers=headers)
-            if response.status_code != 200:
-                raise serializers.ValidationError('Invalid data sent to users ms')
-            else :
-                serializer.save()
+            req_urls = ['http://users:8443/api/users/{old_username}/update/']
+            send_update_requests(old_username, req_urls, body={'username':new_username})
+            serializer.save()
         else:
             serializer.save()
         return serializer.instance
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        user = self.perform_update(serializer=serializer)
+
+        token = MyTokenObtainPairSerializer.get_token(user)
+        access_token = str(token.access_token)
+        refresh_token = str(token)
+        response_data = {
+                'message':'update successefull',
+                'new username':user.username,
+                'access': access_token,
+                'refresh': refresh_token, 
+                }
+        response_data.update(serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
+
+class PasswordUpdateView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = PasswordModficationSerializer
+    lookup_field = 'username'
+    permission_classes = [IsOwner]
 
 class ServiceJWTObtainPair(APIView):
     @method_decorator(csrf_exempt)
@@ -81,3 +98,8 @@ class ServiceJWTObtainPair(APIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MicroServiceError(APIException):
+    status_code = 500
+    default_detail = 'An error happend between microservice interaction. Please try again later'
+    default_code = 'MicroService error'

@@ -3,26 +3,28 @@ import AbstractView from "./AbstractViews.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Home");
   }
 
   async loadCss() {
-    const linkElement = document.createElement("link");
-    linkElement.rel = "stylesheet";
-    linkElement.href = "../css/home.css";
-    linkElement.classList.add("page-css");
-    document.head.appendChild(linkElement);
+    this.createPageCss("../css/home.css");
   }
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["menu", "home"])}`);
     return `
-        <div class="container">
-            <section class="home text-center p-5">
-                <h1 class="welcome">Welcome to Our Pong!</h1>
-                <p class="welcome-msg">Explore the depth of the Pong game, play with friends, and personalize your
-                    profileas you desire!</p>
-                <p class="welcome-msg">✨ Have fun! ✨</p>
-            </section>
+        <div class="background Home removeElem">
+          <div class="container removeElem">
+              <section class="home text-center p-5 removeElem">
+                  <h1 class="welcome removeElem">${this.lang.getTranslation(["homePage", "homeTitle"])}</h1>
+                  <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage"])}</p>
+                  <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage2"])}</p>
+              </section>
+          </div>
         </div>
   `;
+  }
+
+  destroy() {
+    this.removeCss();
+    this.removeElem();
   }
 }

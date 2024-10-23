@@ -218,3 +218,7 @@
 .bg-darkyellow:hover {
     background-color: rgb(235, 235, 0);
 }
+
+.bg-semi-t-white:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}

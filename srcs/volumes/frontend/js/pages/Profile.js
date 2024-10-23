@@ -1,24 +1,17 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
+import CustomError from "../Utils/CustomError.js";
+import { removeSessionStorage, showModal } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Profile");
   }
 
   async loadCss() {
-    const linkElement = document.createElement("link");
-    linkElement.rel = "stylesheet";
-    linkElement.href = "../css/home.css";
-    linkElement.classList.add("page-css");
-    document.head.appendChild(linkElement);
-
-    const alternateBackground = document.createElement("link");
-    alternateBackground.rel = "stylesheet";
-    alternateBackground.href = "../css/background-profile.css";
-    alternateBackground.classList.add("page-css");
-    document.head.appendChild(alternateBackground);
+    this.createPageCss("../css/profile.css");
+    this.createPageCss("../css/battle-history.css");
+    this.createPageCss("../css/background-profile.css");
   }
 
   removeEventListeners() {
@@ -39,49 +32,188 @@ export default class extends AbstractView {
     this.removeCss();
   }
 
-  async getHtml() {
-    const authToken = localStorage.getItem("accessJWT");
-    if (!authToken) {
-      navigateTo("/login");
-      return;
+  async loadUserData() {
+    const username = sessionStorage.getItem("username_transcendence");
+    console.log("username = ", username);
+    try {
+      const request = await this.makeRequest(
+        `/api/auth/${username}`,
+        "GET",
+        null,
+      );
+      const response = await fetch(request);
+      if (response.ok) {
+        const userData = await response.json();
+        return userData;
+      } else {
+        const log = await this.getErrorLogfromServer(response);
+        console.debug(log);
+        return null;
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      console.debug("Error: ", error);
+      throw error;
     }
-    return `
-        <div class="Profile container">
-            <div class="d-flex justify-content-center w-100">
-                <!-- Top profile section (centered) -->
-                <div class="top-profile d-flex flex-column justify-content-center align-items-center">
-                    <div class="rounded-circle Avatar status-playing" alt="Avatar"></div>
-                    <a class="black-txt">Username</a>
-                </div>
-            </div>
+  }
 
-            <!-- Left-aligned profile info -->
-            <div class="align-items-left mt-3 w-100">
-                <p class="black-txt">Win Rate: 75%</p>
+  async getHtml() {
+    if (!sessionStorage.getItem("username_transcendence")) {
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        `${this.lang.getTranslation(["error", "notAuthentified"])}`,
+        "/",
+      )
+    }
+    this.setTitle(`${this.lang.getTranslation(["menu", "profile"])}`);
+    let userData = null;
+    try {
+      const tokenProfile = await this.getToken();
+      userData = await this.loadUserData();
+    } catch (error) {
+      throw error;
+    }
+    let winRate = this.lang.getTranslation(["profile", "noGamePlayed"]);
+    let battleHistory = this.lang.getTranslation(["profile", "noHistory"])
+    if (userData.single_games_win_rate != undefined) {
+      winRate = `${userData.single_games_win_rate} % `;
+      battleHistory = this.lang.getTranslation(["profile", "battleHistoryLabel"]);
+    }
+
+    const htmlContent = `< div class= "background" >
+        <div class="Profile container">
+          <div class="d-flex justify-content-center w-100">
+            <!-- Top profile section (centered) -->
+            <div class="top-profile d-flex flex-column justify-content-center align-items-center">
+              <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: ${userData.profilePic}"></div>
+              <a class="black-txt">${userData.username}</a>
             </div>
-            <div class="align-items-left mt-3 w-100">
-                <p class="black-txt">Battle History:</p>
-            </div>
-            <div class="border p-3" style="height: 300px; overflow-y: auto;">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet accumsan urna. Cras
-                    ultricies scelerisque magna, vitae tempus nulla finibus sit amet. Aenean et pharetra odio. Phasellus
-                    faucibus, orci non vestibulum faucibus, velit justo lacinia metus, non egestas turpis nunc a risus.
-                    Quisque non magna at est ultricies bibendum.</p>
-                <p>Morbi nec orci lorem. In finibus urna vel magna aliquam viverra. Vivamus consequat magna orci, sed
-                    sollicitudin odio blandit id. Pellentesque at ipsum dapibus, pulvinar ligula non, finibus felis. Nam
-                    vitae magna eros.</p>
-                <p>Curabitur id pharetra risus, vitae vestibulum ex. Nam ornare tempor neque, nec laoreet nisi lobortis
-                    id. Integer dignissim eros ac arcu pulvinar, nec fermentum turpis volutpat.</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet accumsan urna. Cras
-                    ultricies scelerisque magna, vitae tempus nulla finibus sit amet.</p>
-                <p>Phasellus faucibus, orci non vestibulum faucibus, velit justo lacinia metus, non egestas turpis nunc
-                    a risus. Quisque non magna at est ultricies bibendum.</p>
-            </div>
-            <br>
-            <div class="align-items-right mt-3 w-100">
-                <button type="button" class="btn bg-lightgray">Settings</button>
-            </div>
-        </div>
+          </div>
+
+          <!-- Left-aligned profile info -->
+          <div class="align-items-left mt-3 w-100">
+            <p class="black-txt">${this.lang.getTranslation(["profile", "winRateLabel"])} ${winRate}</p>
+          </div>
+          <div class="align-items-left mt-3 w-100">
+            <p class="black-txt">${battleHistory}</p>
+          </div>
+          <div id="battleHistory"></div>
+          <div class="align-items-right mt-3 w-100">
+            <a id=settingsButton type="button" class="btn bg-lightgray" href="/settings">Settings</a>
+          </div>
           `;
+    const app = document.querySelector("#app");
+    app.innerHTML = htmlContent;
+    return htmlContent;
+    //         return `
+    // <div class="background">
+    //                     <div class="Profile container">
+    //                         <div class="d-flex justify-content-center w-100">
+    //                             <!-- Top profile section (centered) -->
+    //                             <div class="top-profile d-flex flex-column justify-content-center align-items-center">
+    //                                 <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: ${userData.profilePic}"></div>
+    //                                 <a class="black-txt">${userData.username}</a>
+    //                             </div>
+    //                         </div>
+    //
+    //                         <!-- Left-aligned profile info -->
+    //                         <div class="align-items-left mt-3 w-100">
+    //                             <p class="black-txt">Win Rate: ${winRate}</p>
+    //                         </div>
+    //                         <div class="align-items-left mt-3 w-100">
+    //                             <p class="black-txt">${battleHistory}</p>
+    //                         </div>
+    //                         <div class="border bd">
+    //                             <div class="row justify-content-center pym-1 w-100">
+    //                                 <div class="col-8 bg-darkgreen text-white text-center py-5 m-3">
+    //                                     <div class="d-flex justify-content-around align-items-center">
+    //                                         <div>
+    //                                             <div class="player-circle">
+    //                                             </div>
+    //                                             <div class="no-overflow player-name">
+    //                                                 <span>dddddddddddddddddddddddddddU1</span>
+    //                                             </div>
+    //                                         </div>
+    //                                         <div>
+    //                                             <h4>WIN-LOSE</h4>
+    //                                             <h2>1 - 0</h2>
+    //                                             <p>DATE</p>
+    //                                         </div>
+    //                                         <div>
+    //                                             <div class="player-circle">
+    //                                             </div>
+    //                                             <div class="no-overflow player-name">
+    //                                                 <span>dU2</span>
+    //                                             </div>
+    //                                         </div>
+    //                                     </div>
+    //                                 </div>
+    //                                 <div class="col-8 bg-darkred text-white text-center py-5 m-3">
+    //                                     <div class="d-flex justify-content-around align-items-center">
+    //                                         <div>
+    //                                             <div class="player-circle">
+    //                                             </div>
+    //                                             <div class="no-overflow player-name">
+    //                                                 <span>dddddddddddddddddddddddddddU1</span>
+    //                                             </div>
+    //                                         </div>
+    //                                         <div>
+    //                                             <h4>WIN-LOSE</h4>
+    //                                             <h2>1 - 0</h2>
+    //                                             <p>DATE</p>
+    //                                         </div>
+    //                                         <div>
+    //                                             <div class="player-circle">
+    //                                             </div>
+    //                                             <div class="no-overflow player-name">
+    //                                                 <span>dU2</span>
+    //                                             </div>
+    //                                         </div>
+    //                                     </div>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                         <br>
+    //                         <div class="align-items-right mt-3 w-100">
+    //                             <a id=settingsButton type="button" class="btn bg-lightgray" href="/settings">Settings</a>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //
+    //            `;
+  }
+
+  async addEventListeners() {
+    const button = document.querySelector("#settingsButton");
+    if (button) {
+    button.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+        navigateTo("/settings");
+    });
+    }
+  }
+
+  removeEventListeners() {
+    const button = document.querySelector("#settingsButton");
+    if (button) {
+      console.info("removing event click on button : " + button.innerText);
+      button.removeEventListener("click", this.loginEvent);
+    }
+    document.querySelectorAll('[data-link="view"]').forEach((button) => {
+      console.info("removing event click on button : " + button.innerText);
+      button.removeEventListener("click", this.handleClick);
+    });
+  }
+
+  removeCss() {
+    document.querySelectorAll(".page-css").forEach((e) => {
+      console.log("removing: ", e);
+      e.remove();
+    });
+  }
+  destroy() {
+    this.cleanModal();
+    this.removeEventListeners();
+    this.removeCss();
   }
 }

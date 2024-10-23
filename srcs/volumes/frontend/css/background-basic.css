@@ -1,9 +1,10 @@
 .background {
     background-image: url("../img/pong.gif");
-    /* height: 100%; */
-    width: 100%;
-    min-height: 100vh;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    min-height: 100vh;
+    height: 100%;
+    width: 100%;
+    position: relative;
 }

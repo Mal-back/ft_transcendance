@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED=1
 RUN mkdir -p /code
 RUN mkdir -p /certs
 RUN mkdir -p /init
+RUN mkdir -p /media/
 
 COPY certs/* /certs
 COPY init/* /init

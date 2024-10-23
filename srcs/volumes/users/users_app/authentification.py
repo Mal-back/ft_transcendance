@@ -33,5 +33,3 @@ class CustomAuthentication(BaseAuthentication):
             return(None, None)
         user_obj = PublicUser.objects.get(username=user)
         return(user_obj, token)
-
-

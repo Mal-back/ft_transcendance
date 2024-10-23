@@ -47,6 +47,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
             raise ValidationError('Forbidden user name')
         if 'israel' in value.lower():
             raise ValidationError("You can't choose a non-existing country as username. Free Palestine !")
+        for char in value:
+            if char not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_':
+                raise ValidationError('Username should only contain letters, numbers, "-", "_" and "."')
         return value
 
     def validate(self, data):
@@ -64,18 +67,49 @@ class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=256)
     password = serializers.CharField(write_only=True)
 
+class PasswordModficationSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=128, required=True, write_only=True)
+    new_password = serializers.CharField(max_length=128, required=True, write_only=True)
+    new_password2 = serializers.CharField(max_length=128, required=True, write_only=True)
+
+    def validate_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError('Old password is incorrect')
+        return value
+    def validate(self, data):
+        if data['new_password'] != data['new_password2']:
+            raise serializers.ValidationError("Passwords dont't match")
+        return data
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
+
+
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     @classmethod
+#     def get_token(cls, user):
+#         token = super().get_token(user)
+#         token['username'] = user.username
+#         del token['user_id']
+#         if user.groups.filter(name='service').exists():
+#             token.set_exp(lifetime=timedelta(hours=12))
+#             token.set_exp(lifetime=timedelta(days=3), claim='refresh')
+#         else:
+#             token.set_exp(lifetime=timedelta(minutes=5))
+#             token.set_exp(lifetime=timedelta(days=1), claim='refresh')
+#
+#         return token
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         token['username'] = user.username
         del token['user_id']
-        if user.groups.filter(name='service').exists():
-            token.set_exp(lifetime=timedelta(hours=12))
-            token.set_exp(lifetime=timedelta(days=3), claim='refresh')
-        else:
-            token.set_exp(lifetime=timedelta(minutes=3))
-            token.set_exp(lifetime=timedelta(hours=6), claim='refresh')
+        token.set_exp(lifetime=timedelta(minutes=5))
+        token.payload['exp'] = (datetime.utcnow() + timedelta(days=1)).timestamp()
 
         return token
 

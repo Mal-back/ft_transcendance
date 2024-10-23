@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('DJANGO_MATCHMAKING_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['users', 'localhost', 'auth']
+ALLOWED_HOSTS = ['users', 'localhost', 'auth', 'matchmaking']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'users_app.middleware.SetRequestHostMiddleware',
+    'matchmaking_app.middleware.SetRequestHostMiddleware',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -132,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'users_app.authentification.CustomAuthentication',
+            'matchmaking_app.authentification.CustomAuthentication',
             ),
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
         'PAGE_SIZE': 10,

@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('DJANGO_USERS_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['users', 'localhost', 'auth']
+ALLOWED_HOSTS = ['users', 'localhost', 'auth', 'avatar_manager']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'users_app.apps.UsersAppConfig',
+    'ms_client.apps.MsClientConfig',
     'corsheaders',
 ]
 
@@ -149,6 +150,12 @@ SIMPLE_JWT = {
             "ALGORITHM": "RS512",
             "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
             "AUTH_HEADER_TYPES": ("Bearer",),
+        }
+
+MS_CLIENT_SETTINGS = {
+        'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
+        'SERVICE_NAME':'users',
+        'SERVICE_SECRET':'acab1313',
         }
 
 # Internationalization
