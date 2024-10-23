@@ -41,7 +41,7 @@
         "LocalMatch": "MODE LOCAL",
         "RandomMatch": "MATCH ALÉATOIRE",
         "FriendlyMatch": "MATCH AMICAL",
-        "CreateNew": "CRÉER UN NOUVEAU",
+        "CreateNew": "CRÉER",
         "Join": "REJOINDRE",
         "PendingInvites": "INVITATIONS EN ATTENTE"
     },

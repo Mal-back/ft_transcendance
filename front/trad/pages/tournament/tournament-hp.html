@@ -7,12 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/notif.css">
-    <link rel="stylesheet" href="css/colors/colors.css">
-    <link rel="stylesheet" href="css/home.css">
-    <link rel="stylesheet" href="css/background-basic.css">
-    <title>Notif</title>
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/notif.css">
+    <link rel="stylesheet" href="../../css/colors/colors.css">
+    <link rel="stylesheet" href="../../css/tournament-hp.css">
+    <link rel="stylesheet" href="../../css/background-basic.css">
+    <title>Tournament-Homepage</title>
 </head>
 
 <body>
@@ -39,11 +39,7 @@
                             <div id="notificationcount" class=""></div>
                         </span>
                     </button>
-
-
                 </div>
-
-
                 <div id="mainTitle" class="text-black text-center flex-grow-1" style="font-size: 3.5vh;">
                     FT_TRANSCENDENCE
                 </div>
@@ -62,6 +58,7 @@
             </div>
         </div>
     </header>
+
     <!-- Invite Modal -->
     <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -81,6 +78,7 @@
             </div>
         </div>
     </div>
+
     <div class="container-fluid">
         <div class="row">
             <div class="offcanvas offcanvas-start bg-dark text-white" id="sidebar" tabindex="-1"
@@ -107,38 +105,41 @@
                     </div>
                 </div>
             </div>
-
             <!-- Main Content -->
             <div class="col d-flex justify-content-center">
                 <div class="background">
-                    <div class="container">
-                        <section class="home text-center p-5">
-                            <h1 id="homeTitle" class="welcome">Welcome to Our Pong!</h1>
-                            <p id="descriptionHomeMessage" class="welcome-msg">Explore the depth of the Pong game, play
-                                with
-                                friends, and personalize your profile as you desire!</p>
-                            <p id="descriptionHomeMessage2" class="welcome-msg">✨ Have fun! ✨</p>
-                        </section>
+                    <div class="custom-container d-flex flex-column justify-content-center align-items-center">
+                        <h1 class="mb-3 text-center title white-txt text-decoration-underline" id="TournamentTitle">
+                            Tournament</h1>
+                        <br>
+                        <button type="button" class="btn btn-light white-txt btn-lg bg-green  custom-button"
+                            id="LocalModeButton">LOCAL
+                            MODE</button>
+                        <br>
+                        <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
+                            id="CreateNewButton">CREATE
+                            NEW</button>
+                        <br>
+                        <button type="button" class="btn btn-light white-txt btn-lg bg-purple custom-button"
+                            id="JoinButton">JOIN</button>
+                        <br>
+                        <!-- <button type="button" class="btn btn-light white-txt btn-lg bg-darkred custom-button">PENDING
+                            INVITES</button>
+                        <br> -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-
     <script>
         function changeLanguage(translations) {
             const translation = translations;
             console.log(translation);
             if (translation) {
                 // Update main content translations
-                document.getElementById('homeTitle').textContent = translation.homePage.homeTitle;
-                document.getElementById('descriptionHomeMessage').textContent = translation.homePage.descriptionHomeMessage;
-                document.getElementById('descriptionHomeMessage2').textContent = translation.homePage.descriptionHomeMessage2;
-
                 // Update menu translations using innerHTML
                 document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
                 document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
@@ -146,6 +147,13 @@
                 document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
                 document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
                 document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
+
+                document.getElementById('TournamentTitle').innerText = `${translation.Matchmaking.Tournament}`;
+                document.getElementById('LocalModeButton').innerText = `${translation.Matchmaking.LocalMatch}`;
+                document.getElementById('CreateNewButton').innerText = `${translation.Matchmaking.CreateNew}`;
+                document.getElementById('JoinButton').innerText = `${translation.Matchmaking.Join}`;
+                console.log(translation);
+
             }
         }
 
@@ -155,7 +163,7 @@
             const params = new URLSearchParams(window.location.search);
             const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
             console.log(selectedLang);
-            const translationFile = selectedLang === 'fr' ? './json/fr.json' : './json/en.json';
+            const translationFile = selectedLang === 'fr' ? '../../json/fr.json' : '../../json/en.json';
 
             fetch(translationFile)
                 .then(response => {
@@ -172,7 +180,7 @@
                 });
         });
     </script>
-    <script src="js/notif.js"></script>
+    <script src="../../js/notif.js"></script>
 </body>
 
 </html>

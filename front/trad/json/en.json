@@ -41,7 +41,7 @@
         "LocalMatch": "LOCAL MODE",
         "RandomMatch": "RANDOM MATCH",
         "FriendlyMatch": "FRIENDLY MATCH",
-        "CreateNew": "CREATE NEW",
+        "CreateNew": "CREATE",
         "Join": "JOIN",
         "PendingInvites": "PENDING INVITES"
     },
