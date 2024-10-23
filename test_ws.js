@@ -432,10 +432,10 @@ function testChannelFUll() {
 	};
 }
 
-// testInit();
-// testStart();
+testInit();
+testStart();
 testGetConfig();
-// testPause();
-// testMove();
-// testSurrend();
-// testChannelFUll();
+testPause();
+testMove();
+testSurrend();
+testChannelFUll();

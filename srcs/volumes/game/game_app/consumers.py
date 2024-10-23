@@ -161,7 +161,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 
 	async def send_pause(self, event):
 		data = {"type" : "pause"}
-		data.update(event["Pause"])
+		data.update({"action" : event["Pause"]})
 		try:
 			await self.send(dumps(data))
 		except:
