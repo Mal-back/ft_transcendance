@@ -44,22 +44,21 @@ export default class extends AbstractView {
   async getHtml() {
     const htmlContent = `<div class="col d-flex flex-column align-items-center justify-content-center">
                 <div class="background background-battle d-flex flex-column align-items-center">
-                    <!-- Text Section: Usernames and Score -->
                     <div class="d-flex flex-row justify-content-between text-white text-section mt-3 w-80">
-                        <div class="text-center"> <!-- Center the text within the div -->
-                            <h3>Username1</h3>
+                        <div class="text-center d-flex"> 
+                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar"></div>
+                          <h3>${this.lang.getTranslation(["game", "leftPlayer"])}</h3>
                         </div>
-                        <div class="text-center"> <!-- Center the text within the div -->
+                        <div class="text-center">
                             <h3>0 - 0</h3>
                         </div>
-                        <div class="text-center"> <!-- Center the text within the div -->
-                            <h3>Username2</h3>
+                        <div class="text-center d-flex">
+                          <h3>${this.lang.getTranslation(["game", "rightPlayer"])}</h3>
+                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar"></div>
                         </div>
                     </div>
-
-                    <!-- Canvas Section: The game area -->
                     <div class="canvas-container">
-                        <canvas id="ongoing-game"></canvas>
+                      <canvas id="ongoing-game"></canvas>
                     </div>
                 </div>
             </div>`;

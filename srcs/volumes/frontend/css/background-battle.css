@@ -45,3 +45,10 @@ canvas {
     right: 0;
     border: 5px solid white;
 }
+
+.Avatar-Resize {
+    width: 8vw;
+    height: 8vh;
+    max-width: 80px;
+    max-height: 80px;
+}
