@@ -21,9 +21,6 @@ export default class extends AbstractView {
 
   async getHtml() {
     try {
-      // await this.makeFriend("toi");
-      // await this.makeFriend("moi");
-      // await this.makeFriend("joi");
     } catch (error) {
       console.error("error making friends:", error.message);
     }
@@ -36,14 +33,11 @@ export default class extends AbstractView {
     }
     if (tokenProfile == null) {
       console.log("token = ", tokenProfile);
-      showModal("Error", "User is not authentified");
-      navigateTo("/login");
       throw new Error("Redirect to login");
     }
 
     const mainDiv = document.createElement("div");
     mainDiv.innerHTML = await this.getMaindiv();
-    console.log("MainDiv:", mainDiv.innerHTML);
     return mainDiv.innerHTML;
   }
 
@@ -52,28 +46,32 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       if (username == friendname) {
         this.cleanModal();
-        showModal("Error", "can't add yourself as a friend");
+        showModal(
+          this.lang.getTranslation(["modal", "error"]),
+          this.lang.getTranslation(["Friends", "error", "yourself"]),
+        );
         return;
       }
       const request = await this.makeRequest(
         `/api/users/${username}/friend/add/${friendname}/`,
         "PATCH",
       );
-      console.log("Request:", request);
-
       const response = await fetch(request);
       if (response.ok) {
         const data = await this.getErrorLogfromServer(response);
-        showModal("Success", data);
+        showModal(this.lang.getTranslation(["modal", "success"]), data);
         navigateTo("/friends");
       } else {
         console.info("RESPONSE: ", response);
         const dataError = await this.getErrorLogfromServer(response);
-        showModal("Error", dataError);
+        showModal(this.lang.getTranslation(["modal", "error"]), dataError);
       }
     } catch (error) {
-      console.error("error makefriends:", error.message);
-      showModal("Error", error.message);
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("error makefriends:", error);
+        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
+      }
     }
   }
 
@@ -81,13 +79,12 @@ export default class extends AbstractView {
     let friendList = null;
     try {
       friendList = await this.getFriendList();
-      console.log("friendlist:", friendList);
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
         showModal(this.lang.getTranslation(["modal", "error"]), error.message);
         console.error("GetMainDiv", error);
-        friendList = `<div>Sorry, Couldnt get your Friends list</div>`;
+        friendList = `<div class="removeElem">${this.lang.getTranslation(["Friends", "error", "failList"])}</div>`;
       }
     }
 
@@ -180,16 +177,20 @@ export default class extends AbstractView {
           const newFriendsHtml = friendsArray
             .map((friendJson) => this.createFriendElement(friendJson))
             .join("");
-          friendList.innerHTML += newFriendsHtml; // Append new friends
-          nextPage = pageData.next; // Update next page
+          friendList.innerHTML += newFriendsHtml;
+          nextPage = pageData.next;
         } else {
           const log = await this.getErrorLogfromServer(response);
           console.log(log);
+          showModal(this.lang.getTranslation(["modal", "error"]), log);
           break;
         }
       } catch (error) {
-        console.error("Error fetching next page:", error.message);
-        break;
+        if (error instanceof CustomError) throw error;
+        else {
+          console.error("Error fetching next page:", error);
+          break;
+        }
       }
     }
     return `<div class="list-group removeElem" id="friendList">${friendList.innerHTML}</div>`;
@@ -204,20 +205,20 @@ export default class extends AbstractView {
     console.log("AVATAR:", friendAvatar);
 
     return `
-      <div class="list-group-item d-flex align-items-center mb3 rounded">
-        <div class="rounded-circle Avatar ${friendStatus} me-3" style="${friendAvatar}" alt="Avatar"></div>
-        <div class="flex-fill">
-          <h5 class="mb-0">${friendJson.username}</h5>
+      <div class="list-group-item d-flex align-items-center mb3 rounded removeElem">
+        <div class="removeElem rounded-circle Avatar ${friendStatus} me-3" style="${friendAvatar}" alt="Avatar"></div>
+        <div class="flex-fill removeElem">
+          <h5 class="mb-0 removeElem">${friendJson.username}</h5>
           <button
-            class="text-decoration-none text-primary"
+            class="text-decoration-none text-primary removeElem"
             data-bs-toggle="modal"
             data-bs-target="#modal${friendJson.username}"
           >
-            Show Profile
+            ${this.lang.getTranslation(["Friends", "showProfile"])}
           </button>
         </div>
-        <button class="btn btn-sm btn-danger ms-auto removefriend">
-          <i class="bi bi-x-circle"></i> Remove
+        <button class="btn btn-sm btn-danger ms-auto removefriend removeElem">
+          <i class="bi bi-x-circle removeElem"></i> ${this.lang.getTranslation(["Friends", "removeButton"])}
         </button>
       </div>
       ${this.createFriendModal(friendJson)}
@@ -231,18 +232,18 @@ export default class extends AbstractView {
       : "status-offline";
 
     return `
-      <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="${modalId}Label">${friendJson.username}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal fade removeElem" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered removeElem">
+          <div class="modal-content removeElem">
+            <div class="modal-header removeElem">
+              <h5 class="modal-title removeElem" id="${modalId}Label">${friendJson.username}</h5>
+              <button type="button" class="btn-close removeElem" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              <div class="d-flex flex-column justify-content-center align-items-center">
-                <div class="rounded-circle Avatar ${modalStatus} mb-3" style="background-image: url('${friendJson.profilePic}');"></div>
-                <h3>${friendJson.username}</h3>
-                <p class="black-txt">Win Rate: ${friendJson.single_games_win_rate}</p>
+            <div class="modal-body removeElem">
+              <div class="d-flex flex-column justify-content-center align-items-center removeElem">
+                <div class="removeElem rounded-circle Avatar ${modalStatus} mb-3" style="background-image: url('${friendJson.profilePic}');"></div>
+                <h3 class="removeElem">${friendJson.username}</h3>
+                <p class="black-txt removeElem">Win Rate: ${friendJson.single_games_win_rate}</p>
               </div>
             </div>
           </div>
@@ -251,12 +252,13 @@ export default class extends AbstractView {
     `;
   }
 
-  noFriendDiv(friendList) {
-    friendList.innerHTML = `
-      <div class="list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
-        <p class="h4">✨ <i>Maidenless</i> ✨</p>
-        <p class="h4">Please, add friends</p>
-      </div>`;
+  noFriendDiv() {
+    return `<div class="list-group removeElem" id="friendsList">
+              <div class="removeElem list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
+                <p class="h4 removeElem">✨ <i>Maidenless</i> ✨</p>
+                <p class="h4 removeElem">Please, add friends</p>
+              </div>
+            </div>`;
   }
 
   async removeFriends(friendUsername) {
@@ -324,5 +326,6 @@ export default class extends AbstractView {
     this.cleanModal();
     this.removeEventListeners();
     this.removeCss();
+    this.removeElem();
   }
 }

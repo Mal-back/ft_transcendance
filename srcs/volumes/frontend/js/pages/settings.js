@@ -740,7 +740,8 @@ export default class extends AbstractView {
         navigateTo("/settings");
       } else {
         console.log("RESPONSE FAIL:", response);
-        const data = await response.json();
+        const data = await this.getErrorLogfromServer(response);
+        showModal(this.lang.getTranslation(["modal", "error"]), data);
         console.log("DATA: ", data);
       }
     } catch (error) {
@@ -784,10 +785,14 @@ export default class extends AbstractView {
         return;
       }
       const username = sessionStorage.getItem("username_transcendence");
+      console.log(
+        "body request:",
+        JSON.stringify(`{profile_pic: ${chosenImageUrl}}`),
+      );
       const request = await this.makeRequest(
         `/api/users/${username}/default_pic/`,
         "PATCH",
-        `${chosenImageUrl}`,
+        { profile_pic: `${chosenImageUrl}` },
       );
       const response = await fetch(request);
       if (response.ok) {

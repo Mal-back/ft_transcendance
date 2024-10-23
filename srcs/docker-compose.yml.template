@@ -226,7 +226,7 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/auth
+      device: placeholder/srcs/volumes/auth
   data_django_users:
     name: data_django_users
     driver: local

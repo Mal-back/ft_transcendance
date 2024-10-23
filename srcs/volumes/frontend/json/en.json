@@ -171,6 +171,10 @@
     "removeButton": "Remove",
     "showProfile": "Show profile",
     "winRateLabel": "Win Rate:",
-    "warning": "Please add friends"
+    "warning": "Please add friends",
+    "error": {
+      "yourself": "You can't add yourself as a friend",
+      "failList": "Sorry, we couldn't get your friends list"
+    }
   }
 }
