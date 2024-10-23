@@ -6,15 +6,11 @@ import threading
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import logging
-from .Coord import Coordinates, Direction
-log = logging.getLogger(__name__)
-from attrs import define, field, validators
-from .Math import CollisionCircleSegment, ImpactProjection, Circle, GetBounceDir, GetNormal
-from .Player import Player
-from .Ball import Ball
+from .Frame import Frame
+from .Config import Config
 
+log = logging.getLogger(__name__)
 allowed_movement = ["UP", "DOWN", "NONE"]
-allowed_pause = ["stop", "start"]
         
 # @define
 # class Player:
@@ -149,55 +145,55 @@ allowed_pause = ["stop", "start"]
 #         return { "position": self.position.render(),
 #         }
     
-@define
-class Board:
-    ball: Ball = field(validator=validators.instance_of(Ball), default=Ball())
-    dimension : Coordinates = field(validator=validators.instance_of(Coordinates), default=Const["DIMENSION"].value)
+# @define
+# class Board:
+#     ball: Ball = field(validator=validators.instance_of(Ball), default=Ball())
+#     dimension : Coordinates = field(validator=validators.instance_of(Coordinates), default=Const["DIMENSION"].value)
     
-    def render(self) -> dict:
-        return { "Ball" : self.ball.render(),
-                "Dimensions" : self.dimension.render(),
-        }
+#     def render(self) -> dict:
+#         return { "Ball" : self.ball.render(),
+#                 "Dimensions" : self.dimension.render(),
+#         }
     
-@define
-class Frame:
-    board: Board = field(validator=validators.instance_of(Board), default=Board())
-    player_1 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_1", position=Coordinates(Const["X_PLAYER_1"].value, Const["Y_PLAYER"].value)))
-    player_2 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_2", position=Coordinates(Const["X_PLAYER_2"].value, Const["Y_PLAYER"].value)))
+# @define
+# class Frame:
+#     board: Board = field(validator=validators.instance_of(Board), default=Board())
+#     player_1 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_1", position=Coordinates(Const["X_PLAYER_1"].value, Const["Y_PLAYER"].value)))
+#     player_2 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_2", position=Coordinates(Const["X_PLAYER_2"].value, Const["Y_PLAYER"].value)))
     
-    reset : bool = False
-    end : bool = False
+#     reset : bool = False
+#     end : bool = False
  
-    def render(self) -> dict:
-        return { "ball" : self.board.ball.render(),
-                "player_1" : self.player_1.render(),
-                "player_2" : self.player_2.render(),    
-        }
+#     def render(self) -> dict:
+#         return { "ball" : self.board.ball.render(),
+#                 "player_1" : self.player_1.render(),
+#                 "player_2" : self.player_2.render(),    
+#         }
         
-@define
-class Config:
-    player_1_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
-    player_2_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
-    player_1_username : str = field(validator=validators.instance_of(str))
-    player_2_username : str = field(validator=validators.instance_of(str))
-    ball_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
-    board_len : int = field(validator=validators.instance_of(int), default=Const["BOARD_LEN"].value)
-    board_height : int = field(validator=validators.instance_of(int), default=Const["BOARD_HEIGHT"].value)
-    ball_size : int = field(validator=validators.instance_of(int), default=Const["BALL_SIZE"].value)
-    pad_len : int = field(validator=validators.instance_of(int), default=Const["PAD_LEN"].value)
-    pad_height : int = field(validator=validators.instance_of(int), default=Const["PAD_HEIGHT"].value)
-    pad_offset : int = field(validator=validators.instance_of(int), default=Const["PAD_OFFSET"].value)
+# @define
+# class Config:
+#     player_1_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
+#     player_2_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
+#     player_1_username : str = field(validator=validators.instance_of(str))
+#     player_2_username : str = field(validator=validators.instance_of(str))
+#     ball_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
+#     board_len : int = field(validator=validators.instance_of(int), default=Const["BOARD_LEN"].value)
+#     board_height : int = field(validator=validators.instance_of(int), default=Const["BOARD_HEIGHT"].value)
+#     ball_size : int = field(validator=validators.instance_of(int), default=Const["BALL_SIZE"].value)
+#     pad_len : int = field(validator=validators.instance_of(int), default=Const["PAD_LEN"].value)
+#     pad_height : int = field(validator=validators.instance_of(int), default=Const["PAD_HEIGHT"].value)
+#     pad_offset : int = field(validator=validators.instance_of(int), default=Const["PAD_OFFSET"].value)
     
-    def render(self) -> dict:
-        return { "board_len" : self.board_len,
-                "board_height" : self.board_height,
-                "ball_size" : self.ball_size,
-                "pad_len" : self.pad_len * 2,
-                "pad_height" : self.pad_height * 2,
-                "player_1" : {"pos" : self.player_1_pos.render(), "username" : self.player_1_username},
-                "player_2" : {"pos" : self.player_2_pos.render(), "username" : self.player_2_username},
-                "ball": self.ball_pos.render(),
-        }
+#     def render(self) -> dict:
+#         return { "board_len" : self.board_len,
+#                 "board_height" : self.board_height,
+#                 "ball_size" : self.ball_size,
+#                 "pad_len" : self.pad_len * 2,
+#                 "pad_height" : self.pad_height * 2,
+#                 "player_1" : {"pos" : self.player_1_pos.render(), "username" : self.player_1_username},
+#                 "player_2" : {"pos" : self.player_2_pos.render(), "username" : self.player_2_username},
+#                 "ball": self.ball_pos.render(),
+#         }
     
 class LocalEngine(threading.Thread):
     def __init__(self, game_id, **kwargs):
@@ -229,7 +225,7 @@ class LocalEngine(threading.Thread):
             with self.end_lock:
                 if self.end == True:
                     break
-            time.sleep(1/60)
+            time.sleep(self.frame_rate)
 
     def start_game(self):
         with self.start_lock:
@@ -371,7 +367,6 @@ class LocalEngine(threading.Thread):
             "Pause": action
         })
         
-  
     def send_end_state(self, last_frame) -> None:
         data = {"winner" : self.winner,
           "score_1" : last_frame.player_1.score,
