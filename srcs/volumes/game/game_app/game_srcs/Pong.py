@@ -292,7 +292,6 @@ class LocalEngine(threading.Thread):
         frame.player_1.move()
         frame.player_2.move()
         return frame
->>>>>>> game-branch-leo
 
     def move_ball(self, frame : Frame) -> Frame:
         if frame.board.ball.direction.dx < 0:
