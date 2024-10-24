@@ -1,14 +1,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import SyncConsumer
-from game_app.game_srcs.Pong import LocalEngine
+from game_app.game_srcs.Pong_local import PongLocalEngine
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-import django
-# django.setup()
 from game_app.models import LocalGame
 import uuid
-
 
 log = logging.getLogger(__name__)
 
@@ -76,11 +73,17 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			await sync_to_async(game.delete)()
 		except Exception:
 			log.info("Cannot delet game model id " + self.group_name)
-		await self.channel_layer.send("local_engine", {
-			"type": "end.thread",
-			"game_id": self.group_name,
-		})
-		await self.channel_layer.group_discard(self.group_name, self.channel_name)        
+		try:
+			await self.channel_layer.send("local_engine", {
+				"type": "end.thread",
+				"game_id": self.group_name,
+			})
+		except:
+			log.info("Error sending end_thread to LocalEngine")
+		try:
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
+		except:
+			log.info("Can not discard channel " + self.channel_name + " from group " + self.group_name) 
 	 
 	async def disconnect(self, code):
 		log.info("Player " + self.username + " disconnected")
@@ -88,22 +91,34 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.clean_game()
 	
 	async def init_game(self):
-		await self.channel_layer.send("local_engine", {
-			"type": "init.game",
-			"game_id": self.group_name,
-		})
+		try:
+			await self.channel_layer.send("local_engine", {
+				"type": "init.game",
+				"game_id": self.group_name,
+			})
+		except:
+			log.info("Error sending init_game to LocalEngine")
+			self.close()
 		
 	async def get_config(self):
-		await self.channel_layer.send("local_engine", {
-			"type": "get.config",
-			"game_id": self.group_name,
-		})
+		try:
+			await self.channel_layer.send("local_engine", {
+				"type": "get.config",
+				"game_id": self.group_name,
+			})
+		except:
+			log.info("Error sending get_config to LocalEngine")
+			self.close()
 
 	async def start_game(self):
-		await self.channel_layer.send("local_engine", {
-			"type": "start.game",
-			"game_id": self.group_name,
-		})
+		try:
+			await self.channel_layer.send("local_engine", {
+				"type": "start.game",
+				"game_id": self.group_name,
+			})
+		except:
+			log.info("Error sending start_game to LocalEngine")
+			self.close()   
 
 	async def move(self, content):
 		try:
@@ -112,12 +127,16 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		except KeyError:
 			log.error("Key error in LocalPlayerConsumer.move()")
 			return
-		await self.channel_layer.send("local_engine", {
-			"type" : "move",
-			"game_id": self.group_name,
-			"player" : player,
-			"direction": direction
-		})
+		try:
+			await self.channel_layer.send("local_engine", {
+				"type" : "move",
+				"game_id": self.group_name,
+				"player" : player,
+				"direction": direction
+			})
+		except:
+			log.info("Error sending move to LocalEngine")
+			self.close()
 		
 	async def pause(self, content):
 		try:
@@ -125,11 +144,15 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		except KeyError:
 			log.error("Key error in LocalPlayerConsumer.pause()")
 			return
-		await self.channel_layer.send("local_engine", {
-			"type" : "pause",
-			"game_id" : self.group_name,
-			"action" : action,
-		   })
+		try:
+			await self.channel_layer.send("local_engine", {
+				"type" : "pause",
+				"game_id" : self.group_name,
+				"action" : action,
+			})
+		except:
+			log.info("Error sending pause to LocalEngine")
+			self.close()
   
 	async def surrend(self, content):
 		try:
@@ -137,11 +160,15 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		except KeyError:
 			log.error("Key error in LocalPlayerConsumer.pause()")
 			return
-		await self.channel_layer.send("local_engine", {
-			"type" : "surrend",
-			"game_id" : self.group_name,
-			"surrender": surrender,
-		   })		
+		try:
+			await self.channel_layer.send("local_engine", {
+				"type" : "surrend",
+				"game_id" : self.group_name,
+				"surrender": surrender,
+			})
+		except:
+			log.info("Error sending surrend to LocalEngine")
+			self.close()
 
 	async def send_error(self, event):
 		data = {"type" : "error"}
@@ -220,12 +247,12 @@ class LocalGameConsumer(SyncConsumer):
 			{"type": "send.error", "Error" : error_msg})
 		
 	def init_game(self, event):
-		game_id = event["game_id"]
+		game_id = event["game_id"]		
 		if game_id in self.game_instances:
 			print("Game thread for room " + str(game_id) + " is already initialized")
 			self.error("init_game : game already initialized", game_id)
 			return
-		self.game_instances[game_id] = LocalEngine(game_id=game_id)
+		self.game_instances[game_id] = PongLocalEngine(game_id=game_id)
 		self.game_instances[game_id].start()
 
 	def start_game(self, event):

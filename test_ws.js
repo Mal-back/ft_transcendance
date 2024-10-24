@@ -38,9 +38,12 @@ function testInit() {
 			type : "init_game",
 		})) }, 1700)
 		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "start_game",
+		})) }, 1750)
+		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "init_game",
 		})) }, 1900)
-		setTimeout(() => { 	socket.close()}, 2100)
+		setTimeout(() => { 	socket.close()}, 3500)
 
 	}
 	socket.onmessage = function(event){
@@ -136,9 +139,9 @@ function testGetConfig() {
 	socket.onmessage = function(event){
 		const msg = event.data;
 		console.log(`${msg}`)
-		socket.send(JSON.stringify({
-			type : "get_config",
-		}));
+		// socket.send(JSON.stringify({
+		// 	type : "get_config",
+		// }));
 	}
 	socket.onerror = function(event) {
 	  console.log('Error occurred while connecting to the WebSocket server');
@@ -180,25 +183,33 @@ function testPause() {
 			type : "false",
 			surrender : "player_1"
 		})) }, 1300)
-		setTimeout(() => { 	socket.send(JSON.stringify({
-			surrender : "player_1"
-		})) }, 1500)
+		// setTimeout(() => { 	socket.send(JSON.stringify({
+		// 	surrender : "player_1"
+		// })) }, 1500)
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "start_game",
 		})) }, 2100)
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "pause",
+			action: "stop"
+		})) }, 2400)
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "pause",
+			action: "start"
+		})) }, 3000)
 
 	}
 	socket.onmessage = function(event){
 		const msg = event.data;
 		console.log(`${msg}`)
-		setTimeout(() => { 	socket.send(JSON.stringify({
-			type : "pause",
-			action : "stop"
-		})) }, 50)
-		setTimeout(() => { 	socket.send(JSON.stringify({
-			type : "pause",
-			action : "start"
-		})) }, 1000)
+		// setTimeout(() => { 	socket.send(JSON.stringify({
+		// 	type : "pause",
+		// 	action : "stop"
+		// })) }, 50)
+		// setTimeout(() => { 	socket.send(JSON.stringify({
+		// 	type : "pause",
+		// 	action : "start"
+		// })) }, 1000)
 	}
 	socket.onerror = function(event) {
 	  console.log('Error occurred while connecting to the WebSocket server');
@@ -432,6 +443,76 @@ function testChannelFUll() {
 	};
 }
 
+function createInstance() {
+	const WebSocket = require('ws');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	socket.onopen = function(event) {
+		console.log("Socket connected")
+		socket.send(JSON.stringify({
+			type : "init_game",
+		}))
+		socket.send(JSON.stringify({
+			type : "get_config",
+		}))
+		socket.send(JSON.stringify({
+			type : "start_game",
+		}))
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "pause",
+			action: "stop"
+		})) }, 4500)
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "pause",
+			action: "start"
+		})) }, 9500)
+	}
+	socket.onmessage = function(event){
+		const msg = event.data;
+		console.log(`${msg}`)
+	}
+	socket.onerror = function(event) {
+	  console.log('Error occurred while connecting to the WebSocket server');
+	};
+	socket.onclose = function(event) {
+	  console.log('Socket 1 Disconnected from the WebSocket server');
+	};
+}
+
+function testMultipleInstances(n) {
+	for (let i = 0 ; i < n ; i++) {
+		console.log("Creating instance num " + i)
+		createInstance()
+	}
+}
+
+function testWss() {
+	const WebSocket = require('ws');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	socket.onopen = function(event) {
+		console.log("Socket 1 connected")
+		socket.send(JSON.stringify({
+			type : "init_game",
+		}))
+		socket.send(JSON.stringify({
+			type : "get_config",
+		}))
+		socket.send(JSON.stringify({
+			type : "start_game",
+		}))
+	}
+	socket.onmessage = function(event){
+		const msg = event.data;
+		console.log(`${msg}`)
+	}
+	socket.onerror = function(event) {
+	  console.log('Error occurred while connecting to the WebSocket server');
+	};
+	socket.onclose = function(event) {
+	  console.log('Socket 1 Disconnected from the WebSocket server');
+	};
+}
+
+
 testInit();
 testStart();
 testGetConfig();
@@ -439,3 +520,5 @@ testPause();
 testMove();
 testSurrend();
 testChannelFUll();
+testWss();
+testMultipleInstances(50)

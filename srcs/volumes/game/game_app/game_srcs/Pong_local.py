@@ -12,7 +12,7 @@ from .Config import Config
 
 log = logging.getLogger(__name__)
 allowed_movement = ["UP", "DOWN", "NONE"]
-        
+		
 # @define
 # class Player:
 #     username: str = field(validator=validators.instance_of(str), default="default_name")
@@ -28,7 +28,7 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #         return { "position": self.top_left().render(),
 #             "score": self.score,
 #         }
-    
+	
 #     def top_left(self) -> Coordinates:
 #         return Coordinates(self.position.x - self.len, self.position.y - self.height)
 
@@ -61,7 +61,7 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #     def reset_direction(self) -> None:
 #         self.direction = Direction(0, 0)
 #         self.movement = "NONE"
-        
+		
 #     def read_movement(self) -> Direction:
 #         if self.movement == "UP":
 #             return Direction(0, -self.speed)
@@ -69,7 +69,7 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #             return Direction(0, +self.speed)
 #         else:
 #             return self.direction
-    
+	
 #     def move(self) -> None:
 #         self.direction = self.read_movement()
 #         self.direction = self.correct_direction()
@@ -137,31 +137,31 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #             self.handle_wall_collision()
 #         else:
 #             self.position = self.position.move(self.direction)
-    
+	
 #     def reset(self) -> None:
 #         self.position = Const["CENTER"].value
 #         self.direction = Const["BALL_DIR"].value
-    
+	
 #     def render(self) -> dict:
 #         return { "position": self.position.render(),
 #         }
-    
+	
 # @define
 # class Board:
 #     ball: Ball = field(validator=validators.instance_of(Ball), default=Ball())
 #     dimension : Coordinates = field(validator=validators.instance_of(Coordinates), default=Const["DIMENSION"].value)
-    
+	
 #     def render(self) -> dict:
 #         return { "Ball" : self.ball.render(),
 #                 "Dimensions" : self.dimension.render(),
 #         }
-    
+	
 # @define
 # class Frame:
 #     board: Board = field(validator=validators.instance_of(Board), default=Board())
 #     player_1 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_1", position=Coordinates(Const["X_PLAYER_1"].value, Const["Y_PLAYER"].value)))
 #     player_2 : Player = field(validator=validators.instance_of(Player), default=Player(username="player_2", position=Coordinates(Const["X_PLAYER_2"].value, Const["Y_PLAYER"].value)))
-    
+	
 #     reset : bool = False
 #     end : bool = False
  
@@ -170,7 +170,7 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #                 "player_1" : self.player_1.render(),
 #                 "player_2" : self.player_2.render(),    
 #         }
-        
+		
 # @define
 # class Config:
 #     player_1_pos : Coordinates = field(validator=validators.instance_of(Coordinates))
@@ -184,7 +184,7 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #     pad_len : int = field(validator=validators.instance_of(int), default=Const["PAD_LEN"].value)
 #     pad_height : int = field(validator=validators.instance_of(int), default=Const["PAD_HEIGHT"].value)
 #     pad_offset : int = field(validator=validators.instance_of(int), default=Const["PAD_OFFSET"].value)
-    
+	
 #     def render(self) -> dict:
 #         return { "board_len" : self.board_len,
 #                 "board_height" : self.board_height,
@@ -195,187 +195,200 @@ allowed_movement = ["UP", "DOWN", "NONE"]
 #                 "player_2" : {"pos" : self.player_2_pos.render(), "username" : self.player_2_username},
 #                 "ball": self.ball_pos.render(),
 #         }
-    
-class LocalEngine(threading.Thread):
+	
+class PongLocalEngine(threading.Thread):
 
-    def __init__(self, game_id, **kwargs):
-        super().__init__(daemon=True)
-        self.game_id = game_id
-        self.channel_layer = get_channel_layer()
-        self.frame = copy.deepcopy(Frame())
-        self.config = copy.deepcopy(Config(player_1_pos=self.frame.player_1.top_left(),
-            player_2_pos=self.frame.player_2.top_left(),
-            player_1_username=self.frame.player_1.username,
-            player_2_username=self.frame.player_2.username,
-            ball_pos=self.frame.board.ball.position))
-        self.frame_rate = 1 / 60
-        self.movement_lock = threading.Lock()
-        self.start_lock = threading.Lock()
-        self.runing = False
-        self.end_lock = threading.Lock()
-        self.end = False
-        self.surrender = "None"
-        self.surrender_lock = threading.Lock()
-        self.winner = "None"
-        
-    def wait_start(self):
-        print("Waiting for game instance " + self.game_id + " to start")
-        while True:
-            with self.start_lock:
-                if self.runing == True:
-                    break
-            with self.end_lock:
-                if self.end == True:
-                    break
-            time.sleep(self.frame_rate)
+	def __init__(self, game_id, **kwargs):
+		super().__init__(daemon=True)
+		self.game_id = game_id
+		self.channel_layer = get_channel_layer()
+		self.frame = copy.deepcopy(Frame())
+		self.config = copy.deepcopy(Config(player_1_pos=self.frame.player_1.top_left(),
+			player_2_pos=self.frame.player_2.top_left(),
+			player_1_username=self.frame.player_1.username,
+			player_2_username=self.frame.player_2.username,
+			ball_pos=self.frame.board.ball.position))
+		self.frame_rate = 1 / 60
+		self.movement_lock = threading.Lock()
+		self.start_lock = threading.Lock()
+		self.runing = False
+		self.end_lock = threading.Lock()
+		self.end = False
+		self.surrender = "None"
+		self.surrender_lock = threading.Lock()
+		self.winner = "None"
+		
+	def wait_start(self):
+		print("Waiting for game instance " + self.game_id + " to start")
+		while True:
+			with self.start_lock:
+				if self.runing == True:
+					break
+			with self.end_lock:
+				if self.end == True:
+					break
+			time.sleep(self.frame_rate)
 
-    def start_game(self):
-        with self.start_lock:
-            if self.runing == True:
-                print("Game instance " + self.game_id + "is already runing, this function returns without doing anything")
-            else:
-                print("Starting game instance " + self.game_id)
-                self.runing = True
+	def start_game(self):
+		with self.start_lock:
+			if self.runing == True:
+				print("Game instance " + self.game_id + "is already runing, this function returns without doing anything")
+			else:
+				print("Starting game instance " + self.game_id)
+				self.runing = True
 
-    def run(self) -> None:
-        self.wait_start()
-        while True:
-            with self.end_lock:
-                if self.end == True:
-                    break
-            self.frame = self.get_next_frame()
-            self.send_frame()
-            if self.frame.end == True:
-                break;
-            time.sleep(self.frame_rate)
-            self.check_pause()
-            if self.check_surrender() == True:
-                break
-        self.send_end_state(self.frame)
-        async_to_sync(self.channel_layer.group_send)(self.game_id, {
-            "type": "end.game"
-        })
-        print("End of run function for thread " + self.game_id)
-        
-    def receive_movement(self, player : str, direction : str):
-        with self.start_lock:
-            if self.runing == False:
-                return
-        try:
-            with self.movement_lock:
-                if player == "player_1":
-                    self.frame.player_1.movement = direction
-                if player == "player_2":
-                    self.frame.player_2.movement = direction
-        except ValueError:
-            print("Invalid movement received from " + player)
+	def run(self) -> None:
+		self.wait_start()
+		while True:
+			with self.end_lock:
+				if self.end == True:
+					break
+			self.frame = self.get_next_frame()
+			self.send_frame()
+			if self.frame.end == True:
+				break;
+			time.sleep(self.frame_rate)
+			self.check_pause()
+			if self.check_surrender() == True:
+				break
+		self.send_end_state(self.frame)
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type": "end.game"
+			})
+		except Exception:
+			print("Can not send end game to group channel " + self.game_id)
+		
+		print("End of run function for thread " + self.game_id)
+		
+	def receive_movement(self, player : str, direction : str):
+		with self.start_lock:
+			if self.runing == False:
+				return
+		try:
+			with self.movement_lock:
+				if player == "player_1":
+					self.frame.player_1.movement = direction
+				if player == "player_2":
+					self.frame.player_2.movement = direction
+		except ValueError:
+			print("Invalid movement received from " + player)
    
-    def receive_pause(self, action : str):
-        with self.start_lock:
-            if action == "start" and self.runing == False:
-                print("Unpausing game instance " + str(self.game_id))
-                self.runing = True
-                self.send_pause("start")
-            elif action == "stop" and self.runing == True:
-                print("Pausing game instance " + str(self.game_id))
-                self.runing = False
-                self.send_pause("stop")
-    
-    def receive_surrend(self, surrender : str) -> None:
-        with self.surrender_lock:
-            if (surrender == "player_1" or surrender == "player_2") and self.surrender == "None":
-                self.surrender = surrender
-                     
-    def move_players(self, frame : Frame) -> Frame:
-        frame.player_1.move()
-        frame.player_2.move()
-        return frame
+	def receive_pause(self, action : str):
+		with self.start_lock:
+			if action == "start" and self.runing == False:
+				self.runing = True
+				self.send_pause("start")
+			elif action == "stop" and self.runing == True:
+				self.runing = False
+				self.send_pause("stop")
+	
+	def receive_surrend(self, surrender : str) -> None:
+		with self.surrender_lock:
+			if (surrender == "player_1" or surrender == "player_2") and self.surrender == "None":
+				self.surrender = surrender
+					 
+	def move_players(self, frame : Frame) -> Frame:
+		frame.player_1.move()
+		frame.player_2.move()
+		return frame
 
-    def move_ball(self, frame : Frame) -> Frame:
-        if frame.board.ball.direction.dx < 0:
-            frame.board.ball.move(frame.player_1)
-        else:
-            frame.board.ball.move(frame.player_2)
-        return frame
+	def move_ball(self, frame : Frame) -> Frame:
+		if frame.board.ball.direction.dx < 0:
+			frame.board.ball.move(frame.player_1)
+		else:
+			frame.board.ball.move(frame.player_2)
+		return frame
  
-    def check_goal(self, frame : Frame) -> Frame:
-        if frame.board.ball.position.x <= 0:
-            frame.player_2.score += 1
-            frame.board.ball.reset()
-            frame.reset = True
-      
-        elif frame.board.ball.position.x >= Const["BOARD_LEN"].value:
-            frame.player_1.score += 1
-            frame.board.ball.reset()
-            frame.reset = True
-        
-        if frame.player_1.score == Const["MAX_SCORE"].value:
-            frame.end = True
-            self.winner = "player_1"
-        elif frame.player_2.score == Const["MAX_SCORE"].value:
-            frame.end = True
-            self.winner = "player_2"
-        return frame
+	def check_goal(self, frame : Frame) -> Frame:
+		if frame.board.ball.position.x <= 0:
+			frame.player_2.score += 1
+			frame.board.ball.reset()
+			frame.reset = True
+	  
+		elif frame.board.ball.position.x >= Const["BOARD_LEN"].value:
+			frame.player_1.score += 1
+			frame.board.ball.reset()
+			frame.reset = True
+		
+		if frame.player_1.score == Const["MAX_SCORE"].value:
+			frame.end = True
+			self.winner = "player_1"
+		elif frame.player_2.score == Const["MAX_SCORE"].value:
+			frame.end = True
+			self.winner = "player_2"
+		return frame
 
-    def check_pause(self) -> None :
-        while True:
-            with self.start_lock:
-                if self.runing == True:
-                    break
-            with self.end_lock:
-                if self.end == True:
-                    break
-            time.sleep(self.frame_rate)
-       
-    def check_surrender(self) -> bool:
-        with self.surrender_lock:
-            if self.surrender == "player_1" or self.surrender == "player_2":
-                self.winner = "player_1" if self.surrender == "player_2" else "player_2"
-                return True
-        return False
+	def check_pause(self) -> None :
+		while True:
+			with self.start_lock:
+				if self.runing == True:
+					break
+			with self.end_lock:
+				if self.end == True:
+					break
+			time.sleep(self.frame_rate)
+	   
+	def check_surrender(self) -> bool:
+		with self.surrender_lock:
+			if self.surrender == "player_1" or self.surrender == "player_2":
+				self.winner = "player_1" if self.surrender == "player_2" else "player_2"
+				return True
+		return False
 
-    def get_next_frame(self) -> Frame:
-        new_frame = self.frame
-        new_frame = self.check_goal(new_frame)
-        if new_frame.reset == True:
-            new_frame.reset = False
-            return new_frame
-        with self.movement_lock:
-            new_frame = self.move_players(new_frame)
-        new_frame = self.move_ball(new_frame)
-        return new_frame
+	def get_next_frame(self) -> Frame:
+		new_frame = self.frame
+		new_frame = self.check_goal(new_frame)
+		if new_frame.reset == True:
+			new_frame.reset = False
+			return new_frame
+		with self.movement_lock:
+			new_frame = self.move_players(new_frame)
+		new_frame = self.move_ball(new_frame)
+		return new_frame
  
-    def end_thread(self) -> None:
-        with self.end_lock:
-            self.end = True
-            print("End function called in thread" + self.game_id)
+	def end_thread(self) -> None:
+		with self.end_lock:
+			self.end = True
    
-    def send_frame(self) -> None:
-        async_to_sync(self.channel_layer.group_send)(self.game_id, {
-            "type": "send.frame",
-            "Frame": self.frame.render(),
-        })
-        
-    def send_config(self) -> None:
-        conf = self.config.render()
-        async_to_sync(self.channel_layer.group_send)(self.game_id, {
-            "type": "send.config",
-            "Config": conf,
-        })
+	def send_frame(self) -> None:
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type": "send.frame",
+				"Frame": self.frame.render(),
+			})
+		except Exception:
+			print("Can not send frame to group channel " + self.game_id)
+		
+	def send_config(self) -> None:
+		conf = self.config.render()
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type": "send.config",
+				"Config": conf,
+			})
+		except Exception:
+			print("Can not send config to group channel " + self.game_id)
   
 
-    def send_pause(self, action : str) -> None:
-        async_to_sync(self.channel_layer.group_send)(self.game_id, {
-            "type": "send.pause",
-            "Pause": action
-        })
-        
-    def send_end_state(self, last_frame) -> None:
-        data = {"winner" : self.winner,
-          "score_1" : last_frame.player_1.score,
-          "score_2" : last_frame.player_2.score,
-        }
-        async_to_sync(self.channel_layer.group_send)(self.game_id, {
-            "type" : "send.end.state",
-            "End_state" : data,
-        })    
+	def send_pause(self, action : str) -> None:
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type": "send.pause",
+				"Pause": action
+			})
+		except Exception:
+			print("Can not send pause to group channel " + self.game_id)
+		
+	def send_end_state(self, last_frame) -> None:
+		data = {"winner" : self.winner,
+		  "score_1" : last_frame.player_1.score,
+		  "score_2" : last_frame.player_2.score,
+		}
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type" : "send.end.state",
+				"End_state" : data,
+			})
+		except Exception:
+			print("Can not send end state to group channel " + self.game_id)
