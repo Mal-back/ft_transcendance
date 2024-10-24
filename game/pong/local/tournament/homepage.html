@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../../css/index.css">
+    <link rel="stylesheet" href="../../../css/notif.css">
+    <link rel="stylesheet" href="../../../css/colors/colors.css">
+    <link rel="stylesheet" href="../../../css/background-basic.css">
+    <link rel="stylesheet" href="../../../css/game-menu-buttons.css">
+    <link rel="stylesheet" href="../../../css/margin.css">
+    <link rel="stylesheet" href="../../../css/tournament-local.css">
+    <title id="page-title">PONG - LOCAL - TOURNAMENT</title>
+</head>
+
+<body>
+    <header>
+        <div style="background-color: gray;">
+            <div class="container d-flex align-items-center py-2">
+                <div class="icon-container d-flex align-items-center">
+                    <button class="btn btn-light" id="toggleSidebar" data-bs-toggle="offcanvas"
+                        data-bs-target="#sidebar" aria-controls="sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <a href="/" class="btn btn-light" title="Home">
+                        <i class="bi bi-house-fill"></i>
+                    </a>
+                    <a href="/authentification" class="btn btn-light" title="Logout">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+
+                    <!-- Notification Bell Updated -->
+                    <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#inviteModal"
+                        title="Notifications">
+                        <i class="bi bi-mailbox2"></i>
+                        <span id="notificationbell">
+                            <div id="notificationcount" class=""></div>
+                        </span>
+                    </button>
+                </div>
+                <div id="mainTitle" class="text-black text-center flex-grow-1" style="font-size: 3.5vh;">
+                    FT_TRANSCENDENCE
+                </div>
+
+                <div class="icon-container-right dropdown d-flex align-items-center p">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="languageDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                        <li><a class="dropdown-item" href="?lang=fr">Français</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Invite Modal -->
+    <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inviteModalLabel">Friend Invites</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll-notif">
+                    <ul id="inviteList" class="list-group">
+                        <!-- Invites will be appended here dynamically -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="offcanvas offcanvas-start bg-dark text-white" id="sidebar" tabindex="-1"
+                aria-labelledby="sidebarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="nav flex-column">
+                        <a class="nav-link text-white my-4" href="/" data-link id="menuHome"><i
+                                class="bi bi-house-fill"></i> HOME</a>
+                        <a class="nav-link text-white my-4" href="/game" data-link id="menuGame"><i
+                                class="bi bi-controller"></i> Game</a>
+                        <a class="nav-link text-white my-4" href="/profile" data-link id="menuProfile"><i
+                                class="bi bi-person"></i> Profile</a>
+                        <a class="nav-link text-white my-4" href="/friends" data-link id="menuFriends"><i
+                                class="bi bi-person-heart"></i> Friends</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogout"><i
+                                class="bi bi-box-arrow-in-right"></i> Logout</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogin"><i
+                                class="bi bi-box-arrow-in-left"></i> Login</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="col d-flex justify-content-center align-items-center">
+                <div class="background ">
+                    <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
+                        PONG - LOCAL - TOURNAMENT</h1>
+                    <br>
+                    <div class="tournament-creation">
+                        <div class="text-white text-center mv-80">
+                            <div class="mb-3">
+                                <h5 class="form-label" id="SelectPlayersTitle">Select number of players (3 to 10):</h5>
+                                <input type="number" id="usernameCount" class="form-control" min="3" max="10" value="3">
+                            </div>
+                            <div class="text-center">
+                                <button id="generateBtn" class="btn btn-primary">Generate Usernames</button>
+                            </div>
+                        </div>
+
+                        <!-- <div id="usernameTemplates" class="mt-4 mv-80"></div> -->
+                        <div id="usernameTemplates" class="mt-4 mv-80">
+                            <div id="usernameScroll" class="mt-2">
+                                <div class="username-input"><label for="username1">User 1:</label><input type="text"
+                                        id="username1" class="form-control" placeholder="User1"></div>
+                                <div class="username-input"><label for="username2">User 2:</label><input type="text"
+                                        id="username2" class="form-control" placeholder="User2"></div>
+                                <div class="username-input"><label for="username3">User 3:</label><input type="text"
+                                        id="username3" class="form-control" placeholder="User3"></div>
+                            </div>
+                        </div>
+                        <div class="text-center mv-80">
+                            <button id="startGameBtn" class="btn btn-success mt-3">Start Game</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script>
+        function changeLanguage(translations) {
+            const translation = translations;
+            console.log(translation);
+            if (translation) {
+                // Update main content translations
+                // Update menu translations using innerHTML
+                document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
+                document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
+                document.getElementById('menuProfile').innerHTML = `<i class="bi bi-person"></i> ${translation.menu.profile}`;
+                document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
+                document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
+                document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
+
+                document.getElementById('page-title').innerText = `${translation.Room.PongTitle} - ${translation.Room.LocalTitle} - ${translation.Room.TournamentTitle}`;
+                document.getElementById('GameTitle').innerText = `${translation.Room.PongTitle} - ${translation.Room.LocalTitle} - ${translation.Room.TournamentTitle}`;
+                document.getElementById('SelectPlayersTitle').innerText = `${translation.Room.SelectPlayersTitle}`;
+                document.getElementById('generateBtn').innerText = `${translation.Room.generateBtn}`;
+                document.getElementById('startGameBtn').innerText = `${translation.Room.startGameBtn}`;
+
+            }
+        }
+
+
+        // On page load, fetch the translations and apply the selected language
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
+            console.log(selectedLang);
+            const translationFile = selectedLang === 'fr' ? '../../../json/fr.json' : '../../../json/en.json';
+
+            fetch(translationFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(translations => {
+                    changeLanguage(translations);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+    </script>
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', function () {
+            const usernameCountInput = document.getElementById('usernameCount');
+            let count = parseInt(usernameCountInput.value);
+
+            // Validate input
+            if (isNaN(count) || count < 3) {
+                // alert("Please enter a number of usernames between 3 and 10.");
+                usernameCountInput.value = 3; // Reset to minimum
+                count = 3; // Set count to minimum
+            } else if (count > 10) {
+                // alert("Please enter a number of usernames between 3 and 10.");
+                usernameCountInput.value = 10; // Reset to maximum
+                count = 10; // Set count to maximum
+            }
+
+            const usernameTemplatesDiv = document.getElementById('usernameTemplates');
+
+            // Clear previous templates
+            usernameTemplatesDiv.innerHTML = '';
+
+            // Create a container for scrolling
+            const scrollContainer = document.createElement('div');
+            scrollContainer.id = 'usernameScroll';
+            scrollContainer.className = 'mt-2';
+
+            // Generate input fields for usernames
+            for (let i = 1; i <= count; i++) {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = 'username-input';
+
+                const inputLabel = document.createElement('label');
+                inputLabel.innerText = `User ${i}:`;
+                inputLabel.setAttribute('for', `username${i}`);
+
+                const inputField = document.createElement('input');
+                inputField.type = 'text';
+                inputField.id = `username${i}`;
+                inputField.className = 'form-control';
+                inputField.placeholder = `User${i}`;
+
+                inputGroup.appendChild(inputLabel);
+                inputGroup.appendChild(inputField);
+                scrollContainer.appendChild(inputGroup);
+            }
+
+            // Append the scrollable container to the main username templates div
+            usernameTemplatesDiv.appendChild(scrollContainer);
+        });
+
+    </script>
+    <script src="../../../js/notif.js"></script>
+</body>
+
+</html>

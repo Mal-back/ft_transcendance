@@ -42,7 +42,8 @@
         "RemoteTitle": "REMOTE",
         "SelectPlayersTitle": "Select the number of players (3 to 10):",
         "generateBtn": "Generate Usernames",
-        "startGameBtn": "Start Game"
+        "startGameBtn": "Start Game",
+        "User": "User"
     },
     "settings": {
         "settingsLabel": "Settings",

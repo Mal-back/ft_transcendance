@@ -1,8 +1,8 @@
 /* Default border style for Avatar */
 .Avatar {
     background-image: url(../img/red_panda.jpg);
-    width: 11vw;
-    height: 11vh;
+    width: min(11vw, 11vh);
+    height: min(11vw, 11vh);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
