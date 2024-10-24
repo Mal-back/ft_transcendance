@@ -39,7 +39,10 @@
         "Play": "PLAY",
         "TournamentTitle": "TOURNAMENT",
         "LocalTitle": "LOCAL",
-        "RemoteTitle": "REMOTE"
+        "RemoteTitle": "REMOTE",
+        "SelectPlayersTitle": "Select the number of players (3 to 10):",
+        "generateBtn": "Generate Usernames",
+        "startGameBtn": "Start Game"
     },
     "settings": {
         "settingsLabel": "Settings",

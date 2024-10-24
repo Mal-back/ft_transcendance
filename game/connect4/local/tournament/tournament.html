@@ -13,32 +13,8 @@
     <link rel="stylesheet" href="../../../css/background-basic.css">
     <link rel="stylesheet" href="../../../css/game-menu-buttons.css">
     <link rel="stylesheet" href="../../../css/margin.css">
+    <link rel="stylesheet" href="../../../css/tournament-local.css">
     <title id="page-title">CONNECT 4 - LOCAL - TOURNAMENT</title>
-    <style>
-        .username-input {
-            margin: 5px 0;
-        }
-
-        #usernameTemplates {
-            max-height: 50vh;
-            /* Set a max height for the scrollable area */
-            overflow-y: auto;
-            /* Enable vertical scrolling */
-            border: 1px solid #ccc;
-            /* Add a border */
-            padding: 10px;
-            /* Add some padding */
-            background-color: #f8f9fa;
-            /* Background color */
-            border-radius: 5px;
-            /* Rounded corners */
-        }
-
-        .tournament-creation {
-            max-width: 80vw;
-            margin: 0 auto;
-        }
-    </style>
 </head>
 
 <body>
@@ -137,9 +113,9 @@
                         CONNECT 4 - LOCAL - TOURNAMENT</h1>
                     <br>
                     <div class="tournament-creation">
-                        <div class="text-white text-center" style="max-width: 80vw;">
+                        <div class="text-white text-center mv-80">
                             <div class="mb-3">
-                                <h5 class="form-label">Select number of usernames (3 to 10):</h5>
+                                <h5 class="form-label" id="SelectPlayersTitle">Select number of players (3 to 10):</h5>
                                 <input type="number" id="usernameCount" class="form-control" min="3" max="10" value="3">
                             </div>
                             <div class="text-center">
@@ -147,18 +123,18 @@
                             </div>
                         </div>
 
-                        <!-- <div id="usernameTemplates" class="mt-4" style="max-width: 80vw;"></div> -->
-                        <div id="usernameTemplates" class="mt-4" style="max-width: 80vw;">
+                        <!-- <div id="usernameTemplates" class="mt-4 mv-80"></div> -->
+                        <div id="usernameTemplates" class="mt-4 mv-80">
                             <div id="usernameScroll" class="mt-2">
                                 <div class="username-input"><label for="username1">Username 1:</label><input type="text"
-                                        id="username1" class="form-control" placeholder="Username 1"></div>
+                                        id="username1" class="form-control" placeholder="Username1"></div>
                                 <div class="username-input"><label for="username2">Username 2:</label><input type="text"
-                                        id="username2" class="form-control" placeholder="Username 2"></div>
+                                        id="username2" class="form-control" placeholder="Username2"></div>
                                 <div class="username-input"><label for="username3">Username 3:</label><input type="text"
-                                        id="username3" class="form-control" placeholder="Username 3"></div>
+                                        id="username3" class="form-control" placeholder="Username3"></div>
                             </div>
                         </div>
-                        <div class="text-center" style="max-width: 80vw;">
+                        <div class="text-center mv-80">
                             <button id="startGameBtn" class="btn btn-success mt-3">Start Game</button>
                         </div>
                     </div>
@@ -253,6 +229,7 @@
                 inputField.type = 'text';
                 inputField.id = `username${i}`;
                 inputField.className = 'form-control';
+                inputField.placeholder = `Username${i}`;
 
                 inputGroup.appendChild(inputLabel);
                 inputGroup.appendChild(inputField);

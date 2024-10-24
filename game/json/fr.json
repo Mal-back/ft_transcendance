@@ -39,7 +39,10 @@
         "Play": "JOUER",
         "TournamentTitle": "TOURNOI",
         "LocalTitle": "LOCAL",
-        "RemoteTitle": "EN LIGNE"
+        "RemoteTitle": "EN LIGNE",
+        "SelectPlayersTitle": "Veuillez choisir le nombre de joueurs (3 à 10):",
+        "generateBtn": "Générer les noms d'utilisateurs",
+        "startGameBtn": "Lancer la partie"
     },
     "settings": {
         "settingsLabel": "Paramètres",
