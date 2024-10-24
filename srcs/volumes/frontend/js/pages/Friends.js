@@ -303,10 +303,9 @@ export default class extends AbstractView {
   }
 
   noFriendDiv(friendList) {
-    friendList.innerHTML = `<div class="list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
-                                <p class="h4">✨ <i>Maidenless</i> ✨</p>
-                                
-                                <p class="h4">Please, add friends</p>
+    friendList.innerHTML = `<div class="list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded removeElem">
+                                <p class="h4 removeElem">✨ <i class="removeElem">Maidenless</i> ✨</p>
+                                <p class="h4 removeElem">Please, add friends</p>
                             </div>`;
   }
 
@@ -348,9 +347,9 @@ export default class extends AbstractView {
         const response = await fetch(request);
         if (response.ok) {
           const pageData = await response.json();
-          friendsArray = pageData.results; // Fetch new results
-          this.forLoopArray(friendsArray, friendList); // Append new friends
-          nextPage = pageData.next; // Update next page
+          friendsArray = pageData.results;
+          this.forLoopArray(friendsArray, friendList);
+          nextPage = pageData.next;
         } else {
           const log = await this.getErrorLogfromServer(response);
           console.log(log);
@@ -390,46 +389,48 @@ export default class extends AbstractView {
     }
   }
 
-  async addEventListeners() {
-    document.querySelectorAll(".btn-danger").forEach((button) => {
-      button.addEventListener("click", async (ev) => {
-        const friendUsername = button
-          .closest(".list-group-item")
-          .querySelector("h5").textContent;
-        console.log("Removing:", friendUsername);
-        ev.preventDefault();
-        try {
-          await this.removeFriends(friendUsername);
-        } catch (error) {
-          console.error("Error In remove Button: ", error.message);
-        }
-      });
-    });
-    const addFriendButton = document.querySelector("#addFriendRequest");
-    addFriendButton.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      const addFriendUsername = document.querySelector(
-        "input[name='friendRequest']",
-      ).value;
-      try {
-        await this.addFriendRequest(addFriendUsername);
-      } catch (error) {
-        console.error("Error in Request Friend", error.message);
-      }
-    });
-  }
+  async handleRemoveClick(ev) {
+    const button = ev.currentTarget;
+    const friendUsername = button
+      .closest(".list-group-item")
+      .querySelector("h5").textContent;
+    console.log("Removing:", friendUsername);
 
-  removeEventListeners() {
-    const changeUsernameButton = document.querySelector("#changeUsername");
-    if (changeUsernameButton) {
-      changeUsernameButton.removeEventListener("click", this.changeUsername);
+    ev.preventDefault();
+    try {
+      await this.removeFriends(friendUsername);
+    } catch (error) {
+      console.error("Error in remove button:", error.message);
     }
   }
 
-  removeCss() {
-    document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
-      e.remove();
+  async handleAddFriend(ev) {
+    ev.preventDefault();
+    const addFriendUsername = document.querySelector(
+      "input[name='friendRequest']",
+    ).value;
+    try {
+      await this.addFriendRequest(addFriendUsername);
+    } catch (error) {
+      console.error("Error in Request Friend", error.message);
+    }
+  }
+
+  async addEventListeners() {
+    document.querySelectorAll(".btn-danger").forEach((button) => {
+      button.addEventListener("click", this.handleRemoveClick);
+    });
+    const addFriendButton = document.querySelector("#addFriendRequest");
+    addFriendButton.addEventListener("click", this.handleAddFriend);
+  }
+
+  removeEventListeners() {
+    const changeUsernameButton = document.querySelector("#addFriendRequest");
+    if (changeUsernameButton) {
+      changeUsernameButton.removeEventListener("click", this.handleAddFriend);
+    }
+    document.querySelectorAll(".btn-danger").forEach((button) => {
+      button.removeEventListener("click", this.handleRemoveClick);
     });
   }
 
@@ -437,5 +438,6 @@ export default class extends AbstractView {
     this.cleanModal();
     this.removeEventListeners();
     this.removeCss();
+    this.removeElem();
   }
 }

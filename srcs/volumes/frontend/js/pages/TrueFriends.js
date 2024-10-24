@@ -257,7 +257,7 @@ export default class extends AbstractView {
   noFriendDiv() {
     return `<div class="list-group removeElem" id="friendsList">
               <div class="removeElem list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
-                <p class="h4 removeElem">✨ <i>Maidenless</i> ✨</p>
+                <p class="h4 removeElem">✨ <i clas="removeElem">Maidenless</i> ✨</p>
                 <p class="h4 removeElem">Please, add friends</p>
               </div>
             </div>`;
@@ -327,10 +327,13 @@ export default class extends AbstractView {
   }
 
   removeEventListeners() {
-    const changeUsernameButton = document.querySelector("#changeUsername");
+    const changeUsernameButton = document.querySelector("#addFriendRequest");
     if (changeUsernameButton) {
-      changeUsernameButton.removeEventListener("click", this.changeUsername);
-    }
+      changeUsernameButton.removeEventListener("click", this.handleAddFriend);
+    } 
+    document.querySelectorAll(".btn-danger").forEach((button) => {
+      button.removeEventListener("click", this.handleRemoveFriends);
+    });
   }
   destroy() {
     this.cleanModal();

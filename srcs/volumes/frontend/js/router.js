@@ -1,5 +1,5 @@
 import Home from "./pages/Home.js";
-import Game from "./pages/Game.js";
+// import Game from "./pages/Game.js";
 import Profile from "./pages/Profile.js";
 import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
@@ -127,7 +127,7 @@ const router = async () => {
     document.querySelector("#app").innerHTML = "";
     document.querySelector("#app").innerHTML = await view.getHtml();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
-      view.pongGame();
+      view.game();
     await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
