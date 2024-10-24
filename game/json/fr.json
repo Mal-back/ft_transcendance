@@ -43,7 +43,10 @@
         "SelectPlayersTitle": "Choisissez le nombre de joueurs (3 à 10) :",
         "generateBtn": "Générer des noms d'utilisateur",
         "startGameBtn": "Démarrer la partie",
-        "User": "Utilisateur"
+        "User": "Utilisateur",
+        "Ranking": "CLASSEMENT",
+        "NextGame": "PROCHAINE PARTIE",
+        "Finish": "TERMINER"
     },
     "settings": {
         "settingsLabel": "Paramètres",

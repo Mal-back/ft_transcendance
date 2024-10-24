@@ -7,16 +7,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../../css/index.css">
-    <link rel="stylesheet" href="../../../css/notif.css">
-    <link rel="stylesheet" href="../../../css/colors/colors.css">
-    <link rel="stylesheet" href="../../../css/background-basic.css">
-    <link rel="stylesheet" href="../../../css/game-menu-buttons.css">
-    <link rel="stylesheet" href="../../../css/margin.css">
-    <link rel="stylesheet" href="../../../css/tournament-local.css">
-    <link rel="stylesheet" href="../../../css/connect-local.css">
-    <link rel="stylesheet" href="../../../css/ranking-tournament.css">
-    <title id="page-title">TOURNAMENT - PONG - RANKING</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/notif.css">
+    <link rel="stylesheet" href="../css/colors/colors.css">
+    <link rel="stylesheet" href="../css/background-basic.css">
+    <link rel="stylesheet" href="../css/game-menu-buttons.css">
+    <link rel="stylesheet" href="../css/margin.css">
+    <link rel="stylesheet" href="../css/tournament-local.css">
+    <link rel="stylesheet" href="../css/connect-local.css">
+    <link rel="stylesheet" href="../css/ranking-tournament.css">
+    <title id="page-title">TOURNAMENT - CONNECT 4 - RANKING</title>
 </head>
 
 <body>
@@ -112,7 +112,7 @@
             <div class="col d-flex justify-content-center align-items-center">
                 <div class="background ">
                     <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-                        TOURNAMENT - PONG - RANKING</h1>
+                        TOURNAMENT - CONNECT 4 - RANKING</h1>
                     <br>
                     <div class="tournament-creation list-group ranking">
 
@@ -314,8 +314,8 @@
                 document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
                 document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
 
-                document.getElementById('page-title').innerText = `${translation.Room.TournamentTitle} - ${translation.Room.PongTitle} - ${translation.Room.Ranking}`;
-                document.getElementById('GameTitle').innerText = `${translation.Room.TournamentTitle} - ${translation.Room.PongTitle} - ${translation.Room.Ranking}`;
+                document.getElementById('page-title').innerText = `${translation.Room.TournamentTitle} - ${translation.Room.Connect4Title} - ${translation.Room.Ranking}`;
+                document.getElementById('GameTitle').innerText = `${translation.Room.TournamentTitle} - ${translation.Room.Connect4Title} - ${translation.Room.Ranking}`;
 
             }
         }
@@ -325,7 +325,7 @@
             const params = new URLSearchParams(window.location.search);
             const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
             console.log(selectedLang);
-            const translationFile = selectedLang === 'fr' ? '../../../json/fr.json' : '../../../json/en.json';
+            const translationFile = selectedLang === 'fr' ? '../json/fr.json' : '../json/en.json';
 
             fetch(translationFile)
                 .then(response => {
@@ -342,7 +342,7 @@
                 });
         });
     </script>
-    <script src="../../../js/notif.js"></script>
+    <script src="../js/notif.js"></script>
 </body>
 
 </html>

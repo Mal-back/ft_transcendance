@@ -43,7 +43,10 @@
         "SelectPlayersTitle": "Select the number of players (3 to 10):",
         "generateBtn": "Generate Usernames",
         "startGameBtn": "Start Game",
-        "User": "User"
+        "User": "User",
+        "Ranking": "RANKING",
+        "NextGame": "NEXT GAME",
+        "Finish": "FINISH"
     },
     "settings": {
         "settingsLabel": "Settings",
