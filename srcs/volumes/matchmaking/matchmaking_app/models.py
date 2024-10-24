@@ -25,8 +25,8 @@ class Match(models.Model):
                                 on_delete=models.PROTECT)
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
-    game_type = models.URLField(choices=[('https://lala.com', 'pong'),
-                                           ('https://lili.com', 'power4')])
+    game_type = models.URLField(choices=[('https://lala.com', 'Pong'),
+                                           ('https://lili.com', 'Connect four')])
     matchId = models.URLField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('accepted', 'Accepted'),

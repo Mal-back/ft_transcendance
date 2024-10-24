@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'matchmaking_app.apps.MatchmakingAppConfig',
+    'ms_client.apps.MsClientConfig',
     'corsheaders',
 ]
 
@@ -146,6 +147,12 @@ SIMPLE_JWT = {
             "ALGORITHM": "RS512",
             "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
             "AUTH_HEADER_TYPES": ("Bearer",),
+        }
+
+MS_CLIENT_SETTINGS = {
+        'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
+        'SERVICE_NAME':'matchmaking',
+        'SERVICE_SECRET':'acab1314',
         }
 
 # Internationalization

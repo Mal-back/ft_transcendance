@@ -6,9 +6,9 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
-from .permissions import IsAuth, IsOwner, IsAvatarManager
+from .permissions import IsAuth, IsOwner, IsAvatarManager, IsMatchmaking
 from .authentification import CustomAuthentication
-from ms_client.ms_client import MicroServiceClient, RequestsFailed
+from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 
 # Create your views here.
 
@@ -60,6 +60,7 @@ class PublicUserDelete(generics.DestroyAPIView):
 
 class PublicUserIncrement(APIView):
     lookup_field = 'username'
+    permission_classes = [IsMatchmaking]
     def patch(self, request, username, lookupfield):
         try:
             user = PublicUser.objects.get(username=username)
@@ -181,7 +182,7 @@ class PublicUserSetDefaultAvatar(APIView):
                     expected_status=[204, 304],
                     body={'username':f'{user.username}'}
                     )
-        except RequestsFailed:
+        except (RequestsFailed, InvalidCredentialsException):
             return Response({'error': 'Could not update avatar. Plz try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user.profilePic = path
         user.save()
