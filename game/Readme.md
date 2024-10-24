@@ -1,10 +1,11 @@
 pour le ranking dans les tournois:
 les classes dans le div de base c'est :
+```
     1er -> gold
     2eme -> silver
     3eme -> bronze
     4eme,etc. -> black
-
+```
 voila a quoi ressemble une div a append pour le 1er:
 ```html
 <div>
