@@ -60,65 +60,10 @@ const router = async () => {
   }
   console.info("route = " + match.route.path);
 
-  // let previousView = null;
-  // if (view) {
-  //   previousView = view;
-  // }
+  
   view = null;
   view = new match.route.view();
 
-  // if (previousView) {
-  //   previousView.destroy();
-  //   previousView = null;
-  // }
-
-  // const pathToRegex = (path) =>
-  //   new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
-  //
-  // const getParams = (match) => {
-  //   const values = match.result.slice(1);
-  //   const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(
-  //     (result) => result[1],
-  //   );
-  //
-  //   return Object.fromEntries(
-  //     keys.map((key, i) => {
-  //       return [key, values[i]];
-  //     }),
-  //   );
-  // };
-  //
-  // const navigateTo = (url) => {
-  //   history.pushState(null, null, url);
-  //   router();
-  // };
-  //
-  // const router = async () => {
-  //   const routes = [
-  //     { path: "/", view: Home },
-  //     { path: "/createUser", view: Form },
-  //   ];
-  //
-  //   // Test each route for potential match
-  //   const potentialMatches = routes.map((route) => {
-  //     return {
-  //       route: route,
-  //       result: location.pathname.match(pathToRegex(route.path)),
-  //     };
-  //   });
-  //
-  //   let match = potentialMatches.find(
-  //     (potentialMatch) => potentialMatch.result !== null,
-  //   );
-  //
-  //   if (!match) {
-  //     match = {
-  //       route: routes[0],
-  //       result: [location.pathname],
-  //     };
-  //   }
-  //
-  //   const view = new match.route.view(getParams(match));
 
   try {
     await view.loadCss();
@@ -127,7 +72,7 @@ const router = async () => {
     document.querySelector("#app").innerHTML = "";
     document.querySelector("#app").innerHTML = await view.getHtml();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
-      view.game();
+      await view.game();
     await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
@@ -182,29 +127,23 @@ export function handleClick(e) {
   }
 }
 
-// function closeSidebar(sidebar) {
-//   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
-//   if (offcanvasInstance) {
-//     offcanvasInstance.hide();
-//   }
-//   }
+
 function closeSidebar(sidebar) {
   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
 
   if (offcanvasInstance && sidebar.classList.contains("show")) {
     offcanvasInstance.hide();
 
-    // Clean up the backdrop after it's fully hidden
     sidebar.addEventListener(
       "hidden.bs.offcanvas",
       function () {
         const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
-          backdrop.remove(); // Ensure backdrop is removed
+          backdrop.remove();
         }
       },
       { once: true },
-    ); // Remove listener after it's executed once
+    ); 
   }
 }
 
@@ -243,3 +182,96 @@ document.addEventListener("keydown", (ev) => {
     modalInstance.hide();
   }
 });
+
+
+// const  inviteModalEl = document.getElementById('inviteModal');
+// inviteModalEl.addEventListener('show.bs.modal', function () {
+//     populateInvites(invites); // Call your function to populate invites
+// });
+//
+// const invites = [
+//     {
+//         profilePic: './img/ts/RED.jpeg',
+//         name: 'John Doe',
+//         message: 'John Doe has sent you an invite for a local pong!'
+//     },
+//     {
+//         profilePic: './img/ts/RED.jpeg',
+//         name: 'Jane Smith',
+//         message: 'Jane Smith has sent you an invite for a remote pong!'
+//     },
+//     {
+//         profilePic: './img/ts/RED.jpeg',
+//         name: 'Thomas Moore',
+//         message: 'Thomas Moore has sent you an invite for a local connect4!'
+//     },
+//     {
+//         profilePic: './img/ts/RED.jpeg',
+//         name: 'Guillaume',
+//         message: 'Guillaume has sent you an invite for a remote connect4!'
+//     }
+//     ,
+//     {
+//         profilePic: './img/ts/RED.jpeg',
+//         name: 'Xavier Sirius',
+//         message: 'Xavier Sirius has sent you an invite for a pong tournament!'
+//     },
+//     {
+//         profilePic: './img/ts/RED.jpeg',
+//         name: 'Leo Nidas',
+//         message: 'Leo Nidas has sent you an invite for a connect4 tournament!'
+//     }
+// ];
+
+function populateInvites(invites) {
+    const inviteList = document.getElementById('inviteList');
+    inviteList.innerHTML = ''; // Clear existing invites
+
+    invites.forEach(invite => {
+        const inviteItem = document.createElement('li');
+        inviteItem.className = 'list-group-item';
+
+        inviteItem.innerHTML = `
+    <div class="d-flex align-items-center">
+        <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50">
+        <div class="flex-grow-1">
+            <h5><strong>${invite.name}</strong></h5>
+            <p>${invite.message}</p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end mt-2">
+        <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.name}')">
+            <i class="bi bi-check-circle"></i> Accept
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.name}')">
+            <i class="bi bi-x-circle"></i> Refuse
+        </button>
+    </div>
+`;
+
+        inviteList.appendChild(inviteItem);
+    });
+}
+
+function acceptInvite(name) {
+    alert(`${name} has been accepted!`); // Placeholder action
+    // Add your logic for accepting the invite
+}
+
+function refuseInvite(name) {
+    alert(`${name} has been refused!`); // Placeholder action
+    // Add your logic for refusing the invite
+}
+
+function updateNotificationCount(count) {
+    const badge = document.getElementById('notificationbell');
+    badge.textContent = count;
+
+    if (count > 0) {
+        badge.innerHTML = `<div class="notification-badge">${count}</div>`
+    }
+}
+setTimeout(() => {
+    updateNotificationCount(2); // Update count to 2
+}, 3000);
+

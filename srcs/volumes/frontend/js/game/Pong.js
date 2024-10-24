@@ -18,6 +18,7 @@ export default class Pong {
     this.gameStart = false;
     this.gamePause = false;
     this.player1 = {
+      username: "Left-Player",
       keyPressTimeout: null,
       name: "player_1",
       upPressed: false,
@@ -25,6 +26,7 @@ export default class Pong {
       lastDirection: null,
     };
     this.player2 = {
+      username: "Right-Player",
       keyPressTimeout: null,
       name: "player_2",
       upPressed: false,
@@ -62,6 +64,14 @@ export default class Pong {
     this.webSocket = new WebSocket(websocket);
   }
 
+  getUsername() {
+    return {
+      mode: this.mode,
+      leftPlayer: this.player1.username,
+      rightPlayer: this.player2.username,
+    };
+  }
+
   handleWebSocketOpen(ev) {
     this.webSocket.send(JSON.stringify({ type: "init_game" }));
     this.webSocket.send(JSON.stringify({ type: "get_config" }));
@@ -78,6 +88,19 @@ export default class Pong {
     this.gameStart = false;
   }
 
+  printMessage(message, color) {
+    const fontSize = 50;
+    this.context.font = `${fontSize}px Arial`;
+    const textWidth = this.context.measureText(message).width;
+    const x = (this.canvas.width - textWidth) / 2;
+    const y = (this.canvas.height / 2) * 0.5;
+    this.context.strokeStyle = "black";
+    this.context.lineWidth = 5;
+    this.context.strokeText(message, x, y + fontSize * 0.5);
+    this.context.fillStyle = color;
+    this.context.fillText(message, x, y + fontSize * 0.5);
+  }
+
   handleWebSocketMessage(ev) {
     const data = JSON.parse(ev.data);
     switch (data.type) {
@@ -91,11 +114,19 @@ export default class Pong {
       }
       case "pause": {
         console.log(data);
-        this.gamePause = true;
+        if (data.action == "start") {
+          this.context.strokeText("", 10, 80);
+          this.gamePause = false;
+        }
+        if (data.action == "stop") {
+          this.printMessage("Game is paused", "white");
+          this.gamePause = true;
+        }
         break;
       }
       case "end_state": {
         console.log("END:", data);
+        this.printMessage(`${data.winner} won`, "white");
         this.removePongEvent();
         // this.endGame();
         break;
@@ -355,39 +386,19 @@ export default class Pong {
     this.webSocket.send(JSON.stringify(movementData));
     console.info("Sent", movementData);
   }
-  // throttleMovement(playerObj) {
-  //   if (this.gamePause || !this.gameStart) return;
-  //   if (!playerObj.keyPressTimeout) {
-  //     playerObj.keyPressTimeout = setTimeout(() => {
-  //       this.sendPlayerMovement(playerObj.name, playerObj.lastDirection);
-  //
-  //       if (playerObj.upPressed || playerObj.downPressed) {
-  //         this.throttleMovement(playerObj); // Recurse if keys are still pressed
-  //       } else {
-  //         playerObj.keyPressTimeout = null;
-  //       }
-  //     }, 50);
-  //     playerObj.keyPressTimeout = null;
-  //   }
-  // }
+
   throttleMovement(playerObj) {
-    // Check for game state before doing any movement
     if (this.gamePause || !this.gameStart) return;
 
-    // Only start the throttle if it's not already running
     if (!playerObj.keyPressTimeout) {
       playerObj.keyPressTimeout = setTimeout(() => {
-        // Send movement command
         this.sendPlayerMovement(playerObj.name, playerObj.lastDirection);
-
-        // Check if any keys are still pressed and continue if they are
         if (playerObj.upPressed || playerObj.downPressed) {
-          this.throttleMovement(playerObj); // Recursively call if keys are still pressed
+          this.throttleMovement(playerObj);
         } else {
-          // Reset the timeout only after movement has been sent
           playerObj.keyPressTimeout = null;
         }
-      }, 50); // Adjust the delay based on your requirements
+      }, 10);
       playerObj.keyPressTimeout = null;
     }
   }
