@@ -22,4 +22,5 @@ voila a quoi ressemble une div a append pour le 1er:
             <span>LOSS: 2</span>
         </div>
     </div>
-</div>```
+</div>
+```
