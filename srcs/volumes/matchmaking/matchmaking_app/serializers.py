@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.utils import choices
 from rest_framework import serializers
 from .models import MatchUser, Match
@@ -17,6 +18,10 @@ class MatchSerializer(serializers.ModelSerializer):
                     'created_at': {'read_only': True},
                     'id': {'read_only': True},
                 }
+        def validate_player2(self, value):
+            if not MatchUser.objects.filter(username=value).exists():
+                raise ValidationError('Invited Player does not exists')
+            return value
 
 class MatchSerializer(serializers.ModelSerializer):
     class Meta :
