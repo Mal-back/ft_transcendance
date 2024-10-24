@@ -9,14 +9,19 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
 
 import os
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game.settings')
+
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
 from channels.auth import AuthMiddlewareStack
-from game_app.routing import websocket_urlpatterns
-from game_app.consumers import LocalGameConsumer
 import signal
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game.settings')
+import django
+django.setup()
+
+from game_app.routing import websocket_urlpatterns
+from game_app.consumers import LocalGameConsumer
+
 application =  ProtocolTypeRouter(
 	{
 		"http" : get_asgi_application(),

@@ -5,7 +5,7 @@ from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
 import django
-django.setup()
+# django.setup()
 from game_app.models import LocalGame
 import uuid
 
@@ -236,7 +236,6 @@ class LocalGameConsumer(SyncConsumer):
 			print("Game thread for room " + str(game_id) + " can not start because not initialized")
 			self.error("start_game : game not initialized", game_id)
   
-
 	def pause(self, event):
 		game_id = event["game_id"]
 		try:
