@@ -513,12 +513,31 @@ function testWss() {
 }
 
 
-testInit();
-testStart();
-testGetConfig();
-testPause();
-testMove();
-testSurrend();
-testChannelFUll();
-testWss();
-testMultipleInstances(50)
+function testRemote() {
+	const WebSocket = require('ws');
+	const socket = new WebSocket('ws://localhost:8080/api/game/ws/remote/');
+	socket.onopen = function(event) {
+		console.log("Socket connected")
+	}
+	socket.onmessage = function(event){
+		const msg = event.data;
+		console.log(`${msg}`)
+	}
+	socket.onerror = function(event) {
+	  console.log('Error occurred while connecting to the WebSocket server');
+	};
+	socket.onclose = function(event) {
+	  console.log('Socket 1 Disconnected from the WebSocket server');
+	};
+}
+
+// testInit();
+// testStart();
+// testGetConfig();
+// testPause();
+// testMove();
+// testSurrend();
+// testChannelFUll();
+// testWss();
+// testMultipleInstances(50)
+testRemote();

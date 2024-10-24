@@ -19,14 +19,17 @@ import signal
 import django
 django.setup()
 
+from game_app.urls import urlpatterns
 from game_app.routing import websocket_urlpatterns
 from game_app.consumers import LocalGameConsumer
+from game_app.consumers_remote import RemoteGameConsumer
 
 application =  ProtocolTypeRouter(
 	{
-		"http" : get_asgi_application(),
+		"http" : AuthMiddlewareStack(URLRouter(urlpatterns)),
   		"websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
-		"channel": ChannelNameRouter({"local_engine": LocalGameConsumer.as_asgi()}),
+		"channel": ChannelNameRouter({"local_engine": LocalGameConsumer.as_asgi(),
+                                "remote_engine": RemoteGameConsumer.as_asgi()})
 	}
 )
 

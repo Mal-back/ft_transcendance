@@ -243,8 +243,11 @@ class LocalGameConsumer(SyncConsumer):
 		self.game_instances = {}
 	
 	def error(self, error_msg, game_id):
-		async_to_sync(self.channel_layer.group_send)(game_id,
-			{"type": "send.error", "Error" : error_msg})
+		try:
+			async_to_sync(self.channel_layer.group_send)(game_id,
+				{"type": "send.error", "Error" : error_msg})
+		except Exception:
+			log.info("Can not send error to group channel")
 		
 	def init_game(self, event):
 		game_id = event["game_id"]		
