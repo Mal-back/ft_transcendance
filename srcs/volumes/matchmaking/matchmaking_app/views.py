@@ -26,17 +26,18 @@ class MatchUserDelete(generics.UpdateAPIView):
     permission_classes = [IsAuth]
     lookup_field = 'username'
 
-class MatchCreate(generics.CreateAPIView):
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
+class MatchCreate(APIView):
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        existing_matches = Match.objects.filter(player1=self.request.user.username)
+    def post(self, request, *args, **kwargs):
+        existing_matches = Match.objects.filter(player1=request.user.username, status__in=['pending', 'accepted', 'in_progress'])
         if existing_matches.exists():
-            return Response({'Error':'Yo already invite somebody'}, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(player1=self.request.user.username)
-        return Response({'OK':'Invite sent'}, status=status.HTTP_201_CREATED)
+            return Response({'Error': 'You already invited somebody'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = MatchSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(player1=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MatchGetPendingInvites(generics.ListAPIView):
     serializer_class = PendingInviteSerializer
@@ -63,14 +64,17 @@ class MatchAcceptInvite(generics.UpdateAPIView):
         username = self.request.user.username
         accepted_matches = Match.objects.filter(player2=username, status__in=['accepted', 'in_progress'])
         matches_as_player1 = Match.objects.filter(player1=username, status__in=['pending', 'accepted', 'in_progress'])
-        if accepted_matches.exists() or matches_as_player1.exists():
-            return Response({'Error':'You already send invites or have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
+        if accepted_matches.exists():
+            return Response({'Error':'You already send invites or have game in progress acce'}, status=status.HTTP_400_BAD_REQUEST)
+        elif matches_as_player1.exists():
+            return Response({'Error':'You already send invites or have game in progress p1'}, status=status.HTTP_400_BAD_REQUEST)
         match = self.get_object()
         if match.status != 'pending':
             return Response({'Error':'You can\'t accept this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'accepted'
         match.save()
         #Send Request to game to game ms
+        return Response({'lol': 'Ca veut dire que ca a matrcher mais y a pas de communication av le jeu'}, status=status.HTTP_206_PARTIAL_CONTENT)
 
 class MatchDeclineInvite(generics.UpdateAPIView):
     queryset = Match.objects.all()

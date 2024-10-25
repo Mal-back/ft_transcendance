@@ -19,10 +19,12 @@ class Tournament(models.Model):
 class Match(models.Model):
     player1 = models.ForeignKey('MatchUser',
                                 related_name='matches_as_p1',
-                                on_delete=models.PROTECT)
+                                on_delete=models.PROTECT,
+                                to_field='username')
     player2 = models.ForeignKey('MatchUser',
                                 related_name='matches_as_p2',
-                                on_delete=models.PROTECT)
+                                on_delete=models.PROTECT,
+                                to_field='username')
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
     game_type = models.URLField(choices=[('https://lala.com', 'Pong'),
