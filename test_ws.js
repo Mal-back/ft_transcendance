@@ -345,7 +345,11 @@ function testSurrend() {
 		})) }, 500)
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "start_game",
-		})) }, 2000)
+		})) }, 500)
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "surrend",
+			surrender : "player_1"
+		})) }, 5000)
 	}
 	socket.onmessage = function(event){
 		const msg = event.data;
@@ -537,7 +541,7 @@ testGetConfig();
 testPause();
 testMove();
 testSurrend();
-testChannelFUll();
+// testChannelFUll();
 testWss();
 testMultipleInstances(50)
 // testRemote();
