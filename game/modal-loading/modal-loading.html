@@ -11,24 +11,7 @@
     <link rel="stylesheet" href="../css/notif.css">
     <link rel="stylesheet" href="../css/colors/colors.css">
     <link rel="stylesheet" href="../css/background-basic.css">
-    <link rel="stylesheet" href="../css/game-menu-buttons.css">
-    <link rel="stylesheet" href="../css/margin.css">
-    <link rel="stylesheet" href="../css/ranking/global-ranking-tournament.css">
     <title id="page-title">TOURNAMENT - CONNECT 4 - GLOBAL RANKING</title>
-    <style>
-        /* Custom CSS for centering the modal */
-        .loading-modal-diag {
-            max-width: 500px;
-        }
-
-        .loading-modal-body {
-            display: flex;
-            align-items: center;
-            /* Center content vertically */
-            justify-content: center;
-            /* Center content horizontally */
-        }
-    </style>
 
 </head>
 
@@ -126,6 +109,10 @@
                 <div class="background ">
                     <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#loading-modal">loading icon modal</button>
+                    <button type="button" class="btn btn-link" id="openPrivacyPolicy">
+                        Privacy Policy
+                    </button>
+
                 </div>
             </div>
             <div class="modal fade" id="loading-modal" tabindex="-1" aria-labelledby="loading-modalLabel"
@@ -144,6 +131,25 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stop
                                 Matchmaking</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Privacy Policy Modal -->
+            <div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-80">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="privacyPolicyModalLabel">Privacy Policy</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                            <!-- Using <pre> to preserve formatting -->
+                            <pre id="privacyPolicyContent" style="white-space: pre-wrap;">Loading...</pre>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -192,6 +198,26 @@
                     console.error('There was a problem with the fetch operation:', error);
                 });
         });
+        document.getElementById('openPrivacyPolicy').addEventListener('click', function () {
+            fetch('../rgpd/politique-en.txt')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // Insert the text content into the modal body
+                    document.getElementById('privacyPolicyContent').textContent = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching the privacy policy:', error);
+                    document.getElementById('privacyPolicyContent').textContent = 'Sorry, there was an error loading the privacy policy.';
+                });
+            let privacyPolicyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+            privacyPolicyModal.show();
+        });
+
     </script>
     <script src="../js/notif.js"></script>
 </body>
