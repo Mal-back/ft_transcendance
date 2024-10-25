@@ -12,6 +12,9 @@ import Friends from "./pages/TrueFriends.js";
 // import Pong from "./pages/Pong.js";
 import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
+import PongMenu from "./pages/PongMode.js";
+import PongLocalMenu from "./pages/PongLocalMenu.js";
+import PongLocalLobby from "./pages/PongLocalLobby.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -38,7 +41,10 @@ const router = async () => {
     { path: "/friends", view: Friends },
     { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
-    { path: "/pongLocal", view: PongLocal },
+    { path: "/ponglocal", view: PongLocal },
+    { path: "/pong-menu", view: PongMenu },
+    { path: "/pong-local-menu", view: PongLocalMenu },
+    { path: "/pong-local-lobby", view: PongLocalLobby },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -86,21 +92,24 @@ const router = async () => {
   }
 
   // Function to print all CSS links on the page
-  // function printAllCssLinks() {
-  //   // Select all <link> elements with rel="stylesheet"
-  //   const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-  //
-  //   // Loop through each <link> element
-  //   cssLinks.forEach((link) => {
-  //     // Print the href attribute (URL of the stylesheet) to the console
-  //     console.log(link.href);
-  //   });
-  // }
+  function printAllCssLinks() {
+    // Select all <link> elements with rel="stylesheet"
+  console.log("PRINT CSS")
+    const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+
+    // Loop through each <link> element
+    cssLinks.forEach((link) => {
+      // Print the href attribute (URL of the stylesheet) to the console
+      console.log(link.href);
+    });
+  }
 
   // Call the function to print all CSS links
 
   // print all html
-  // console.log(document.documentElement.outerHTML);
+//   printAllCssLinks();
+//   console.log("PRINT HTML")
+    // console.log(document.documentElement.outerHTML); 
 };
 
 window.addEventListener("popstate", router);
@@ -223,55 +232,55 @@ document.addEventListener("keydown", (ev) => {
 //     }
 // ];
 
-function populateInvites(invites) {
-    const inviteList = document.getElementById('inviteList');
-    inviteList.innerHTML = ''; // Clear existing invites
-
-    invites.forEach(invite => {
-        const inviteItem = document.createElement('li');
-        inviteItem.className = 'list-group-item';
-
-        inviteItem.innerHTML = `
-    <div class="d-flex align-items-center">
-        <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50">
-        <div class="flex-grow-1">
-            <h5><strong>${invite.name}</strong></h5>
-            <p>${invite.message}</p>
-        </div>
-    </div>
-    <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.name}')">
-            <i class="bi bi-check-circle"></i> Accept
-        </button>
-        <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.name}')">
-            <i class="bi bi-x-circle"></i> Refuse
-        </button>
-    </div>
-`;
-
-        inviteList.appendChild(inviteItem);
-    });
-}
-
-function acceptInvite(name) {
-    alert(`${name} has been accepted!`); // Placeholder action
-    // Add your logic for accepting the invite
-}
-
-function refuseInvite(name) {
-    alert(`${name} has been refused!`); // Placeholder action
-    // Add your logic for refusing the invite
-}
-
-function updateNotificationCount(count) {
-    const badge = document.getElementById('notificationbell');
-    badge.textContent = count;
-
-    if (count > 0) {
-        badge.innerHTML = `<div class="notification-badge">${count}</div>`
-    }
-}
-setTimeout(() => {
-    updateNotificationCount(2); // Update count to 2
-}, 3000);
+// function populateInvites(invites) {
+//     const inviteList = document.getElementById('inviteList');
+//     inviteList.innerHTML = ''; // Clear existing invites
+//
+//     invites.forEach(invite => {
+//         const inviteItem = document.createElement('li');
+//         inviteItem.className = 'list-group-item';
+//
+//         inviteItem.innerHTML = `
+//     <div class="d-flex align-items-center">
+//         <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50">
+//         <div class="flex-grow-1">
+//             <h5><strong>${invite.name}</strong></h5>
+//             <p>${invite.message}</p>
+//         </div>
+//     </div>
+//     <div class="d-flex justify-content-end mt-2">
+//         <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.name}')">
+//             <i class="bi bi-check-circle"></i> Accept
+//         </button>
+//         <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.name}')">
+//             <i class="bi bi-x-circle"></i> Refuse
+//         </button>
+//     </div>
+// `;
+//
+//         inviteList.appendChild(inviteItem);
+//     });
+// }
+//
+// function acceptInvite(name) {
+//     alert(`${name} has been accepted!`); // Placeholder action
+//     // Add your logic for accepting the invite
+// }
+//
+// function refuseInvite(name) {
+//     alert(`${name} has been refused!`); // Placeholder action
+//     // Add your logic for refusing the invite
+// }
+//
+// function updateNotificationCount(count) {
+//     const badge = document.getElementById('notificationbell');
+//     badge.textContent = count;
+//
+//     if (count > 0) {
+//         badge.innerHTML = `<div class="notification-badge">${count}</div>`
+//     }
+// }
+// setTimeout(() => {
+//     updateNotificationCount(2); // Update count to 2
+// }, 3000);
 

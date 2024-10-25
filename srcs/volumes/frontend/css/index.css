@@ -6,6 +6,7 @@ html,
 body {
     height: 100%;
     margin: 0;
+    overflow: visible;
 }
 
 body {
@@ -15,6 +16,7 @@ body {
 header {
     position: relative;
     padding: 0;
+    z-index: 1000;
 }
 
 h3 {

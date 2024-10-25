@@ -13,22 +13,6 @@
 
 }
 
-/* Ensure border is always applied */
 .status-online {
-    border: 5px solid green !important;
-}
-
-.status-offline {
-    border: 5px solid blue !important;
-}
-
-.status-playing {
-    border: 5px solid orange !important;
-}
-
-.text-primary {
-    background-color: transparent;
-    border: none;
-    color: #007bff;
-    text-decoration: none;
+    border: 1px solid green !important;
 }
