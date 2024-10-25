@@ -21,6 +21,15 @@
     max-width: 80vw;
 }
 
+.mb-0 {
+    white-space: nowrap;
+    /* Prevents the text from wrapping */
+    overflow: hidden;
+    /* Hides overflowed content */
+    text-overflow: ellipsis;
+    max-width: 30vw;
+}
+
 .tournament-creation {
     max-width: 80vw;
     margin: 0 auto;

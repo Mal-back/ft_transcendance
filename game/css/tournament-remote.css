@@ -27,6 +27,15 @@
     /* margin-bottom: 0; */
 }
 
+.mb-0 {
+    white-space: nowrap;
+    /* Prevents the text from wrapping */
+    overflow: hidden;
+    /* Hides overflowed content */
+    text-overflow: ellipsis;
+    max-width: 30vw;
+}
+
 h3 {
     font-size: 2em;
 

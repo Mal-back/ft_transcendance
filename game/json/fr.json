@@ -46,7 +46,8 @@
         "User": "Utilisateur",
         "Ranking": "CLASSEMENT",
         "NextGame": "PROCHAINE PARTIE",
-        "Finish": "TERMINER"
+        "Finish": "TERMINER",
+        "GlobalRankingTitle": "CLASSEMENT GENERAL"
     },
     "settings": {
         "settingsLabel": "Paramètres",

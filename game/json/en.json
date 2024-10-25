@@ -46,7 +46,8 @@
         "User": "User",
         "Ranking": "RANKING",
         "NextGame": "NEXT GAME",
-        "Finish": "FINISH"
+        "Finish": "FINISH",
+        "GlobalRankingTitle": "GLOBAL RANKING"
     },
     "settings": {
         "settingsLabel": "Settings",
