@@ -531,13 +531,13 @@ function testRemote() {
 	};
 }
 
-// testInit();
-// testStart();
-// testGetConfig();
-// testPause();
-// testMove();
-// testSurrend();
-// testChannelFUll();
-// testWss();
-// testMultipleInstances(50)
-testRemote();
+testInit();
+testStart();
+testGetConfig();
+testPause();
+testMove();
+testSurrend();
+testChannelFUll();
+testWss();
+testMultipleInstances(50)
+// testRemote();

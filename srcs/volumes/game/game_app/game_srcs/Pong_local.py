@@ -54,6 +54,29 @@ class PongLocalEngine(threading.Thread):
 				print("Starting game instance " + self.game_id)
 				self.runing = True
 
+	# def run(self) -> None:
+	# 	self.wait_start()
+	# 	while True:
+	# 		with self.end_lock:
+	# 			if self.end == True:
+	# 				break
+	# 		self.frame = self.get_next_frame()
+	# 		self.send_frame()
+	# 		if self.frame.end == True:
+	# 			break;
+	# 		time.sleep(self.frame_rate)
+	# 		self.check_pause()
+	# 		if self.check_surrender() == True:
+	# 			break
+	# 	self.send_end_state(self.frame)
+	# 	try:
+	# 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
+	# 			"type": "end.game"
+	# 		})
+	# 	except Exception:
+	# 		print("Can not send end game to group channel " + self.game_id)
+	# 	print("End of run function for thread " + self.game_id)
+ 
 	def run(self) -> None:
 		self.wait_start()
 		while True:
@@ -62,21 +85,20 @@ class PongLocalEngine(threading.Thread):
 					break
 			self.frame = self.get_next_frame()
 			self.send_frame()
-			if self.frame.end == True:
-				break;
+			if self.frame.end == True or self.check_surrender() == True:
+				self.send_end_state(self.frame)
+				break
 			time.sleep(self.frame_rate)
 			self.check_pause()
-			if self.check_surrender() == True:
-				break
-		self.send_end_state(self.frame)
 		try:
-			async_to_sync(self.channel_layer.group_send)(self.game_id, {
-				"type": "end.game"
+			async_to_sync(self.channel_layer.send)("local_engine", {
+				"type": "join_thread",
+				"game_id": self.game_id
 			})
-		except Exception:
-			print("Can not send end game to group channel " + self.game_id)
-		
+		except:
+			print("Can not send join thread to local_engine from thread num " + self.game_id)
 		print("End of run function for thread " + self.game_id)
+					
 		
 	def receive_movement(self, player : str, direction : str):
 		with self.start_lock:

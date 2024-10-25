@@ -1,10 +1,9 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import SyncConsumer
-from game_app.game_srcs.Pong_local import PongLocalEngine
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-from game_app.models import LocalGame
+from game_app.models import RemoteGame
 import uuid
 
 log = logging.getLogger(__name__)
@@ -49,20 +48,15 @@ def propagate_exceptions(func):
 class RemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		path = self.scope["path"]
-		self.group_name = path.rsplit('/', 1)[1]
-		self.username = "Random Player"
+		self.scope
 		log.info("Remote Player Consumer created")
-		await self.channel_layer.send("remote_engine", {
-			"type": "test",
-			"game_id": self.group_name,
-		})
 
   
 	async def disconnect(self, code):
 		log.info("Remote Player Consumer disconnected")
   
 	async def receive(self, text_data=None, bytes_data=None):
-		log.info("Message received from remote Player Consumer websocket")
+		content = loads(text_data)
 
 
 class RemoteGameConsumer(SyncConsumer):

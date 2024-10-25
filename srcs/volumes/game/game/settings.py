@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'game_app.apps.GameAppConfig',
     'corsheaders',
+    'ms_client.apps.MsClientConfig',
 ]
 
 MIDDLEWARE = [
@@ -155,33 +156,15 @@ def get_jwt_keys(key):
         return keyfile.read()
 
 SIMPLE_JWT = {
-            "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-            "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-            "ROTATE_REFRESH_TOKENS": True,
-            "BLACKLIST_AFTER_ROTATION": True,
-            "UPDATE_LAST_LOGIN": False,
-
             "ALGORITHM": "RS512",
-            # "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
-            "AUDIENCE": None,
-            "ISSUER": None,
-            "JSON_ENCODER": None,
-            "JWK_URL": None,
-            "LEEWAY": 0,
-
+            "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
             "AUTH_HEADER_TYPES": ("Bearer",),
-            "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-            "USER_ID_FIELD": "id",
-            "USER_ID_CLAIM": "user_id",
-            "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+        }
 
-            "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-            "TOKEN_TYPE_CLAIM": "token_type",
-            "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-
-            "JTI_CLAIM": "jti",
-
-            "TOKEN_OBTAIN_SERIALIZER": "game_app.serializers.MyTokenObtainPairSerializer",
+MS_CLIENT_SETTINGS = {
+        'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
+        'SERVICE_NAME': os.getenv('DJANGO_GAME_AUTH_NAME'),
+        'SERVICE_SECRET': os.getenv('DJANGO_GAME_AUTH_PASSWORD'),
         }
 
 

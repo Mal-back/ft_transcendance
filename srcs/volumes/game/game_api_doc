@@ -1,3 +1,8 @@
+modifier settings game JWT
+creer le profil du docker dans auth
+modifier authentication.py et permissions.py
+copier dossier ms_client pour pouvoir envoyer les requetes au docker mathmaking à la fin de la partie
+
 Important : when a KeyValue Error is receive from your websocket, the game will ignore it and not send anything, please follow the correct JSON formats described bellow to have the best experience possible with our game.
 
 I - Pong:

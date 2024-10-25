@@ -51,7 +51,6 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		path = self.scope["path"]
 		self.group_name = path.rsplit('/', 1)[1]
 		self.username = "Random Player"
-
 		try:
 			self.group_name = str(uuid.uuid4())
 			game = await sync_to_async(LocalGame.objects.create)(game_creator=self.username, game_id=self.group_name)
@@ -60,6 +59,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			log.info("Player " + self.username+ " added to room " + self.group_name)
 			await self.accept()
 			self.delete = True
+			self.game_ended = False
 	   
 		except Exception:
 			log.info("Local game already exists")
@@ -73,13 +73,14 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			await sync_to_async(game.delete)()
 		except Exception:
 			log.info("Cannot delet game model id " + self.group_name)
-		try:
-			await self.channel_layer.send("local_engine", {
-				"type": "end.thread",
-				"game_id": self.group_name,
-			})
-		except:
-			log.info("Error sending end_thread to LocalEngine")
+		if self.game_ended == False:
+			try:
+				await self.channel_layer.send("local_engine", {
+					"type": "end.thread",
+					"game_id": self.group_name,
+				})
+			except:
+				log.info("Error sending end_thread to LocalEngine")
 		try:
 			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except:
@@ -209,6 +210,8 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.send(dumps(data))
 		except:
 			log.info("Can not send on closed websocket")
+		self.game_ended = True
+		await self.close()
   
 	async def end_game(self, event):
 		log.info("End game function called in WebsocketConsumer " + self.group_name)
@@ -304,9 +307,15 @@ class LocalGameConsumer(SyncConsumer):
 		try :
 			print("Ending thread " + game_id)
 			self.game_instances[game_id].end_thread()
-			print("Waiting for thread to end")
+		except Exception:
+			print("Error: Can not end thread " + str(game_id))
+   
+	def join_thread(self, event):
+		game_id = event["game_id"]
+		try:
+			print("Joining thread " + game_id)
 			self.game_instances[game_id].join()
 			self.game_instances.pop(game_id)
 			print("Thread waited !")
 		except Exception:
-			print("Error: Can not end thread " + str(game_id))
+			print("Error: Can not join thread " + str(game_id))
