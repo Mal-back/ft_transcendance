@@ -24,9 +24,11 @@ from game_app.routing import websocket_urlpatterns
 from game_app.consumers import LocalGameConsumer
 from game_app.consumers_remote import RemoteGameConsumer
 
+django_asgi_app = get_asgi_application()
+
 application =  ProtocolTypeRouter(
 	{
-		"http" : AuthMiddlewareStack(URLRouter(urlpatterns)),
+		"http" : django_asgi_app,
   		"websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
 		"channel": ChannelNameRouter({"local_engine": LocalGameConsumer.as_asgi(),
                                 "remote_engine": RemoteGameConsumer.as_asgi()})

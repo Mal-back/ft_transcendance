@@ -1,4 +1,8 @@
 from django.db import models
+import uuid
+import logging
+
+log = logging.getLogger(__name__)
 
 class LocalGame(models.Model):
     game_creator = models.CharField(max_length=100)
@@ -11,5 +15,8 @@ class RemoteGame(models.Model):
     player_1_connected = models.BooleanField(default=False)
     player_2_connected = models.BooleanField(default=False)
     
-    def __str__(self):
-        return self.game_id
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.game_id = str(uuid.uuid4())
+        log.info("Created model RemoteGame with id " + self.game_id)
+        
