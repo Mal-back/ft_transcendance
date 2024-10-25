@@ -1,0 +1,108 @@
+Política de privacidad
+[Nombre del sitio/aplicación]
+
+ARTÍCULO 1: PREÁMBULO
+La presente política de privacidad tiene como objetivo informar a los usuarios del sitio:
+
+    • Sobre cómo se recogen sus datos personales. Se consideran datos personales toda información que permita identificar a un usuario. En este sentido, puede tratarse de: su nombre y apellidos, su edad, su dirección postal o de correo electrónico, su ubicación o su dirección IP (lista no exhaustiva);
+    • Sobre los derechos que tienen en relación con estos datos;
+    • Sobre la persona responsable del tratamiento de los datos personales recogidos y tratados;
+    • Sobre los destinatarios de estos datos personales;
+    • Sobre la política del sitio en materia de cookies.
+Esta política complementa los avisos legales y las Condiciones Generales de Uso que los usuarios pueden consultar en la siguiente dirección:
+[Insertar la URL que permite acceder a las Condiciones Generales de Uso y a los avisos legales]
+
+ARTÍCULO 2: PRINCIPIOS RELATIVOS A LA RECOLECCIÓN Y AL TRATAMIENTO DE LOS DATOS PERSONALES
+De acuerdo con el artículo 5 del Reglamento europeo 2016/679, los datos personales son:
+    • Tratados de manera lícita, leal y transparente en relación con la persona interesada;
+    • Recogidos para fines determinados (ver Artículo 3.1 de la presente), explícitos y legítimos, y no ser tratados posteriormente de manera incompatible con esos fines;
+    • Adecuados, pertinentes y limitados a lo que es necesario en función de los fines para los cuales son tratados;
+    • Exactos y, si es necesario, mantenidos actualizados. Se deben tomar todas las medidas razonables para que los datos personales que sean inexactos, en relación con los fines para los cuales son tratados, sean eliminados o rectificados sin demora;
+    • Conservados de forma que se permita la identificación de las personas interesadas durante un período que no exceda el necesario en función de los fines para los cuales son tratados;
+    • Tratados de manera que se garantice una seguridad adecuada de los datos recogidos, incluida la protección contra el tratamiento no autorizado o ilícito y contra la pérdida, destrucción o daños accidentales, mediante medidas técnicas u organizativas apropiadas.
+    • El tratamiento solo es lícito si, y en la medida en que, se cumple al menos una de las siguientes condiciones:
+
+La persona interesada ha consentido al tratamiento de sus datos personales para uno o varios fines específicos;
+    • El tratamiento es necesario para la ejecución de un contrato en el que la persona interesada es parte o para la ejecución de medidas precontractuales adoptadas a petición de la misma;
+    • El tratamiento es necesario para el cumplimiento de una obligación legal a la que está sujeto el responsable del tratamiento;
+    • El tratamiento es necesario para salvaguardar los intereses vitales de la persona interesada o de otra persona física;
+    • El tratamiento es necesario para la ejecución de una misión de interés público o que se enmarca en el ejercicio de la autoridad pública conferida al responsable del tratamiento;
+    • El tratamiento es necesario para los fines de los intereses legítimos perseguidos por el responsable del tratamiento o por un tercero, salvo que prevalezcan los intereses o los derechos y libertades fundamentales de la persona interesada que requieren protección de los datos personales, en particular cuando la persona interesada sea un menor.
+
+ARTÍCULO 3: DATOS PERSONALES RECOGIDOS Y TRATADOS EN EL MARCO DE LA NAVEGACIÓN EN EL SITIO
+
+Artículo 3.1: Datos recogidos
+Los datos personales recogidos en el marco de nuestra actividad son los siguientes:
+[Listar los datos recogidos durante la utilización del sitio]
+La recolección y el tratamiento de estos datos responden a la(s) finalidad(es) siguiente(s):
+[Especificar la(s) razón(es) por la(s) cual(es) la recolección de datos personales es necesaria en el marco de su actividad]
+Ejemplo: gestión de contratos, gestión del espacio de cliente, seguimiento de la calidad de los servicios, envío de boletines, etc.
+
+
+Artículo 3.2: Modo de recolección de datos
+Cuando utiliza nuestro sitio, se recogen automáticamente los siguientes datos:
+[Listar los datos automáticamente recogidos durante la simple visita del usuario al sitio]
+Otros datos personales son recogidos cuando usted realiza las siguientes operaciones en la plataforma:
+[Listar los datos personales recogidos y especificar la finalidad de la recolección]
+
+
+Se conservan por el responsable del tratamiento en condiciones razonables de seguridad, durante un período de: [Indicar la duración de conservación prevista]
+La empresa puede conservar ciertos datos personales más allá de los plazos mencionados anteriormente para cumplir con sus obligaciones legales o reglamentarias.
+
+Artículo 3.3: Alojamiento de los datos
+El sitio [nombre del sitio web] está alojado por:
+[Nombre de la empresa
+Dirección de la sede social
+Contacto (dirección de correo electrónico y/o número de teléfono)]
+
+[En caso de que los datos personales recogidos por la empresa se compartan con terceros, insertar una cláusula “Artículo 3.4: Transmisión de datos a terceros”:
+“Los datos pueden ser transmitidos a nuestros socios, que se enumeran a continuación:”]
+
+[Si el sitio está sujeto al uso de cookies, especificar su uso en un Artículo 3.5: Política sobre “cookies”]
+
+ARTÍCULO 4: RESPONSABLE DEL TRATAMIENTO DE LOS DATOS Y DELEGADO A LA PROTECCIÓN DE DATOS
+
+Artículo 4.1: El responsable del tratamiento de los datos
+Los datos personales son recogidos por [razón o nombre social de la empresa], [forma jurídica] con un capital de [monto del capital social], cuyo número de registro es [indique su número RCS].
+El responsable del tratamiento de los datos personales puede ser contactado de la siguiente manera:
+Por correo a la dirección: [indique la dirección de la sede social];
+Por teléfono, al [número de teléfono];
+Por correo electrónico: [correo electrónico del responsable del tratamiento de datos].
+
+
+
+
+
+Artículo 4.2: El delegado a la protección de datos
+
+El delegado a la protección de datos de la empresa o del responsable es:
+
+[Indique la identidad, la dirección, el número de teléfono y/o la dirección de correo electrónico del DPO]
+
+Si considera, tras contactarnos, que sus derechos “Informática y Libertades” no son respetados, puede enviar una información a la CNIL.
+
+ARTÍCULO 5: LOS DERECHOS DEL USUARIO EN MATERIA DE RECOLECCIÓN Y TRATAMIENTO DE DATOS
+Todo usuario afectado por el tratamiento de sus datos personales puede invocar los siguientes derechos, en aplicación del reglamento europeo 2016/679 y de la Ley de Informática y Libertades (Ley 78-17 del 6 de enero de 1978):
+    • Derecho de acceso, rectificación y derecho a la supresión de los datos (establecidos respectivamente en los artículos 15, 16 y 17 del RGPD);
+
+    • Derecho a la portabilidad de los datos (artículo 20 del RGPD);
+
+    • Derecho a la limitación (artículo 18 del RGPD) y a la oposición al tratamiento de los datos (artículo 21 del RGPD);
+
+    • Derecho a no ser objeto de una decisión basada exclusivamente en un procedimiento automatizado;
+
+    • Derecho a determinar el destino de los datos tras la muerte;
+
+    • Derecho a presentar una reclamación ante la autoridad de control competente (artículo 77 del RGPD).
+
+Para ejercer sus derechos, dirija su carta a [Nombre y dirección de la empresa] o por correo electrónico a [Insertar la dirección de correo electrónico del Delegado a la protección de datos].
+A fin de que el responsable del tratamiento de datos pueda dar respuesta a su solicitud, el usuario puede estar obligado a proporcionarle cierta información como: su nombre y apellidos, su dirección de correo electrónico, así como su número de cuenta, de espacio personal o de abonado.
+Consulte el sitio cnil.fr para más información sobre sus derechos.
+
+
+ARTÍCULO 6: CONDICIONES DE MODIFICACIÓN DE LA POLÍTICA DE PRIVACIDAD
+
+El editor del sitio [Nombre del sitio] se reserva el derecho de modificar la presente Política en cualquier momento para garantizar a los usuarios del sitio su conformidad con la legislación vigente.
+Las posibles modificaciones no tendrán incidencia en las compras realizadas anteriormente en el sitio, que seguirán sometidas a la Política vigente en el momento de la compra y tal como fue aceptada por el usuario al validar la compra.
+Se invita al usuario a tomar conocimiento de esta Política cada vez que utilice nuestros servicios, sin que sea necesario informarle formalmente.
+La presente política, publicada el [fecha de publicación], ha sido actualizada el [fecha de modificación de la política].
