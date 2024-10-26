@@ -3,8 +3,7 @@ from channels.consumer import SyncConsumer
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-from game_app.models import RemoteGame
-import uuid
+from .models import RemoteGame
 
 log = logging.getLogger(__name__)
 

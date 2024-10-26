@@ -11,7 +11,7 @@ A - Local game:
 
 1 - Join a room :
 
-	Establish a websocket connection to "ws://application_host/api/game/ws/room_id" where :
+	Establish a websocket connection to "ws://application_host/api/game/pong-local/join/room_id" where :
 		- application_host is the combination host-port of the application (ex: localhost:8080).
 		- room_id is the id given by the matchmaking (not working yet, you can put any ID you want to create a room).
 	

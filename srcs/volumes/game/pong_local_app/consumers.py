@@ -1,10 +1,10 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import SyncConsumer
-from game_app.game_srcs.Pong_local import PongLocalEngine
+from game_srcs.Pong_local import PongLocalEngine
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-from game_app.models import LocalGame
+from .models import LocalGame
 import uuid
 
 log = logging.getLogger(__name__)

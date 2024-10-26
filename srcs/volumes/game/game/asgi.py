@@ -19,10 +19,10 @@ import signal
 import django
 django.setup()
 
-from game_app.urls import urlpatterns
-from game_app.routing import websocket_urlpatterns
-from game_app.consumers import LocalGameConsumer
-from game_app.consumers_remote import RemoteGameConsumer
+from pong_local_app.routing import websocket_urlpatterns
+# from .routing import websocket_urlpatterns
+from pong_local_app.consumers import LocalGameConsumer
+from pong_remote_app.consumers import RemoteGameConsumer
 
 django_asgi_app = get_asgi_application()
 

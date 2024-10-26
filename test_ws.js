@@ -1,7 +1,7 @@
 function testInit() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -61,7 +61,7 @@ function testInit() {
 function testStart() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -106,7 +106,7 @@ function testStart() {
 function testGetConfig() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -154,7 +154,7 @@ function testGetConfig() {
 function testPause() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -222,7 +222,7 @@ function testPause() {
 function testMove() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -314,7 +314,7 @@ function testMove() {
 function testSurrend() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -365,7 +365,7 @@ function testSurrend() {
 
 function testChannelFUll() {
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket 1 connected")
 		socket.send(JSON.stringify({
@@ -385,7 +385,7 @@ function testChannelFUll() {
 	socket.onclose = function(event) {
 	  console.log('Socket 1 Disconnected from the WebSocket server');
 	};
-	const socket_2 = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket_2 = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket_2.onopen = function(event) {
 		console.log("Socket 2 connected")
 		socket_2.send(JSON.stringify({
@@ -405,7 +405,7 @@ function testChannelFUll() {
 	socket_2.onclose = function(event) {
 	  console.log('Disconnected from the WebSocket server');
 	};
-	const socket_3 = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket_3 = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket_3.onopen = function(event) {
 		console.log("Socket 3 connected")
 		socket_3.send(JSON.stringify({
@@ -425,7 +425,7 @@ function testChannelFUll() {
 	socket_3.onclose = function(event) {
 	  console.log('Disconnected from the WebSocket server');
 	};
-	const socket_4 = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket_4 = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket_4.onopen = function(event) {
 		console.log("Socket 4 connected")
 		socket_4.send(JSON.stringify({
@@ -449,7 +449,7 @@ function testChannelFUll() {
 
 function createInstance() {
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		socket.send(JSON.stringify({
@@ -491,7 +491,7 @@ function testMultipleInstances(n) {
 
 function testWss() {
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket 1 connected")
 		socket.send(JSON.stringify({
@@ -519,7 +519,7 @@ function testWss() {
 
 function testRemote() {
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/ws/remote/');
+	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/remote/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 	}

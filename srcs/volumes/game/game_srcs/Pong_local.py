@@ -111,7 +111,7 @@ class PongLocalEngine(threading.Thread):
 				if player == "player_2":
 					self.frame.player_2.movement = direction
 		except ValueError:
-			print("Invalid movement received from " + player)
+			return
    
 	def receive_pause(self, action : str):
 		with self.start_lock:
