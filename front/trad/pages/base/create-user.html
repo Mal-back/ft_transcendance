@@ -106,12 +106,81 @@
                                 <br>
                                 <button type="submit" id="createProfileBtn" class="btn bg-silver">Create New
                                     Profile</button>
+                                <button type="button" class="btn btn-danger white-txt" data-bs-toggle="modal"
+                                    data-bs-target="#legalMentions">
+                                    Legal Mentions
+                                </button>
                                 <br>
                                 <br>
                             </form>
                         </div>
                         <div class="d-flex justify-content-center mt-3">
                             <button type="button" class="btn bg-blue login42-create white-txt">42 Connect</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal fade" id="legalMentions" tabindex="-1" aria-labelledby="legalMentionsLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content ">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="legalMentionsLabel">Legal Mentions</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body d-flex justify-content-center">
+                                <!-- Buttons without data-bs-toggle and data-bs-target -->
+                                <button type="button" class="btn btn-danger white-txt" id="openPrivacyPolicyBtn"
+                                    style="margin-right: 3px;">
+                                    Privacy Policy
+                                </button>
+                                <button type="button" class="btn btn-secondary white-txt" id="openTermsOfUseBtn">
+                                    Terms Of Use
+                                </button>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Privacy Policy Modal -->
+                <div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-80">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="privacyPolicyModalLabel">Privacy Policy</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                                <!-- Using <pre> to preserve formatting -->
+                                <pre id="privacyPolicyContent" style="white-space: pre-wrap;">Loading...</pre>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="termsOfUseModal" tabindex="-1" aria-labelledby="termsOfUseModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-80">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="termsOfUseModalLabel">Terms of Use</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                                <!-- Using <pre> to preserve formatting -->
+                                <pre id="termsOfUseContent" style="white-space: pre-wrap;">Loading...</pre>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -164,6 +233,44 @@
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
                 });
+        });
+        document.getElementById('openPrivacyPolicyBtn').addEventListener('click', function () {
+            fetch('../../../../game/rgpd/politique-en.txt')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('privacyPolicyContent').textContent = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching the privacy policy:', error);
+                    document.getElementById('privacyPolicyContent').textContent = 'Error loading privacy policy.';
+                });
+
+            // Show Privacy Policy modal
+            let privacyPolicyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+            privacyPolicyModal.show();
+        });
+
+        // Event listener for Terms of Use button in the Legal Mentions modal
+        document.getElementById('openTermsOfUseBtn').addEventListener('click', function () {
+            fetch('../../../../game/rgpd/terms-of-use-en.txt')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('termsOfUseContent').textContent = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching the terms of use:', error);
+                    document.getElementById('termsOfUseContent').textContent = 'Error loading terms of use.';
+                });
+
+            // Show Terms of Use modal
+            let termsOfUseModal = new bootstrap.Modal(document.getElementById('termsOfUseModal'));
+            termsOfUseModal.show();
         });
     </script>
 </body>
