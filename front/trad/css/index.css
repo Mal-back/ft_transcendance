@@ -46,3 +46,33 @@ p {
     margin-left: auto;
     /* Ensure it moves to the right */
 }
+
+.loading-modal-diag {
+    max-width: 500px;
+}
+
+.loading-modal-body {
+    display: flex;
+    align-items: center;
+    /* Center content vertically */
+    justify-content: center;
+    /* Center content horizontally */
+}
+
+.next-battle-modal-body {
+    display: flex;
+    align-items: center;
+    /* Center content vertically */
+    justify-content: center;
+    /* Center content horizontally */
+    flex-direction: column;
+    text-align: center;
+}
+
+/* Custom class for 80% width and height modal */
+.modal-80 {
+    width: 80vw;
+    max-width: 80vw;
+    height: 80vh;
+    max-height: 80vh;
+}
