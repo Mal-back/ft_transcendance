@@ -50,10 +50,10 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		try:
 			self.group_name = str(uuid.uuid4())
-			game = await sync_to_async(LocalGame.objects.create)(game_creator=self.username, game_id=self.group_name)
+			game = await sync_to_async(LocalGame.objects.create)(game_id=self.group_name)
 			await sync_to_async(game.save)()
 			await self.channel_layer.group_add(self.group_name, self.channel_name)
-			log.info("Player " + self.username+ " added to room " + self.group_name)
+			log.info("Local Player added to room " + self.group_name)
 			await self.accept()
 			self.delete = True
 			self.game_ended = False
@@ -84,7 +84,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			log.info("Can not discard channel " + self.channel_name + " from group " + self.group_name) 
 	 
 	async def disconnect(self, code):
-		log.info("Player " + self.username + " disconnected")
+		log.info("Local Player disconnected")
 		if self.delete == True:
 			await self.clean_game()
 	
