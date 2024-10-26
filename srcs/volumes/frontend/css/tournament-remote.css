@@ -21,6 +21,12 @@
     max-width: 80vw;
 }
 
+.tournament-creation {
+    max-width: 80vw;
+    margin: 0 auto;
+    /* margin-bottom: 0; */
+}
+
 .mb-0 {
     white-space: nowrap;
     /* Prevents the text from wrapping */
@@ -30,7 +36,7 @@
     max-width: 30vw;
 }
 
-.tournament-creation {
-    max-width: 80vw;
-    margin: 0 auto;
+h3 {
+    font-size: 2em;
+
 }

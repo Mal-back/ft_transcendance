@@ -38,15 +38,18 @@ export default class extends AbstractView {
         </div>
         <div id="usernameTemplates" class="mt-4 mv-80 removeElem">
           <div id="usernameScroll" class="mt-2 removeElem">
-            <div class="username-input removeElem" id="username1-input"><label for="username1">${this.lang.getTranslation(["game", "player"])} 1:</label><input type="text"
-              id="username1" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 1"></div>
+            <div class="username-input removeElem" id="username1-input"><label for="username1">${this.lang.getTranslation(["game", "player"])} 1:</label>
+              <input type="text" id="username1" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 1">
               <div id="username1Error" class="removeElem"></div>
-            <div class="username-input removeElem" id="username1-input"><label for="username2">${this.lang.getTranslation(["game", "player"])} 2:</label><input type="text"
-              id="username2" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 2"></div>
+            </div>
+            <div class="username-input removeElem" id="username2-input"><label for="username2">${this.lang.getTranslation(["game", "player"])} 2:</label>
+              <input type="text" id="username2" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 2">
               <div id="username2Error" class="removeElem"></div>
-            <div class="username-input removeElem" id="username1-input"><label for="username3">${this.lang.getTranslation(["game", "player"])} 3:</label><input type="text"
-              id="username3" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 3"></div>
+            </div>
+            <div class="username-input removeElem" id="username3-input"><label for="username3">${this.lang.getTranslation(["game", "player"])} 3:</label>
+              <input type="text" id="username3" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 3">
               <div id="username3Error" class="removeElem"></div>
+            </div>
           </div>
         </div>
         <div class="text-center mv-80 removeElem">
@@ -72,6 +75,17 @@ export default class extends AbstractView {
             `;
   }
 
+  checkUnique(playerName) {
+    console.log("check unique:");
+    let count = 0;
+    this.playerInputs.forEach((input) => {
+      console.log(`${input.value} vs ${playerName}`);
+      if (input.value == playerName) count++;
+    });
+    console.log("count = ", count);
+    return count == 1;
+  }
+
   validatePlayerInput(target) {
     const errorDiv = document.querySelector(`#${target.id}Error`);
     let errorMessage = "";
@@ -80,12 +94,15 @@ export default class extends AbstractView {
       errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
     } else if (!this.sanitizeInput(target.value)) {
       errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
-    } else if (!this.checkUnique)
-      if (errorMessage) {
-        errorDiv.textContent = errorMessage;
-        errorDiv.style.color = "red";
-        errorDiv.style.fontStyle = "italic";
-      }
+    } else if (!this.checkUnique(target.value)) {
+      errorMessage = "Not a unique Username";
+    }
+    if (errorMessage) {
+      console.log("ERROR:", errorMessage);
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
     errorDiv.classList.add("removeElem");
     return errorMessage;
   }
@@ -95,11 +112,12 @@ export default class extends AbstractView {
   }
 
   cleanUpPlayersInput() {
+    console.log(this.playerInputs);
     this.playerInputs.forEach((input) => {
       input.value = "";
-      let inputError = input.querySelector(`#${input.id}Error`);
+      let inputError = document.querySelector(`#${input.id}Error`);
       inputError.innerText = "";
-      input.removeEventListener("input", this.validatePlayerInput);
+      input.removeEventListener("input", this.handleValidatePlayerInput);
     });
     this.playerInputs = [];
   }
@@ -139,7 +157,6 @@ export default class extends AbstractView {
   }
 
   handleStartGame(ev) {
-    //CHECK UNIQUE PLAYER NAME
     ev.preventDefault();
     let isValid = true;
     this.playerInputs.forEach((input) => {
@@ -158,10 +175,9 @@ export default class extends AbstractView {
     const scroll = document.getElementById("usernameScroll");
     const inputs = scroll.querySelectorAll("input");
     inputs.forEach((input) => {
-      input.addEventListener("input", this.validatePlayerInput);
+      input.addEventListener("input", this.handleValidatePlayerInput);
       this.playerInputs.push(input);
     });
-
     const startGameBtn = document.querySelector("#startGameBtn");
     startGameBtn.addEventListener("click", this.handleStartGame);
   }

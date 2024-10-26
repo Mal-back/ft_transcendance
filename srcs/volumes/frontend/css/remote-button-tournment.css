@@ -1,0 +1,12 @@
+.start-game-button {
+    max-height: 6vh;
+    min-height: 50px;
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+
+.friends-button {
+    max-height: 6vh;
+    min-height: 50px;
+    margin-bottom: 0px;
+}
