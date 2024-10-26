@@ -48,9 +48,6 @@ def propagate_exceptions(func):
 @apply_wrappers
 class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		path = self.scope["path"]
-		self.group_name = path.rsplit('/', 1)[1]
-		self.username = "Random Player"
 		try:
 			self.group_name = str(uuid.uuid4())
 			game = await sync_to_async(LocalGame.objects.create)(game_creator=self.username, game_id=self.group_name)

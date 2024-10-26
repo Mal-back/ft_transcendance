@@ -517,31 +517,15 @@ function testWss() {
 }
 
 
-function testRemote() {
-	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/remote/');
-	socket.onopen = function(event) {
-		console.log("Socket connected")
-	}
-	socket.onmessage = function(event){
-		const msg = event.data;
-		console.log(`${msg}`)
-	}
-	socket.onerror = function(event) {
-	  console.log('Error occurred while connecting to the WebSocket server');
-	};
-	socket.onclose = function(event) {
-	  console.log('Socket 1 Disconnected from the WebSocket server');
-	};
-}
 
-testInit();
-testStart();
-testGetConfig();
-testPause();
-testMove();
-testSurrend();
+
+// testInit();
+// testStart();
+// testGetConfig();
+// testPause();
+// testMove();
+// testSurrend();
 // testChannelFUll();
-testWss();
-testMultipleInstances(50)
-// testRemote();
+// testWss();
+// testMultipleInstances(50)
+testRemote();

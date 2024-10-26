@@ -4,5 +4,5 @@ import pong_remote_app.routing
 
 websocket_urlpatterns = [
     *pong_local_app.routing.websocket_urlpatterns,
-    # *pong_remote_app.routing.websocket_urlpatterns,
+    *pong_remote_app.routing.websocket_urlpatterns,
     ]

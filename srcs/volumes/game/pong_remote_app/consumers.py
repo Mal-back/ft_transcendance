@@ -46,16 +46,52 @@ def propagate_exceptions(func):
 @apply_wrappers
 class RemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		path = self.scope["path"]
-		self.scope
-		log.info("Remote Player Consumer created")
-
+		self.player = "None"
+		await self.accept()		
+		log.info("Remote Player Consumer created")	
   
 	async def disconnect(self, code):
 		log.info("Remote Player Consumer disconnected")
-  
+		if self.player != "None":
+			# try:
+			game = await sync_to_async(RemoteGame.objects.get)(game_id=self.game_id)
+			game.player_1_connected = False
+			await sync_to_async(game.save)()
+			# except Exception:
+			# 	log.info("Game instance " + self.game_id + " does not exist")
+			# 	return
+
 	async def receive(self, text_data=None, bytes_data=None):
 		content = loads(text_data)
+		try:
+			type = content["type"]
+		except KeyError:
+			log.error("Key error in RemotePlayerConsumer.receive()")
+			return
+		if type == "join_game":
+			await self.join_game(content)
+      
+	async def join_game(self, content):
+		try:
+			game_id = content["game_id"]
+			username = content["username"]
+			auth_key = content["auth_key"]
+		except:
+			log.error("Key error in RemotePlayerConsumer.join_game()")
+		try:
+			game = await sync_to_async(RemoteGame.objects.get)(game_id=game_id)
+		except Exception:
+			log.info("Game instance " + game_id + " does not exist")
+			await self.close()
+			return
+		if username == game.player_1_name and game.player_1_connected == False:
+			self.game_id = game_id
+			self.player = "player_1"
+			game.player_1_connected = True
+			await sync_to_async(game.save)()
+			log.info("Player " + username + " connected to game " + game_id + " as " + self.player)
+		else:
+			await self.close()
 
 
 class RemoteGameConsumer(SyncConsumer):
