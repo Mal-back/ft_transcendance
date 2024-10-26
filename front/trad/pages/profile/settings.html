@@ -114,52 +114,7 @@
                                         Handle Email
                                     </button>
                                 </div>
-                                <div class="modal fade" id="handleEmail" tabindex="-1"
-                                    aria-labelledby="handleEmailLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="handleEmailLabel">
-                                                    Change Mail
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form>
 
-                                                    <div class="mb-3">
-                                                        <label for="email-old" class="form-label">Old Email</label>
-                                                        <input type="email" class="form-control" id="email-old"
-                                                            name="oldMail" value="old-email@google.com">
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="email-new" class="form-label">New Email</label>
-                                                        <input type="email" class="form-control" id="email-new"
-                                                            name="mailChange" value="new-email@google.com">
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="email-confirm" class="form-label">Confirm New
-                                                            Email</label>
-                                                        <input type="email" class="form-control" id="email-confirm"
-                                                            name="checkMail" value="new-email@google.com">
-                                                    </div>
-
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Close
-                                                </button>
-                                                <button type="button" class="btn btn-success" id="confirmChangesMail">
-                                                    Confirm Changes
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <!-- PASSWORD -->
                                 <div class="mb-3">
@@ -170,52 +125,7 @@
                                         Handle Password
                                     </button>
                                 </div>
-                                <div class="modal fade" id="handlePassword" tabindex="-1"
-                                    aria-labelledby="handlePasswordLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="handlePasswordLabel">
-                                                    Change password
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form>
-                                                    <div class="mb-3">
-                                                        <label for="old-password-settings" class="form-label">Old
-                                                            Password</label>
-                                                        <input type="password" class="form-control" name="oldPassword"
-                                                            id="old-password-settings" />
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="new-password-settings" class="form-label">New
-                                                            Password</label>
-                                                        <input type="password" class="form-control" name="newPassword"
-                                                            id="new-password-settings" />
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="confirm-new-password-settings"
-                                                            class="form-label">Confirm New
-                                                            Password</label>
-                                                        <input type="password" class="form-control"
-                                                            name="confirmPassword" id="confirm-new-password-settings" />
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Close
-                                                </button>
-                                                <button type="button" class="btn btn-success"
-                                                    id="confirm-changes-password-btn">
-                                                    Confirm Changes
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
 
                                 <!-- LANGUAGE -->
                                 <div class="mb-3">
@@ -237,132 +147,191 @@
                                         data-bs-target="#handleData">
                                         Handle Data
                                     </button>
+                                    <button type="button" class="btn btn-danger white-txt" data-bs-toggle="modal"
+                                        data-bs-target="#legalMentions">
+                                        Legal Mentions
+                                    </button>
+
+                                    <!-- <button> -->
+                                    <!-- Conditions Générales d'Utilisation et de mentions légales -->
+                                    <!-- </button> -->
+                                    <!-- <button type="button" class="btn btn-danger white-txt" data-bs-toggle="modal" -->
+                                    <!-- data-bs-target="#privacyPolicy"> -->
+                                    <!-- Privacy Policy -->
+                                    <!-- </button> -->
                                 </div>
                                 <!-- <br> -->
-                                <div class="modal fade" id="handleData" tabindex="-1" aria-labelledby="handleDataLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="handleDataLabel">
-                                                    Handle Data
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form>
-                                                    <div class="mb-3">
-                                                        <button type="button" class="btn btn-success">
-                                                            Send All Data
-                                                        </button>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <button type="button" class="btn btn-warning"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#confirmDeleteAccountModal">
-                                                            Delete Account
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Close
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- Delete Account Modal -->
-                                <div class="modal fade" id="confirmDeleteAccountModal" tabindex="-1"
-                                    aria-labelledby="confirmDeleteAccountModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="confirmDeleteAccountModalLabel">Confirm
-                                                    Account Deletion</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>Are you sure you want to delete your account? This action cannot be
-                                                    undone.</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button type="button" class="btn btn-danger"
-                                                    id="confirmDeleteAccountBtn">Delete Account</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
+
                             </form>
                         </div>
                     </div>
                 </div>
-                <!-- <div class="modal fade" id="changeProfileBackground" tabindex="-1"
-                    aria-labelledby="changeProfileBackgroundLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="changeProfileBackgroundLabel">Select or Upload Profile
-                                    Background</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <h6>Current Profile Background:</h6>
-                                    <div id="currentProfileBackgroundPreview" class="rounded"
-                                        style="width: 11vh; height: 11vh; background-size: cover; background-position: center; background-image: url(../../img/ts/TTPD.jpeg);">
-                                    </div>
-                                </div>
 
-                                <div class="mb-3">
-                                    <h6>Choose a Profile Background:</h6>
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <img src="../../img/ts/TTPD.jpeg" class="img-fluid rounded border "
-                                                alt="Background 1" style="cursor: pointer;">
-                                        </div>
-                                        <div class="col-4">
-                                            <img src="../../img/ts/RED.jpeg" class="img-fluid rounded border"
-                                                alt="Background 2" style="cursor: pointer;">
-                                        </div>
-                                        <div class="col-4">
-                                            <img src="../../img/ts/MIDNIGHTS.jpeg" class="img-fluid rounded border"
-                                                alt="Background 3" style="cursor: pointer;">
-                                        </div>
-                                        <div class="col-4">
-                                            <img src="../../img/ts/EVERMORE.jpeg" class="img-fluid rounded border"
-                                                alt="Background 4" style="cursor: pointer;">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <h6>Or Upload Your Own:</h6>
-                                    <input type="file" class="form-control" accept="image/*"
-                                        id="uploadProfileBackground">
-                                    <button type="button" class="btn btn-success">Upload</button>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-success" id="confirm-profile-background-btn">Set
-                                    Profile
-                                    Background</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
             </div>
         </div>
     </div>
+    <div class="modal fade" id="legalMentions" tabindex="-1" aria-labelledby="legalMentionsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="legalMentionsLabel">Legal Mentions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex justify-content-center">
+                    <button type="button" class="btn btn-danger white-txt" data-bs-toggle="modal"
+                        data-bs-target="openPrivacyPolicy" style="margin-right: 3px;">
+                        Privacy Policy
+                    </button>
+                    <button type="button" class="btn btn-secondary white-txt" data-bs-toggle="modal"
+                        data-bs-target="openTermsOfUse">
+                        Terms Of Use
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="handleEmail" tabindex="-1" aria-labelledby="handleEmailLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="handleEmailLabel">
+                        Change Mail
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
 
+                        <div class="mb-3">
+                            <label for="email-old" class="form-label">Old Email</label>
+                            <input type="email" class="form-control" id="email-old" name="oldMail"
+                                value="old-email@google.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email-new" class="form-label">New Email</label>
+                            <input type="email" class="form-control" id="email-new" name="mailChange"
+                                value="new-email@google.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email-confirm" class="form-label">Confirm New
+                                Email</label>
+                            <input type="email" class="form-control" id="email-confirm" name="checkMail"
+                                value="new-email@google.com">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-success" id="confirmChangesMail">
+                        Confirm Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="handlePassword" tabindex="-1" aria-labelledby="handlePasswordLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="handlePasswordLabel">
+                        Change password
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="old-password-settings" class="form-label">Old
+                                Password</label>
+                            <input type="password" class="form-control" name="oldPassword" id="old-password-settings" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-password-settings" class="form-label">New
+                                Password</label>
+                            <input type="password" class="form-control" name="newPassword" id="new-password-settings" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm-new-password-settings" class="form-label">Confirm New
+                                Password</label>
+                            <input type="password" class="form-control" name="confirmPassword"
+                                id="confirm-new-password-settings" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-success" id="confirm-changes-password-btn">
+                        Confirm Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="handleData" tabindex="-1" aria-labelledby="handleDataLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="handleDataLabel">
+                        Handle Data
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-success">
+                                Send All Data
+                            </button>
+                        </div>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                data-bs-target="#confirmDeleteAccountModal">
+                                Delete Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="confirmDeleteAccountModal" tabindex="-1"
+        aria-labelledby="confirmDeleteAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteAccountModalLabel">Confirm
+                        Account Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete your account? This action cannot be
+                        undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAccountBtn">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Change Profile Background Modal -->
     <div class="modal fade" id="changeProfileBackground" tabindex="-1" aria-labelledby="changeProfileBackgroundLabel"
         aria-hidden="true">
