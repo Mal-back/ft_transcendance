@@ -225,7 +225,6 @@ export default class {
         options.body = myBody;
       } else options.body = JSON.stringify(myBody);
     }
-    console.log(JSON.stringify(myBody));
     const myRequest = new Request(url, options);
     return myRequest;
   }

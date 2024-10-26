@@ -14,42 +14,6 @@
 </head>
 
 <body>
-  <!-- <header id="header"> -->
-  <!-- 	<div style="background-color: gray"> -->
-  <!-- 		<div class="container d-flex align-items-center py-2"> -->
-  <!-- 			<div class="icon-container d-flex align-items-center"> -->
-  <!-- 				<button class="btn btn-light clickable-element" id="toggleSidebar" data-bs-toggle="offcanvas" -->
-  <!-- 					data-bs-target="#sidebar" aria-controls="sidebar" data-bs-backdrop="true"> -->
-  <!-- 					<i class="bi bi-list"></i> -->
-  <!-- 				</button> -->
-  <!-- 				<a href="/" class="btn btn-light clickable-element" id="HomeIcon" title="Home" data-link> -->
-  <!-- 					<i class="bi bi-house-fill"></i> -->
-  <!-- 				</a> -->
-  <!-- 				<a id="logIconRef" href="/login" class="btn btn-light clickable-element" title="Login" data-link> -->
-  <!-- 					<i id="logIconImg" class="bi bi-box-arrow-in-right"></i> -->
-  <!-- 				</a> -->
-  <!-- 			</div> -->
-  <!-- 			<div class="text-black text-center flex-grow-1 overlay-element" style="font-size: 3.5vh"> -->
-  <!-- 				FT_TRANSCENDENCE -->
-  <!-- 			</div> -->
-  <!-- 			<div class="icon-container-right dropdown d-flex align-items-center p"> -->
-  <!-- 				<button class="btn btn-light dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" -->
-  <!-- 					aria-expanded="false"> -->
-  <!-- 					<i class="bi bi-translate"></i> -->
-  <!-- 				</button> -->
-  <!-- 				<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"> -->
-  <!-- 					<li> -->
-  <!-- 						<a class="dropdown-item" href="?lang=en" id="headerEnglish">English</a> -->
-  <!-- 					</li> -->
-  <!-- 					<li> -->
-  <!-- 						<a class="dropdown-item" href="?lang=fr" id="headerFrench">Français</a> -->
-  <!-- 					</li> -->
-  <!-- 				</ul> -->
-  <!-- 			</div> -->
-  <!-- 		</div> -->
-  <!-- 	</div> -->
-  <!-- </header> -->
-
   <header id="header">
     <div style="background-color: gray">
       <div class="container d-flex align-items-center justify-content-between py-2">
@@ -166,50 +130,3 @@
 </body>
 
 </html>
-
-<div class="col d-flex justify-content-center align-items-center">
-  <div class="background">
-    <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-      PONG - LOCAL - TOURNAMENT
-    </h1>
-    <br />
-    <div class="tournament-creation">
-      <div class="text-white text-center mv-80">
-        <div class="mb-3">
-          <h5 class="form-label" id="SelectPlayersTitle">
-            Select number of players (3 to 10):
-          </h5>
-          <input type="number" id="usernameCount" class="form-control" min="3" max="10" value="3" />
-        </div>
-        <div class="text-center">
-          <button id="generateBtn" class="btn btn-primary">
-            Generate Usernames
-          </button>
-        </div>
-      </div>
-
-      <!-- <div id="usernameTemplates" class="mt-4 mv-80"></div> -->
-      <div id="usernameTemplates" class="mt-4 mv-80">
-        <div id="usernameScroll" class="mt-2">
-          <div class="username-input">
-            <label for="username1">User 1:</label><input type="text" id="username1" class="form-control"
-              placeholder="User1" />
-          </div>
-          <div class="username-input">
-            <label for="username2">User 2:</label><input type="text" id="username2" class="form-control"
-              placeholder="User2" />
-          </div>
-          <div class="username-input">
-            <label for="username3">User 3:</label><input type="text" id="username3" class="form-control"
-              placeholder="User3" />
-          </div>
-        </div>
-      </div>
-      <div class="text-center mv-80">
-        <button id="startGameBtn" class="btn btn-success mt-3">
-          Start Game
-        </button>
-      </div>
-    </div>
-  </div>
-</div

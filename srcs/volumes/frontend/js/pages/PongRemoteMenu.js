@@ -10,11 +10,11 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Pong Local");
-    this.handleLocalGameRedirection =
-      this.handleLocalGameRedirection.bind(this);
-    this.handleLocalTournamentRedirection =
-      this.handleLocalTournamentRedirection.bind(this);
+    this.setTitle("Pong Remote");
+    this.handleRemoteGameRedirection =
+      this.handleRemoteGameRedirection.bind(this);
+    this.handleRemoteTournamentRedirection =
+      this.handleRemoteTournamentRedirection.bind(this);
   }
 
   async loadCss() {
@@ -27,13 +27,13 @@ export default class extends AbstractView {
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
           <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
-            ${this.lang.getTranslation(["pong", "maj", "title"])} - ${this.lang.getTranslation(["pong", "maj", "local"])}</h1>
+            ${this.lang.getTranslation(["pong", "maj", "title"])} - ${this.lang.getTranslation(["pong", "maj", "remote"])}</h1>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
-            id="PongLocalPlayButton">${this.lang.getTranslation(["pong", "maj", "play"])}</button>
+            id="PongRemotePlayButton">${this.lang.getTranslation(["pong", "maj", "play"])}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-            id="PongLocalTournamentButton">${this.lang.getTranslation(["pong", "maj", "tournament"])}</button>
+            id="PongRemoteTournamentButton">${this.lang.getTranslation(["pong", "maj", "tournament"])}</button>
           <br>
         </div>
       </div>
@@ -47,32 +47,35 @@ export default class extends AbstractView {
     }
   }
 
-  handleLocalGameRedirection(ev) {
+  handleRemoteGameRedirection(ev) {
     ev.preventDefault();
-    navigateTo("/ponglocal");
+    navigateTo("/pongremote");
   }
 
-  handleLocalTournamentRedirection(ev) {
+  handleRemoteTournamentRedirection(ev) {
     ev.preventDefault();
-    navigateTo("/pong-local-lobby");
+    navigateTo("/pong-remote-tournament");
   }
 
   async addEventListeners() {
-    const local = document.querySelector("#PongLocalPlayButton");
-    local.addEventListener("click", this.handleLocalGameRedirection);
+    const remote = document.querySelector("#PongRemotePlayButton");
+    remote.addEventListener("click", this.handleRemoteGameRedirection);
 
-    const tournament = document.querySelector("#PongLocalTournamentButton");
-    tournament.addEventListener("click", this.handleLocalTournamentRedirection);
+    const tournament = document.querySelector("#PongRemoteTournamentButton");
+    tournament.addEventListener(
+      "click",
+      this.handleRemoteTournamentRedirection,
+    );
   }
 
   removeEventListeners() {
-    const local = document.querySelector("#PongLocalPlayButton");
-    local.removeEventListener("click", this.handleLocalGameRedirection);
+    const remote = document.querySelector("#PongRemotePlayButton");
+    remote.removeEventListener("click", this.handleRemoteGameRedirection);
 
-    const tournament = document.querySelector("#PongLocalTournamentButton");
+    const tournament = document.querySelector("#PongRemoteTournamentButton");
     tournament.removeEventListener(
       "click",
-      this.handleLocalTournamentRedirection,
+      this.handleRemoteTournamentRedirection,
     );
   }
 

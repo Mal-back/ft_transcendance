@@ -100,7 +100,9 @@ export default class extends AbstractView {
 				  ${this.lang.getTranslation(["Friends", "addButton"])}</button>
 		  </div>
 	  </div>
-	  <div class="modal fade removeElem" id="addFriendModal" tabindex="-1" aria-labelledby="addFriendModalLabel" aria-hidden="true">
+    ${friendList}
+	</div>
+ <div class="modal fade removeElem" id="addFriendModal" tabindex="-1" aria-labelledby="addFriendModalLabel" aria-hidden="true">
 		  <div class="modal-dialog removeElem">
 			  <div class="modal-content removeElem">
 				  <div class="modal-header removeElem">
@@ -111,24 +113,22 @@ export default class extends AbstractView {
 					  <form id="addFriendForm" class="removeElem">
 						  <div class="mb-3 removeElem">
 							  <label for="friendUsername" class="form-label removeElem">${this.lang.getTranslation(
-                  ["Friends", "enterUsername"],
-                )}</label>
+      ["Friends", "enterUsername"],
+    )}</label>
 							  <input type="text" class="form-control removeElem" name="friendRequest" id="friendUsername" required>
 						  </div>
 					  </form>
 				  </div>
 				  <div class="modal-footer removeElem">
 					  <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">${this.lang.getTranslation(
-              ["modal", "close"],
-            )}</button>
+      ["modal", "close"],
+    )}</button>
 					  <button type="submit" class="btn btn-primary removeElem" form="addFriendForm"
 						  id="addFriendRequest">${this.lang.getTranslation(["Friends", "addButton"])}</button>
 				  </div>
 			  </div>
 		  </div>
 		</div>
-    ${friendList}
-	</div>
 </div>`;
   }
 
@@ -257,7 +257,7 @@ export default class extends AbstractView {
   noFriendDiv() {
     return `<div class="list-group removeElem" id="friendsList">
               <div class="removeElem list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
-                <p class="h4 removeElem">✨ <i clas="removeElem">Maidenless</i> ✨</p>
+                <p class="h4 removeElem">✨ <i class="removeElem">Maidenless</i> ✨</p>
                 <p class="h4 removeElem">Please, add friends</p>
               </div>
             </div>`;
@@ -330,7 +330,7 @@ export default class extends AbstractView {
     const changeUsernameButton = document.querySelector("#addFriendRequest");
     if (changeUsernameButton) {
       changeUsernameButton.removeEventListener("click", this.handleAddFriend);
-    } 
+    }
     document.querySelectorAll(".btn-danger").forEach((button) => {
       button.removeEventListener("click", this.handleRemoveFriends);
     });

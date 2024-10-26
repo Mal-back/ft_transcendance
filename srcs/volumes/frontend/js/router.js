@@ -14,6 +14,7 @@ import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
 import PongMenu from "./pages/PongMode.js";
 import PongLocalMenu from "./pages/PongLocalMenu.js";
+import PongRemoteMenu from "./pages/PongRemoteMenu.js";
 import PongLocalLobby from "./pages/PongLocalLobby.js";
 
 export const navigateTo = (url) => {
@@ -44,6 +45,7 @@ const router = async () => {
     { path: "/ponglocal", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
     { path: "/pong-local-menu", view: PongLocalMenu },
+    { path: "/pong-remote-menu", view: PongRemoteMenu },
     { path: "/pong-local-lobby", view: PongLocalLobby },
   ];
 
@@ -66,10 +68,8 @@ const router = async () => {
   }
   console.info("route = " + match.route.path);
 
-  
   view = null;
   view = new match.route.view();
-
 
   try {
     await view.loadCss();
@@ -94,7 +94,7 @@ const router = async () => {
   // Function to print all CSS links on the page
   function printAllCssLinks() {
     // Select all <link> elements with rel="stylesheet"
-  console.log("PRINT CSS")
+    console.log("PRINT CSS");
     const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
 
     // Loop through each <link> element
@@ -107,9 +107,9 @@ const router = async () => {
   // Call the function to print all CSS links
 
   // print all html
-//   printAllCssLinks();
-//   console.log("PRINT HTML")
-    // console.log(document.documentElement.outerHTML); 
+  //   printAllCssLinks();
+  //   console.log("PRINT HTML")
+  console.log(document.documentElement.outerHTML);
 };
 
 window.addEventListener("popstate", router);
@@ -136,7 +136,6 @@ export function handleClick(e) {
   }
 }
 
-
 function closeSidebar(sidebar) {
   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
 
@@ -145,14 +144,14 @@ function closeSidebar(sidebar) {
 
     sidebar.addEventListener(
       "hidden.bs.offcanvas",
-      function () {
+      function() {
         const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
           backdrop.remove();
         }
       },
       { once: true },
-    ); 
+    );
   }
 }
 
@@ -191,7 +190,6 @@ document.addEventListener("keydown", (ev) => {
     modalInstance.hide();
   }
 });
-
 
 // const  inviteModalEl = document.getElementById('inviteModal');
 // inviteModalEl.addEventListener('show.bs.modal', function () {
@@ -283,4 +281,3 @@ document.addEventListener("keydown", (ev) => {
 // setTimeout(() => {
 //     updateNotificationCount(2); // Update count to 2
 // }, 3000);
-
