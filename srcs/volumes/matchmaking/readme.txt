@@ -1,7 +1,7 @@
 All urls start with 'api/matchmaking/'
 
 FrontEnd Urls :
-- 'match/create/' : Create a match. Expected Body : 'player2', 'game_type' Game type CHoices : 'Pong', 'Connect Four' . Permission : Authenticated, Method : Post
+- 'match/create/' : Create a match. Expected Body : 'player2', 'game_type' Game type CHoices : 'pong', 'connect_four' . Permission : Authenticated, Method : Post
 - 'match/pending_invites/' : Send pending Invites. Permission : Authenticated, Method : Get
 - 'match/sent_invite/' : Send the invite user sent. Permission : Authenticated, Method : Get
 - 'match/<int:pk>/accept/': Accept an invite. Permission : Must be invited, Method : Patch

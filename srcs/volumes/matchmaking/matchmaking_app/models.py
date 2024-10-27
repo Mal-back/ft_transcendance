@@ -27,8 +27,8 @@ class Match(models.Model):
                                 to_field='username')
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
-    game_type = models.URLField(choices=[('https://lala.com', 'Pong'),
-                                           ('https://lili.com', 'Connect four')])
+    game_type = models.URLField(choices=[('pong', 'Pong'),
+                                           ('connect_four', 'Connect four')])
     matchId = models.URLField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('accepted', 'Accepted'),
