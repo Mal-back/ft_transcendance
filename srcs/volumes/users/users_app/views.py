@@ -136,6 +136,7 @@ class PublicUserRemoveFriend(APIView):
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        self.check_object_permissions(request, user)
         cur_friends = getattr(user, 'friends', None)
         try:
             delete_friend = PublicUser.objects.get(username=friendusername)
@@ -173,6 +174,7 @@ class PublicUserSetDefaultAvatar(APIView):
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        self.check_object_permissions(request, user)
         path = 'http://localhost:8080/media/default_avatars/default_00.jpg'
         try:
             sender = MicroServiceClient()

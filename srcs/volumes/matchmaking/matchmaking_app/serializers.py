@@ -22,17 +22,6 @@ class MatchSerializer(serializers.ModelSerializer):
             if not MatchUser.objects.filter(username=value).exists():
                 raise ValidationError('Invited Player does not exists')
             return value
-#
-# class MatchSerializer(serializers.ModelSerializer):
-#     class Meta :
-#         model = Match
-#         fields = ['id', 'player1', 'player2', 'matchId', 'status', 'game_type', 'created_at']
-#         extra_kwargs = {
-#                     'matchId': {'read_only': True},
-#                     'status': {'read_only': True},
-#                     'created_at': {'read_only': True},
-#                     'id': {'read_only': True},
-#                 }
 
 class PendingInviteSerializer(serializers.ModelSerializer):
     accept_invite = serializers.SerializerMethodField()
@@ -54,6 +43,11 @@ class PendingInviteSerializer(serializers.ModelSerializer):
     def get_decline_invite(self, obj):
         match_id = obj.id
         return(f"http://localhost:8080/api/matchmaking/match/{match_id}/decline/")
+
+class AcceptedMatchSerializer(serializers.ModelSerializer):
+    class Meta :
+        model = Match
+        fields = ['player1', 'player2', 'matchId']
 
 class SentInviteSerializer(serializers.ModelSerializer):
     delete_invite = serializers.SerializerMethodField

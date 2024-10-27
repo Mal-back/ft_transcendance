@@ -3,9 +3,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
+from .single_match_to_history import end_single_match
 
 # Create your views here.
 
@@ -62,13 +63,14 @@ class MatchAcceptInvite(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         username = self.request.user.username
+        match = self.get_object()
+        self.check_object_permissions(request, match)
         accepted_matches = Match.objects.filter(player2=username, status__in=['accepted', 'in_progress'])
         matches_as_player1 = Match.objects.filter(player1=username, status__in=['pending', 'accepted', 'in_progress'])
         if accepted_matches.exists():
-            return Response({'Error':'You already send invites or have game in progress acce'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
         elif matches_as_player1.exists():
-            return Response({'Error':'You already send invites or have game in progress p1'}, status=status.HTTP_400_BAD_REQUEST)
-        match = self.get_object()
+            return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != 'pending':
             return Response({'Error':'You can\'t accept this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'accepted'
@@ -83,6 +85,7 @@ class MatchDeclineInvite(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         match = self.get_object()
+        self.check_object_permissions(request, match)
         if match.status != 'pending':
             return Response({'Error':'You can\'t declined this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'declined'
@@ -96,13 +99,16 @@ class MatchDeleteInvite(APIView):
 
     def delete(self, request, *args, **kwargs):
         match = self.get_object()
+        self.check_object_permissions(request, match)
         if match.status != 'pending':
             return Response({'Error':'You can\'t cancel this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'cancelled'
         return Response({'OK':'Match Cancelled'}, status=status.HTTP_200_OK)
 
 class GetAcceptedMatch(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Match.objects.all()
+    serializer_class = AcceptedMatchSerializer
 
     def get_object(self):
         user = self.request.user.username
@@ -112,36 +118,23 @@ class GetAcceptedMatch(generics.RetrieveAPIView):
 
 class HandleMatchResult(APIView):
     queryset = Match.objects.all()
-    lookup_field = 'pk'
+    lookup_field = 'matchId'
     permission_classes = [IsGame]
 
-    def get_object(self, pk):
-        return get_object_or_404(self.queryset, id=pk)
+    def get_object(self, matchId):
+        return get_object_or_404(self.queryset, matchId=matchId)
 
     def post(self, request, *args, **kwargs):
         serializer = MatchResultSerializer(data=request.data)
+        match = self.get_object(kwargs['matchId'])
         if serializer.is_valid():
             data = serializer.save()
-            sender = MicroServiceClient()
-            try :
-                sender.send_requests(urls=[f"http://users:8443/api/users/{data['winner']}/increment/single_games_won",
-                                            "http://users:8443/api/users/{data['looser']}/increment/single_games_lost",],
-                                     method='patch',
-                                     expected_status=[200]) 
-            except (RequestsFailed, InvalidCredentialsException):
-                pass
-            try :
-                # sender.send_requests(urls=["http://users:8443/api/history/"],
-                #                      method='post',
-                #                      expected_status=[201],
-                #                      body=data) 
-                pass
-            except (RequestsFailed, InvalidCredentialsException):
-                pass
-            match = self.get_object(kwargs['pk'])
-            match.status = 'finished'
-            match.save()
+        if match.tournament is None :
+            end_single_match(match, data)
             return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
+        else :
+            # tournament logic here
+            pass
         return Response({'Error':'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
 class DebugSetGameAsFinished(generics.UpdateAPIView):
@@ -153,6 +146,3 @@ class DebugSetGameAsFinished(generics.UpdateAPIView):
         match.status = 'finished'
         match.save()
         return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
-# Remain the view to handle finished game
-
-
