@@ -13,6 +13,7 @@ services:
       - users
       - matchmaking
       - avatars
+      - history
     build :
       context: requirements/nginx
       dockerfile: Dockerfile
@@ -90,6 +91,23 @@ services:
       - '8443'
     restart: on-failure
 
+  history:
+    image: transcendance_django_history
+    container_name: 'transcendance_django_history'
+    volumes:
+      - data_django_history:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_history
+    build:
+      context: requirements/django_history
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '8443'
+    restart: on-failure
+
   frontend:
     image: transcendance_frontend
     container_name: 'transcendance_frontend'
@@ -157,7 +175,21 @@ services:
       - '5432'
     restart: on-failure
 
+  postgresql_history:
+    image: transcendance_postgresql_history
+    container_name: 'transcendance_postgresql_history'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_history
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - '5432'
+    restart: on-failure
+
 volumes:
+
   data_django_auth:
     name: data_django_auth
     driver: local
@@ -165,6 +197,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: /home/vlevy/42_projects/transcendance/srcs/volumes/auth
+
   data_django_users:
     name: data_django_users
     driver: local
@@ -172,6 +205,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: /home/vlevy/42_projects/transcendance/srcs/volumes/users
+
   data_django_matchmaking:
     name: data_django_matchmaking
     driver: local
@@ -179,6 +213,15 @@ volumes:
       type: 'none'
       o: 'bind'
       device: /home/vlevy/42_projects/transcendance/srcs/volumes/matchmaking
+
+  data_django_history:
+    name: data_django_history
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: /home/vlevy/42_projects/transcendance/srcs/volumes/history
+
   data_django_avatar_management:
     name: data_django_avatar_management
     driver: local
@@ -186,6 +229,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: /home/vlevy/42_projects/transcendance/srcs/volumes/avatar_management
+
   data_avatar_media:
     name: data_avatar_media
     driver: local
@@ -193,6 +237,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: /home/vlevy/42_projects/transcendance/srcs/volumes/avatar_media
+
   data_frontend:
     name: data_frontend
     driver: local
@@ -200,6 +245,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: /home/vlevy/42_projects/transcendance/srcs/volumes/frontend
+
   data_static:
     name: data_static
     driver: local
