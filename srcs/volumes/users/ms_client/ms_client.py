@@ -20,7 +20,6 @@ class MicroServiceClient:
         headers.update({'Authorization': f'Bearer {self._getToken()}'})
         successed_requests=[]
         response_dict = {}
-        print(headers)
         for url in urls:
             response = self._send_request(url, method, body=body, headers=headers)
             if response.status_code not in expected_status:
@@ -52,10 +51,8 @@ class MicroServiceClient:
                 'password': self.service_secret,
                 }
         response = requests.post(self.auth_url, json=body)
-        print(response.status_code)
         if response.status_code != 200:
             raise InvalidCredentialsException('Auth refused to issue a token for the microservice')
-        print(response.json())
         return response.json()['token']
     
     def _on_failure(self, urls:list, method:str, headers={}, body={}, *args, **kwargs):

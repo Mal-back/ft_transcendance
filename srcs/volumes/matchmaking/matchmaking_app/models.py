@@ -27,9 +27,9 @@ class Match(models.Model):
                                 to_field='username')
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
-    game_type = models.URLField(choices=[('pong', 'Pong'),
+    game_type = models.TextField(choices=[('pong', 'Pong'),
                                            ('connect_four', 'Connect four')])
-    matchId = models.URLField(null=True)
+    matchId = models.UUIDField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('accepted', 'Accepted'),
                                                                          ('declined', 'Declined'),
@@ -37,9 +37,9 @@ class Match(models.Model):
                                                                          ('in_progess', 'In progress'),
                                                                          ('finished', 'Finished')])
     created_at = models.DateTimeField(auto_now_add=True)
-    # tournament = models.ForeignKey('Tournament',
-    #                                related_name='tournament',
-    #                                on_delete=models.CASCADE,
-    #                                null=True,
-    #                                blank=True)
+    tournament = models.ForeignKey('Tournament',
+                                   related_name='tournament',
+                                   on_delete=models.CASCADE,
+                                   null=True,
+                                   blank=True)
 

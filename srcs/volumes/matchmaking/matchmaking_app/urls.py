@@ -13,7 +13,7 @@ urlpatterns = [
         path('match/<int:pk>/decline/', views.MatchDeclineInvite.as_view(), name='match-decline-invite'),
         path('match/<int:pk>/delete/', views.MatchDeleteInvite.as_view(), name='match-delete-invite'),
         path('match/get_accepted/', views.GetAcceptedMatch.as_view(), name='get-accepted-match'),
-        path('match/<int:pk>/finished/', views.HandleMatchResult.as_view(), name='handle-match-result'),
+        path('match/<uuid:matchId>/finished/', views.HandleMatchResult.as_view(), name='handle-match-result'),
         path('match/<int:pk>/debug_force_finished/', views.DebugSetGameAsFinished.as_view(), name='force-finished-game',),
 ]
 
