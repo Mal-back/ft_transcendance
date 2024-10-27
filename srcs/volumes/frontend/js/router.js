@@ -16,6 +16,7 @@ import PongMenu from "./pages/PongMode.js";
 import PongLocalMenu from "./pages/PongLocalMenu.js";
 import PongRemoteMenu from "./pages/PongRemoteMenu.js";
 import PongLocalLobby from "./pages/PongLocalLobby.js";
+import PongRemoteLobby from "./pages/PongRemoteLobby.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -47,6 +48,7 @@ const router = async () => {
     { path: "/pong-local-menu", view: PongLocalMenu },
     { path: "/pong-remote-menu", view: PongRemoteMenu },
     { path: "/pong-local-lobby", view: PongLocalLobby },
+    { path: "/pong-remote-lobby", view: PongRemoteLobby },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -109,7 +111,7 @@ const router = async () => {
   // print all html
   //   printAllCssLinks();
   //   console.log("PRINT HTML")
-  console.log(document.documentElement.outerHTML);
+  // console.log(document.documentElement.outerHTML);
 };
 
 window.addEventListener("popstate", router);
@@ -144,7 +146,7 @@ function closeSidebar(sidebar) {
 
     sidebar.addEventListener(
       "hidden.bs.offcanvas",
-      function() {
+      function () {
         const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
           backdrop.remove();

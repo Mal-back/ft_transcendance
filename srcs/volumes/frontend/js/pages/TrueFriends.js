@@ -102,7 +102,8 @@ export default class extends AbstractView {
 	  </div>
     ${friendList}
 	</div>
- <div class="modal fade removeElem" id="addFriendModal" tabindex="-1" aria-labelledby="addFriendModalLabel" aria-hidden="true">
+ </div>
+<div class="modal fade removeElem" id="addFriendModal" tabindex="-1" aria-labelledby="addFriendModalLabel" aria-hidden="true">
 		  <div class="modal-dialog removeElem">
 			  <div class="modal-content removeElem">
 				  <div class="modal-header removeElem">
@@ -113,23 +114,23 @@ export default class extends AbstractView {
 					  <form id="addFriendForm" class="removeElem">
 						  <div class="mb-3 removeElem">
 							  <label for="friendUsername" class="form-label removeElem">${this.lang.getTranslation(
-      ["Friends", "enterUsername"],
-    )}</label>
+                  ["Friends", "enterUsername"],
+                )}</label>
 							  <input type="text" class="form-control removeElem" name="friendRequest" id="friendUsername" required>
 						  </div>
 					  </form>
 				  </div>
 				  <div class="modal-footer removeElem">
 					  <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">${this.lang.getTranslation(
-      ["modal", "close"],
-    )}</button>
+              ["modal", "close"],
+            )}</button>
 					  <button type="submit" class="btn btn-primary removeElem" form="addFriendForm"
 						  id="addFriendRequest">${this.lang.getTranslation(["Friends", "addButton"])}</button>
 				  </div>
 			  </div>
 		  </div>
 		</div>
-</div>`;
+`;
   }
 
   async getFriendList() {

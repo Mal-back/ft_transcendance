@@ -964,6 +964,7 @@ export default class extends AbstractView {
       uploadProfileBackgroundInput.removeEventListener(
         "change",
         this.uploadProfileBackground,
+        nn,
       );
     }
     const changeMailButton = document.querySelector("#confirmChangesMail");
