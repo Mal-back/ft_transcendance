@@ -26,8 +26,10 @@
             <i class="bi bi-house-fill"></i>
           </a>
           <a id="logIconRef" href="/login" class="btn btn-light clickable-element" title="Login" data-link>
-            <i id="logIconImg" class="bi bi-box-arrow-in-right"></i> </a><button class="btn btn-light"
-            data-bs-toggle="modal" data-bs-target="#inviteModal" title="Notifications">
+            <i id="logIconImg" class="bi bi-box-arrow-in-right"></i>
+          </a>
+          <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#inviteUserModal" title="Notifications"
+            style="display: none" id="notifButtonModal">
             <i class="bi bi-mailbox2"></i>
             <span id="notificationbell">
               <div id="notificationcount" class=""></div>
@@ -58,7 +60,7 @@
     </div>
   </header>
 
-  <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
+  <div class="modal fade" id="inviteUserModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">

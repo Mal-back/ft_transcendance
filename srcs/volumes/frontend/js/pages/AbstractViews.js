@@ -7,8 +7,12 @@ import {
 import Language from "../Utils/Language.js";
 import CustomError from "../Utils/CustomError.js";
 
-export default class {
+export default class AbstractViews {
+  static invitesArray = [];
+  static pollingInterval = null;
+
   constructor() {
+    this.populatesInvites = this.populatesInvites.bind(this);
     this.lang = new Language();
     this.loginToLogout();
     this.closeSidebarOnNavigate();
@@ -71,6 +75,64 @@ export default class {
     });
   }
 
+  populatesInvites() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.innerHTML = "";
+    console.log("LENGTH:", AbstractViews.invitesArray.length);
+    if (!AbstractViews.invitesArray.length) {
+      inviteList.innerHTML = "No Invites";
+      return;
+    }
+    AbstractViews.invitesArray.forEach((invite) => {
+      const inviteItem = document.createElement("li");
+      inviteItem.className = "list-group-item";
+      inviteItem.innerHTML = `
+    <div class="d-flex align-items-center">
+        <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50">
+        <div class="flex-grow-1">
+            <h5><strong>${invite.name}</strong></h5>
+            <p>${invite.message}</p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end mt-2">
+        <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.name}')">
+            <i class="bi bi-check-circle"></i> Accept
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.name}')">
+            <i class="bi bi-x-circle"></i> Refuse
+        </button>
+    </div>
+`;
+      inviteList.appendChild(inviteItem);
+    });
+  }
+
+  async fetchNotifications() {
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/match/pending_invites/",
+        "GET",
+      );
+      const response = await fetch(request);
+      // console.log("Notif Response:", response);
+      const data = await this.getErrorLogfromServer(response);
+      // console.log("data:", data);
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("fetchNotifications:", error);
+      }
+    }
+  }
+
+  startNotificationPolling() {
+    if (!AbstractViews.pollingInterval) {
+      AbstractViews.pollingInterval = setInterval(() => {
+        this.fetchNotifications();
+      }, 5000);
+    }
+  }
+
   loginToLogout() {
     console.log("LOGIN");
     const username = sessionStorage.getItem("username_transcendence");
@@ -79,6 +141,9 @@ export default class {
     const loginOverlay = document.querySelector("#overlayLogin");
     const logIcon = document.querySelector("#logIconRef");
     const logIconImg = document.querySelector("#logIconImg");
+    const notifButton = document.querySelector("#notifButtonModal");
+    const inviteModalEl = document.getElementById("inviteUserModal");
+    console.log("INVITEMODAL", inviteModalEl);
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
       loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
@@ -89,6 +154,14 @@ export default class {
       logIcon.title = this.lang.getTranslation(["menu", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
+      if (notifButton.style.display == "none") {
+        notifButton.style.display = "block";
+        let modalInviteInstance = bootstrap.Modal.getInstance(inviteModalEl);
+        if (!modalInviteInstance)
+          modalInviteInstance = new bootstrap.Modal(inviteModalEl);
+        inviteModalEl.addEventListener("show.bs.modal", this.populatesInvites);
+      }
+      this.startNotificationPolling();
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
@@ -102,19 +175,26 @@ export default class {
       logIcon.title = this.lang.getTranslation(["menu", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
+      if (notifButton.style.display == "block") {
+        notifButton.style.display = "none";
+        inviteModalEl.removeEventListener(
+          "show.bs.modal",
+          this.populatesInvites,
+        );
+      }
+      clearInterval(AbstractViews.pollingInterval);
+      AbstractViews.pollingInterval = null;
     }
   }
 
   cleanModal() {
-    const modal = document.querySelectorAll(".modal");
+    const modal = document.querySelector("#app").querySelectorAll(".modal");
     if (modal) {
       modal.forEach((element) => {
-        if (element.id != "alertModal") {
-          console.log("removing modal: ", element.id);
-          const modalInstance = bootstrap.Modal.getInstance(element);
-          if (modalInstance) modalInstance.hide();
-          element.remove();
-        }
+        console.log("removing modal: ", element.id);
+        const modalInstance = bootstrap.Modal.getInstance(element);
+        if (modalInstance) modalInstance.hide();
+        element.remove();
       });
     }
     const backdrop = document.querySelector(".modal-backdrop");
@@ -130,7 +210,7 @@ export default class {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -144,19 +224,15 @@ export default class {
       const input = inputList[i];
       console.log("input = ", input);
       if (!whitelist.test(input)) {
-        // showModal(
-        //   `${this.lang.getTranslation(["modal", "error"])}`,
-        //   `${this.lang.getTranslation(["error", "invalidChar"])}`,
-        // );
         return false;
       }
     }
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -204,7 +280,7 @@ export default class {
     }
   }
 
-  async makeRequest(url, myMethod, myBody = null, boolImage = false) {
+  async makeRequest(url, myMethod, myBody, boolImage = false) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
@@ -308,5 +384,5 @@ export default class {
     return authToken;
   }
 
-  destroy() { }
+  destroy() {}
 }

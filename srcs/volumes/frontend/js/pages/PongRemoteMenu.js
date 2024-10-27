@@ -71,6 +71,7 @@ export default class extends AbstractView {
   handleShowInviteModal(ev) {
     ev.preventDefault();
     const modalId = document.getElementById("invitePongModal");
+    console.log(modalId);
     let inviteModal = bootstrap.Modal.getInstance(modalId);
     if (!inviteModal) inviteModal = new bootstrap.Modal(modalId);
     inviteModal.show();
@@ -81,8 +82,8 @@ export default class extends AbstractView {
     ev.preventDefault();
     //validate username
     try {
-      const request = this.makeRequest(
-        "apu/matchmaking/match/create/",
+      const request = await this.makeRequest(
+        "api/matchmaking/match/create/",
         "POST",
         `{ player2: "toi", game_type: "Pong" }`,
       );
