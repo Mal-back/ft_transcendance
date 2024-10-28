@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match
@@ -21,11 +22,17 @@ class MatchUserUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuth]
     lookup_field = 'username'
 
-class MatchUserDelete(generics.UpdateAPIView):
+class MatchUserDelete(generics.DestroyAPIView):
     queryset = MatchUser.objects.all()
     serializer_class = MatchUserSerializer 
     permission_classes = [IsAuth]
     lookup_field = 'username'
+
+    def perform_destroy(self, instance):
+        username = instance.username
+        Match.objects.filter(player1=username).update(player1='deleted_account')
+        Match.objects.filter(player2=username).update(player2='deleted_account')
+        instance.delete()
 
 class MatchCreate(APIView):
     permission_classes = [IsAuthenticated]
@@ -89,7 +96,7 @@ class MatchDeclineInvite(generics.UpdateAPIView):
         if match.status != 'pending':
             return Response({'Error':'You can\'t declined this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'declined'
-        match.save()
+        match.delete()
         return Response({'OK':'Match Declined'}, status=status.HTTP_200_OK)
 
 class MatchDeleteInvite(APIView):
@@ -103,6 +110,7 @@ class MatchDeleteInvite(APIView):
         if match.status != 'pending':
             return Response({'Error':'You can\'t cancel this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'cancelled'
+        match.delete()
         return Response({'OK':'Match Cancelled'}, status=status.HTTP_200_OK)
 
 class GetAcceptedMatch(generics.RetrieveAPIView):

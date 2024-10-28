@@ -10,10 +10,11 @@ def end_single_match(match, data):
         except (RequestsFailed, InvalidCredentialsException):
             pass
         try :
-            # sender.send_requests(urls=["http://users:8443/api/history/"],
-            #                      method='post',
-            #                      expected_status=[201],
-            #                      body=data) 
+            data.update({'played_at':match.created_at})
+            sender.send_requests(urls=["http://users:8443/api/history/"],
+                                 method='post',
+                                 expected_status=[201],
+                                 body=data) 
             pass
         except (RequestsFailed, InvalidCredentialsException):
             pass
