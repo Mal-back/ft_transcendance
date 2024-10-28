@@ -23,4 +23,4 @@ function testRemote(game_id) {
 	};
 }
 
-testRemote("46463448-436b-4910-97e6-af0a47e2fe8");
+testRemote("4d64c356-8fb2-401b-9222-be0605fef857");
