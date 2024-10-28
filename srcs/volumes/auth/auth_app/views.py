@@ -24,7 +24,8 @@ class UserDeleteView(generics.DestroyAPIView) :
     permission_classes = [IsOwner]
 
     def perform_destroy(self, instance):
-        req_url = [f'http://users:8443/api/users/delete/{instance.username}/',]
+        req_url = [f'http://users:8443/api/users/delete/{instance.username}/',
+                    f'http://users:8443/api/matchmaking/{instance.username}/delete/',]
         send_delete_requests(url=req_url)
         instance.delete()
 
@@ -38,7 +39,7 @@ class UserCreateView(generics.ListCreateAPIView) :
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data.get('username')
         req_urls = ['http://users:8443/api/users/create/',
-                   'http://matchmaking:8443/api/matchmaking/create/',]
+                    'http://matchmaking:8443/api/matchmaking/create/',]
         if send_create_requests(urls=req_urls, body={'username':username}) == False:
             raise MicroServiceError
         user = serializer.save()
@@ -57,8 +58,10 @@ class UserUpdateView(generics.UpdateAPIView):
         old_username = instance.username
         new_username = serializer.validated_data.get('username', old_username)
         if old_username != new_username:
-            req_urls = ['http://users:8443/api/users/{old_username}/update/']
-            send_update_requests(old_username, req_urls, body={'username':new_username})
+            req_urls = [f'http://users:8443/api/users/{old_username}/update/',
+                        f'http://users:8443/api/matchmaking/update/{old_username}/',]
+            if send_update_requests(old_username, req_urls, body={'username':new_username}) == False:
+                raise MicroServiceError
             serializer.save()
         else:
             serializer.save()
