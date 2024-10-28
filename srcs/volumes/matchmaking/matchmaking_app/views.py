@@ -53,7 +53,7 @@ class MatchGetPendingInvites(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Match.objects.filter(player2=user.username)
+        return Match.objects.filter(player2=user.username, status='pending')
 
 class MatchGetSentInvite(generics.RetrieveAPIView):
     serializer_class = SentInviteSerializer
