@@ -85,7 +85,7 @@ export default class extends AbstractView {
       const request = await this.makeRequest(
         "api/matchmaking/match/create/",
         "POST",
-        `{ player2: "toi", game_type: "Pong" }`,
+        { player2: "toi", game_type: "Pong" },
       );
       const response = await fetch(request);
       console.log("Request:", request);

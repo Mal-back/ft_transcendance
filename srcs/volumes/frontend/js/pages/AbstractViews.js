@@ -129,7 +129,7 @@ export default class AbstractViews {
     if (!AbstractViews.pollingInterval) {
       AbstractViews.pollingInterval = setInterval(() => {
         this.fetchNotifications();
-      }, 5000);
+      }, 10000);
     }
   }
 
