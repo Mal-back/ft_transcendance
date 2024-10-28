@@ -1,4 +1,4 @@
-function testRemote(game_id) {
+function testRemote(game_id, player) {
 	const WebSocket = require('ws');
 	
 	const socket = new WebSocket('ws://localhost:8080/api/game/pong-remote/join/');
@@ -7,7 +7,7 @@ function testRemote(game_id) {
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "join_game",
 			game_id: game_id,
-			username: "xavier",
+			username: player,
 			auth_key: "1234"
 		})) }, 500)
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -19,6 +19,13 @@ function testRemote(game_id) {
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "start_game",
 		})) }, 1500)
+
+
+
+		// setTimeout(() => { 	socket.send(JSON.stringify({
+		// 	type : "pause",
+		// 	action : "start",
+		// })) }, 10000)
 	}
 	socket.onmessage = function(event){
 		const msg = event.data;
@@ -32,4 +39,4 @@ function testRemote(game_id) {
 	};
 }
 
-testRemote("6e7bcafe-3fe2-4274-b2ba-d84cb2d5b24c");
+testRemote("e367140d-3219-4dcd-970f-50a93be870e6", "xavier");
