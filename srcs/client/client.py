@@ -47,12 +47,12 @@ def getUserProfile(userPk):
                 'Authorization' : f'Bearer {access}'
                 }
         body = {
-                'username': 'lui',
+                'username': 'louja',
                 }
         refresh = json.loads(creds.read_text())['refresh']
-        response = requests.get(f'http://localhost:8080/api/matchmaking/match/pending_invites/', headers=headers)
-        # response = requests.patch(f'http://localhost:8080/api/auth/update/val', headers=headers, data=body)
-        # response = requests.delete(f'http://localhost:8080/api/auth/delete/{userPk}', headers=headers)
+        # response = requests.get(f'http://localhost:8080/api/matchmaking/match/pending_invites/', headers=headers)
+        # response = requests.patch(f'http://localhost:8080/api/auth/update/lui', headers=headers, data=body)
+        response = requests.delete(f'http://localhost:8080/api/auth/delete/{userPk}', headers=headers)
         # response = requests.post(f'http://localhost:8080/api/auth/logout', headers=headers, data=body)
         # response = requests.patch(f'http://localhost:8080/api/users/val/default_pic/', headers=headers)
         if response.status_code == 401 :

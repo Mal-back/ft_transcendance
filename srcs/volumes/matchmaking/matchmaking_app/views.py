@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from requests import delete
@@ -22,6 +23,25 @@ class MatchUserUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuth]
     lookup_field = 'username'
 
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        old_username = kwargs.get('username')
+        new_username = request.data.get('username')
+        accepted_matches = Match.objects.filter(player2=old_username, status__in=['accepted', 'in_progress'])
+        matches_as_player1 = Match.objects.filter(player1=old_username, status__in=['accepted', 'in_progress'])
+        if accepted_matches.exists():
+            return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
+        elif matches_as_player1.exists():
+            return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
+
+        with transaction.atomic():
+            user.username = new_username
+            user.save()
+            Match.objects.filter(player1=old_username).update(player1=new_username)
+            Match.objects.filter(player2=old_username).update(player2=new_username)
+
+        return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)
+
 class MatchUserDelete(generics.DestroyAPIView):
     queryset = MatchUser.objects.all()
     serializer_class = MatchUserSerializer 
@@ -30,9 +50,17 @@ class MatchUserDelete(generics.DestroyAPIView):
 
     def perform_destroy(self, instance):
         username = instance.username
-        Match.objects.filter(player1=username).update(player1='deleted_account')
-        Match.objects.filter(player2=username).update(player2='deleted_account')
-        instance.delete()
+        accepted_matches = Match.objects.filter(player2=username, status__in=['accepted', 'in_progress'])
+        matches_as_player1 = Match.objects.filter(player1=username, status__in=['accepted', 'in_progress'])
+        if accepted_matches.exists():
+            return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
+        elif matches_as_player1.exists():
+            return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            Match.objects.filter(player1=username).delete()
+            Match.objects.filter(player2=username).delete()
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 class MatchCreate(APIView):
     permission_classes = [IsAuthenticated]
@@ -53,7 +81,18 @@ class MatchGetPendingInvites(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Match.objects.filter(player2=user.username, status='pending')
+        query = Match.objects.filter(player2=user.username, status='pending')
+        if not query.exists():
+            self.empty_response = True
+        else:
+            self.empty_response = False
+        return query
+
+    def list(self, request, *args, **kwargs):
+        self.get_queryset()
+        if getattr(self, 'empty_response', False):
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return super().list(request, *args, **kwargs)
 
 class MatchGetSentInvite(generics.RetrieveAPIView):
     serializer_class = SentInviteSerializer

@@ -15,11 +15,11 @@ def send_request(url:str, method:str, body={}, headers={}) -> int:
             'patch':requests.patch,
             }
     response = req_methods[method](url, json=body ,headers=headers)
+    print(f'Request at url {url} return {response.status_code} with {response.text}')
     return response.status_code
 
 def send_create_requests(urls:list, body={}, headers={}) -> bool:
     token = getToken()
-    print(token)
     headers.update({'Authorization': f'Bearer {token}'})
     successefull_elements = []
     for url in urls:
@@ -38,7 +38,9 @@ def send_delete_requests(urls:list, body={}, headers={}) -> bool :
     token = getToken()  
     headers.update({'Authorization': f'Bearer {token}'})
     for url in urls:
-        send_request(url=url, method='delete', body=body, headers=headers)
+        if send_request(url=url, method='delete', body=body, headers=headers) != 204:
+            return False
+    return True
 
 def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bool:
     token = getToken()  
@@ -46,7 +48,7 @@ def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bo
     headers.update({'Authorization': f'Bearer {token}'})
     successefull_elements = []
     for url in urls:
-        if send_request(url=url, method='patch', body=body, headers=headers) != 201:
+        if send_request(url=url, method='patch', body=body, headers=headers) != 200:
             break
         else:
             successefull_elements.append(url)
@@ -54,8 +56,9 @@ def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bo
         for url in successefull_elements:
             new_username = body['username']
             body['username'] = old_username
+            print(body)
             rollback_url = url.replace(old_username, new_username) 
-            send_request(url=rollback_url, method='delete', headers=headers)
+            send_request(url=rollback_url, method='patch', headers=headers, body=body)
         return False
     return True
 
