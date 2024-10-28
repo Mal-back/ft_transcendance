@@ -5,7 +5,7 @@ import logging
 log = logging.getLogger(__name__)
     
 class RemoteGame(models.Model):
-    game_id = models.CharField(max_length=100, unique=True, default=str(uuid.uuid4()))
+    game_id = models.UUIDField(primary_key=True, unique=True, default=uuid.uuid4)
     player_1_name = models.CharField(max_length=100)
     player_2_name = models.CharField(max_length=100)
     player_1_connected = models.BooleanField(default=False)

@@ -7,9 +7,18 @@ function testRemote(game_id) {
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "join_game",
 			game_id: game_id,
-			username: "leo",
+			username: "xavier",
 			auth_key: "1234"
 		})) }, 500)
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "init_game",
+		})) }, 700)
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "get_config",
+		})) }, 1000)
+		setTimeout(() => { 	socket.send(JSON.stringify({
+			type : "start_game",
+		})) }, 1500)
 	}
 	socket.onmessage = function(event){
 		const msg = event.data;
@@ -23,4 +32,4 @@ function testRemote(game_id) {
 	};
 }
 
-testRemote("4d64c356-8fb2-401b-9222-be0605fef857");
+testRemote("6e7bcafe-3fe2-4274-b2ba-d84cb2d5b24c");
