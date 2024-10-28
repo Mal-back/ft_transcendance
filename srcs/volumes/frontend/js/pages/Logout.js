@@ -11,6 +11,11 @@ export default class extends AbstractView {
   constructor() {
     super();
   }
+
+  async checkLogin() {
+    return;
+  }
+
   async getHtml() {
     const username = sessionStorage.getItem("username_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");

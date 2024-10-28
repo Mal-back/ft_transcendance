@@ -10,6 +10,7 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
+    this.boolLogin = true;
     this.setTitle("Pong Remote");
     this.handleRemoteTournamentRedirection =
       this.handleRemoteTournamentRedirection.bind(this);
@@ -22,8 +23,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    try {
-      return `
+    return `
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
           <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -54,18 +54,11 @@ export default class extends AbstractView {
         </div>
       </div>
               `;
-    } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"], error.message));
-        console.error("PongMode:getHtml:", error);
-      }
-    }
   }
 
   handleRemoteTournamentRedirection(ev) {
     ev.preventDefault();
-    navigateTo("/pong-remote-tournament");
+    navigateTo("/pong-remote-lobby");
   }
 
   handleShowInviteModal(ev) {
@@ -85,7 +78,7 @@ export default class extends AbstractView {
       const request = await this.makeRequest(
         "api/matchmaking/match/create/",
         "POST",
-        { player2: "toi", game_type: "Pong" },
+        { player2: "toi", game_type: "pong" },
       );
       const response = await fetch(request);
       console.log("Request:", request);

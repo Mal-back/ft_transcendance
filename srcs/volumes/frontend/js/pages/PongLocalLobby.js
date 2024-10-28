@@ -14,6 +14,7 @@ export default class extends AbstractView {
     this.playerInputs = [];
     this.handleGeneratePlayers = this.handleGeneratePlayers.bind(this);
     this.handleValidatePlayerInput = this.handleValidatePlayerInput.bind(this);
+    this.handleStartGame = this.handleStartGame.bind(this);
   }
 
   async loadCss() {
@@ -23,8 +24,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    try {
-      return `
+    return `
       <div class="background removeElem">
         <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
           ${this.lang.getTranslation(["game", "maj", "pong"])} - ${this.lang.getTranslation(["game", "maj", "local"])} - ${this.lang.getTranslation(["pong", "maj", "tournament"])}</h1>
@@ -57,13 +57,6 @@ export default class extends AbstractView {
         </div>
       </div>
               `;
-    } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-        console.error("PongLocalLobby:getHtml:", error);
-      }
-    }
   }
 
   createPlayerDiv(count) {
@@ -112,7 +105,6 @@ export default class extends AbstractView {
   }
 
   cleanUpPlayersInput() {
-    console.log(this.playerInputs);
     this.playerInputs.forEach((input) => {
       input.value = "";
       let inputError = document.querySelector(`#${input.id}Error`);
@@ -149,20 +141,49 @@ export default class extends AbstractView {
   }
 
   setPlayersName() {
-    let count = 1;
-    this.playerInputs.forEach((input) => {
-      sessionStorage.setItem(`transcendence_tournament_player${count}`, input);
-      count++;
-    });
+    console.log("setsPlayerName:", this.playerInputs);
+    let maxRound = 2;
+    if (this.playerInputs.length >= 4) maxRound++;
+    if (this.playerInputs.length >= 6) maxRound++;
+
+    const playerValues = Array.from(this.playerInputs).map(
+      (input) => input.value,
+    );
+
+    const tournament = {
+      players: playerValues.reduce((acc, playerName, index) => {
+        acc[`player${index + 1}`] = {
+          name: playerName,
+          win: 0,
+          loss: 0,
+          winRate: 0,
+          played: {},
+          rank: index + 1,
+        };
+        return acc;
+      }, {}),
+      round: {
+        number: 0,
+        match: {},
+        max: maxRound,
+      },
+    };
+    console.log("tournament", tournament);
+    sessionStorage.setItem(
+      "tournament_transcendence_local",
+      JSON.stringify(tournament),
+    );
   }
 
   handleStartGame(ev) {
     ev.preventDefault();
     let isValid = true;
     this.playerInputs.forEach((input) => {
-      isValid = this.validatePlayerInput(input);
+      if (this.validatePlayerInput(input)) isValid = false;
     });
+    console.log(`isValid = ${isValid}`);
     if (!isValid) return;
+    console.log("CHECK HERE");
     this.setPlayersName();
     navigateTo("/pong-local-tournament");
   }

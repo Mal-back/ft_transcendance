@@ -4,6 +4,7 @@ import {
   setSessionStorage,
   showModal,
 } from "../Utils/Utils.js";
+import CustomError from "../Utils/CustomError.js";
 import AbstractView from "./AbstractViews.js";
 
 export default class extends AbstractView {
@@ -17,15 +18,6 @@ export default class extends AbstractView {
 
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["menu", "login"])}`);
-    const username = sessionStorage.getItem("username_transcendance");
-    if (username) {
-      // const loginOverlay = document.querySelector("#overlayLogin");
-      // loginOverlay.innerText = "Logout";
-      // loginOverlay.href = "/logout";
-      navigateTo("/");
-      throw new CustomError("Redirect to Home, User already logged in");
-    }
-
     return `
                 <div class="background login removeElem">
                     <div class="p-5 bg-* removeElem">
@@ -80,6 +72,19 @@ export default class extends AbstractView {
   async loadCss() {
     this.createPageCss("../css/login.css");
     console.log("adding login.css");
+  }
+
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      navigateTo("/");
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        "User is already logged in",
+        "/",
+      );
+    }
+    return;
   }
 
   validateUsername(usernameInput) {

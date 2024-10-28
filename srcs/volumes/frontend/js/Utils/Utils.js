@@ -2,9 +2,12 @@ export function removeSessionStorage() {
   sessionStorage.removeItem("accessJWT_transcendence");
   sessionStorage.removeItem("refreshJWT_transcendence");
   sessionStorage.removeItem("username_transcendence");
-  for (let count = 1; count <= 10; count++) {
-    sessionStorage.removeItem(`transcendeance_tournament_player${count}`);
-  }
+  removeTournamentStorage();
+  
+}
+
+export function removeTournamentStorage() {
+  sessionStorage.removeItem("tournament_transcendence_local");
 }
 
 export function setSessionStorage(data, username) {

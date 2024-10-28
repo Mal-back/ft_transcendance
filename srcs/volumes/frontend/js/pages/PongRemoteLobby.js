@@ -21,8 +21,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    try {
-      return `
+    return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
           PONG - REMOTE - TOURNAMENT</h1>
@@ -95,13 +94,6 @@ export default class extends AbstractView {
         </div>
       </div>
                       `;
-    } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"], error.message));
-        console.error("PongRemoteLobby:GetHtml:", error);
-      }
-    }
   }
 
   async getFriendList() {

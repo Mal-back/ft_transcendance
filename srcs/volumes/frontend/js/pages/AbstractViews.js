@@ -75,6 +75,29 @@ export default class AbstractViews {
     });
   }
 
+  async checkLogin() {
+    if (
+      !sessionStorage.getItem("username_transcendence") ||
+      !sessionStorage.getItem("accessJWT_transcendence") ||
+      !sessionStorage.getItem("refreshJWT_transcendence")
+    ) {
+      removeSessionStorage();
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        "You're not logged, please login to access this page",
+        "/",
+      );
+    }
+    try {
+      await this.fetchNotifications();
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("checkLogin: ", error);
+      }
+    }
+  }
+
   populatesInvites() {
     const inviteList = document.getElementById("inviteList");
     inviteList.innerHTML = "";
@@ -83,40 +106,92 @@ export default class AbstractViews {
       inviteList.innerHTML = "No Invites";
       return;
     }
+    // <!-- <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50"> -->
     AbstractViews.invitesArray.forEach((invite) => {
       const inviteItem = document.createElement("li");
       inviteItem.className = "list-group-item";
       inviteItem.innerHTML = `
-    <div class="d-flex align-items-center">
-        <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50">
-        <div class="flex-grow-1">
-            <h5><strong>${invite.name}</strong></h5>
-            <p>${invite.message}</p>
+    <div class="d-flex align-items-cente"r>
+      <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" style="background-image: url('${invite.opponentAvatar}')" alt="Avatar">
         </div>
+      <div class="flex-grow-1">
+          <h5><strong>${invite.player}</strong></h5>
+          <br>
+          <p>${invite.message}</p>
+      </div>
     </div>
     <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.name}')">
+        <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.player}')">
             <i class="bi bi-check-circle"></i> Accept
         </button>
-        <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.name}')">
+        <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.player}')">
             <i class="bi bi-x-circle"></i> Refuse
         </button>
     </div>
-`;
+            `;
       inviteList.appendChild(inviteItem);
     });
   }
 
+  async getUserInfo(user) {
+    try {
+      const request = await this.makeRequest(`/api/users/${user}/`, "GET");
+      const response = await fetch(request);
+      const data = await this.getErrorLogfromServer(response, true);
+      if (!response.ok) {
+        console.error(`Notifications:getAvatar on ${user}: ${data}`, response);
+        return;
+      }
+      return data;
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error(`Notifications:getAvatar on ${user}`, response);
+      }
+    }
+  }
+
+  async createInvites(data, username) {
+    for (const item of data.results) {
+      if (item.status === "finished") continue;
+      const opponentName =
+        item.player2 != username ? item.player2 : item.player1;
+      const opponent = await this.getUserInfo(opponentName);
+      const invite = {
+        id: item.id,
+        player: opponentName,
+        gameType: item.game_type,
+        createdAt: item.created_at,
+        acceptInviteUrl: item.accept_invite,
+        declineInviteUrl: item.decline_invite,
+        opponentAvatar: opponent.profilePic,
+        opponentStatus: opponent.is_online,
+        message: `${opponentName} invites you to a game of ${item.game_type}`,
+      };
+      console.log(invite);
+      AbstractViews.invitesArray.push(invite);
+    }
+  }
+
   async fetchNotifications() {
+    AbstractViews.invitesArray = [];
+    console.log("fetchNotifications");
     try {
       const request = await this.makeRequest(
         "/api/matchmaking/match/pending_invites/",
         "GET",
       );
+      //TODO loop on next if more than 10 invite
       const response = await fetch(request);
-      // console.log("Notif Response:", response);
-      const data = await this.getErrorLogfromServer(response);
-      // console.log("data:", data);
+      const data = await this.getErrorLogfromServer(response, true);
+      const badge = document.getElementById("notificationbell");
+      if (data.count == 0) {
+        badge.innerHTML = "";
+        return;
+      }
+      const username = sessionStorage.getItem("username_transcendence");
+      await this.createInvites(data, username);
+      badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length}</div>`;
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
@@ -143,7 +218,6 @@ export default class AbstractViews {
     const logIconImg = document.querySelector("#logIconImg");
     const notifButton = document.querySelector("#notifButtonModal");
     const inviteModalEl = document.getElementById("inviteUserModal");
-    console.log("INVITEMODAL", inviteModalEl);
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
       loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
@@ -222,7 +296,7 @@ export default class AbstractViews {
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     for (let i = 0; i < inputList.length; i++) {
       const input = inputList[i];
-      console.log("input = ", input);
+      // console.log("input = ", input);
       if (!whitelist.test(input)) {
         return false;
       }
@@ -249,7 +323,7 @@ export default class AbstractViews {
     return myHeaders;
   }
 
-  async getErrorLogfromServer(response) {
+  async getErrorLogfromServer(response, boolJSON = false) {
     const contentType = response.headers.get("Content-Type");
     if (contentType && contentType.includes("application/json")) {
       try {
@@ -259,7 +333,7 @@ export default class AbstractViews {
           return "Empty response";
         }
         const errorJSON = JSON.parse(responseText);
-        console.log("ERROR", errorJSON);
+        if (boolJSON) return errorJSON;
         const errorMessages = Object.entries(errorJSON)
           .map(([field, errorMessage]) => {
             // Ensure errorMessage is an array; if not, make it an array

@@ -20,8 +20,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    try {
-      return `
+    return `
     <div class="background removeElem">
       <div class="custom-container d-flex flex-column justify-content-center align-items-center removeElem">
         <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -36,13 +35,6 @@ export default class extends AbstractView {
       </div>
     </div> 
               `;
-    } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"], error.message));
-        console.error("PongMode:getHtml:", error);
-      }
-    }
   }
 
   handleLocalRedirection(ev) {

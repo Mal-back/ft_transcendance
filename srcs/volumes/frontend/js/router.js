@@ -78,6 +78,7 @@ const router = async () => {
     await view.lang.fetchJSONLanguage();
 
     document.querySelector("#app").innerHTML = "";
+    await view.checkLogin();
     document.querySelector("#app").innerHTML = await view.getHtml();
     if (match.route.path == "/pongLocal" || match.route.path == "/pong")
       await view.game();
@@ -87,8 +88,7 @@ const router = async () => {
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {
-      console.error("Error in get Html():", error);
-      console.trace();
+      console.error("error in view", error);
       navigateTo("/");
     }
   }

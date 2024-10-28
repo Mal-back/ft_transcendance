@@ -16,28 +16,12 @@ export default class extends AbstractView {
   }
 
   async loadCss() {
-    this.createPageCss("../css/friend-list.css");
+    // this.createPageCss("../css/friend-list.css");
     this.createPageCss("../css/battle-history.css");
     this.createPageCss("../css/background-profile.css");
   }
 
   async getHtml() {
-    try {
-    } catch (error) {
-      console.error("error making friends:", error.message);
-    }
-    let tokenProfile = null;
-    try {
-      tokenProfile = await this.getToken();
-    } catch (error) {
-      console.error("Error in getHtml", error.message);
-      throw error;
-    }
-    if (tokenProfile == null) {
-      console.log("token = ", tokenProfile);
-      throw new Error("Redirect to login");
-    }
-
     const mainDiv = document.createElement("div");
     mainDiv.innerHTML = await this.getMaindiv();
     return mainDiv.innerHTML;
