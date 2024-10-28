@@ -18,8 +18,10 @@ class MatchSerializer(serializers.ModelSerializer):
                     'created_at': {'read_only': True},
                     'id': {'read_only': True},
                 }
-        def validate_player2(self, value):
+        def validate_player2(self, value):            
+            print('coucocu')
             if not MatchUser.objects.filter(username=value).exists():
+                print('coucocu')
                 raise ValidationError('Invited Player does not exists')
             return value
 

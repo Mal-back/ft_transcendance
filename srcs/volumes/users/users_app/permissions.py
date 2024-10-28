@@ -81,7 +81,6 @@ class IsMatchmaking(permissions.BasePermission):
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        print('In permission : ')
         print(obj.username)
         print(request.user.username)
         return obj.username == request.user.username 

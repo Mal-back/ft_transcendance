@@ -19,6 +19,7 @@ def send_request(url:str, method:str, body={}, headers={}) -> int:
 
 def send_create_requests(urls:list, body={}, headers={}) -> bool:
     token = getToken()
+    print(token)
     headers.update({'Authorization': f'Bearer {token}'})
     successefull_elements = []
     for url in urls:
@@ -41,6 +42,7 @@ def send_delete_requests(urls:list, body={}, headers={}) -> bool :
 
 def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bool:
     token = getToken()  
+    print(token)
     headers.update({'Authorization': f'Bearer {token}'})
     successefull_elements = []
     for url in urls:
