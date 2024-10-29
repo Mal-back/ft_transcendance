@@ -152,25 +152,50 @@ export default class extends AbstractView {
       (input) => input.value,
     );
 
-    const tournament = {
-      players: playerValues.reduce((acc, playerName, index) => {
+    function players() {
+      const players = playerValues.reduce((acc, playerName, index) => {
         acc[`player${index + 1}`] = {
           name: playerName,
           win: 0,
           loss: 0,
           winRate: 0,
-          played: {},
           rank: index + 1,
         };
         return acc;
-      }, {}),
+      }, {});
+      console.log(players)
+      return players
+    };
+
+    function teams() {
+      const playerList = Object.values(players()); // Convert the players object to an array of player objects
+      const n = playerList.length;
+      const mid = Math.floor(n / 2);
+
+      // Split into two halves
+      const firstHalf = playerList.slice(0, mid);
+      const secondHalf = playerList.slice(mid, n);
+
+      // If odd number of players, add an `undefined` for balancing
+      if (n % 2 !== 0) {
+        firstHalf.push(undefined);
+      }
+
+      return [firstHalf, secondHalf];
+    };
+
+    const playersTemp = teams();
+    const tournament = {
+      PlayerA: playersTemp[0],
+      PlayerB: playersTemp[1],
       round: {
-        number: 0,
-        match: {},
+        current: 0,
         max: maxRound,
+        currentMatch: 0
       },
     };
     console.log("tournament", tournament);
+    console.log(tournament.PlayerA.length);
     sessionStorage.setItem(
       "tournament_transcendence_local",
       JSON.stringify(tournament),
