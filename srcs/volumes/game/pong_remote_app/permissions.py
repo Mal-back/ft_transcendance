@@ -3,7 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 import jwt
 from django.conf import settings
 
-class UserIsAuthenticated(BasePermission):
+class MatchmakingAuthenticated(BasePermission):
     def has_permission(self, request, view):
         auth_header = request.headers.get('Authorization')
         if not auth_header:

@@ -234,28 +234,25 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 		await self.pause({"action" : "stop"})
  
 	async def auth(self, game_instance : RemoteGame) -> bool:
-	 
-	 
-	# def authenticate(self, token):
-	#     try :
-	#         clear_token = jwt.decode(
-	#                 token,
-	#                 settings.SIMPLE_JWT['VERIFYING_KEY'],
-	#                 settings.SIMPLE_JWT['ALGORITHM'] 
-	#                 )
-	#     except jwt.ExpiredSignatureError :
-	#         raise AuthenticationFailed('Token Expired')
-	#     except jwt.InvalidTokenError:
-	#         raise AuthenticationFailed('Invalid header info')
-	#     user = clear_token.get('username')
-		
-		
+		# Uncomment bellow to activate user authentication
+		# try :
+		# 	clear_token = jwt.decode(self.auth_key,
+        #                     settings.SIMPLE_JWT['VERIFYING_KEY'],
+        #                     settings.SIMPLE_JWT['ALGORITHM'] 
+		# 	)
+		# except jwt.ExpiredSignatureError:
+		# 	log.info("ExpiredSignatureError from authenticate user")
+		# 	return False
+		# except jwt.InvalidTokenError:
+		# 	log.info("InvalidTokenError from authenticate user")
+		# 	return False
+		# self.username = clear_token.get('username')
+  
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
 			game_instance.player_1_connected = True
 		elif self.username == game_instance.player_2_name and game_instance.player_2_connected == False: #Need to auth there
 			self.player = "player_2"
-			self.opponent = game_instance.player_1_name
 			game_instance.player_2_connected = True
 		else:
 			return False

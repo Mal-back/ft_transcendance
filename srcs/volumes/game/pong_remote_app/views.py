@@ -2,13 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import RemoteGameSerializer
 import logging
-from .permissions import UserIsAuthenticated
+from .permissions import MatchmakingAuthenticated
 
 log = logging.getLogger(__name__)
 
 class RemoteGameCreate(APIView):
-    
-    # permission_classes = [UserIsAuthenticated]
+    # Uncomment bellow to activate matchmaking application authentication
+    # permission_classes = [MatchmakingAuthenticated]
     
     def post(self, request, *args, **kwargs):
         serializer = RemoteGameSerializer(data=request.data)
