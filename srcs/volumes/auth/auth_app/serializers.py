@@ -7,6 +7,7 @@ from .models import CustomUser, Service
 import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
+from django.utils.timezone import now
 
 class UserRegistrationSerializer(serializers.ModelSerializer) :
     password2 = serializers.CharField(max_length=128, write_only=True, style={'input_type': 'password'}, required=True)
@@ -116,7 +117,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         del token['user_id']
         token.set_exp(lifetime=timedelta(minutes=5))
         token.payload['exp'] = (datetime.utcnow() + timedelta(days=1)).timestamp()
-
+        user.last_log = now()
+        user.save()
         return token
 
 class ServiceObtainTokenSerializer(serializers.ModelSerializer):

@@ -81,16 +81,16 @@ export default class extends AbstractView {
     });
 
     const sortedPlayers = Object.entries(this.tournament.players)
-      .map(([key, player]) => ({ key, ...player })) // Convert each player entry into an object
-      .sort((a, b) => b.winRate - a.winRate); // Sort by win rate descending
+      .map(([key, player]) => ({ key, ...player })) 
+      .sort((a, b) => b.winRate - a.winRate); 
 
     sortedPlayers.forEach((player, index) => {
-      player.rank = index + 1; // Rank starts at 1 for the highest win rate
+      player.rank = index + 1; 
     });
 
     this.tournament.players = sortedPlayers.reduce((acc, player) => {
       acc[player.key] = player;
-      delete acc[player.key].key; // Optional: Clean up temporary key property
+      delete acc[player.key].key; 
       return acc;
     }, {});
   }
@@ -134,3 +134,28 @@ export default class extends AbstractView {
     }
   }
 }
+
+`
+5 joueurs
+Round 1 :
+1 vs 2 ; 3 vs 4; 5 skip;
+Round 2 :
+5 vs 2; 4 vs 1; 3 skip;
+Round 3 :
+3 vs 1; 5 vs 4; 2 skip;
+ROund 4 :
+1 vs 5; 2 vs 3; 4 skip;
+Round 5 :
+2 vs 4; 3 vs 5; 1 skip;
+
+
+Round skip 1;
+2 vs 3; 4 vs 5;
+Round skip 2;
+3 vs 5; 1 vs 2;
+Round skip 3;
+4 vs 2; 1 vs 5;
+Round skip 4;
+1 vs 5; 2 vs 3;
+
+`

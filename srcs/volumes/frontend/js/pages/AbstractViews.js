@@ -320,6 +320,9 @@ export default class AbstractViews {
     if (accessToken != null) {
       myHeaders.append("Authorization", "Bearer " + accessToken);
     }
+    else {
+      console.log("NO AUTH TOKEN");
+    }
     if (boolJSON === true) {
       console.log("manual header");
       myHeaders.append("Content-Type", "application/json");

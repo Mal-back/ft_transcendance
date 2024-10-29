@@ -63,7 +63,7 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
         return self.get_overall_wins(obj) / self.get_overall_losts(obj) if self.get_overall_losts(obj) != 0 else 100
 
     def get_is_online(self, obj):
-        if obj.last_seen_online == None or now() - obj.last_seen_online > timedelta(minutes=5):
+        if obj.last_seen_online == None or now() - obj.last_seen_online > timedelta(minutes=15):
             return False 
         return True
 
