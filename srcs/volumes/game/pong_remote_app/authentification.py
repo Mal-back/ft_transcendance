@@ -5,19 +5,7 @@ import jwt
 from django.conf import settings
 
 class CustomAuthentication(BaseAuthentication):
-    def authenticate(self, request):
-        authHeader = request.headers.get('Authorization')
-
-        if not authHeader:
-            return None
-
-        try :
-            tokenType, token = authHeader.split()
-            if tokenType != 'Bearer':
-                raise AuthenticationFailed('Invalid header info')
-        except ValueError :
-            raise AuthenticationFailed('Invalid header info')
-
+    def authenticate(self, token):
         try :
             clear_token = jwt.decode(
                     token,
@@ -29,7 +17,3 @@ class CustomAuthentication(BaseAuthentication):
         except jwt.InvalidTokenError:
             raise AuthenticationFailed('Invalid header info')
         user = clear_token.get('username')
-        if user is None:
-            return None
-        request.user_username = user
-        return None

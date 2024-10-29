@@ -14,5 +14,4 @@ if ["$DUMP_DATA" == "True" ] ; then
 else
 	python3 manage.py flush --noinput
 	exec daphne -b '0.0.0.0' -p '8443' game.asgi:application
-	# exec python3 manage.py runworker local_engine -v2
 fi

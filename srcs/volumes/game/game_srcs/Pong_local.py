@@ -91,12 +91,12 @@ class PongLocalEngine(threading.Thread):
 			time.sleep(self.frame_rate)
 			self.check_pause()
 		try:
-			async_to_sync(self.channel_layer.send)("local_engine", {
+			async_to_sync(self.channel_layer.send)("pong_local_engine", {
 				"type": "join_thread",
 				"game_id": self.game_id
 			})
 		except:
-			print("Can not send join thread to local_engine from thread num " + self.game_id)
+			print("Can not send join thread to pong_local_engine from thread num " + self.game_id)
 		print("End of run function for thread " + self.game_id)
 					
 		

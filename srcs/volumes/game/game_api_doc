@@ -13,11 +13,10 @@ A - Local game:
 
 1 - Join a room :
 
-	Establish a websocket connection to "ws://application_host/api/game/pong-local/join/room_id" where :
+	Establish a websocket connection to "ws://application_host/api/game/pong-local/join/" where :
 		- application_host is the combination host-port of the application (ex: localhost:8080).
-		- room_id is the id given by the matchmaking (not working yet, you can put any ID you want to create a room).
 	
-	This will create a room in Django Channel to communicate with the game engine. You can not join a local game room if there is already a client in it.
+	This will create a room in Django Channel to communicate with the game engine.
 
 2 - Initialise the game :
 
@@ -26,10 +25,11 @@ A - Local game:
 		{type: "init_game"}
 		
 	This will :
-		- Create the game thread via the local_engine worker
+		- Create the game thread via the pong_local_engine worker
 		- The thread is ready to start or send configuration to the client
 
 	You can not initialise the game more than one time.
+	If an error occurs initializing the game, you will receive an error message and the websocket will be close
 		
 
 3 - Get game configuration : 
@@ -157,3 +157,71 @@ A - Local game:
 	}
 
 	Where value is the full error message.
+
+
+B - Remote game:
+
+1 - Join a room :
+
+	Establish a websocket connection to "ws://application_host/api/game/remote-local/join/" where :
+		- application_host is the combination host-port of the application (ex: localhost:8080).
+	
+	This will create a room in Django Channel to communicate with the game engine. To join the game room, you need to first send a message in JSON format :
+
+		{"type" : "join_room",
+			"game_id" : value,
+			"username" : value,
+			"auth_key" : value,
+		}
+
+	Where : 
+		- game_id is the uuid4 given by the django matchamking application
+		- username is the username of the player sending the message
+		- auth_key is the JWT of the player sending the message
+
+	Be carefull : - if the first message send after establishing the websocket connection is not of type "join_room", the websocket will be closed directly.
+		- if the django application can not authentify the user (ex: wrong game_id, user not belong to the game_id, wrong auth_key...) the websocket will be closed directly.
+
+2 - Initialise the game :
+
+	Send via the websocket in JSON format : 
+	
+		{type: "init_game"}
+		
+	This will :
+		- Create the game thread via the pong_local_engine worker
+		- The thread is ready to start or send configuration to the client
+
+	You can not initialise the game more than one time.
+		
+
+3 - Get game configuration : 
+
+	Send via the websocket in JSON format :
+
+		{type: "get_config"}
+
+	This will send you configuration to draw the base game :
+
+		{"type" : "config",
+		"board_len": value,
+		"board_height": value,
+		"ball_size": value,
+		"pad_len": value,
+		"pad_height": value,
+		"player_1": {"pos" : [x, y], "username" : value},
+		"player_2": {"pos" : [x, y], "username" : value},
+		"ball": [x, y]}
+
+		Where :
+			- board_len is the x maximum value
+			- board_height is the y maximum value
+			- ball size is the ball radius
+			- pad_len is the pad size on x axe
+			- pad_height is the pad size on y axe
+			- player's coordinates are the top-left coordinates of the pad
+			- ball's coordinates are the center of the ball
+			- To access to initial x or y coordinate of an element, use [0] or [1] (ex: to get initial x of player 2, use player_2.pos[0]).
+
+		Info : coordinates [0, 0] is at top-left of the board.
+		Warning : If you get configuration while game runing, you can not access to current player's and ball's positions with the configuration. It will always send you initial coordinates.

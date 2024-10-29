@@ -77,21 +77,21 @@ class PongRemoteEngine(threading.Thread):
 		
 	def join_thread(self):
 		try:
-			async_to_sync(self.channel_layer.send)("remote_engine", {
+			async_to_sync(self.channel_layer.send)("pong_remote_engine", {
 				"type": "join.thread",
 				"game_id": self.game_id
 			})
 		except:
-			print("Can not send join thread to remote_engine from thread num " + self.game_id)
+			print("Can not send join thread to pong_remote_engine from thread num " + self.game_id)
    
 	def clean_game(self):
 		try:
-			async_to_sync(self.channel_layer.send)("remote_engine", {
+			async_to_sync(self.channel_layer.send)("pong_remote_engine", {
 				"type": "clean.game",
 				"game_id": self.game_id
 			})
 		except:
-			print("Can not send clean game to remote_engine from thread num " + self.game_id)     
+			print("Can not send clean game to pong_remote_engine from thread num " + self.game_id)     
 				   
 	def receive_movement(self, player : str, direction : str):
 		with self.start_lock:
@@ -244,9 +244,10 @@ class PongRemoteEngine(threading.Thread):
 		except Exception:
 			print("Can not send end state to group channel " + self.game_id)
 		try:
-			async_to_sync(self.channel_layer.send)("remote_engine", {
+			async_to_sync(self.channel_layer.send)("pong_remote_engine", {
 				"type" : "send.result",
 				"End_state" : data,
+				"game_id" : self.game_id,
 			})
 		except Exception:
 			print("Can not send end state to group channel " + self.game_id)

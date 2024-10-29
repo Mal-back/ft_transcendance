@@ -30,8 +30,8 @@ application =  ProtocolTypeRouter(
 	{
 		"http" : django_asgi_app,
   		"websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
-		"channel": ChannelNameRouter({"local_engine": LocalGameConsumer.as_asgi(),
-                                "remote_engine": RemoteGameConsumer.as_asgi()})
+		"channel": ChannelNameRouter({"pong_local_engine": LocalGameConsumer.as_asgi(),
+                                "pong_remote_engine": RemoteGameConsumer.as_asgi()})
 	}
 )
 
