@@ -4,6 +4,7 @@ from django.conf import settings
 
 class IsAuth(permissions.BasePermission):
     def has_permission(self, request, view):
+        print('cc')
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             return False
@@ -80,7 +81,6 @@ class IsMatchmaking(permissions.BasePermission):
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        print('In permission : ')
         print(obj.username)
         print(request.user.username)
         return obj.username == request.user.username 

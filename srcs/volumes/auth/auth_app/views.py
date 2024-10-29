@@ -24,8 +24,10 @@ class UserDeleteView(generics.DestroyAPIView) :
     permission_classes = [IsOwner]
 
     def perform_destroy(self, instance):
-        req_url = [f'http://users:8443/api/users/delete/{instance.username}/',]
-        send_delete_requests(url=req_url)
+        req_url = [f'http://matchmaking:8443/api/matchmaking/{instance.username}/delete/',
+                    f'http://users:8443/api/users/delete/{instance.username}/',]
+        if send_delete_requests(urls=req_url) != True:
+            return Response({'Error': 'Unable to update username. Please wait not to be in a game'}, status=status.HTTP_400_BAD_REQUEST)
         instance.delete()
 
 
@@ -38,8 +40,7 @@ class UserCreateView(generics.ListCreateAPIView) :
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data.get('username')
         req_urls = ['http://users:8443/api/users/create/',
-                   'http://matchmaking:8443/api/matchmaking/create/',
-                    ]
+                    'http://matchmaking:8443/api/matchmaking/create/',]
         if send_create_requests(urls=req_urls, body={'username':username}) == False:
             raise MicroServiceError
         user = serializer.save()
@@ -48,42 +49,34 @@ class UserCreateView(generics.ListCreateAPIView) :
 
 class UserUpdateView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
 
-    def perform_update(self, serializer):
-        serializer.is_valid(raise_exception=True)
-        instance = self.get_object()
-        old_username = instance.username
-        new_username = serializer.validated_data.get('username', old_username)
-        if old_username != new_username:
-            req_urls = ['http://users:8443/api/users/{old_username}/update/']
-            send_update_requests(old_username, req_urls, body={'username':new_username})
-            serializer.save()
-        else:
-            serializer.save()
-        return serializer.instance
-
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-
-        user = self.perform_update(serializer=serializer)
-
-        token = MyTokenObtainPairSerializer.get_token(user)
-        access_token = str(token.access_token)
-        refresh_token = str(token)
-        response_data = {
-                'message':'update successefull',
-                'new username':user.username,
-                'access': access_token,
-                'refresh': refresh_token, 
-                }
-        response_data.update(serializer.data)
-        return Response(response_data, status=status.HTTP_200_OK)
+        user = self.get_object()
+        self.check_object_permissions(request, user)
+        old_username = user.username
+        serializer = UserRegistrationSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            new_username = serializer.validated_data.get('username', old_username)
+            if old_username != new_username:
+                req_urls = [f'http://matchmaking:8443/api/matchmaking/{old_username}/update/',
+                            f'http://users:8443/api/users/{old_username}/update/',]
+                if send_update_requests(old_username, req_urls, body={'username':new_username}) == False:
+                    return Response({'Error': 'Unable to update username. Please wait not to be in a game'}, status=status.HTTP_400_BAD_REQUEST)
+                serializer.save()
+                token = MyTokenObtainPairSerializer.get_token(user)
+                access_token = str(token.access_token)
+                refresh_token = str(token)
+                response_data = {
+                        'OK':'update successefull',
+                        'new username':user.username,
+                        'access': access_token,
+                        'refresh': refresh_token, 
+                        }
+                return Response(response_data, status=status.HTTP_200_OK)
+        else:
+            return Response({'Error': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordUpdateView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
