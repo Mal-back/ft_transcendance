@@ -68,53 +68,16 @@ export default class extends AbstractView {
         `;
   }
 
-  rankPlayers() {
-    if (this.tournament.round.number == 0) return;
-    Object.keys(this.tournament.players).forEach((playerKey) => {
-      const player = this.tournament.players[playerKey];
-      const totalGames = player.win + player.loss;
-      player.winRate = totalGames > 0 ? (player.win / totalGames) * 100 : 0;
-    });
+  updateRank() {
 
-    const sortedPlayers = Object.entries(this.tournament.players)
-      .map(([key, player]) => ({ key, ...player })) // Convert each player entry into an object
-      .sort((a, b) => b.winRate - a.winRate); // Sort by win rate descending
-
-    sortedPlayers.forEach((player, index) => {
-      player.rank = index + 1; // Rank starts at 1 for the highest win rate
-    });
-
-    this.tournament.players = sortedPlayers.reduce((acc, player) => {
-      acc[player.key] = player;
-      delete acc[player.key].key; // Optional: Clean up temporary key property
-      return acc;
-    }, {});
   }
 
-  hasPlayedAgainst(player, opponentName) {
-    if (opponentName in player.played) return true;
-    return false;
-  }
-
-  computeMatches() {
-    const playerCount = Object.keys(tournament.players).length;
-    let matchmaking = Array.from({ length: playerCount }, (_, i) => i + 1);
-    while (matchmaking.length > 0) {
-      for (let target = 1; target < matchmaking.length; target++) {
-        let playerToMatch = this.tournament.players[`player${matchmaking[0]}`];
-        let opponent = this.tournament.players[`player${matchmaking[target]}`];
-        if (!this.hasPlayedAgainst(playerToMatch, opponent)) {
-          matchmaking.splice(0, 1);
-          matchmaking.splice(target, 1);
-          break;
-        }
-      }
+  getListPlayer() {
+    const divList = document.createElement("div");
+    divList.innerHTML = "";
+    for (let count = 1; count <= (this.tournament.PlayerA.length * 2); count++) {
+      divList.innerHTML += this.getNextRankDivPlayer(count);
     }
-  }
-
-  computeNextRound() {
-    this.rankPlayers();
-    this.computeMatches();
   }
 
   actualizeTournament() {
@@ -122,11 +85,15 @@ export default class extends AbstractView {
       sessionStorage.getItem("tournament_transcendence_local"),
     );
     //TODO protect tournament
-    if (!this.tournament.round.match) {
-      this.tournament.round++;
-      if (this.tournament.round == this.tournament.max)
-        return this.endTournament();
-      this.computeNextRound();
+    this.updateRank();
+    if (this.tournament.round.currentMatch != this.tournament.PlayerA.length) {
+      this.tournament.round.currentMatch++
     }
+    else {
+      this.tournament.round.current++
+      this.tournament.round.currentMatch = 0
+    }
+    if (this.tournament.round == this.tournament.max)
+      return this.endTournament();
   }
 }
