@@ -3,7 +3,7 @@ from channels.consumer import SyncConsumer
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-from .models import RemoteGame
+from .models import PongRemoteGame
 from game_srcs.Pong_remote import PongRemoteEngine
 from ms_client.ms_client import MicroServiceClient, RequestsFailed
 
@@ -222,7 +222,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
  
 	async def leave_game(self):
 		try:
-			game_instance = await sync_to_async(RemoteGame.objects.get)(game_id=self.group_name)
+			game_instance = await sync_to_async(PongRemoteGame.objects.get)(game_id=self.group_name)
 			if self.player == "player_1":
 				game_instance.player_1_connected = False
 			elif self.player == "player_2":
@@ -233,7 +233,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			log.info("Problem leaving game " + self.group_name + " for player " + self.username)
 		await self.pause({"action" : "stop"})
  
-	async def auth(self, game_instance : RemoteGame) -> bool:
+	async def auth(self, game_instance : PongRemoteGame) -> bool:
 		# Uncomment bellow to activate user authentication
 		# try :
 		# 	clear_token = jwt.decode(self.auth_key,
@@ -276,7 +276,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			log.error("Key error in RemotePlayerConsumer.join_game()")
 			return
 		try:
-			game = await sync_to_async(RemoteGame.objects.get)(game_id=self.group_name)
+			game = await sync_to_async(PongRemoteGame.objects.get)(game_id=self.group_name)
 		except Exception:
 			log.info("Game instance " + self.group_name + " does not exist")
 			await self.close()
@@ -365,7 +365,7 @@ class RemoteGameConsumer(SyncConsumer):
 	def clean_game(self, event):
 		game_id = event["game_id"]
 		try:
-			game_instance = RemoteGame.objects.get(game_id=game_id)
+			game_instance = PongRemoteGame.objects.get(game_id=game_id)
 			game_instance.delete()
 			print("Cleaning game " + str(game_id))
 		except:

@@ -4,7 +4,7 @@ from game_srcs.Pong_local import PongLocalEngine
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-from .models import LocalGame
+from .models import PongLocalGame
 import uuid
 
 log = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		try:
 			self.group_name = str(uuid.uuid4())
-			game = await sync_to_async(LocalGame.objects.create)(game_id=self.group_name)
+			game = await sync_to_async(PongLocalGame.objects.create)(game_id=self.group_name)
 			await sync_to_async(game.save)()
 			await self.channel_layer.group_add(self.group_name, self.channel_name)
 			log.info("Local Player added to room " + self.group_name)
@@ -66,7 +66,7 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def clean_game(self):
 		log.info("Cleaning game " + str(self.group_name))
 		try:
-			game = await sync_to_async(LocalGame.objects.get)(game_id=self.group_name)
+			game = await sync_to_async(PongLocalGame.objects.get)(game_id=self.group_name)
 			await sync_to_async(game.delete)()
 		except Exception:
 			log.info("Cannot delet game model id " + self.group_name)
