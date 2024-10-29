@@ -38,6 +38,9 @@ mkdir -p $PGSQL_AVATAR
 $GEN_CSR $NGINX/nginx_client.csr -keyout $NGINX/nginx_client.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=nginx_client/UID=vlevy" 
 $GEN_CRT $NGINX/nginx_client.csr -out $NGINX/nginx_client.crt -CA ca.crt -CAkey ca.key
 
+$GEN_CSR $NGINX/nginx.csr -keyout $NGINX/nginx.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=nginx/UID=vlevy" 
+$GEN_CRT $NGINX/nginx.csr -out $NGINX/nginx.crt -CA ca.crt -CAkey ca.key
+
 $GEN_CSR $DJANGO_AUTH/auth.csr -keyout $DJANGO_AUTH/auth.key -subj "/C=FR/ST=IDF/L=PARIS/O=42/OU=42/CN=auth/UID=vlevy" 
 $GEN_CRT $DJANGO_AUTH/auth.csr -out $DJANGO_AUTH/auth.crt -CA ./ca.crt -CAkey ./ca.key
 
