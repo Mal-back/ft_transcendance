@@ -327,3 +327,9 @@ Ball's coordinates are the center of the ball.
 		- After 30 seconds, the game is unpaused automatically
 		- You can reconnect to the game at any moment.
 		- You have to send again the join_room message to authenticate the user (see I-B-1), it means you need game_id and JWT of the user.
+
+II - C4 :
+
+A - Local Game :
+
+B - Remote Game :
