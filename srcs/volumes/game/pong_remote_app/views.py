@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import RemoteGameSerializer
 import logging
-from .permissions import MatchmakingAuthenticated
+from game.permissions import MatchmakingAuthenticated
 
 log = logging.getLogger(__name__)
 

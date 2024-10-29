@@ -1,7 +1,6 @@
 # coding: utf-8
 from .Const import Const
 import time
-import copy
 import threading
 import copy
 from asgiref.sync import async_to_sync
@@ -14,7 +13,6 @@ log = logging.getLogger(__name__)
 allowed_movement = ["UP", "DOWN", "NONE"]
 	
 class PongLocalEngine(threading.Thread):
-
 	def __init__(self, game_id, **kwargs):
 		super().__init__(daemon=True)
 		self.game_id = game_id
@@ -53,29 +51,6 @@ class PongLocalEngine(threading.Thread):
 			else:
 				print("Starting game instance " + self.game_id)
 				self.runing = True
-
-	# def run(self) -> None:
-	# 	self.wait_start()
-	# 	while True:
-	# 		with self.end_lock:
-	# 			if self.end == True:
-	# 				break
-	# 		self.frame = self.get_next_frame()
-	# 		self.send_frame()
-	# 		if self.frame.end == True:
-	# 			break;
-	# 		time.sleep(self.frame_rate)
-	# 		self.check_pause()
-	# 		if self.check_surrender() == True:
-	# 			break
-	# 	self.send_end_state(self.frame)
-	# 	try:
-	# 		async_to_sync(self.channel_layer.group_send)(self.game_id, {
-	# 			"type": "end.game"
-	# 		})
-	# 	except Exception:
-	# 		print("Can not send end game to group channel " + self.game_id)
-	# 	print("End of run function for thread " + self.game_id)
  
 	def run(self) -> None:
 		self.wait_start()
