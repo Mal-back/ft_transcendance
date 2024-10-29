@@ -1,4 +1,5 @@
 from os.path import exists
+from django.utils.timezone import now
 import requests
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
@@ -189,3 +190,16 @@ class PublicUserSetDefaultAvatar(APIView):
         user.profilePic = path
         user.save()
         return Response({'OK':'Successefully reset the avatar'}, status=status.HTTP_200_OK)
+
+class PublicUserSetLastSeenOnline(APIView):
+    lookup_field = 'username'
+    permission_classes = [IsMatchmaking]
+
+    def patch(self, request, username):
+        try:
+            user = PublicUser.objects.get(username=username)
+        except PublicUser.DoesNotExist:
+            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        user.last_seen_online = now()
+        user.save()
+        return Response({'OK': 'Actualize last log time'}, status=status.HTTP_200_OK)

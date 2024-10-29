@@ -6,6 +6,7 @@ import jwt
 from django.conf import settings
 from .models import MatchUser
 import threading
+from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 
 class CustomAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -42,4 +43,13 @@ class CustomAuthentication(BaseAuthentication):
         return(user_obj, token)
 
 def update_online_status(username):
-    pass
+    try:
+        sender = MicroServiceClient()
+        sender.send_requests(
+                urls=[f'http://users:8443/api/users/{username}/last_seen_online/'],
+                method='patch',
+                expected_status=[200],
+                )
+        print('Update last seen online field')
+    except (RequestsFailed, InvalidCredentialsException):
+        print('Failed to send request')

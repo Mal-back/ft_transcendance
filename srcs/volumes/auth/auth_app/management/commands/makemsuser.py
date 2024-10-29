@@ -12,7 +12,7 @@ class Command(BaseCommand):
                 {'serviceName' : 'users', 'password': 'acab1313'},
                 {'serviceName' : 'matchmaking', 'password': 'acab1314'},
                 {'serviceName' : 'avatar_manager', 'password': 'acab1315'},
-                {'serviceName' : 'history', 'password': 'acab1315'},
+                {'serviceName' : 'history', 'password': 'acab1316'},
                 ]
         for microservice in microservices:
             serviceName = microservice['serviceName']
