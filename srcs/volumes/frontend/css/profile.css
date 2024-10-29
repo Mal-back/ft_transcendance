@@ -1,0 +1,78 @@
+/* Default border style for Avatar */
+.Avatar {
+    background-image: url(../img/red_panda.jpg);
+    width: 11vw;
+    height: 11vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+    max-width: 100px;
+    max-height: 100px;
+}
+
+/* Ensure border is always applied */
+.status-connected {
+    border: 5px solid green !important;
+}
+
+.status-offline {
+    border: 5px solid blue !important;
+}
+
+.status-playing {
+    border: 5px solid orange !important;
+}
+
+/* Profile container */
+.Profile {
+    background-color: rgba(255, 255, 255, 1);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 65%;
+    box-sizing: border-box;
+    margin: 20px auto;
+}
+
+/* Ensure the top profile section is centered */
+.top-profile {
+    text-align: center;
+}
+
+.align-items-left {
+    text-align: left;
+}
+
+.align-items-right {
+    text-align: right;
+}
+
+.bd {
+    height: 300px;
+    overflow-y: auto;
+}
+
+.custom-file-upload {
+    display: flex;
+    align-items: center;
+}
+
+.custom-upload-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.custom-upload-btn:hover {
+    background-color: #0056b3;
+}
+
+#file-chosen {
+    font-size: 14px;
+    color: #555;
+}

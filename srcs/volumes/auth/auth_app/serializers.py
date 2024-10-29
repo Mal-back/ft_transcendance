@@ -94,6 +94,21 @@ class PasswordModficationSerializer(serializers.Serializer):
         return instance
 
 
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     @classmethod
+#     def get_token(cls, user):
+#         token = super().get_token(user)
+#         token['username'] = user.username
+#         del token['user_id']
+#         if user.groups.filter(name='service').exists():
+#             token.set_exp(lifetime=timedelta(hours=12))
+#             token.set_exp(lifetime=timedelta(days=3), claim='refresh')
+#         else:
+#             token.set_exp(lifetime=timedelta(minutes=5))
+#             token.set_exp(lifetime=timedelta(days=1), claim='refresh')
+#
+#         return token
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

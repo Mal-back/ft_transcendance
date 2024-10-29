@@ -16,7 +16,9 @@ env :
 	fi
 
 down :
-	docker compose -f ./srcs/docker-compose.yml down
+	docker compose -f ./srcs/docker-compose.yml down -t 10
+
+re : down all
 
 clean :
 	docker stop $$(docker ps -qa);\

@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.hashers import make_password
 from auth_app.models import Service, Token
 from auth_app.serializers import createServiceToken
+import os
 
 class Command(BaseCommand):
     help = 'Create microservice users'
@@ -13,6 +14,7 @@ class Command(BaseCommand):
                 {'serviceName' : 'matchmaking', 'password': 'acab1314'},
                 {'serviceName' : 'avatar_manager', 'password': 'acab1315'},
                 {'serviceName' : 'history', 'password': 'acab1316'},
+                {'serviceName' : os.getenv('DJANGO_GAME_AUTH_NAME'), 'password': os.getenv('DJANGO_GAME_AUTH_PASSWORD')}
                 ]
         for microservice in microservices:
             serviceName = microservice['serviceName']

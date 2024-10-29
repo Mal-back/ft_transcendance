@@ -35,7 +35,7 @@ services:
       context: requirements/django_auth
       dockerfile: Dockerfile
     env_file: .env
-    ports:
+    expose:
       - '8443'
     restart: on-failure
 
@@ -52,7 +52,56 @@ services:
       context: requirements/django_users
       dockerfile: Dockerfile
     env_file: .env
-    ports:
+    expose:
+      - '8443'
+    restart: on-failure
+
+  redis:
+    image: transcendance_redis
+    container_name: 'transcendance_redis'
+    networks:
+      - transcendance
+    build:
+      context: requirements/redis
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '6379'
+    restart: on-failure
+
+  game:
+    image: transcendance_django_game
+    container_name: 'transcendance_django_game'
+    volumes:
+      - data_django_game:/code
+    networks:
+      - transcendance
+    depends_on:
+      - postgresql_game
+      - redis
+    build:
+      context: requirements/django_game
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
+      - '8443'
+    restart: on-failure
+
+  worker:
+    image: transcendance_worker
+    container_name: 'transcendance_worker'
+    volumes:
+      - data_django_game:/code
+    networks:
+      - transcendance
+    depends_on:
+      - redis
+      - game
+    build:
+      context: requirements/worker
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
       - '8443'
     restart: on-failure
 
@@ -132,7 +181,20 @@ services:
       context: requirements/postgreSQL_auth
       dockerfile: Dockerfile
     env_file: .env
-    ports:
+    expose:
+      - '5432'
+    restart: on-failure
+
+  postgresql_game:
+    image: transcendance_postgresql_game
+    container_name: 'transcendance_postgresql_game'
+    networks:
+      - transcendance
+    build:
+      context: requirements/postgreSQL_game
+      dockerfile: Dockerfile
+    env_file: .env
+    expose:
       - '5432'
     restart: on-failure
 
@@ -145,7 +207,7 @@ services:
       context: requirements/postgreSQL_users
       dockerfile: Dockerfile
     env_file: .env
-    ports:
+    expose:
       - '5432'
     restart: on-failure
 
@@ -196,23 +258,28 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/auth
-
+      device: placeholder/srcs/volumes/auth
   data_django_users:
     name: data_django_users
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/users
-
+      device: placeholder/srcs/volumes/users
+  data_django_game:
+    name: data_django_game
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: placeholder/srcs/volumes/game
   data_django_matchmaking:
     name: data_django_matchmaking
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/matchmaking
+      device: placeholder/srcs/volumes/matchmaking
 
   data_django_history:
     name: data_django_history
@@ -220,39 +287,35 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/history
-
+      device: placeholder/srcs/volumes/matchmaking
   data_django_avatar_management:
     name: data_django_avatar_management
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/avatar_management
-
+      device: placeholder/srcs/volumes/avatar_management
   data_avatar_media:
     name: data_avatar_media
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/avatar_media
-
+      device: placeholder/srcs/volumes/avatar_media
   data_frontend:
     name: data_frontend
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/frontend
-
+      device: placeholder/srcs/volumes/frontend
   data_static:
     name: data_static
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/vlevy/42_projects/transcendance/srcs/volumes/auth/staticRoot
+      device: placeholder/srcs/volumes/auth/staticRoot
 
 
 networks:
