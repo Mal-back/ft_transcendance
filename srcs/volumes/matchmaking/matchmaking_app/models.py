@@ -5,7 +5,12 @@ from django.utils import choices
 
 class MatchUser(models.Model):
     username = models.CharField(max_length=128, unique=True)
+    last_online_update = models.DateTimeField(null=True)
 
+    @property
+    def is_authenticated(self):
+        return True
+    
 class Tournament(models.Model):
     name = models.CharField(max_length=255)
     invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', blank=True)
@@ -42,4 +47,3 @@ class Match(models.Model):
                                    on_delete=models.CASCADE,
                                    null=True,
                                    blank=True)
-
