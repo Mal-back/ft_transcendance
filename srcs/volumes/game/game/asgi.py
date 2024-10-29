@@ -15,11 +15,10 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
 from channels.auth import AuthMiddlewareStack
 import signal
-
 import django
+
 django.setup()
 
-# from pong_local_app.routing import websocket_urlpatterns
 from .routing import websocket_urlpatterns
 from pong_local_app.consumers import LocalGameConsumer
 from pong_remote_app.consumers import RemoteGameConsumer
