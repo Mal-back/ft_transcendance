@@ -248,6 +248,8 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 		# 	return False
 		# self.username = clear_token.get('username')
   
+		self.username = self.auth_key
+  
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
 			game_instance.player_1_connected = True
@@ -270,7 +272,6 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def join_game(self, content):
 		try:
 			self.group_name = content["game_id"]
-			self.username = content["username"]
 			self.auth_key = content["auth_key"]
 		except:
 			log.error("Key error in RemotePlayerConsumer.join_game()")

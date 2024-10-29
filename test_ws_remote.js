@@ -7,8 +7,7 @@ function testRemote(game_id, player) {
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "join_game",
 			game_id: game_id,
-			username: player,
-			auth_key: "1234"
+			auth_key: player
 		})) }, 500)
 		setTimeout(() => { 	socket.send(JSON.stringify({
 			type : "init_game",
@@ -39,4 +38,4 @@ function testRemote(game_id, player) {
 	};
 }
 
-testRemote("b1a6be49-5a9d-4e44-8df2-568b489bc62e", "leo");
+testRemote("b0ee653e-98e0-48fd-89da-69ce55cf17d1", "xavier");
