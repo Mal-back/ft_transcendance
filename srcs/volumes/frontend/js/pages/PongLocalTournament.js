@@ -20,6 +20,10 @@ export default class extends AbstractView {
 
   async getHtml() {
     actualizeTournament();
+    const tournamentMode =
+      this.tournament.round.max > 4
+        ? `Swiss Round Tournament`
+        : `Round Robin Tournament`;
     const listPlayer = getListPlayer();
     return `
     <div class="background">

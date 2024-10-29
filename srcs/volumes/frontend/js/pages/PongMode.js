@@ -57,10 +57,11 @@ export default class extends AbstractView {
 
   removeEventListeners() {
     const local = document.querySelector("#pongLocalButton");
-    local.removeEventListener("click", this.handleLocalRedirection);
+    if (local) local.removeEventListener("click", this.handleLocalRedirection);
 
     const remote = document.querySelector("#pongRemoteButton");
-    remote.removeEventListener("click", this.handleRemoteRedirection);
+    if (remote)
+      remote.removeEventListener("click", this.handleRemoteRedirection);
   }
 
   destroy() {

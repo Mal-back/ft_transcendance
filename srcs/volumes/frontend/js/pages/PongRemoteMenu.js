@@ -71,7 +71,6 @@ export default class extends AbstractView {
   }
 
   async handleMatchRemote(ev) {
-    console.log("HANDLEMATCHREMOTE");
     ev.preventDefault();
     //validate username
     try {
@@ -85,6 +84,9 @@ export default class extends AbstractView {
       console.log("response:", response);
       const data = await this.getErrorLogfromServer(response);
       console.log("data:", data);
+      if (!response.ok) {
+        showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
+      }
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
@@ -107,21 +109,23 @@ export default class extends AbstractView {
 
   removeEventListeners() {
     const remote = document.querySelector("#PongRemotePlayButton");
-    remote.removeEventListener("click", this.handleShowInviteModal);
+    if (remote) remote.removeEventListener("click", this.handleShowInviteModal);
 
     const tournament = document.querySelector("#PongRemoteTournamentButton");
-    tournament.removeEventListener(
-      "click",
-      this.handleRemoteTournamentRedirection,
-    );
+    if (tournament)
+      tournament.removeEventListener(
+        "click",
+        this.handleRemoteTournamentRedirection,
+      );
 
     const inviteButton = document.querySelector("#inviteButton");
-    inviteButton.removeEventListener("click", this.handleMatchRemote);
+    if (inviteButton)
+      inviteButton.removeEventListener("click", this.handleMatchRemote);
   }
 
   destroy() {
-    this.cleanModal();
     this.removeEventListeners();
+    this.cleanModal();
     this.removeCss();
     this.removeElem();
   }

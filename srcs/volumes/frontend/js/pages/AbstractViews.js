@@ -152,6 +152,7 @@ export default class AbstractViews {
   }
 
   async createInvites(data, username) {
+    console.log(data);
     for (const item of data.results) {
       if (item.status === "finished") continue;
       const opponentName =
@@ -184,15 +185,21 @@ export default class AbstractViews {
       //TODO loop on next if more than 10 invite
       const response = await fetch(request);
       const data = await this.getErrorLogfromServer(response, true);
+      console.log(response);
+      console.log(data);
       const badge = document.getElementById("notificationbell");
       if (data.count == 0) {
         badge.innerHTML = "";
         return;
       }
       const username = sessionStorage.getItem("username_transcendence");
+      if (response.status != 200) {
+        return;
+      }
       await this.createInvites(data, username);
       badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length}</div>`;
     } catch (error) {
+      console.log("caught error");
       if (error instanceof CustomError) throw error;
       else {
         console.error("fetchNotifications:", error);
@@ -284,7 +291,7 @@ export default class AbstractViews {
       window
         .atob(base64)
         .split("")
-        .map(function (c) {
+        .map(function(c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -304,9 +311,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -361,8 +368,10 @@ export default class AbstractViews {
       try {
         accessToken = await this.getToken();
       } catch (error) {
-        if (error instanceof CustomError) throw error;
-        console.error("Error in getToken:", error.message);
+        if (!(error instanceof CustomError)) {
+          console.error("Error in getToken:", error);
+        }
+        throw error;
       }
     }
     console.log("myMethod:", myMethod);
@@ -430,33 +439,35 @@ export default class AbstractViews {
   async getToken() {
     let authToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
-    if (
-      !authToken ||
-      !refreshToken ||
-      !sessionStorage.getItem("username_transcendence")
-    ) {
-      console.log("User is not authentified", authToken);
-      removeSessionStorage();
-      throw new CustomError(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        `${this.lang.getTranslation(["error", "notAuthentified"])}`,
-        "/login",
-      );
-    }
-    const parseToken = this.parseJwt(authToken);
-    const currentTime = Math.floor(Date.now() / 1000);
-    if (parseToken.exp + 1 <= currentTime) {
-      try {
+    try {
+      if (
+        !authToken ||
+        !refreshToken ||
+        !sessionStorage.getItem("username_transcendence")
+      ) {
+        console.log("User is not authentified", authToken);
+        removeSessionStorage();
+        throw new CustomError(
+          `${this.lang.getTranslation(["modal", "error"])}`,
+          `${this.lang.getTranslation(["error", "notAuthentified"])}`,
+          "/login",
+        );
+      }
+      const parseToken = this.parseJwt(authToken);
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (parseToken.exp + 1 <= currentTime) {
         await this.refreshToken(authToken);
-      } catch (error) {
-        if (error instanceof CustomError) throw error;
-        console.error("getToken", error.message);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("getToken", error);
         throw error;
       }
-      authToken = sessionStorage.getItem("accessJWT_transcendence");
     }
+    authToken = sessionStorage.getItem("accessJWT_transcendence");
     return authToken;
   }
 
-  destroy() {}
+  destroy() { }
 }
