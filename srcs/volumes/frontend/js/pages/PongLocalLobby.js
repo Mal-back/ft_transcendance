@@ -193,6 +193,7 @@ export default class extends AbstractView {
       },
     };
     console.log("tournament", tournament);
+    console.log(tournament.PlayerA.length);
     sessionStorage.setItem(
       "tournament_transcendence_local",
       JSON.stringify(tournament),
