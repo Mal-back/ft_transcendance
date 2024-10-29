@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from rest_framework import permissions
 import jwt
 from django.conf import settings
@@ -69,5 +70,5 @@ class IsInvitedPlayer(permissions.BasePermission):
 
 class IsAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user is not None
+        return request.user.is_authenticated
 

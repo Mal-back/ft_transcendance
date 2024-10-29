@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
@@ -32,4 +33,6 @@ class CustomAuthentication(BaseAuthentication):
         if user is None:
             return(None, None)
         user_obj = PublicUser.objects.get(username=user)
+        user_obj.last_seen_online = now()
+        user_obj.save()
         return(user_obj, token)
