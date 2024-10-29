@@ -207,11 +207,21 @@ export default class AbstractViews {
     }
   }
 
-  startNotificationPolling() {
+   startNotificationPolling() {
     if (!AbstractViews.pollingInterval) {
-      AbstractViews.pollingInterval = setInterval(() => {
-        this.fetchNotifications();
-      }, 10000);
+      AbstractViews.pollingInterval = setInterval(async () => {
+        try {
+        await this.fetchNotifications();
+      }catch (error) {
+          AbstractViews.pollingInterval = null;
+          removeSessionStorage();
+          console.error("startNotificationPolling: ", error);
+          navigateTo("/");
+          showModal(
+            "error",
+            error.message
+          )
+        }}, 10000);
     }
   }
 
@@ -318,6 +328,7 @@ export default class AbstractViews {
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
     if (accessToken != null) {
+      console.log("AUTH TOKEN", accessToken);
       myHeaders.append("Authorization", "Bearer " + accessToken);
     }
     else {
