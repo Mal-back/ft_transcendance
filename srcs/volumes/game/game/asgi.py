@@ -23,6 +23,7 @@ from .routing import websocket_urlpatterns
 from pong_local_app.consumers import PongLocalGameConsumer
 from pong_remote_app.consumers import PongRemoteGameConsumer
 from c4_local_app.consumers import C4LocalGameConsumer
+from c4_remote_app.consumers import C4RemoteGameConsumer
 
 django_asgi_app = get_asgi_application()
 
@@ -32,7 +33,8 @@ application =  ProtocolTypeRouter(
   		"websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
 		"channel": ChannelNameRouter({"pong_local_engine": PongLocalGameConsumer.as_asgi(),
                                 "pong_remote_engine": PongRemoteGameConsumer.as_asgi(),
-                                "c4_local_engine": C4LocalGameConsumer.as_asgi()})
+                                "c4_local_engine": C4LocalGameConsumer.as_asgi(),
+                                "c4_remote_engine": C4RemoteGameConsumer.as_asgi(),})
 	}
 )
 

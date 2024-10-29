@@ -1,11 +1,16 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import SyncConsumer
-from game_srcs.c4.C4_local import C4LocalEngine
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-from .models import C4LocalGame
-import uuid
+from .models import PongRemoteGame
+from game_srcs.c4.C4_remote import C4RemoteEngine
+from ms_client.ms_client import MicroServiceClient, RequestsFailed
+
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import UntypedToken
+import jwt
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +51,7 @@ def propagate_exceptions(func):
 ####### WARNING #####
 
 @apply_wrappers
-class C4LocalPlayerConsumer(AsyncWebsocketConsumer):
+class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         return
     
@@ -56,8 +61,10 @@ class C4LocalPlayerConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         return
     
-class C4LocalGameConsumer(SyncConsumer):
+class C4RemoteGameConsumer(SyncConsumer):
 	def __init__(self, *args, **kwargs):
-		print("C4LocalGameConsumer created")
+		print("C4RemoteGameConsumer created")
 		self.game_instances = {}    
     
+
+
