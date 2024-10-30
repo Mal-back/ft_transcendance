@@ -66,7 +66,6 @@ export default class Pong {
     this.scoreId = document.getElementById(scoreId);
     this.context = this.canvas.getContext("2d");
     this.webSocket = new WebSocket(websocket);
-    console.log("tried to open websocket");
   }
 
   setUsername(player1Name, player2Name) {
@@ -83,11 +82,10 @@ export default class Pong {
   }
 
   handleWebSocketOpen(ev) {
+    console.log("WEBSOCKET IS OPEN");
     this.webSocket.send(JSON.stringify({ type: "init_game" }));
     this.webSocket.send(JSON.stringify({ type: "get_config" }));
-    this.pingInterval = setTimeout(() => {
-      this.webSocket.send(JSON.stringify({ type: "ping" }));
-    });
+    this.startTimeout();
   }
 
   handleWebSocketClose(ev) {
@@ -151,7 +149,14 @@ export default class Pong {
         console.log("END:", data);
         this.printMessage(`${data.winner} won`, "white");
         if (this.mode == "local_tournament") {
-          this.tournament;
+          const playerA = this.tournament.PlayerA[this.tournament.round.currentMatch];
+          const playerB = this.tournament.PlayerA[this.tournament.round.currentMatch];
+          if (data.winner == "player_1") {
+            playerA.win += 1;
+            playerA.winRate = (playerA.win / (playerA.win + playerA.loss) * 100);
+            playerB.win += 1;
+            playerB.winRate = (playerB.win / (playerB.win + playerB.loss) * 100);
+          }
         }
         this.webSocket.close();
         this.removePongEvent();
