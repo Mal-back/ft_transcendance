@@ -121,8 +121,25 @@ class MatchAcceptInvite(generics.UpdateAPIView):
             return Response({'Error':'You can\'t accept this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'accepted'
         match.save()
-        #Send Request to game to game ms
-        return Response({'lol': 'Ca veut dire que ca a matrcher mais y a pas de communication av le jeu'}, status=status.HTTP_206_PARTIAL_CONTENT)
+        try:
+            sender = MicroServiceClient()
+            ret = sender.send_requests(
+                    urls = ['http://game:8443/api/game/pong-remote/create/'],
+                    expected_status=[201],
+                    method='post',
+                    body={
+                        'player_1_name':f'{match.player1}',
+                        'player_2_name':f'{match.player2}',
+                        }
+                    )
+            response = ret['http://game:8443/api/game/pong-remote/create/'] 
+            matchId = response.text.strip('"')
+            match.status = 'in_progress'
+            match.matchId = matchId
+            match.save()
+            return Response({'Ok': 'Match Created', 'MatchId': f'{matchId}'}, status=status.HTTP_206_PARTIAL_CONTENT)
+        except (RequestsFailed, InvalidCredentialsException):
+            return Response({'Error': 'Request failed'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 class MatchDeclineInvite(generics.UpdateAPIView):
     queryset = Match.objects.all()

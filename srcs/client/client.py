@@ -21,7 +21,7 @@ def getToken() :
         writeCreds(response.json())
     else:
         print(response.status_code)
-        print(response.json())
+        print(response.text)
 
 def refreshToken(headers):
     print('Refrshing Token')

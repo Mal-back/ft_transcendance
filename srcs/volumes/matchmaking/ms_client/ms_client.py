@@ -36,6 +36,8 @@ class MicroServiceClient:
                 'patch':requests.patch,
                 }
         response = req_methods[method](url, json=body ,headers=headers)
+        print(response.status_code)
+        print(response.text)
         return response
 
     def _getToken(self):

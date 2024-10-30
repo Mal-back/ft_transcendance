@@ -38,7 +38,7 @@ const router = async () => {
     { path: "/friends", view: Friends },
     { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
-    { path: "/pongLocal", view: PongLocal },
+    { path: "/ponglocal", view: PongLocal },
   ];
 
   const potentialMatches = routes.map((route) => {
