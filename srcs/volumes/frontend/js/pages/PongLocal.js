@@ -51,7 +51,7 @@ export default class extends AbstractView {
     console.log("Init Game");
     this.pong.initPong(
       "ongoing-game",
-      "ws://localhost:8080/api/game/ws/14545",
+      "wss://localhost:8080/api/game/pong-local/join/",
       mode,
       "scoreId",
     );

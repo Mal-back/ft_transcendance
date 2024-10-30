@@ -48,7 +48,7 @@ export default class Pong {
 
   initPong(
     canvas = "ongoing-game",
-    websocket = `ws://localhost:8080/api/game/ws/`,
+    websocket = `wss://localhost:8080/api/game/pong-local/join/`,
     mode = "local",
     scoreId,
   ) {
