@@ -9,14 +9,14 @@ def end_single_match(match, data):
                                  expected_status=[200]) 
         except (RequestsFailed, InvalidCredentialsException):
             pass
-        try :
-            data.update({'played_at':match.created_at})
-            sender.send_requests(urls=["http://users:8443/api/history/"],
-                                 method='post',
-                                 expected_status=[201],
-                                 body=data) 
-            pass
-        except (RequestsFailed, InvalidCredentialsException):
-            pass
+        # try :
+        #     data.update({'played_at':match.created_at})
+        #     sender.send_requests(urls=["http://matchmaking:8443/api/history/"],
+        #                          method='post',
+        #                          expected_status=[201],
+        #                          body=data) 
+        #     pass
+        # except (RequestsFailed, InvalidCredentialsException):
+        #     pass
         match.status = 'finished'
         match.delete()

@@ -1,14 +1,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import SyncConsumer
-from game_app.game_srcs.Pong import LocalEngine
+from game_srcs.Pong_local import PongLocalEngine
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-import django
-# django.setup()
-from game_app.models import LocalGame
+from .models import PongLocalGame
 import uuid
-
 
 log = logging.getLogger(__name__)
 
@@ -51,18 +48,15 @@ def propagate_exceptions(func):
 @apply_wrappers
 class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		path = self.scope["path"]
-		self.group_name = path.rsplit('/', 1)[1]
-		self.username = "Random Player"
-
 		try:
 			self.group_name = str(uuid.uuid4())
-			game = await sync_to_async(LocalGame.objects.create)(game_creator=self.username, game_id=self.group_name)
+			game = await sync_to_async(PongLocalGame.objects.create)(game_id=self.group_name)
 			await sync_to_async(game.save)()
 			await self.channel_layer.group_add(self.group_name, self.channel_name)
-			log.info("Player " + self.username+ " added to room " + self.group_name)
+			log.info("Local Player added to room " + self.group_name)
 			await self.accept()
 			self.delete = True
+			self.game_ended = False
 	   
 		except Exception:
 			log.info("Local game already exists")
@@ -72,38 +66,57 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def clean_game(self):
 		log.info("Cleaning game " + str(self.group_name))
 		try:
-			game = await sync_to_async(LocalGame.objects.get)(game_id=self.group_name)
+			game = await sync_to_async(PongLocalGame.objects.get)(game_id=self.group_name)
 			await sync_to_async(game.delete)()
 		except Exception:
 			log.info("Cannot delet game model id " + self.group_name)
-		await self.channel_layer.send("local_engine", {
-			"type": "end.thread",
-			"game_id": self.group_name,
-		})
-		await self.channel_layer.group_discard(self.group_name, self.channel_name)        
+		if self.game_ended == False:
+			try:
+				await self.channel_layer.send("pong_local_engine", {
+					"type": "end.thread",
+					"game_id": self.group_name,
+				})
+			except:
+				log.info("Error sending end_thread to LocalEngine")
+		try:
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
+		except:
+			log.info("Can not discard channel " + self.channel_name + " from group " + self.group_name) 
 	 
 	async def disconnect(self, code):
-		log.info("Player " + self.username + " disconnected")
+		log.info("Local Player disconnected")
 		if self.delete == True:
 			await self.clean_game()
 	
 	async def init_game(self):
-		await self.channel_layer.send("local_engine", {
-			"type": "init.game",
-			"game_id": self.group_name,
-		})
+		try:
+			await self.channel_layer.send("pong_local_engine", {
+				"type": "init.game",
+				"game_id": self.group_name,
+			})
+		except:
+			log.info("Error sending init_game to LocalEngine")
+			self.close()
 		
 	async def get_config(self):
-		await self.channel_layer.send("local_engine", {
-			"type": "get.config",
-			"game_id": self.group_name,
-		})
+		try:
+			await self.channel_layer.send("pong_local_engine", {
+				"type": "get.config",
+				"game_id": self.group_name,
+			})
+		except:
+			log.info("Error sending get_config to LocalEngine")
+			self.close()
 
 	async def start_game(self):
-		await self.channel_layer.send("local_engine", {
-			"type": "start.game",
-			"game_id": self.group_name,
-		})
+		try:
+			await self.channel_layer.send("pong_local_engine", {
+				"type": "start.game",
+				"game_id": self.group_name,
+			})
+		except:
+			log.info("Error sending start_game to LocalEngine")
+			self.close()   
 
 	async def move(self, content):
 		try:
@@ -112,12 +125,16 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		except KeyError:
 			log.error("Key error in LocalPlayerConsumer.move()")
 			return
-		await self.channel_layer.send("local_engine", {
-			"type" : "move",
-			"game_id": self.group_name,
-			"player" : player,
-			"direction": direction
-		})
+		try:
+			await self.channel_layer.send("pong_local_engine", {
+				"type" : "move",
+				"game_id": self.group_name,
+				"player" : player,
+				"direction": direction
+			})
+		except:
+			log.info("Error sending move to LocalEngine")
+			self.close()
 		
 	async def pause(self, content):
 		try:
@@ -125,11 +142,15 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		except KeyError:
 			log.error("Key error in LocalPlayerConsumer.pause()")
 			return
-		await self.channel_layer.send("local_engine", {
-			"type" : "pause",
-			"game_id" : self.group_name,
-			"action" : action,
-		   })
+		try:
+			await self.channel_layer.send("pong_local_engine", {
+				"type" : "pause",
+				"game_id" : self.group_name,
+				"action" : action,
+			})
+		except:
+			log.info("Error sending pause to LocalEngine")
+			self.close()
   
 	async def surrend(self, content):
 		try:
@@ -137,11 +158,15 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 		except KeyError:
 			log.error("Key error in LocalPlayerConsumer.pause()")
 			return
-		await self.channel_layer.send("local_engine", {
-			"type" : "surrend",
-			"game_id" : self.group_name,
-			"surrender": surrender,
-		   })		
+		try:
+			await self.channel_layer.send("pong_local_engine", {
+				"type" : "surrend",
+				"game_id" : self.group_name,
+				"surrender": surrender,
+			})
+		except:
+			log.info("Error sending surrend to LocalEngine")
+			self.close()
 
 	async def send_error(self, event):
 		data = {"type" : "error"}
@@ -150,6 +175,8 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.send(dumps(data))
 		except:
 			log.info("Can not send on closed websocket")
+		if data["close"] == "true":
+			await self.close()
 
 	async def send_frame(self, event):
 		data = {"type" : "frame"}
@@ -182,6 +209,8 @@ class LocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.send(dumps(data))
 		except:
 			log.info("Can not send on closed websocket")
+		self.game_ended = True
+		await self.close()
   
 	async def end_game(self, event):
 		log.info("End game function called in WebsocketConsumer " + self.group_name)
@@ -215,18 +244,23 @@ class LocalGameConsumer(SyncConsumer):
 		print("LocalGameConsumer created")
 		self.game_instances = {}
 	
-	def error(self, error_msg, game_id):
-		async_to_sync(self.channel_layer.group_send)(game_id,
-			{"type": "send.error", "Error" : error_msg})
+	def error(self, error_msg, game_id, close):
+		try:
+			async_to_sync(self.channel_layer.group_send)(game_id,
+				{"type": "send.error", "Error" : error_msg,  "close" : close})
+		except Exception:
+			log.info("Can not send error to group channel")
 		
 	def init_game(self, event):
-		game_id = event["game_id"]
+		game_id = event["game_id"]		
 		if game_id in self.game_instances:
 			print("Game thread for room " + str(game_id) + " is already initialized")
-			self.error("init_game : game already initialized", game_id)
 			return
-		self.game_instances[game_id] = LocalEngine(game_id=game_id)
-		self.game_instances[game_id].start()
+		try:
+			self.game_instances[game_id] = PongLocalEngine(game_id=game_id)
+			self.game_instances[game_id].start()
+		except Exception:
+			self.error("can not init the game", "true")
 
 	def start_game(self, event):
 		game_id = event["game_id"]
@@ -234,7 +268,6 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].start_game()
 		except Exception:
 			print("Game thread for room " + str(game_id) + " can not start because not initialized")
-			self.error("start_game : game not initialized", game_id)
   
 	def pause(self, event):
 		game_id = event["game_id"]
@@ -242,7 +275,6 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].receive_pause(event["action"])
 		except Exception:
 			print("Game thread for room " + str(game_id) + " can not pause because not initialized")
-			self.error("pause: game not initialized", game_id)
 		
 	def get_config(self, event):
 		game_id = event["game_id"]
@@ -250,7 +282,6 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].send_config()
 		except Exception:
 			print("Game thread " + str(game_id) + " can not send config because not initialized")
-			self.error("get_config: game not initialized", game_id)
   
 	def move(self, event):
 		game_id = event["game_id"]
@@ -258,7 +289,6 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].receive_movement(event["player"], event["direction"])
 		except Exception:
 			print("Game thread " + str(game_id) + " can not move because not initialized")
-			self.error("move: game not initialized", game_id)
 			
 	def surrend(self, event):
 		print("Surrend function in LocalGameConsumer")
@@ -267,16 +297,21 @@ class LocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id].receive_surrend(event["surrender"])
 		except Exception:
 			print("Game thread " + str(game_id) + " can not surrend because not initialized")
-			self.error("surrend: game not initialized", game_id) 
 
 	def end_thread(self, event):
 		game_id = event["game_id"]
 		try :
 			print("Ending thread " + game_id)
 			self.game_instances[game_id].end_thread()
-			print("Waiting for thread to end")
+		except Exception:
+			print("Error: Can not end thread " + str(game_id))
+   
+	def join_thread(self, event):
+		game_id = event["game_id"]
+		try:
+			print("Joining thread " + game_id)
 			self.game_instances[game_id].join()
 			self.game_instances.pop(game_id)
 			print("Thread waited !")
 		except Exception:
-			print("Error: Can not end thread " + str(game_id))
+			print("Error: Can not join thread " + str(game_id))

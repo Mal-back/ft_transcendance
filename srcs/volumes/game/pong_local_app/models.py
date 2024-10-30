@@ -1,5 +1,7 @@
 from django.db import models
+import logging
 
-class LocalGame(models.Model):
-    game_creator = models.CharField(max_length=100)
+log = logging.getLogger(__name__)
+
+class PongLocalGame(models.Model):
     game_id = models.CharField(max_length=100, unique=True)

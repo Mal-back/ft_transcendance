@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class GameAppConfig(AppConfig):
+class C4LocalAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'game_app'
+    name = 'c4_local_app'

@@ -15,18 +15,22 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
 from channels.auth import AuthMiddlewareStack
 import signal
-
 import django
+
 django.setup()
 
-from game_app.routing import websocket_urlpatterns
-from game_app.consumers import LocalGameConsumer
+from .routing import websocket_urlpatterns
+from pong_local_app.consumers import LocalGameConsumer
+from pong_remote_app.consumers import RemoteGameConsumer
+
+django_asgi_app = get_asgi_application()
 
 application =  ProtocolTypeRouter(
 	{
-		"http" : get_asgi_application(),
+		"http" : django_asgi_app,
   		"websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
-		"channel": ChannelNameRouter({"local_engine": LocalGameConsumer.as_asgi()}),
+		"channel": ChannelNameRouter({"pong_local_engine": LocalGameConsumer.as_asgi(),
+                                "pong_remote_engine": RemoteGameConsumer.as_asgi()})
 	}
 )
 
