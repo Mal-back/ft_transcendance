@@ -328,11 +328,7 @@ export default class AbstractViews {
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
     if (accessToken != null) {
-      console.log("AUTH TOKEN", accessToken);
       myHeaders.append("Authorization", "Bearer " + accessToken);
-    }
-    else {
-      console.log("NO AUTH TOKEN");
     }
     if (boolJSON === true) {
       console.log("manual header");

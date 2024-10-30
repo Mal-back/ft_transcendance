@@ -57,7 +57,8 @@ export default class extends AbstractView {
     );
     const leftPlayerText = document.getElementById("leftPlayer");
     const rightPlayerText = document.getElementById("rightPlayer");
-    if (mode == "local_tournament") {
+    if (mode == "tournament_local") {
+      console.log("tournament mode")
       this.tournament = JSON.parse(
         sessionStorage.getItem("tournament_transcendence_local"),
       );
@@ -65,14 +66,12 @@ export default class extends AbstractView {
         this.tournament.PlayerA[this.tournament.round.currentMatch].name,
         this.tournament.PlayerB[this.tournament.round.currentMatch].name,
       );
+
+    } else {
+            console.log("not tournament mode")
+
     }
     const objectPlayers = this.pong.getUsername();
-    if (objectPlayers.mode != "remote") {
-      leftPlayerText.innerText = `${this.lang.getTranslation(["game", "LeftPlayer"])}  `;
-      rightPlayerText.innerText = `  ${this.lang.getTranslation(["game", "rightPlayer"])}`;
-      // AVATAR ?
-      return;
-    }
     leftPlayerText.innerText = objectPlayers.leftPlayer;
     rightPlayerText.innerText = objectPlayers.rightPlayer;
   }

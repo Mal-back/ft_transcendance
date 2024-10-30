@@ -206,7 +206,7 @@ export default class extends AbstractView {
         JSON.stringify(this.tournament),
       );
       this.tournament = null;
-      navigateTo("/pong-local?mode=tournament");
+      navigateTo("/pong-local?mode=tournament_local");
     }
   }
 

@@ -6,6 +6,8 @@ export default class Pong {
     this.context = null;
     this.webSocket = null;
     this.mode = "local";
+    this.pingInterval = null;
+    this.timeout = null;
 
     this.leftPaddle = { x: 0, y: 0 };
     this.rightPaddle = { x: 0, y: 0 };
@@ -83,12 +85,16 @@ export default class Pong {
   handleWebSocketOpen(ev) {
     this.webSocket.send(JSON.stringify({ type: "init_game" }));
     this.webSocket.send(JSON.stringify({ type: "get_config" }));
+    this.pingInterval = setTimeout(() => {
+      this.webSocket.send(JSON.stringify({ type: "ping" }));
+    });
   }
 
   handleWebSocketClose(ev) {
+    console.error("Socket is closed");
     this.removePongEvent();
     this.gameStart = false;
-   if (mode == "local_tournament") {
+    if (this.mode == "tournament_local") {
       navigateTo("/pong-local-tournament");
     }
   }
@@ -115,6 +121,12 @@ export default class Pong {
   handleWebSocketMessage(ev) {
     const data = JSON.parse(ev.data);
     switch (data.type) {
+      case "ping": {
+        this.webSocket.send(JSON.stringify({ type: "pong" }));
+      }
+      case "pong": {
+        clearTimeout(this.pingInterval);
+      }
       case "config": {
         this.configGame(data);
         break;
@@ -139,8 +151,9 @@ export default class Pong {
         console.log("END:", data);
         this.printMessage(`${data.winner} won`, "white");
         if (this.mode == "local_tournament") {
-          this.tournament
+          this.tournament;
         }
+        this.webSocket.close();
         this.removePongEvent();
         // this.endGame();
         break;
@@ -149,6 +162,23 @@ export default class Pong {
         console.log("Unknown message: ", data);
       }
     }
+    clearTimeout(this.timeout);
+    this.startTimeout();
+  }
+
+  startTimeout() {
+    this.timeout = setTimeout(() => {
+      console.log("no frame recieved in the last 3s");
+      this.sendPing();
+    }, 3000);
+  }
+
+  sendPing() {
+    this.webSocket.send(JSON.stringify({ type: "ping" }));
+    this.pingInterval = setTimeout(() => {
+      console.error("No response from the server");
+      this.webSocket.close();
+    }, 2000);
   }
 
   handleUnloadPage(ev) {
@@ -267,6 +297,8 @@ export default class Pong {
   }
 
   removePongEvent() {
+    clearTimeout(this.pingInterval);
+    clearTimeout(this.timeout);
     if (this.webSocket) {
       this.webSocket.removeEventListener("open", this.handleWebSocketOpen);
       this.webSocket.removeEventListener("close", this.handleWebSocketClose);
