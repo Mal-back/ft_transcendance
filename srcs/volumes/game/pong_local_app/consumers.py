@@ -96,7 +96,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending init_game to LocalEngine")
-			self.close()
+			await self.close()
 		
 	async def get_config(self):
 		try:
@@ -106,7 +106,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending get_config to LocalEngine")
-			self.close()
+			await self.close()
 
 	async def start_game(self):
 		try:
@@ -116,7 +116,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending start_game to LocalEngine")
-			self.close()   
+			await self.close()   
 
 	async def move(self, content):
 		try:
@@ -134,7 +134,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending move to LocalEngine")
-			self.close()
+			await self.close()
 		
 	async def pause(self, content):
 		try:
@@ -150,7 +150,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending pause to LocalEngine")
-			self.close()
+			await self.close()
   
 	async def surrend(self, content):
 		try:
@@ -166,7 +166,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending surrend to LocalEngine")
-			self.close()
+			await self.close()
 
 	async def send_error(self, event):
 		data = {"type" : "error"}
@@ -212,6 +212,13 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 		self.game_ended = True
 		await self.close()
   
+	async def send_pong(self):
+		data = {"type" : "pong"}
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
+  
 	async def end_game(self, event):
 		log.info("End game function called in WebsocketConsumer " + self.group_name)
 		self.delete = True
@@ -236,6 +243,8 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.pause(content)
 		elif type == "surrend":
 			await self.surrend(content)
+		elif type == "ping":
+			await self.send_pong()
 		else:
 			log.info("Wrong type receive in PongLocalPlayerConsumer : " + type)
 

@@ -74,7 +74,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending init_game to LocalEngine")
-			self.close()
+			await self.close()
 		
 	async def get_config(self):
 		try:
@@ -85,7 +85,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending get_config to LocalEngine")
-			self.close()
+			await self.close()
 
 	async def start_game(self):
 		try:
@@ -97,7 +97,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending start_game to LocalEngine")
-			self.close()   
+			await self.close()   
 
 	async def move(self, content):
 		try:
@@ -115,7 +115,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending move to LocalEngine")
-			self.close()
+			await self.close()
 		
 	async def pause(self, content):
 		try:
@@ -133,7 +133,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending pause to LocalEngine")
-			self.close()
+			await self.close()
   
 	async def surrend(self, content):
 		try:
@@ -145,7 +145,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending surrend to LocalEngine")
-			self.close()
+			await self.close()
 
 	async def send_error(self, event):
 		data = {"type" : "error"}
@@ -189,10 +189,12 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		self.game_ended = True
 		await self.close()
   
-	async def end_game(self, event):
-		log.info("End game function called in WebsocketConsumer " + self.group_name)
-		self.delete = True
-		await self.close()
+	async def send_pong(self):
+		data = {"type" : "pong"}
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
 
 	async def receive(self, text_data=None, bytes_data=None):
 		content = loads(text_data)
@@ -217,6 +219,8 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			await self.pause(content)
 		elif type == "surrend":
 			await self.surrend(content)
+		elif type == "ping":
+			await self.send_pong()
 		else:
 			log.info("Wrong type receive in LocalPlayerConsumer : " + type)
  
@@ -228,7 +232,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			elif self.player == "player_2":
 				game_instance.player_2_connected = False
 			await game_instance.asave()
-			self.channel_layer.group_discard(self.group_name, self.channel_name)
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except Exception:
 			log.info("Problem leaving game " + self.group_name + " for player " + self.username)
 		await self.pause({"action" : "stop"})
