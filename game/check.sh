@@ -1,4 +1,4 @@
-for file in css-to-merge/*; do
+for file in ../front/css/*; do
     filename=$(basename "$file")
     if [ -f "css/$filename" ]; then
         echo "Comparing $filename:"
