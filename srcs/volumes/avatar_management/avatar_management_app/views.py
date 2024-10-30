@@ -12,7 +12,7 @@ from ms_client.ms_client import MicroServiceClient, RequestsFailed
 class AvatarView(APIView):
     permission_classes = [UserIsAuthenticated]
     def get(self, request, *args, **kwargs):
-        links = ['http://localhost:8080/media/default_avatars/default_00.jpg',]
+        links = ['/media/default_avatars/default_00.jpg',]
         return Response(links, status=200)
 
     def post(self, request, *args, **kwargs):
@@ -31,7 +31,7 @@ class AvatarView(APIView):
                         urls=[f'http://users:8443/api/users/{request.user_username}/update_pic/',],
                         method='patch',
                         expected_status=[200],
-                        body={'avatar_path':f'http://localhost:8080/media/users_avatars/{request.user_username}.{img_type}'},
+                        body={'avatar_path':f'/media/users_avatars/{request.user_username}.{img_type}'},
                         )
                 return Response({'status':'new avatar successefully updated'}, status=201)
             except RequestsFailed:

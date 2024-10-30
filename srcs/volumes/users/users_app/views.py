@@ -176,7 +176,7 @@ class PublicUserSetDefaultAvatar(APIView):
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
         self.check_object_permissions(request, user)
-        path = 'http://localhost:8080/media/default_avatars/default_00.jpg'
+        path = '/media/default_avatars/default_00.jpg'
         try:
             sender = MicroServiceClient()
             sender.send_requests(
