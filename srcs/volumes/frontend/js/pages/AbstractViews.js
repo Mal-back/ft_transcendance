@@ -98,40 +98,84 @@ export default class AbstractViews {
     }
   }
 
+  // populatesInvites() {
+  //   const inviteList = document.getElementById("inviteList");
+  //   inviteList.innerHTML = "";
+  //   console.log("LENGTH:", AbstractViews.invitesArray.length);
+  //   if (!AbstractViews.invitesArray.length) {
+  //     inviteList.innerHTML = "No Invites";
+  //     return;
+  //   }
+  //   // <!-- <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50"> -->
+  //   AbstractViews.invitesArray.forEach((invite) => {
+  //     const inviteItem = document.createElement("li");
+  //     inviteItem.className = "list-group-item";
+  //     inviteItem.innerHTML = `
+  //   <div class="d-flex align-items-cente"r>
+  //     <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" style="background-image: url('${invite.opponentAvatar}')" alt="Avatar">
+  //       </div>
+  //     <div class="flex-grow-1">
+  //         <h5><strong>${invite.player}</strong></h5>
+  //         <br>
+  //         <p>${invite.message}</p>
+  //     </div>
+  //   </div>
+  //   <div class="d-flex justify-content-end mt-2">
+  //       <button class="btn btn-success btn-sm me-2 accept-button" data-invite-id="${invite.id}" data-action="accept">
+  //           <i class="bi bi-check-circle"></i> Accept
+  //       </button>
+  //       <button class="btn btn-danger btn-sm" data-invite-id="${invite.id}" data-action="refuse">
+  //           <i class="bi bi-x-circle"></i> Refuse
+  //       </button>
+  //   </div>
+  //           `;
+  //     inviteList.appendChild(inviteItem);
+  //
+  //   });
+  // }
+
   populatesInvites() {
-    const inviteList = document.getElementById("inviteList");
-    inviteList.innerHTML = "";
-    console.log("LENGTH:", AbstractViews.invitesArray.length);
-    if (!AbstractViews.invitesArray.length) {
-      inviteList.innerHTML = "No Invites";
-      return;
-    }
-    // <!-- <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50"> -->
-    AbstractViews.invitesArray.forEach((invite) => {
-      const inviteItem = document.createElement("li");
-      inviteItem.className = "list-group-item";
-      inviteItem.innerHTML = `
-    <div class="d-flex align-items-cente"r>
-      <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" style="background-image: url('${invite.opponentAvatar}')" alt="Avatar">
-        </div>
-      <div class="flex-grow-1">
-          <h5><strong>${invite.player}</strong></h5>
-          <br>
-          <p>${invite.message}</p>
-      </div>
-    </div>
-    <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-success btn-sm me-2 accept-button" data-invite-id="${invite.id}" data-action="accept">
-            <i class="bi bi-check-circle"></i> Accept
-        </button>
-        <button class="btn btn-danger btn-sm" data-invite-id="${invite.id}" data-action="refuse">
-            <i class="bi bi-x-circle"></i> Refuse
-        </button>
-    </div>
-            `;
-      inviteList.appendChild(inviteItem);
-    });
+  const inviteList = document.getElementById("inviteList");
+  inviteList.innerHTML = "";
+
+  if (!AbstractViews.invitesArray.length) {
+    inviteList.innerHTML = "No Invites";
+    return;
   }
+
+  AbstractViews.invitesArray.forEach((invite) => {
+    const inviteItem = document.createElement("li");
+    inviteItem.className = "list-group-item";
+
+    inviteItem.innerHTML = `
+      <div class="d-flex align-items-center">
+        <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" 
+             style="background-image: url('${invite.opponentAvatar}')" 
+             alt="Avatar">
+        </div>
+        <div class="flex-grow-1">
+          <h5><strong>${invite.player}</strong></h5>
+          <p>${invite.message}</p>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-2">
+        <button class="btn btn-success btn-sm me-2 accept-button" 
+                data-invite-id="${invite.id}" 
+                data-action="accept">
+          <i class="bi bi-check-circle"></i> Accept
+        </button>
+        <button class="btn btn-danger btn-sm refuse-button" 
+                data-invite-id="${invite.id}" 
+                data-action="refuse">
+          <i class="bi bi-x-circle"></i> Refuse
+        </button>
+      </div>
+    `;
+
+    inviteList.appendChild(inviteItem);
+  });
+}
+
 
   async getUserInfo(user) {
     try {

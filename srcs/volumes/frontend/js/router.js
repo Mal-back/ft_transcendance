@@ -18,6 +18,7 @@ import PongRemoteMenu from "./pages/PongRemoteMenu.js";
 import PongLocalLobby from "./pages/PongLocalLobby.js";
 import PongRemoteLobby from "./pages/PongRemoteLobby.js";
 import PongLocalTournament from "./pages/PongLocalTournament.js";
+import AbstractViews from "./pages/AbstractViews.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -148,7 +149,7 @@ function closeSidebar(sidebar) {
 
     sidebar.addEventListener(
       "hidden.bs.offcanvas",
-      function () {
+      function() {
         const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
           backdrop.remove();
@@ -195,4 +196,26 @@ document.addEventListener("keydown", (ev) => {
   }
 });
 
+const inviteList = document.getElementById("inviteList");
 
+inviteList.addEventListener("click", (event) => {
+  console.log("CLICKED");
+  // Check if the clicked element is an accept or refuse button
+  const button = event.target.closest(".accept-button, .refuse-button");
+  if (!button) return; // If not, exit the function
+
+  const inviteId = button.dataset.inviteId;
+  const action = button.dataset.action;
+
+  const invite = AbstractViews.invitesArray.find((inv) => inv.id === inviteId);
+  if (invite) {
+    const url =
+      action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
+    console.log(`URL: ${url}; action: ${action}`);
+  }
+});
+
+handleInviteResponse(url) {
+  console.log(`Invite ${action}: ${url}`);
+  // Additional code to handle the invite response
+}
