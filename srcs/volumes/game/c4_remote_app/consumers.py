@@ -3,7 +3,7 @@ from channels.consumer import SyncConsumer
 from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
-from .models import PongRemoteGame
+from .models import C4RemoteGame
 from game_srcs.c4.C4_remote import C4RemoteEngine
 from ms_client.ms_client import MicroServiceClient, RequestsFailed
 

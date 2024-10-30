@@ -520,7 +520,7 @@ function testWss() {
 
 
 // testInit();
-// testStart();
+testStart();
 // testGetConfig();
 // testPause();
 // testMove();
@@ -528,4 +528,4 @@ function testWss() {
 // testChannelFUll();
 // testWss();
 // testMultipleInstances(50)
-testRemote();
+// testRemote();
