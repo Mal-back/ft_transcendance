@@ -4,6 +4,7 @@ import {
   setSessionStorage,
   showModal,
 } from "../Utils/Utils.js";
+import CustomError from "../Utils/CustomError.js";
 import AbstractView from "./AbstractViews.js";
 
 export default class extends AbstractView {
@@ -17,15 +18,6 @@ export default class extends AbstractView {
 
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["menu", "login"])}`);
-    const username = sessionStorage.getItem("username_transcendance");
-    if (username) {
-      // const loginOverlay = document.querySelector("#overlayLogin");
-      // loginOverlay.innerText = "Logout";
-      // loginOverlay.href = "/logout";
-      navigateTo("/");
-      throw new CustomError("Redirect to Home, User already logged in");
-    }
-
     return `
                 <div class="background login removeElem">
                     <div class="p-5 bg-* removeElem">
@@ -64,9 +56,35 @@ export default class extends AbstractView {
           `;
   }
 
+  cleanInputs() {
+    const usernameInput = document.querySelector("#usernameInput");
+    console.log("usernameInput:", usernameInput);
+    const passwordInput = document.querySelector("#passwordInput");
+    passwordInput.value = "";
+    const usernameInputError = document.querySelector("#loginUsernameError");
+    usernameInputError.innerHTML = "";
+    usernameInputError.classList.add("removeElem");
+    const loginPasswordError = document.querySelector("#loginPasswordError");
+    loginPasswordError.innerHTML = "";
+    loginPasswordError.classList.add("removeElem");
+  }
+
   async loadCss() {
     this.createPageCss("../css/login.css");
     console.log("adding login.css");
+  }
+
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      navigateTo("/");
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        "User is already logged in",
+        "/",
+      );
+    }
+    return;
   }
 
   validateUsername(usernameInput) {
@@ -134,26 +152,6 @@ export default class extends AbstractView {
     navigateTo("/createUser");
   }
 
-  async addEventListeners() {
-    console.log("adding event addEventListeners");
-    const button = document.querySelector("#loginButton");
-    const usernameInput = document.querySelector("#usernameInput");
-    const passwordInput = document.querySelector("#passwordInput");
-    const createUser = document.querySelector("#createUser");
-    if (usernameInput) {
-      usernameInput.addEventListener("input", this.handleInputUsername);
-    }
-    if (passwordInput)
-      passwordInput.addEventListener("input", this.handleInputPassword);
-
-    if (button) {
-      button.addEventListener("click", this.handleLogin);
-    }
-    if (createUser) {
-      createUser.addEventListener("click", this.handleCreateUserRedir);
-    }
-  }
-
   async login() {
     console.log("login");
     const loginForm = document.querySelector("#loginForm");
@@ -191,17 +189,35 @@ export default class extends AbstractView {
     }
   }
 
+  async addEventListeners() {
+    console.log("adding event addEventListeners");
+    const button = document.querySelector("#loginButton");
+    const usernameInput = document.querySelector("#usernameInput");
+    const passwordInput = document.querySelector("#passwordInput");
+    const createUser = document.querySelector("#createUser");
+    if (usernameInput) {
+      usernameInput.addEventListener("input", this.handleInputUsername);
+    }
+    if (passwordInput)
+      passwordInput.addEventListener("input", this.handleInputPassword);
+
+    if (button) {
+      button.addEventListener("click", this.handleLogin);
+    }
+    if (createUser) {
+      createUser.addEventListener("click", this.handleCreateUserRedir);
+    }
+  }
+
   removeEventListeners() {
     const button = document.querySelector("#loginButton");
     if (button) {
-      console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.handleLogin);
     }
     const usernameInput = document.querySelector("#usernameInput");
     const passwordInput = document.querySelector("#passwordInput");
-    if (usernameInput) {
-      usernameInput.removeEventListener("input", this.validateUsername);
-    }
+    usernameInput.removeEventListener("input", this.handleInputUsername);
+    usernameInput.value = "";
     if (passwordInput) {
       passwordInput.removeEventListener("input", this.handleInputPassword);
       passwordInput.removeEventListener("input", null); // Example: if you have 'input' event listeners
@@ -215,8 +231,9 @@ export default class extends AbstractView {
 
   destroy() {
     console.log("Destroy Login");
-    this.cleanModal();
     this.removeEventListeners();
+    this.cleanInputs();
+    this.cleanModal();
     this.removeCss();
     this.removeElem();
   }

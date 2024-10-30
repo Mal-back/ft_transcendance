@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('DJANGO_GAME_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['game', 'localhost', 'auth', 'worker']
+ALLOWED_HOSTS = ['game', 'localhost', 'auth', 'worker', 'matchmaking']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'pong_local_app.apps.PongLocalAppConfig',
     'pong_remote_app.apps.PongRemoteAppConfig',
+    'c4_local_app.apps.C4LocalAppConfig',
+    'c4_remote_app.apps.C4RemoteAppConfig',
     'corsheaders',
     'ms_client.apps.MsClientConfig',
 ]
@@ -146,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework_simplejwt.authentication.JWTAuthentication',
+            # 'pong_remote_app.authentification.CustomAuthentication',
             ),
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
         'PAGE_SIZE': 10,

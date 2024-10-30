@@ -1,6 +1,7 @@
 import { navigateTo } from "../router.js";
 import { showModal } from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
+import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -17,7 +18,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["login", "createProfileBtn"])}`);
-    return `
+     return `
       <div class="background createUser removeElem">
         <div class="p-5 bg-* removeElem">
             <div class="black-txt bg-form create-user-form p-4 removeElem">
@@ -58,6 +59,19 @@ export default class extends AbstractView {
         </div>
       </div>
             `;
+  }
+
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      navigateTo("/");
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        "User is already logged in",
+        "/",
+      )
+    }
+    return;
   }
 
   async submitNewUser(username, email, password, password2) {

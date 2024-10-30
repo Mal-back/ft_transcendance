@@ -1,5 +1,5 @@
 import Home from "./pages/Home.js";
-import Game from "./pages/Game.js";
+// import Game from "./pages/Game.js";
 import Profile from "./pages/Profile.js";
 import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
@@ -12,6 +12,12 @@ import Friends from "./pages/TrueFriends.js";
 // import Pong from "./pages/Pong.js";
 import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
+import PongMenu from "./pages/PongMode.js";
+import PongLocalMenu from "./pages/PongLocalMenu.js";
+import PongRemoteMenu from "./pages/PongRemoteMenu.js";
+import PongLocalLobby from "./pages/PongLocalLobby.js";
+import PongRemoteLobby from "./pages/PongRemoteLobby.js";
+import PongLocalTournament from "./pages/PongLocalTournament.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -38,7 +44,13 @@ const router = async () => {
     { path: "/friends", view: Friends },
     { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
-    { path: "/pongLocal", view: PongLocal },
+    { path: "/pong-local", view: PongLocal },
+    { path: "/pong-menu", view: PongMenu },
+    { path: "/pong-local-menu", view: PongLocalMenu },
+    { path: "/pong-remote-menu", view: PongRemoteMenu },
+    { path: "/pong-local-lobby", view: PongLocalLobby },
+    { path: "/pong-remote-lobby", view: PongRemoteLobby },
+    { path: "/pong-local-tournament", view: PongLocalTournament },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -60,101 +72,47 @@ const router = async () => {
   }
   console.info("route = " + match.route.path);
 
-  // let previousView = null;
-  // if (view) {
-  //   previousView = view;
-  // }
   view = null;
   view = new match.route.view();
-
-  // if (previousView) {
-  //   previousView.destroy();
-  //   previousView = null;
-  // }
-
-  // const pathToRegex = (path) =>
-  //   new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
-  //
-  // const getParams = (match) => {
-  //   const values = match.result.slice(1);
-  //   const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(
-  //     (result) => result[1],
-  //   );
-  //
-  //   return Object.fromEntries(
-  //     keys.map((key, i) => {
-  //       return [key, values[i]];
-  //     }),
-  //   );
-  // };
-  //
-  // const navigateTo = (url) => {
-  //   history.pushState(null, null, url);
-  //   router();
-  // };
-  //
-  // const router = async () => {
-  //   const routes = [
-  //     { path: "/", view: Home },
-  //     { path: "/createUser", view: Form },
-  //   ];
-  //
-  //   // Test each route for potential match
-  //   const potentialMatches = routes.map((route) => {
-  //     return {
-  //       route: route,
-  //       result: location.pathname.match(pathToRegex(route.path)),
-  //     };
-  //   });
-  //
-  //   let match = potentialMatches.find(
-  //     (potentialMatch) => potentialMatch.result !== null,
-  //   );
-  //
-  //   if (!match) {
-  //     match = {
-  //       route: routes[0],
-  //       result: [location.pathname],
-  //     };
-  //   }
-  //
-  //   const view = new match.route.view(getParams(match));
 
   try {
     await view.loadCss();
     await view.lang.fetchJSONLanguage();
 
     document.querySelector("#app").innerHTML = "";
+    await view.checkLogin();
     document.querySelector("#app").innerHTML = await view.getHtml();
-    if (match.route.path == "/pongLocal" || match.route.path == "/pong")
-      view.pongGame();
+    if (match.route.path == "/pong-local" || match.route.path == "/pong")
+      await view.game();
     await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {
-      console.error("Error in get Html():", error);
-      console.trace();
+      console.error("error in view", error);
       navigateTo("/");
     }
   }
 
   // Function to print all CSS links on the page
-  // function printAllCssLinks() {
-  //   // Select all <link> elements with rel="stylesheet"
-  //   const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-  //
-  //   // Loop through each <link> element
-  //   cssLinks.forEach((link) => {
-  //     // Print the href attribute (URL of the stylesheet) to the console
-  //     console.log(link.href);
-  //   });
-  // }
+  function printAllCssLinks() {
+    // Select all <link> elements with rel="stylesheet"
+    console.log("PRINT CSS");
+    const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+
+    // Loop through each <link> element
+    cssLinks.forEach((link) => {
+      // Print the href attribute (URL of the stylesheet) to the console
+      console.log(link.href);
+    });
+  }
 
   // Call the function to print all CSS links
 
   // print all html
+  //   printAllCssLinks();
+  //   console.log("PRINT HTML")
   // console.log(document.documentElement.outerHTML);
 };
 
@@ -182,29 +140,22 @@ export function handleClick(e) {
   }
 }
 
-// function closeSidebar(sidebar) {
-//   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
-//   if (offcanvasInstance) {
-//     offcanvasInstance.hide();
-//   }
-//   }
 function closeSidebar(sidebar) {
   const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
 
   if (offcanvasInstance && sidebar.classList.contains("show")) {
     offcanvasInstance.hide();
 
-    // Clean up the backdrop after it's fully hidden
     sidebar.addEventListener(
       "hidden.bs.offcanvas",
       function () {
         const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
-          backdrop.remove(); // Ensure backdrop is removed
+          backdrop.remove();
         }
       },
       { once: true },
-    ); // Remove listener after it's executed once
+    );
   }
 }
 
@@ -243,3 +194,5 @@ document.addEventListener("keydown", (ev) => {
     modalInstance.hide();
   }
 });
+
+

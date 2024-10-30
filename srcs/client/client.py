@@ -21,7 +21,7 @@ def getToken() :
         writeCreds(response.json())
     else:
         print(response.status_code)
-        print(response.json())
+        print(response.text)
 
 def refreshToken(headers):
     print('Refrshing Token')
@@ -46,10 +46,12 @@ def getUserProfile(userPk):
         headers = {
                 'Authorization' : f'Bearer {access}'
                 }
-        refresh = json.loads(creds.read_text())['refresh']
         body = {
-                'profile_pic':'http://localhost:8080/media/default_avatars/default_00.jpg',
+                'username': 'louja',
                 }
+        refresh = json.loads(creds.read_text())['refresh']
+        # response = requests.get(f'http://localhost:8080/api/matchmaking/match/pending_invites/', headers=headers)
+        # response = requests.patch(f'http://localhost:8080/api/auth/update/lui', headers=headers, data=body)
         # response = requests.get(f'http://localhost:8080/api/users/moi/friend', headers=headers)
         # response = requests.get(f'http://localhost:8080/api/users/vall/', headers=headers)
         # response = requests.patch(f'http://localhost:8080/api/auth/update/{userPk}', headers=headers, data=body)
@@ -58,9 +60,7 @@ def getUserProfile(userPk):
         # response = requests.patch(f'http://localhost:8080/api/users/moi/friend/add/toi', headers=headers)
         # response = requests.get(f'http://localhost:8080/api/users/val/', headers=headers)
         # response = requests.patch(f'http://localhost:8080/api/auth/update/{userPk}', headers=headers, data=body)
-        # response = requests.delete(f'http://localhost:8080/api/auth/delete/{userPk}', headers=headers)
-        # response = requests.post(f'http://localhost:8080/api/auth/logout', headers=headers, data=body)
-        response = requests.patch(f'http://localhost:8080/api/users/val/default_pic/', headers=headers,data=body)
+        response = requests.get(f'http://localhost:8080/api/matchmaking/match/pending_invites', headers=headers)
         if response.status_code == 401 :
             print(response.status_code)
             print(response.text)

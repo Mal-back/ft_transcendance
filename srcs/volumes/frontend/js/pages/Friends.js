@@ -46,6 +46,9 @@ export default class extends AbstractView {
 
   async getHtml() {
     try {
+      // await this.makeFriend("toi");
+      // await this.makeFriend("moi");
+      // await this.makeFriend("joi");
     } catch (error) {
       console.error("error making friends:", error.message);
     }

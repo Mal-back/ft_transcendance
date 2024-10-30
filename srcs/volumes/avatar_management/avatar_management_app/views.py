@@ -16,8 +16,6 @@ class AvatarView(APIView):
         return Response(links, status=200)
 
     def post(self, request, *args, **kwargs):
-        for k, v in request.META.items():
-            print(f'{k} : {v}')
         serializer = UserAvatarSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.save()

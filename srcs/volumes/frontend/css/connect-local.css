@@ -1,0 +1,18 @@
+.Avatar {
+    background-image: url(../img/red_panda.jpg);
+    width: 11vh;
+    height: 11vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+    max-width: 70px;
+    max-height: 70px;
+    min-width: 50px;
+    min-height: 50px;
+
+}
+
+.status-online {
+    border: 1px solid green !important;
+}

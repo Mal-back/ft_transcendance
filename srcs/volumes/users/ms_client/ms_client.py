@@ -19,13 +19,14 @@ class MicroServiceClient:
     def send_requests(self, urls:list, method:str, expected_status:list, headers={}, body={}, *args, **kwargs):
         headers.update({'Authorization': f'Bearer {self._getToken()}'})
         successed_requests=[]
-        print(headers)
+        response_dict = {}
         for url in urls:
-            status_code = self._send_request(url, method, body=body, headers=headers)
-            if status_code not in expected_status:
+            response = self._send_request(url, method, body=body, headers=headers)
+            if response.status_code not in expected_status:
                 self._on_failure(successed_requests, method, headers=headers, body=body, *args, **kwargs)
             successed_requests.append(url)
-        return True
+            response_dict.update({url : response})
+        return response_dict
 
     def _send_request(self, url:str, method:str, body={}, headers={}) -> int:
         req_methods = {
@@ -34,7 +35,7 @@ class MicroServiceClient:
                 'patch':requests.patch,
                 }
         response = req_methods[method](url, json=body ,headers=headers)
-        return response.status_code
+        return response
 
     def _getToken(self):
         try :
@@ -50,10 +51,8 @@ class MicroServiceClient:
                 'password': self.service_secret,
                 }
         response = requests.post(self.auth_url, json=body)
-        print(response.status_code)
         if response.status_code != 200:
             raise InvalidCredentialsException('Auth refused to issue a token for the microservice')
-        print(response.json())
         return response.json()['token']
     
     def _on_failure(self, urls:list, method:str, headers={}, body={}, *args, **kwargs):

@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('pong_remote_app.urls'))
+    path('', include('pong_remote_app.urls')),
+    path('', include('c4_remote_app.urls')),
 ]

@@ -1,0 +1,42 @@
+.username-input {
+    margin: 5px 0;
+}
+
+#usernameTemplates {
+    max-height: 50vh;
+    /* Set a max height for the scrollable area */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    border: 1px solid #ccc;
+    /* Add a border */
+    padding: 10px;
+    /* Add some padding */
+    background-color: #f8f9fa;
+    /* Background color */
+    border-radius: 5px;
+    /* Rounded corners */
+}
+
+.mw-80 {
+    max-width: 80vw;
+}
+
+.tournament-creation {
+    max-width: 80vw;
+    margin: 0 auto;
+    /* margin-bottom: 0; */
+}
+
+.mb-0 {
+    white-space: nowrap;
+    /* Prevents the text from wrapping */
+    overflow: hidden;
+    /* Hides overflowed content */
+    text-overflow: ellipsis;
+    max-width: 30vw;
+}
+
+h3 {
+    font-size: 2em;
+
+}

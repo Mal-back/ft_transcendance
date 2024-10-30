@@ -1,4 +1,5 @@
 import AbstractView from "./AbstractViews.js";
+import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -9,7 +10,6 @@ export default class extends AbstractView {
     this.createPageCss("../css/home.css");
   }
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["menu", "home"])}`);
     return `
         <div class="background Home removeElem">
           <div class="container removeElem">
@@ -21,6 +21,21 @@ export default class extends AbstractView {
           </div>
         </div>
   `;
+  }
+
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        await this.fetchNotifications();
+      } catch (error) {
+        if (error instanceof CustomError) throw error;
+        else {
+          console.error("Home:checkLogin:", error);
+        }
+      }
+      return;
+    }
   }
 
   destroy() {

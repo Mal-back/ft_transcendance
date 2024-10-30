@@ -7,8 +7,12 @@ import {
 import Language from "../Utils/Language.js";
 import CustomError from "../Utils/CustomError.js";
 
-export default class {
+export default class AbstractViews {
+  static invitesArray = [];
+  static pollingInterval = null;
+
   constructor() {
+    this.populatesInvites = this.populatesInvites.bind(this);
     this.lang = new Language();
     this.loginToLogout();
     this.closeSidebarOnNavigate();
@@ -71,6 +75,156 @@ export default class {
     });
   }
 
+  async checkLogin() {
+    if (
+      !sessionStorage.getItem("username_transcendence") ||
+      !sessionStorage.getItem("accessJWT_transcendence") ||
+      !sessionStorage.getItem("refreshJWT_transcendence")
+    ) {
+      removeSessionStorage();
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "error"])}`,
+        "You're not logged, please login to access this page",
+        "/",
+      );
+    }
+    try {
+      await this.fetchNotifications();
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("checkLogin: ", error);
+      }
+    }
+  }
+
+  populatesInvites() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.innerHTML = "";
+    console.log("LENGTH:", AbstractViews.invitesArray.length);
+    if (!AbstractViews.invitesArray.length) {
+      inviteList.innerHTML = "No Invites";
+      return;
+    }
+    // <!-- <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50"> -->
+    AbstractViews.invitesArray.forEach((invite) => {
+      const inviteItem = document.createElement("li");
+      inviteItem.className = "list-group-item";
+      inviteItem.innerHTML = `
+    <div class="d-flex align-items-cente"r>
+      <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" style="background-image: url('${invite.opponentAvatar}')" alt="Avatar">
+        </div>
+      <div class="flex-grow-1">
+          <h5><strong>${invite.player}</strong></h5>
+          <br>
+          <p>${invite.message}</p>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mt-2">
+        <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.player}')">
+            <i class="bi bi-check-circle"></i> Accept
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.player}')">
+            <i class="bi bi-x-circle"></i> Refuse
+        </button>
+    </div>
+            `;
+      inviteList.appendChild(inviteItem);
+    });
+  }
+
+  async getUserInfo(user) {
+    try {
+      const request = await this.makeRequest(`/api/users/${user}/`, "GET");
+      const response = await fetch(request);
+      const data = await this.getErrorLogfromServer(response, true);
+      if (!response.ok) {
+        console.error(`Notifications:getAvatar on ${user}: ${data}`, response);
+        return;
+      }
+      return data;
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error(`Notifications:getAvatar on ${user}`, response);
+      }
+    }
+  }
+
+  async createInvites(data, username) {
+    console.log(data);
+    for (const item of data.results) {
+      if (item.status === "finished") continue;
+      const opponentName =
+        item.player2 != username ? item.player2 : item.player1;
+      const opponent = await this.getUserInfo(opponentName);
+      const invite = {
+        id: item.id,
+        player: opponentName,
+        gameType: item.game_type,
+        createdAt: item.created_at,
+        acceptInviteUrl: item.accept_invite,
+        declineInviteUrl: item.decline_invite,
+        opponentAvatar: opponent.profilePic,
+        opponentStatus: opponent.is_online,
+        message: `${opponentName} invites you to a game of ${item.game_type}`,
+      };
+      console.log(invite);
+      AbstractViews.invitesArray.push(invite);
+    }
+  }
+
+  async fetchNotifications() {
+    AbstractViews.invitesArray = [];
+    console.log("fetchNotifications");
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/match/pending_invites/",
+        "GET",
+      );
+      //TODO loop on next if more than 10 invite
+      const response = await fetch(request);
+      const data = await this.getErrorLogfromServer(response, true);
+      console.log(response);
+      console.log(data);
+      const badge = document.getElementById("notificationbell");
+      if (data.count == 0) {
+        badge.innerHTML = "";
+        return;
+      }
+      const username = sessionStorage.getItem("username_transcendence");
+      if (response.status != 200) {
+        return;
+      }
+      await this.createInvites(data, username);
+      badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length}</div>`;
+    } catch (error) {
+      console.log("caught error");
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("fetchNotifications:", error);
+      }
+    }
+  }
+
+   startNotificationPolling() {
+    if (!AbstractViews.pollingInterval) {
+      AbstractViews.pollingInterval = setInterval(async () => {
+        try {
+        await this.fetchNotifications();
+      }catch (error) {
+          AbstractViews.pollingInterval = null;
+          removeSessionStorage();
+          console.error("startNotificationPolling: ", error);
+          navigateTo("/");
+          showModal(
+            "error",
+            error.message
+          )
+        }}, 10000);
+    }
+  }
+
   loginToLogout() {
     console.log("LOGIN");
     const username = sessionStorage.getItem("username_transcendence");
@@ -79,6 +233,8 @@ export default class {
     const loginOverlay = document.querySelector("#overlayLogin");
     const logIcon = document.querySelector("#logIconRef");
     const logIconImg = document.querySelector("#logIconImg");
+    const notifButton = document.querySelector("#notifButtonModal");
+    const inviteModalEl = document.getElementById("inviteUserModal");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
       loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
@@ -89,6 +245,14 @@ export default class {
       logIcon.title = this.lang.getTranslation(["menu", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
+      if (notifButton.style.display == "none") {
+        notifButton.style.display = "block";
+        let modalInviteInstance = bootstrap.Modal.getInstance(inviteModalEl);
+        if (!modalInviteInstance)
+          modalInviteInstance = new bootstrap.Modal(inviteModalEl);
+        inviteModalEl.addEventListener("show.bs.modal", this.populatesInvites);
+      }
+      this.startNotificationPolling();
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
@@ -102,19 +266,26 @@ export default class {
       logIcon.title = this.lang.getTranslation(["menu", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
+      if (notifButton.style.display == "block") {
+        notifButton.style.display = "none";
+        inviteModalEl.removeEventListener(
+          "show.bs.modal",
+          this.populatesInvites,
+        );
+      }
+      clearInterval(AbstractViews.pollingInterval);
+      AbstractViews.pollingInterval = null;
     }
   }
 
   cleanModal() {
-    const modal = document.querySelectorAll(".modal");
+    const modal = document.querySelector("#app").querySelectorAll(".modal");
     if (modal) {
       modal.forEach((element) => {
-        if (element.id != "alertModal") {
-          console.log("removing modal: ", element.id);
-          const modalInstance = bootstrap.Modal.getInstance(element);
-          if (modalInstance) modalInstance.hide();
-          element.remove();
-        }
+        console.log("removing modal: ", element.id);
+        const modalInstance = bootstrap.Modal.getInstance(element);
+        if (modalInstance) modalInstance.hide();
+        element.remove();
       });
     }
     const backdrop = document.querySelector(".modal-backdrop");
@@ -142,12 +313,8 @@ export default class {
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     for (let i = 0; i < inputList.length; i++) {
       const input = inputList[i];
-      console.log("input = ", input);
+      // console.log("input = ", input);
       if (!whitelist.test(input)) {
-        // showModal(
-        //   `${this.lang.getTranslation(["modal", "error"])}`,
-        //   `${this.lang.getTranslation(["error", "invalidChar"])}`,
-        // );
         return false;
       }
     }
@@ -173,7 +340,7 @@ export default class {
     return myHeaders;
   }
 
-  async getErrorLogfromServer(response) {
+  async getErrorLogfromServer(response, boolJSON = false) {
     const contentType = response.headers.get("Content-Type");
     if (contentType && contentType.includes("application/json")) {
       try {
@@ -183,7 +350,7 @@ export default class {
           return "Empty response";
         }
         const errorJSON = JSON.parse(responseText);
-        console.log("ERROR", errorJSON);
+        if (boolJSON) return errorJSON;
         const errorMessages = Object.entries(errorJSON)
           .map(([field, errorMessage]) => {
             // Ensure errorMessage is an array; if not, make it an array
@@ -204,15 +371,17 @@ export default class {
     }
   }
 
-  async makeRequest(url, myMethod, myBody = null, boolImage = false) {
+  async makeRequest(url, myMethod, myBody, boolImage = false) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {
       try {
         accessToken = await this.getToken();
       } catch (error) {
-        if (error instanceof CustomError) throw error;
-        console.error("Error in getToken:", error.message);
+        if (!(error instanceof CustomError)) {
+          console.error("Error in getToken:", error);
+        }
+        throw error;
       }
     }
     console.log("myMethod:", myMethod);
@@ -225,7 +394,6 @@ export default class {
         options.body = myBody;
       } else options.body = JSON.stringify(myBody);
     }
-    console.log(JSON.stringify(myBody));
     const myRequest = new Request(url, options);
     return myRequest;
   }
@@ -281,31 +449,33 @@ export default class {
   async getToken() {
     let authToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
-    if (
-      !authToken ||
-      !refreshToken ||
-      !sessionStorage.getItem("username_transcendence")
-    ) {
-      console.log("User is not authentified", authToken);
-      removeSessionStorage();
-      throw new CustomError(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        `${this.lang.getTranslation(["error", "notAuthentified"])}`,
-        "/login",
-      );
-    }
-    const parseToken = this.parseJwt(authToken);
-    const currentTime = Math.floor(Date.now() / 1000);
-    if (parseToken.exp + 1 <= currentTime) {
-      try {
+    try {
+      if (
+        !authToken ||
+        !refreshToken ||
+        !sessionStorage.getItem("username_transcendence")
+      ) {
+        console.log("User is not authentified", authToken);
+        removeSessionStorage();
+        throw new CustomError(
+          `${this.lang.getTranslation(["modal", "error"])}`,
+          `${this.lang.getTranslation(["error", "notAuthentified"])}`,
+          "/login",
+        );
+      }
+      const parseToken = this.parseJwt(authToken);
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (parseToken.exp + 1 <= currentTime) {
         await this.refreshToken(authToken);
-      } catch (error) {
-        if (error instanceof CustomError) throw error;
-        console.error("getToken", error.message);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("getToken", error);
         throw error;
       }
-      authToken = sessionStorage.getItem("accessJWT_transcendence");
     }
+    authToken = sessionStorage.getItem("accessJWT_transcendence");
     return authToken;
   }
 

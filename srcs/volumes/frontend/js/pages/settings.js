@@ -31,13 +31,6 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    if (!sessionStorage.getItem("username_transcendence")) {
-      throw new CustomError(
-        this.lang.getTranslation(["modal", "error"]),
-        this.lang.getTranslation(["error", "notAuthentified"]),
-        "/",
-      );
-    }
     const currentAvatar = await this.getCurrentAvatar();
     const defaultAvatar = await this.getDefaultAvatar(currentAvatar);
     const htmlContent = `
@@ -964,6 +957,7 @@ export default class extends AbstractView {
       uploadProfileBackgroundInput.removeEventListener(
         "change",
         this.uploadProfileBackground,
+        nn,
       );
     }
     const changeMailButton = document.querySelector("#confirmChangesMail");

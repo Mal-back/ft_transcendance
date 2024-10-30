@@ -1,4 +1,5 @@
 from os.path import exists
+from django.utils.timezone import now
 import requests
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
@@ -6,9 +7,9 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
-from .permissions import IsAuth, IsOwner, IsAvatarManager
+from .permissions import IsAuth, IsOwner, IsAvatarManager, IsMatchmaking
 from .authentification import CustomAuthentication
-from ms_client.ms_client import MicroServiceClient, RequestsFailed
+from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 
 # Create your views here.
 
@@ -60,6 +61,7 @@ class PublicUserDelete(generics.DestroyAPIView):
 
 class PublicUserIncrement(APIView):
     lookup_field = 'username'
+    permission_classes = [IsMatchmaking]
     def patch(self, request, username, lookupfield):
         try:
             user = PublicUser.objects.get(username=username)
@@ -135,6 +137,7 @@ class PublicUserRemoveFriend(APIView):
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        self.check_object_permissions(request, user)
         cur_friends = getattr(user, 'friends', None)
         try:
             delete_friend = PublicUser.objects.get(username=friendusername)
@@ -172,10 +175,8 @@ class PublicUserSetDefaultAvatar(APIView):
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
-        path = request.data.get('profile_pic')
-        if path is None:
-            return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
-        # if 'users_avatars' in user.profilePic:
+        self.check_object_permissions(request, user)
+        path = 'http://localhost:8080/media/default_avatars/default_00.jpg'
         try:
             sender = MicroServiceClient()
             sender.send_requests(
@@ -184,8 +185,21 @@ class PublicUserSetDefaultAvatar(APIView):
                     expected_status=[204, 304],
                     body={'username':f'{user.username}'}
                     )
-        except RequestsFailed:
+        except (RequestsFailed, InvalidCredentialsException):
             return Response({'error': 'Could not update avatar. Plz try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user.profilePic = path
         user.save()
         return Response({'OK':'Successefully reset the avatar'}, status=status.HTTP_200_OK)
+
+class PublicUserSetLastSeenOnline(APIView):
+    lookup_field = 'username'
+    permission_classes = [IsMatchmaking]
+
+    def patch(self, request, username):
+        try:
+            user = PublicUser.objects.get(username=username)
+        except PublicUser.DoesNotExist:
+            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+        user.last_seen_online = now()
+        user.save()
+        return Response({'OK': 'Actualize last log time'}, status=status.HTTP_200_OK)
