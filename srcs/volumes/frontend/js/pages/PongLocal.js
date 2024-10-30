@@ -62,9 +62,11 @@ export default class extends AbstractView {
       this.tournament = JSON.parse(
         sessionStorage.getItem("tournament_transcendence_local"),
       );
+      console.log("TOURNAMENT START PONG:", this.tournament);
       this.pong.setUsername(
         this.tournament.PlayerA[this.tournament.round.currentMatch].name,
         this.tournament.PlayerB[this.tournament.round.currentMatch].name,
+        this.tournament
       );
 
     } else {

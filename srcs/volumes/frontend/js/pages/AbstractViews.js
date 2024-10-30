@@ -121,10 +121,10 @@ export default class AbstractViews {
       </div>
     </div>
     <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-success btn-sm me-2" onclick="acceptInvite('${invite.player}')">
+        <button class="btn btn-success btn-sm me-2 accept-button" data-invite-id="${invite.id}" data-action="accept">
             <i class="bi bi-check-circle"></i> Accept
         </button>
-        <button class="btn btn-danger btn-sm" onclick="refuseInvite('${invite.player}')">
+        <button class="btn btn-danger btn-sm" data-invite-id="${invite.id}" data-action="refuse">
             <i class="bi bi-x-circle"></i> Refuse
         </button>
     </div>
@@ -159,7 +159,7 @@ export default class AbstractViews {
         item.player2 != username ? item.player2 : item.player1;
       const opponent = await this.getUserInfo(opponentName);
       const invite = {
-        id: item.id,
+        id: `item.id?${opponentName}`,
         player: opponentName,
         gameType: item.game_type,
         createdAt: item.created_at,
@@ -169,7 +169,7 @@ export default class AbstractViews {
         opponentStatus: opponent.is_online,
         message: `${opponentName} invites you to a game of ${item.game_type}`,
       };
-      console.log(invite);
+      console.log("invite",invite);
       AbstractViews.invitesArray.push(invite);
     }
   }
