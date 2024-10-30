@@ -149,6 +149,13 @@ export default class extends AbstractView {
 
   getNextMatch() {
     console.log(this.tournament.round.currentMatch);
+    if (this.tournament.round.current == this.tournament.round.max) {
+      return `<h4> <strong> Tournament is over</strong></h4>
+              <br>
+              <h5><strong>click here if you want to start another</strong></h5>
+             `;
+    }
+
     if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
       console.log(
         "PlayerA ",
@@ -182,35 +189,39 @@ export default class extends AbstractView {
 
   handleStartGame(ev) {
     ev.preventDefault();
-    if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
-      this.tournament.PlayerB[this.tournament.round.currentMatch].win += 1;
-      this.tournament.round.currentMatch += 1;
-      sessionStorage.setItem(
-        "tournament_transcendence_local",
-        JSON.stringify(this.tournament),
-      );
-      this.tournament = null;
-      navigateTo("/pong-local-tournament");
-    } else if (!this.tournament.PlayerB[this.tournament.round.currentMatch]) {
-      this.tournament.PlayerA[this.tournament.round.currentMatch].win += 1;
-      this.tournament.round.currentMatch += 1;
-      sessionStorage.setItem(
-        "tournament_transcendence_local",
-        JSON.stringify(this.tournament),
-      );
-      this.tournament = null;
-      navigateTo("/pong-local-tournament");
-    } else {
-      sessionStorage.setItem(
-        "tournament_transcendence_local",
-        JSON.stringify(this.tournament),
-      );
-      this.tournament = null;
-      navigateTo("/pong-local?mode=tournament_local");
+    if (this.tournament.round.current == this.tournament.round.max) {
+      sessionStorage.removeItem("tournament_transcendence_local");
+      navigateTo("/pong-local-lobby");
     }
+    // if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
+    //   this.tournament.PlayerB[this.tournament.round.currentMatch].win += 1;
+    //   this.tournament.round.currentMatch += 1;
+    //   sessionStorage.setItem(
+    //     "tournament_transcendence_local",
+    //     JSON.stringify(this.tournament),
+    //   );
+    //   this.tournament = null;
+    //   navigateTo("/pong-local-tournament");
+    // } else if (!this.tournament.PlayerB[this.tournament.round.currentMatch]) {
+    //   this.tournament.PlayerA[this.tournament.round.currentMatch].win += 1;
+    //   this.tournament.round.currentMatch += 1;
+    //   sessionStorage.setItem(
+    //     "tournament_transcendence_local",
+    //     JSON.stringify(this.tournament),
+    //   );
+    //   this.tournament = null;
+    //   navigateTo("/pong-local-tournament");
+    // } else {
+    sessionStorage.setItem(
+      "tournament_transcendence_local",
+      JSON.stringify(this.tournament),
+    );
+    this.tournament = null;
+    navigateTo("/pong-local?mode=tournament_local");
+    // }
   }
 
-  getNextRankDivPlayer(count) {
+  getPlayerByRank(count) {
     let nextPlayerRank = null;
     for (let i = 0; i < this.tournament.PlayerA.length; i++) {
       if (
@@ -227,7 +238,12 @@ export default class extends AbstractView {
         break;
       }
     }
+    return nextPlayerRank;
+  }
+  getNextRankDivPlayer(count) {
+    const nextPlayerRank = this.getPlayerByRank(count);
     if (nextPlayerRank == null) return "";
+    console.log("nextPlayer:", nextPlayerRank.name);
     return `
         <div>
           <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
@@ -266,6 +282,30 @@ export default class extends AbstractView {
     this.tournament.PlayerB.push(toPushInB);
   }
 
+  getNextRound() {
+    this.tournament.round.current++;
+    this.tournament.round.currentMatch = 0;
+    this.rotatePlayers();
+  }
+
+  skipByeMatch() {
+    const playerA = this.tournament.PlayerA;
+    const playerB = this.tournament.PlayerB;
+    while (
+      !playerA[this.tournament.round.currentMatch] ||
+      !playerB[this.tournament.round.currentMatch]
+    ) {
+      this.tournament.round.currentMatch += 1;
+      if (this.tournament.round.currentMatch >= this.tournament.PlayerA.length)
+        this.getNextRound();
+      if (this.tournament.round.current >= this.tournament.round.max) break;
+    console.log(`current ROUND: ${this.tournament.round.current}; maxRound: ${this.tournament.round.max}`);
+    }
+    console.log(
+      `next match is : ${playerA[this.tournament.round.currentMatch].name} vs ${playerB[this.tournament.round.currentMatch].name}`,
+    );
+  }
+
   actualizeTournament() {
     this.tournament = JSON.parse(
       sessionStorage.getItem("tournament_transcendence_local"),
@@ -277,15 +317,18 @@ export default class extends AbstractView {
         "/",
       );
     }
-    console.log("tournament:", this.tournament);
+    console.log("tournament start:", this.tournament);
     this.updateRank();
-    if (this.tournament.round.currentMatch == this.tournament.PlayerA.length) {
-      this.tournament.round.current++;
-      this.tournament.round.currentMatch = 0;
-      this.rotatePlayers();
+    this.skipByeMatch();
+    if (this.tournament.round.currentMatch >= this.tournament.PlayerA.length)
+      this.getNextRound();
+    if (this.tournament.round.current >= this.tournament.round.max) {
+      showModal(
+        "Congratulations",
+        `${this.getPlayerByRank(1).name} won the tournament`,
+      );
+      return;
     }
-    if (this.tournament.round == this.tournament.max)
-      return this.endTournament();
   }
 
   async addEventListeners() {
@@ -307,3 +350,33 @@ export default class extends AbstractView {
     this.removeElem();
   }
 }
+
+`
+round 0; match:0;
+a | null
+b | c
+
+round 0; match:1; SKIP
+a | null
+b | c
+
+
+round 1; match:0;
+a | b
+c | null
+
+
+round 1; match:1; SKIP
+a | b
+c | null
+
+round 2; match:0; SKIP
+a    | c
+null | b
+
+round 2; match:1; 
+a    | c
+null | b
+
+round 3 FIN
+`;

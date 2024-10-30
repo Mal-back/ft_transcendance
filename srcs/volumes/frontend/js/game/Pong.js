@@ -68,9 +68,10 @@ export default class Pong {
     this.webSocket = new WebSocket(websocket);
   }
 
-  setUsername(player1Name, player2Name) {
+  setUsername(player1Name, player2Name, tournament) {
     this.player1.username = player1Name;
     this.player2.username = player2Name;
+    this.tournament = tournament;
   }
 
   getUsername() {
@@ -148,17 +149,35 @@ export default class Pong {
       case "end_state": {
         console.log("END:", data);
         this.printMessage(`${data.winner} won`, "white");
-        if (this.mode == "local_tournament") {
-          const playerA = this.tournament.PlayerA[this.tournament.round.currentMatch];
-          const playerB = this.tournament.PlayerA[this.tournament.round.currentMatch];
+        if (this.mode == "tournament_local") {
+          console.log("TOURNAMENT:", this.tournament);
+          const playerA =
+            this.tournament.PlayerA[this.tournament.round.currentMatch];
+          const playerB =
+            this.tournament.PlayerB[this.tournament.round.currentMatch];
           if (data.winner == "player_1") {
             playerA.win += 1;
-            playerA.winRate = (playerA.win / (playerA.win + playerA.loss) * 100);
+            playerA.winRate =
+              (playerA.win / (playerA.win + playerA.loss)) * 100;
+            playerB.loss += 1;
+            playerB.winRate =
+              (playerB.win / (playerB.win + playerB.loss)) * 100;
+          } else {
             playerB.win += 1;
-            playerB.winRate = (playerB.win / (playerB.win + playerB.loss) * 100);
+            playerB.winRate =
+              (playerB.win / (playerB.win + playerB.loss)) * 100;
+            playerA.loss += 1;
+            playerA.winRate =
+              (playerA.win / (playerA.win + playerA.loss)) * 100;
           }
+          this.tournament.round.currentMatch += 1;
+          console.log("CURRENT MATCH = ", this.tournament.round.currentMatch);
+          sessionStorage.setItem(
+            "tournament_transcendence_local",
+            JSON.stringify(this.tournament),
+          );
+          navigateTo("/pong-local-tournament");
         }
-        this.webSocket.close();
         this.removePongEvent();
         // this.endGame();
         break;
@@ -305,6 +324,7 @@ export default class Pong {
     clearTimeout(this.pingInterval);
     clearTimeout(this.timeout);
     if (this.webSocket) {
+      this.webSocket.close();
       this.webSocket.removeEventListener("open", this.handleWebSocketOpen);
       this.webSocket.removeEventListener("close", this.handleWebSocketClose);
       this.webSocket.removeEventListener("error", this.handleWebSocketError);

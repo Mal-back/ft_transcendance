@@ -75,7 +75,7 @@ export default class extends AbstractView {
     //validate username
     try {
       const request = await this.makeRequest(
-        "api/matchmaking/match/create/",
+        "/api/matchmaking/match/create/",
         "POST",
         { player2: "toi", game_type: "pong" },
       );
@@ -86,6 +86,13 @@ export default class extends AbstractView {
       console.log("data:", data);
       if (!response.ok) {
         showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
+      } else {
+        const requestInvite = await this.makeRequest(
+          "/api/matchmaking/match/sent_invite/"
+        )
+        const responseInvite = await fetch(requestInvite);
+        const dataInvite = await this.getErrorLogfromServer(responseInvite);
+        console.log("Response sent invite:", dataInvite);
       }
     } catch (error) {
       if (error instanceof CustomError) throw error;

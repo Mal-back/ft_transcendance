@@ -146,12 +146,8 @@ export default class extends AbstractView {
 
   setPlayersName() {
     console.log("setsPlayerName:", this.playerInputs);
-    let maxRound = 4;
-    if (this.playerInputs.length <= 4) {
-      maxRound = this.playerInputs.length - 1;
-    }
-    if (this.playerInputs.length > 7) maxRound++;
 
+    const maxRound = this.playerInputs.length;
     const playerValues = Array.from(this.playerInputs).map(
       (input) => input.value,
     );
