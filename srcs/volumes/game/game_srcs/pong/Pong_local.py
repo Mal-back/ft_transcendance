@@ -65,15 +65,17 @@ class PongLocalEngine(threading.Thread):
 				break
 			time.sleep(self.frame_rate)
 			self.check_pause()
+		self.join_thread()
+		print("End of run function for thread " + self.game_id)
+
+	def join_thread(self):
 		try:
 			async_to_sync(self.channel_layer.send)("pong_local_engine", {
-				"type": "join_thread",
+				"type": "join.thread",
 				"game_id": self.game_id
 			})
 		except:
-			print("Can not send join thread to pong_local_engine from thread num " + self.game_id)
-		print("End of run function for thread " + self.game_id)
-					
+			print("Can not send join thread to pong_remote_engine from thread num " + self.game_id)					
 		
 	def receive_movement(self, player : str, direction : str):
 		with self.start_lock:

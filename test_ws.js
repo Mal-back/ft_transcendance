@@ -519,13 +519,13 @@ function testWss() {
 
 
 
-// testInit();
+testInit();
 testStart();
-// testGetConfig();
-// testPause();
-// testMove();
-// testSurrend();
-// testChannelFUll();
-// testWss();
-// testMultipleInstances(50)
+testGetConfig();
+testPause();
+testMove();
+testSurrend();
+testChannelFUll();
+testWss();
+testMultipleInstances(50)
 // testRemote();

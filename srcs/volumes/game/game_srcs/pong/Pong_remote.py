@@ -72,8 +72,7 @@ class PongRemoteEngine(threading.Thread):
 		self.clean_game()
 		self.join_thread()
 		print("End of run function for thread " + self.game_id)
-					
-		
+							
 	def join_thread(self):
 		try:
 			async_to_sync(self.channel_layer.send)("pong_remote_engine", {
