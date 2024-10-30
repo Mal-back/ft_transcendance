@@ -6,6 +6,7 @@ export default class extends AbstractView {
   constructor() {
     super();
     this.setTitle("Local Pong");
+    this.tournament = null;
     this.pong = new Pong();
   }
 
@@ -39,15 +40,32 @@ export default class extends AbstractView {
     return htmlContent;
   }
 
+  checkLogin() {
+    return;
+  }
+
   async game() {
+    const params = new URLSearchParams(window.location.search);
+    let mode = params.get("mode");
+    if (!mode) mode = "local";
+    console.log("Init Game");
     this.pong.initPong(
       "ongoing-game",
       "ws://localhost:8080/api/game/ws/14545",
-      "local",
+      mode,
       "scoreId",
     );
     const leftPlayerText = document.getElementById("leftPlayer");
     const rightPlayerText = document.getElementById("rightPlayer");
+    if (mode == "local_tournament") {
+      this.tournament = JSON.parse(
+        sessionStorage.getItem("tournament_transcendence_local"),
+      );
+      this.pong.setUsername(
+        this.tournament.PlayerA[this.tournament.round.currentMatch].name,
+        this.tournament.PlayerB[this.tournament.round.currentMatch].name,
+      );
+    }
     const objectPlayers = this.pong.getUsername();
     if (objectPlayers.mode != "remote") {
       leftPlayerText.innerText = `${this.lang.getTranslation(["game", "LeftPlayer"])}  `;

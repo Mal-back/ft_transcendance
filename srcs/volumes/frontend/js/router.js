@@ -17,6 +17,7 @@ import PongLocalMenu from "./pages/PongLocalMenu.js";
 import PongRemoteMenu from "./pages/PongRemoteMenu.js";
 import PongLocalLobby from "./pages/PongLocalLobby.js";
 import PongRemoteLobby from "./pages/PongRemoteLobby.js";
+import PongLocalTournament from "./pages/PongLocalTournament.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -43,12 +44,13 @@ const router = async () => {
     { path: "/friends", view: Friends },
     { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
-    { path: "/ponglocal", view: PongLocal },
+    { path: "/pong-local", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
     { path: "/pong-local-menu", view: PongLocalMenu },
     { path: "/pong-remote-menu", view: PongRemoteMenu },
     { path: "/pong-local-lobby", view: PongLocalLobby },
     { path: "/pong-remote-lobby", view: PongRemoteLobby },
+    { path: "/pong-local-tournament", view: PongLocalTournament },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -80,7 +82,7 @@ const router = async () => {
     document.querySelector("#app").innerHTML = "";
     await view.checkLogin();
     document.querySelector("#app").innerHTML = await view.getHtml();
-    if (match.route.path == "/pongLocal" || match.route.path == "/pong")
+    if (match.route.path == "/pong-local" || match.route.path == "/pong")
       await view.game();
     await view.addEventListeners();
   } catch (error) {

@@ -3,7 +3,6 @@ import { showModal } from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
 
-
 // `
 // <div>
 //           <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
@@ -39,7 +38,6 @@ import CustomError from "../Utils/CustomError.js";
 //         </div>
 // `
 
-
 /*
             <div class="modal fade" id="next-game-modal" tabindex="-1" aria-labelledby="next-game-modalLabel"
                 aria-hidden="true">
@@ -65,6 +63,7 @@ export default class extends AbstractView {
     super();
     this.setTitle("Pong Tournament Local");
     this.tournament = null;
+    this.handleStartGame = this.handleStartGame.bind(this);
   }
 
   async loadCss() {
@@ -75,9 +74,21 @@ export default class extends AbstractView {
     this.createPageCss("../css/ranking-tournament.css");
   }
 
+  checkLogin() {
+    return;
+  }
+
   async getHtml() {
-    actualizeTournament();
-    const listPlayer = getListPlayer();
+    let listPlayer = null;
+    try {
+      this.actualizeTournament();
+      listPlayer = this.getListPlayer();
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("PongLocalTournament:getHtml:", error);
+      }
+    }
     return `
     <div class="background">
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -88,7 +99,7 @@ export default class extends AbstractView {
       </div>
       <div class="d-flex align-items-center justify-content-center mt-2">
         <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" data-bs-toggle="modal"
-              data-bs-target="#next-game-modal">loading icon modal</button>
+              data-bs-target="#next-game-modal">Next Match</button>
       </div>
     </div>
     <div class="modal fade" id="next-game-modal" tabindex="-1" aria-labelledby="next-game-modalLabel"
@@ -109,60 +120,114 @@ export default class extends AbstractView {
 
   updateRank() {
     const listPlayer = [];
-    this.tournament.PlayerA.array.forEach(element => {
-      if (element != undefined)
-        listPlayer.push(element);
+    this.tournament.PlayerA.forEach((element) => {
+      if (element != undefined) listPlayer.push(element);
     });
-    this.tournament.PlayerB.array.forEach(element => {
-      listPlayer.push(element);
+    this.tournament.PlayerB.forEach((element) => {
+      if (element != undefined) listPlayer.push(element);
     });
-    console.log(listPlayer)
-    listPlayer.sort((a, b) => b.winRate - a.winRate)
-    console.log(listPlayer)
+    listPlayer.sort((a, b) => b.winRate - a.winRate);
     for (let index = 0; index < listPlayer.length; index++) {
       const current = listPlayer[index];
-      current.rank = index + 1;  // Assign rank based on sorted order
+      current.rank = index + 1; // Assign rank based on sorted order
 
       // Update rank in PlayerA array if current player is found there
-      const playerIndexInA = this.tournament.PlayerA.array.findIndex(player => player.name === current.name);
+      const playerIndexInA = this.tournament.PlayerA.findIndex(
+        (player) => player && player.name === current.name,
+      );
       if (playerIndexInA !== -1) {
-        this.tournament.PlayerA.array[playerIndexInA].rank = current.rank;
+        this.tournament.PlayerA[playerIndexInA].rank = current.rank;
       }
-      const playerIndexInB = this.tournament.PlayerB.array.findIndex(player => player.name === current.name);
+      const playerIndexInB = this.tournament.PlayerB.findIndex(
+        (player) => player && player.name === current.name,
+      );
       if (playerIndexInB !== -1) {
-        this.tournament.PlayerB.array[playerIndexInB].rank = current.rank;
+        this.tournament.PlayerB[playerIndexInB].rank = current.rank;
       }
     }
   }
 
   getNextMatch() {
-    if (this.tournament.PlayerA[this.tournament.round.currentMatch] == undefined) {
+    console.log(this.tournament.round.currentMatch);
+    if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
+      console.log(
+        "PlayerA ",
+        this.tournament.PlayerA[this.tournament.round.currentMatch],
+      );
+      console.log(
+        "PlayerB ",
+        this.tournament.PlayerB[this.tournament.round.currentMatch],
+      );
       return `
     <strong role="text">${this.tournament.PlayerB[this.tournament.round.currentMatch].name}</strong>
     <br>
     <strong role="text">You got a bye round! Congrats! ;)</strong>
-    `
+            `;
+    }
+    if (!this.tournament.PlayerB[this.tournament.round.currentMatch]) {
+      return `
+    <strong role="text">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
+    <br>
+    <strong role="text">You got a bye round! Congrats! ;)</strong>
+            `;
     }
     return `
   <strong role="text">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
   <br>
   <strong role="text">VS</strong>
   <br>
-  <strong role="text">${this.tournament.PlayerB[this.tournament.round.currentMatch].name}</strong>`
+  <strong role="text">${this.tournament.PlayerB[this.tournament.round.currentMatch].name}</strong>
+          `;
+  }
+
+  handleStartGame(ev) {
+    ev.preventDefault();
+    if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
+      this.tournament.PlayerB[this.tournament.round.currentMatch].win += 1;
+      this.tournament.round.currentMatch += 1;
+      sessionStorage.setItem(
+        "tournament_transcendence_local",
+        JSON.stringify(this.tournament),
+      );
+      this.tournament = null;
+      navigateTo("/pong-local-tournament");
+    } else if (!this.tournament.PlayerB[this.tournament.round.currentMatch]) {
+      this.tournament.PlayerA[this.tournament.round.currentMatch].win += 1;
+      this.tournament.round.currentMatch += 1;
+      sessionStorage.setItem(
+        "tournament_transcendence_local",
+        JSON.stringify(this.tournament),
+      );
+      this.tournament = null;
+      navigateTo("/pong-local-tournament");
+    } else {
+      sessionStorage.setItem(
+        "tournament_transcendence_local",
+        JSON.stringify(this.tournament),
+      );
+      this.tournament = null;
+      navigateTo("/pong-local?mode=tournament");
+    }
   }
 
   getNextRankDivPlayer(count) {
     let nextPlayerRank = null;
     for (let i = 0; i < this.tournament.PlayerA.length; i++) {
-      if (this.tournament.PlayerA[i].rank === count) {
+      if (
+        this.tournament.PlayerA[i] &&
+        this.tournament.PlayerA[i].rank === count
+      ) {
         nextPlayerRank = this.tournament.PlayerA[i];
         break;
-      }
-      else if (this.tournament.PlayerB[i].rank === count) {
+      } else if (
+        this.tournament.PlayerB[i] &&
+        this.tournament.PlayerB[i].rank === count
+      ) {
         nextPlayerRank = this.tournament.PlayerB[i];
         break;
       }
     }
+    if (nextPlayerRank == null) return "";
     return `
         <div>
           <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
@@ -180,13 +245,13 @@ export default class extends AbstractView {
             </div>
           </div>
         </div>
-          `
+          `;
   }
 
   getListPlayer() {
     const divList = document.createElement("div");
     divList.innerHTML = "";
-    for (let count = 1; count <= (this.tournament.PlayerA.length * 2); count++) {
+    for (let count = 1; count <= this.tournament.PlayerA.length * 2; count++) {
       divList.innerHTML += this.getNextRankDivPlayer(count);
     }
     return divList.innerHTML;
@@ -194,28 +259,51 @@ export default class extends AbstractView {
 
   rotatePlayers() {
     const immovable = this.tournament.PlayerA.shift();
-    const toPushInB = this.tournament.PlayerA.pop()
-    const toPushInA = this.tournament.PlayerB.shift()
-    this.tournament.PlayerA.unshift(toPushInA)
-    this.tournament.PlayerA.unshift(immovable)
-    this.tournament.PlayerB.push(toPushInB)
+    const toPushInB = this.tournament.PlayerA.pop();
+    const toPushInA = this.tournament.PlayerB.shift();
+    this.tournament.PlayerA.unshift(toPushInA);
+    this.tournament.PlayerA.unshift(immovable);
+    this.tournament.PlayerB.push(toPushInB);
   }
 
   actualizeTournament() {
     this.tournament = JSON.parse(
       sessionStorage.getItem("tournament_transcendence_local"),
     );
-    //TODO protect tournament
-    this.updateRank();
-    if (this.tournament.round.currentMatch != this.tournament.PlayerA.length) {
-      this.tournament.round.currentMatch++
+    if (!this.tournament) {
+      throw new CustomError(
+        "error",
+        "failed to retrieve tournament information",
+        "/",
+      );
     }
-    else {
-      this.tournament.round.current++
-      this.tournament.round.currentMatch = 0
+    console.log("tournament:", this.tournament);
+    this.updateRank();
+    if (this.tournament.round.currentMatch == this.tournament.PlayerA.length) {
+      this.tournament.round.current++;
+      this.tournament.round.currentMatch = 0;
       this.rotatePlayers();
     }
     if (this.tournament.round == this.tournament.max)
       return this.endTournament();
+  }
+
+  async addEventListeners() {
+    const startGameButton = document.querySelector("#startBattle");
+    if (startGameButton)
+      startGameButton.addEventListener("click", this.handleStartGame);
+  }
+
+  removeEventListeners() {
+    const startGameButton = document.querySelector("#startBattle");
+    if (startGameButton)
+      startGameButton.removeEventListener("click", this.handleStartGame);
+  }
+
+  destroy() {
+    this.cleanModal();
+    this.removeEventListeners();
+    this.removeCss();
+    this.removeElem();
   }
 }

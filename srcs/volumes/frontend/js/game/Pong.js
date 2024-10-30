@@ -1,3 +1,5 @@
+import { navigateTo } from "../router";
+
 export default class Pong {
   constructor() {
     this.canvas = null;
@@ -62,6 +64,12 @@ export default class Pong {
     this.scoreId = document.getElementById(scoreId);
     this.context = this.canvas.getContext("2d");
     this.webSocket = new WebSocket(websocket);
+    console.log("tried to open websocket");
+  }
+
+  setUsername(player1Name, player2Name) {
+    this.player1.username = player1Name;
+    this.player2.username = player2Name;
   }
 
   getUsername() {
@@ -80,6 +88,9 @@ export default class Pong {
   handleWebSocketClose(ev) {
     this.removePongEvent();
     this.gameStart = false;
+   if (mode == "local_tournament") {
+      navigateTo("/pong-local-tournament");
+    }
   }
 
   handleWebSocketError(ev) {
@@ -127,6 +138,9 @@ export default class Pong {
       case "end_state": {
         console.log("END:", data);
         this.printMessage(`${data.winner} won`, "white");
+        if (this.mode == "local_tournament") {
+          this.tournament
+        }
         this.removePongEvent();
         // this.endGame();
         break;

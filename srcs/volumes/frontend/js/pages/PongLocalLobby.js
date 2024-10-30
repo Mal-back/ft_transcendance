@@ -68,6 +68,10 @@ export default class extends AbstractView {
             `;
   }
 
+  checkLogin() {
+    return;
+  }
+
   checkUnique(playerName) {
     console.log("check unique:");
     let count = 0;
