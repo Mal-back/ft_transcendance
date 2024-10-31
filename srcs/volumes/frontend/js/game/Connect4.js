@@ -13,7 +13,7 @@ export default class Connect4 {
         this.gameStart = false;
         this.player1 = {
             player: "player_1",
-            username: document.getElementById("User1").innerText,
+            username: "Folklore",
             keyPressTimeout: null,
             name: "player_1",
             color: 'Red',
@@ -21,7 +21,7 @@ export default class Connect4 {
         };
         this.player2 = {
             player: "player_2",
-            username: document.getElementById("User2").innerText,
+            username: "Evermore",
             keyPressTimeout: null,
             name: "player_2",
             color: 'Blue',
@@ -37,7 +37,7 @@ export default class Connect4 {
         this.handleUnloadPage = this.handleUnloadPage.bind(this);
     }
 
-    initPong(
+    initC4(
         canvas = "ongoing-game",
         websocket = `wss://localhost:8080/api/game/c4-local/join/`,
         mode = "local",
@@ -64,8 +64,9 @@ export default class Connect4 {
     getUsername() {
         return {
             mode: this.mode,
-            leftPlayer: this.player1.username,
-            rightPlayer: this.player2.username,
+            User1: this.player1.username,
+            User2: this.player2.username,
+            UserTurn: this.currentPlayer.username
         };
     }
 
@@ -222,7 +223,7 @@ export default class Connect4 {
         }
     }
 
-    addPongEvent() {
+    addC4Event() {
         this.webSocket.addEventListener("open", this.handleWebSocketOpen);
         this.webSocket.addEventListener("close", this.handleWebSocketClose);
         this.webSocket.addEventListener("error", this.handleWebSocketError);
