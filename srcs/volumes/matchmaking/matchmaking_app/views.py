@@ -94,13 +94,16 @@ class MatchGetPendingInvites(generics.ListAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return super().list(request, *args, **kwargs)
 
-class MatchGetSentInvite(generics.RetrieveAPIView):
-    serializer_class = SentInviteSerializer
+class MatchGetSentInvite(APIView):
     permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try :
+            match = Match.objects.get(player1=request.user.username, status='pending')
+        except Match.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = SentInviteSerializer(match)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get_queryset(self):
-        user = self.request.user
-        return Match.objects.get(player1=user.username, status='pending')
 
 class MatchAcceptInvite(generics.UpdateAPIView):
     queryset = Match.objects.all()

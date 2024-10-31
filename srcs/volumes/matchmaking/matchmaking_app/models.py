@@ -20,8 +20,9 @@ class MatchUser(models.Model):
         
 class InQueueUser(models.Model):
     user = models.ForeignKey('MatchUser',
-                                related_name='winner',
-                                on_delete=models.PROTECT)
+                            related_name='user_in_queue',
+                            on_delete=models.PROTECT,
+                            to_field='username')
     range_to_search = models.FloatField(default=0.05)
 
 class Tournament(models.Model):

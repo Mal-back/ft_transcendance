@@ -71,7 +71,7 @@ class AcceptedMatchSerializer(serializers.ModelSerializer):
         return(f"/api/users/{player2}")
 
 class SentInviteSerializer(serializers.ModelSerializer):
-    delete_invite = serializers.SerializerMethodField
+    delete_invite = serializers.SerializerMethodField()
     player1_profile = serializers.SerializerMethodField()
     player2_profile = serializers.SerializerMethodField()
     class Meta :

@@ -3,8 +3,8 @@ from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCrede
 from .models import MatchUser
 
 def end_single_match(match, data):
-        MatchUser.objects.get(username=data['winner']).update(match_won=F('match_won') + 1) 
-        MatchUser.objects.get(username=data['looser']).update(match_won=F('match_lost') + 1) 
+        MatchUser.objects.filter(username=data['winner']).update(match_won=F('match_won') + 1) 
+        MatchUser.objects.filter(username=data['looser']).update(match_won=F('match_lost') + 1) 
         sender = MicroServiceClient()
         try :
             sender.send_requests(urls=[f"http://users:8443/api/users/{data['winner']}/increment/single_games_won",
