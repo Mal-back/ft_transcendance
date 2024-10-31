@@ -82,13 +82,13 @@ export default class extends AbstractView {
       const response = await fetch(request);
       console.log("Request:", request);
       console.log("response:", response);
-      const data = await this.getErrorLogfromServer(response);
+      const data = await this.getErrorLogfromServer(response, true);
       console.log("data:", data);
       if (!response.ok) {
         showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
       } else {
         const requestInvite = await this.makeRequest(
-          "/api/matchmaking/match/sent_invite/"
+          `/api/matchmaking/match/${data.id}/sent_invite/`, "GET"
         )
         const responseInvite = await fetch(requestInvite);
         const dataInvite = await this.getErrorLogfromServer(responseInvite);

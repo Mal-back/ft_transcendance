@@ -415,7 +415,7 @@ export default class AbstractViews {
     }
   }
 
-  async makeRequest(url, myMethod, myBody, boolImage = false) {
+  async makeRequest(url, myMethod = "GET", myBody = null, boolImage = false) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {

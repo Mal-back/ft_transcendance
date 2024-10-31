@@ -215,7 +215,7 @@ inviteList.addEventListener("click", (event) => {
   }
 });
 
-handleInviteResponse(url) {
-  console.log(`Invite ${action}: ${url}`);
-  // Additional code to handle the invite response
-}
+// handleInviteResponse(url) {
+//   console.log(`Invite ${action}: ${url}`);
+//   // Additional code to handle the invite response
+// }

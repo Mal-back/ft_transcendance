@@ -1,5 +1,7 @@
 FILE='./srcs/docker-compose.yml'
 
+
+
 all : compose env
 	docker compose -f ./srcs/docker-compose.yml up -d --build
 
@@ -20,10 +22,20 @@ down :
 
 re : down all
 
+migration:
+	rm srcs/volumes/matchmaking/matchmaking_app/migrations/000*
+	rm srcs/volumes/auth/auth_app/migrations/000*
+	rm srcs/volumes/auth/auth_app/migrations/000*
+	rm srcs/volumes/game/game_app/migrations/000*
+	rm srcs/volumes/avatar_management/avatar_management_app/migrations/000*
+	rm srcs/volumes/uses/avatar_management_app/migrations/000*
+	rm srcs/volumes/users/users_app/migrations/000*
+
 clean :
 	docker stop $$(docker ps -qa);\
 	docker rm $$(docker ps -qa);\
 	docker rmi -f $$(docker images -qa);\
 	docker volume rm $$(docker volume ls -q);\
+
 
 .Phony : all down clean env compose
