@@ -38,5 +38,5 @@ function testRemote(game_id, player) {
 	};
 }
 
-testRemote("b0ee653e-98e0-48fd-89da-69ce55cf17d1", "xavier");
+testRemote("b33606dc-ff8f-4556-b516-1843983e4c35", "xavier");
 
