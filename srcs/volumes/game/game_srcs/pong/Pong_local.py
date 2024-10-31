@@ -5,11 +5,9 @@ import threading
 import copy
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-import logging
 from .Frame import Frame
 from .Config import Config
 
-log = logging.getLogger(__name__)
 allowed_movement = ["UP", "DOWN", "NONE"]
 	
 class PongLocalEngine(threading.Thread):
@@ -34,7 +32,7 @@ class PongLocalEngine(threading.Thread):
 		self.winner = "None"
 		
 	def wait_start(self):
-		print("Waiting for game instance " + self.game_id + " to start")
+		print("Waiting for pong local game instance " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
 				if self.runing == True:

@@ -5,11 +5,9 @@ import copy
 import threading
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-import logging
 from .Frame import Frame
 from .Config import Config
 
-log = logging.getLogger(__name__)
 allowed_movement = ["UP", "DOWN", "NONE"]
 	
 class PongRemoteEngine(threading.Thread):
@@ -38,7 +36,7 @@ class PongRemoteEngine(threading.Thread):
 		self.winner = "None"
 		
 	def wait_start(self):
-		print("Waiting for game instance " + self.game_id + " to start | player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
+		print("Waiting for pong remote game instance " + self.game_id + " to start | player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
 		while True:
 			with self.start_lock:
 				if self.runing_player_1 == "start" and self.runing_player_2 == "start":

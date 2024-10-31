@@ -273,16 +273,36 @@ import threading
 import copy
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-import logging
-
-log = logging.getLogger(__name__)
+import time 
 
 class C4LocalEngine(threading.Thread):
 	def __init__(self, game_id, **kwargs):
+		super().__init__(daemon=True)
 		self.board = copy.deepcopy(Board("player_1", "player_2"))
 		self.tick = 0
+		self.board_lock = threading.Lock()
+		self.winner = "None"
+		self.surrender = "None"
+		self.surrender_lock = threading.Lock()
+		self.game_id = game_id
+		self.channel_layer = get_channel_layer()
+		self.end = False
+		self.end_lock = threading.Lock()
 		return
-	
+
+
+	def wait_start(self):
+		print("Waiting for pong local game instance " + self.game_id + " to start")
+		while True:
+			with self.start_lock:
+				if self.runing == True:
+					break
+			with self.end_lock:
+				if self.end == True:
+					break
+			time.sleep(0.01)
+   
+
 	def run(self):
 		while not self.board.over:
 			if self.tick != self.board.tick:
