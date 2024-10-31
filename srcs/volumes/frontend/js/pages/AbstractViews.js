@@ -13,6 +13,7 @@ export default class AbstractViews {
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
+    this.handleInvites = this.handleInvites.bind(this);
     this.lang = new Language();
     this.loginToLogout();
     this.closeSidebarOnNavigate();
@@ -98,37 +99,80 @@ export default class AbstractViews {
     }
   }
 
+  // populatesInvites() {
+  //   const inviteList = document.getElementById("inviteList");
+  //   inviteList.innerHTML = "";
+  //   console.log("LENGTH:", AbstractViews.invitesArray.length);
+  //   if (!AbstractViews.invitesArray.length) {
+  //     inviteList.innerHTML = "No Invites";
+  //     return;
+  //   }
+  //   // <!-- <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50"> -->
+  //   AbstractViews.invitesArray.forEach((invite) => {
+  //     const inviteItem = document.createElement("li");
+  //     inviteItem.className = "list-group-item";
+  //     inviteItem.innerHTML = `
+  //   <div class="d-flex align-items-cente"r>
+  //     <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" style="background-image: url('${invite.opponentAvatar}')" alt="Avatar">
+  //       </div>
+  //     <div class="flex-grow-1">
+  //         <h5><strong>${invite.player}</strong></h5>
+  //         <br>
+  //         <p>${invite.message}</p>
+  //     </div>
+  //   </div>
+  //   <div class="d-flex justify-content-end mt-2">
+  //       <button class="btn btn-success btn-sm me-2 accept-button" data-invite-id="${invite.id}" data-action="accept">
+  //           <i class="bi bi-check-circle"></i> Accept
+  //       </button>
+  //       <button class="btn btn-danger btn-sm" data-invite-id="${invite.id}" data-action="refuse">
+  //           <i class="bi bi-x-circle"></i> Refuse
+  //       </button>
+  //   </div>
+  //           `;
+  //     inviteList.appendChild(inviteItem);
+  //
+  //   });
+  // }
+
   populatesInvites() {
     const inviteList = document.getElementById("inviteList");
     inviteList.innerHTML = "";
-    console.log("LENGTH:", AbstractViews.invitesArray.length);
+
     if (!AbstractViews.invitesArray.length) {
       inviteList.innerHTML = "No Invites";
       return;
     }
-    // <!-- <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50"> -->
+
     AbstractViews.invitesArray.forEach((invite) => {
       const inviteItem = document.createElement("li");
       inviteItem.className = "list-group-item";
+
       inviteItem.innerHTML = `
-    <div class="d-flex align-items-cente"r>
-      <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" style="background-image: url('${invite.opponentAvatar}')" alt="Avatar">
+      <div class="d-flex align-items-center">
+        <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" 
+             style="background-image: url('${invite.opponentAvatar}')" 
+             alt="Avatar">
         </div>
-      <div class="flex-grow-1">
+        <div class="flex-grow-1">
           <h5><strong>${invite.player}</strong></h5>
-          <br>
           <p>${invite.message}</p>
+        </div>
       </div>
-    </div>
-    <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-success btn-sm me-2 accept-button" data-invite-id="${invite.id}" data-action="accept">
-            <i class="bi bi-check-circle"></i> Accept
+      <div class="d-flex justify-content-end mt-2">
+        <button class="btn btn-success btn-sm me-2 accept-button" 
+                data-invite-id="${invite.id}" 
+                data-action="accept">
+          <i class="bi bi-check-circle"></i> Accept
         </button>
-        <button class="btn btn-danger btn-sm" data-invite-id="${invite.id}" data-action="refuse">
-            <i class="bi bi-x-circle"></i> Refuse
+        <button class="btn btn-danger btn-sm refuse-button" 
+                data-invite-id="${invite.id}" 
+                data-action="refuse">
+          <i class="bi bi-x-circle"></i> Refuse
         </button>
-    </div>
-            `;
+      </div>
+    `;
+
       inviteList.appendChild(inviteItem);
     });
   }
@@ -169,8 +213,37 @@ export default class AbstractViews {
         opponentStatus: opponent.is_online,
         message: `${opponentName} invites you to a game of ${item.game_type}`,
       };
-      console.log("invite",invite);
+      console.log("invite", invite);
       AbstractViews.invitesArray.push(invite);
+    }
+  }
+
+  addListenersInvites() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.addEventListener("click", this.handleInvites);
+  }
+
+  removeListenersInvites() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.removeEventListener("click", this.handleInvites);
+  }
+
+  handleInvites(ev) {
+    console.log("CLICKED");
+    // Check if the clicked element is an accept or refuse button
+    const button = ev.target.closest(".accept-button, .refuse-button");
+    if (!button) return; // If not, exit the function
+
+    const inviteId = button.dataset.inviteId;
+    const action = button.dataset.action;
+
+    const invite = AbstractViews.invitesArray.find(
+      (inv) => inv.id === inviteId,
+    );
+    if (invite) {
+      const url =
+        action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
+      console.log(`URL: ${url}; action: ${action}`);
     }
   }
 
@@ -207,21 +280,19 @@ export default class AbstractViews {
     }
   }
 
-   startNotificationPolling() {
+  startNotificationPolling() {
     if (!AbstractViews.pollingInterval) {
       AbstractViews.pollingInterval = setInterval(async () => {
         try {
-        await this.fetchNotifications();
-      }catch (error) {
+          await this.fetchNotifications();
+        } catch (error) {
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
           console.error("startNotificationPolling: ", error);
           navigateTo("/");
-          showModal(
-            "error",
-            error.message
-          )
-        }}, 10000);
+          showModal("error", error.message);
+        }
+      }, 10000);
     }
   }
 
@@ -371,7 +442,7 @@ export default class AbstractViews {
     }
   }
 
-  async makeRequest(url, myMethod, myBody, boolImage = false) {
+  async makeRequest(url, myMethod = "GET", myBody = null, boolImage = false) {
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {

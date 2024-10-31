@@ -1,16 +1,32 @@
 from django.db import models
 from django.utils import choices
+from django.utils.timezone import now
 
 # Create your models here.
 
 class MatchUser(models.Model):
     username = models.CharField(max_length=128, unique=True)
     last_online_update = models.DateTimeField(null=True)
+    match_won = models.IntegerField(default=0)
+    match_lost = models.IntegerField(default=0)
 
     @property
     def is_authenticated(self):
         return True
-    
+
+    @property
+    def win_rate(self):
+        total_matches = self.match_lost + self.match_won
+        return self.match_won / total_matches if total_matches != 0 else 0
+        
+class InQueueUser(models.Model):
+    user = models.ForeignKey('MatchUser',
+                            related_name='user_in_queue',
+                            on_delete=models.PROTECT,
+                            to_field='username')
+    range_to_search = models.FloatField(default=0.05)
+    last_range_update = models.DateTimeField(default=now)
+
 class Tournament(models.Model):
     name = models.CharField(max_length=255)
     invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', blank=True)

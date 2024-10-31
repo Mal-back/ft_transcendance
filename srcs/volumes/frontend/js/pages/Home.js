@@ -10,6 +10,7 @@ export default class extends AbstractView {
     this.createPageCss("../css/home.css");
   }
   async getHtml() {
+    this.setTitle("Home");
     return `
         <div class="background Home removeElem">
           <div class="container removeElem">
