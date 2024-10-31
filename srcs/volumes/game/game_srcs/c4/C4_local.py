@@ -288,11 +288,12 @@ class C4LocalEngine(threading.Thread):
 		self.channel_layer = get_channel_layer()
 		self.end = False
 		self.end_lock = threading.Lock()
-		return
+		self.start_lock= threading.Lock()
+		self.running
 
 
 	def wait_start(self):
-		print("Waiting for pong local game instance " + self.game_id + " to start")
+		print("Waiting for C4 Local Game Instance " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
 				if self.runing == True:
@@ -302,6 +303,13 @@ class C4LocalEngine(threading.Thread):
 					break
 			time.sleep(0.01)
    
+	def start_game(self):
+		with self.start_lock:
+			if self.runing == True:
+				print("C4 Local Game instance " + self.game_id + "is already runing, this function returns without doing anything")
+			else:
+				print("Starting C4 Local Game instance " + self.game_id)
+				self.runing = True
 
 	def run(self):
 		while not self.board.over:

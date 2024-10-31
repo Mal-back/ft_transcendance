@@ -32,7 +32,7 @@ class PongLocalEngine(threading.Thread):
 		self.winner = "None"
 		
 	def wait_start(self):
-		print("Waiting for pong local game instance " + self.game_id + " to start")
+		print("Waiting for Pong Local Game instance " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
 				if self.runing == True:
@@ -45,9 +45,9 @@ class PongLocalEngine(threading.Thread):
 	def start_game(self):
 		with self.start_lock:
 			if self.runing == True:
-				print("Game instance " + self.game_id + "is already runing, this function returns without doing anything")
+				print("pong Local Game instance " + self.game_id + "is already runing, this function returns without doing anything")
 			else:
-				print("Starting game instance " + self.game_id)
+				print("Starting Pong Local Game instance " + self.game_id)
 				self.runing = True
  
 	def run(self) -> None:
