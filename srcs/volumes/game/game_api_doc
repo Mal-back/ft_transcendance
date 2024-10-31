@@ -172,7 +172,7 @@ B - Remote game:
 	
 	This will create a room in Django Channel to communicate with the game engine. To join the game room, you need to first send a message in JSON format :
 
-		{"type" : "join_room",
+		{"type" : "join_game",
 			"game_id" : value,
 			"auth_key" : value,
 		}
