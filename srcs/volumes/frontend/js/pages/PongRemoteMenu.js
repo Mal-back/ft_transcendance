@@ -94,11 +94,11 @@ export default class extends AbstractView {
               "GET",
             );
             const responseInvite = await fetch(requestInvite);
-            const dataInvite = await this.getErrorLogfromServer(responseInvite);
+            const dataInvite = await this.getErrorLogfromServer(responseInvite, true);
             console.log("Response sent invite:", dataInvite);
             if (responseInvite.ok) {
               clearInterval(AbstractView.AcceptInterval);
-              sessionStorage.setItem("transcendence_game_id", data.MatchId);
+              sessionStorage.setItem("transcendence_game_id", dataInvite.matchId);
               navigateTo("/pong-local?mode=remote");
             }
           } catch (error) {

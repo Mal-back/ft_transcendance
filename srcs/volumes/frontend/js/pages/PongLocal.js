@@ -1,6 +1,7 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import Pong from "../game/Pong.js";
+import { getIpPortAdress } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -47,13 +48,15 @@ export default class extends AbstractView {
   async game() {
     try {
       const params = new URLSearchParams(window.location.search);
+      let auth_token = null;
       let mode = params.get("mode");
       if (!mode) mode = "local";
       console.log("Init Game");
-      let webScoketURL = "wss://localhost:8080/api/game/pong-local/join/";
-      if (mode != "local")
-        webScoketURL = "wss://localhost:8080/api/game/pong-remote/join/";
-      const auth_token = await this.getToken();
+      let webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-local/join/`;
+      if (mode != "local") {
+        webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-remote/join/`;
+         auth_token = await this.getToken();
+      } 
       console.log("AUTH TOKEN:", auth_token);
       this.pong.initPong(
         "ongoing-game",

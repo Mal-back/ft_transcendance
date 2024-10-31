@@ -1,5 +1,6 @@
 import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
+import { getIpPortAdress } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -10,6 +11,7 @@ export default class extends AbstractView {
     this.createPageCss("../css/home.css");
   }
   async getHtml() {
+    console.log("URL:", getIpPortAdress());
     this.setTitle("Home");
     return `
         <div class="background Home removeElem">

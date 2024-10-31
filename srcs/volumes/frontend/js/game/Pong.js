@@ -1,4 +1,5 @@
 import { navigateTo } from "../router.js";
+import { getIpPortAdress } from "../Utils/Utils.js";
 
 export default class Pong {
   constructor() {
@@ -52,7 +53,7 @@ export default class Pong {
 
   initPong(
     canvas = "ongoing-game",
-    websocket = `wss://localhost:8080/api/game/pong-local/join/`,
+    websocket = `wss://${getIpPortAdress()}/api/game/pong-local/join/`,
     mode = "local",
     scoreId,
     token = null,
@@ -67,9 +68,7 @@ export default class Pong {
     });
     this.mode = mode;
     this.token = token;
-    console.log("INITPONG TOKEN", token);
-    console.log("WEBSOCKETURL: ", websocket);
-    this.redirectURL = "/pong-local";
+    this.setRedirecturl();
     this.scoreId = document.getElementById(scoreId);
     this.context = this.canvas.getContext("2d");
     this.webSocket = new WebSocket(websocket);
@@ -370,6 +369,8 @@ export default class Pong {
   }
 
   removePongEvent() {
+    clearTimeout(this.player1.keyPressTimeout);
+    clearTimeout(this.player2.keyPressTimeout);
     clearTimeout(this.pingInterval);
     clearTimeout(this.timeout);
     if (this.webSocket) {

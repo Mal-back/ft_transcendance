@@ -17,6 +17,10 @@ env :
 		false;\
 	fi
 
+
+hostname:
+	echo "HOSTNAME=$(shell hostname)" >> srcs/.env
+
 down :
 	docker compose -f ./srcs/docker-compose.yml down -t 10
 
