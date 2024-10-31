@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import choices
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -24,6 +25,7 @@ class InQueueUser(models.Model):
                             on_delete=models.PROTECT,
                             to_field='username')
     range_to_search = models.FloatField(default=0.05)
+    last_range_update = models.DateTimeField(default=now)
 
 class Tournament(models.Model):
     name = models.CharField(max_length=255)

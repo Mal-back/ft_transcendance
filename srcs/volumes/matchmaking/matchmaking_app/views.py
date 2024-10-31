@@ -71,6 +71,10 @@ class MatchCreate(APIView):
             return Response({'Error': 'You already invited somebody'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = MatchSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
+            print(serializer.validated_data['player2'].username)
+            print(request.user.username)
+            if serializer.validated_data['player2'].username == request.user.username:
+                return Response({'Error': 'You can not play agains yourself'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save(player1=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
