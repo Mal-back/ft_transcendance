@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
-from .models import MatchUser, Match
+from .models import MatchUser, Match, InQueueUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
@@ -217,3 +217,11 @@ class DebugSetGameAsFinished(generics.UpdateAPIView):
         match.status = 'finished'
         match.save()
         return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
+
+class MatchMakingJoinQueue(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        if InQueueUser.objects.filter(user=request.user.username).exists():
+            return Response({'Error': 'You\'re already in the queue'}, status=status.HTTP_400_BAD_REQUEST)
+        new_user = InQueueUser.objects.create(user=request.user)
