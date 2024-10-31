@@ -4,26 +4,24 @@ export default class Connect4 {
     constructor() {
         this.rows = 6;
         this.cols = 7;
-        this.board = [];
         this.context = null;
         this.webSocket = null;
         this.mode = "local";
         this.pingInterval = null;
         this.timeout = null;
         this.gameActive = true;
-        for (let i = 0; i < this.rows; i++) {
-            this.board.push(Array(this.cols).fill(null));
-        }
         this.gameStart = false;
         this.player1 = {
-            username: "Left-Player",
+            player: "player_1",
+            username: document.getElementById("User1").innerText,
             keyPressTimeout: null,
             name: "player_1",
             color: 'Red',
             span: `<span class="user1-txt">`,
         };
         this.player2 = {
-            username: "Right-Player",
+            player: "player_2",
+            username: document.getElementById("User2").innerText,
             keyPressTimeout: null,
             name: "player_2",
             color: 'Blue',
@@ -80,7 +78,7 @@ export default class Connect4 {
 
     handleWebSocketClose(ev) {
         console.error("Socket is closed");
-        this.removePongEvent();
+        this.removeC4Event();
         this.gameStart = false;
         if (this.mode == "tournament_local") {
             navigateTo("/pong-local-tournament");
@@ -89,21 +87,58 @@ export default class Connect4 {
 
     handleWebSocketError(ev) {
         console.error("Websocket fail: ", ev);
-        this.removePongEvent();
+        this.removeC4Event();
         this.gameStart = false;
     }
 
-    printMessage(message, color) {
-        const fontSize = 50;
-        this.context.font = `${fontSize}px Arial`;
-        const textWidth = this.context.measureText(message).width;
-        const x = (this.canvas.width - textWidth) / 2;
-        const y = (this.canvas.height / 2) * 0.5;
-        this.context.strokeStyle = "black";
-        this.context.lineWidth = 5;
-        this.context.strokeText(message, x, y + fontSize * 0.5);
-        this.context.fillStyle = color;
-        this.context.fillText(message, x, y + fontSize * 0.5);
+    printMessage() {
+        document.getElementById('Turn').innerHTML = `<h3>Player ${currentPlayer.span}${currentPlayer.username}</span> wins!</h3>`;
+        gameActive = false;
+    }
+
+
+    togglePlayer() {
+        this.currenColor = this.currentPlayer == this.player1 ? 'blue' : 'red';
+        this.currentPlayer = this.currentPlayer == this.player1 ? this.player2 : this.player1;
+    }
+
+    updateUI() {
+        const theme = document.getElementById('theme');
+        if (theme.getAttribute('href') == '../../css/connect4/hover-red.css') {
+            theme.setAttribute('href', '../../css/connect4/hover-blue.css');
+        } else {
+            theme.setAttribute('href', '../../css/connect4/hover-red.css');
+        }
+    }
+
+
+    drawFrame(data) {
+        if (data.currentPlayer !== this.currentPlayer.player) {
+            this.togglePlayer();
+            this.updateUI();
+        }
+        for (let row = 0; row < 6; row++) {
+            const line = data.board[`line${row + 1}`].split(" ");
+            for (let col = 0; col < 6; col++) {
+                let color = null;
+                if (line[col] == "X") {
+                    color = this.player1.color.toLowerCase();
+                }
+                else if (line[col] == "0") {
+                    color = this.player2.color.toUpperCase()
+                }
+                if (col !== null) {
+                    const cell = document.getElementById(`cell${row}-${col}`);
+                    cell.classList.remove('cell-empty');
+                    cell.classList.add(`cell-${color}`);
+                }
+                else {
+                    const cell = document.getElementById(`cell${row}-${col}`);
+                    cell.classList.remove();
+                    cell.classList.add(`cell`, `cell-empty`);
+                }
+            }
+        }
     }
 
     handleWebSocketMessage(ev) {
@@ -125,7 +160,7 @@ export default class Connect4 {
             }
             case "end_state": {
                 console.log("END:", data);
-                this.printMessage(`${data.winner} won`, "white");
+                this.printMessage();
                 if (this.mode == "tournament_local") {
                     console.log("TOURNAMENT:", this.tournament);
                     const playerA =
@@ -212,10 +247,6 @@ export default class Connect4 {
                 this.handleWebSocketMessage,
             );
         }
-        document.querySelectorAll('.cell').forEach((cell, index) => {
-            const col = index % cols;
-            cell.addEventListener('click', () => placePiece(col));
-        });
         document.removeEventListener("beforeunload", this.handleUnloadPage);
         document.querySelectorAll('.cell').forEach((cell, index) => {
             const col = index % cols;
@@ -223,69 +254,11 @@ export default class Connect4 {
         });
     }
 
+
     configGame(data) {
         console.log(data);
     }
 
-    updateUI(row, col) {
-        const cell = document.getElementById(`cell${row}-${col}`);
-        cell.classList.remove('cell-empty');
-        cell.classList.add(`cell-${currentColor}`);
-        const theme = document.getElementById('theme');
-
-        // Toggle between light.css and dark.css
-        if (theme.getAttribute('href') == '../../css/connect4/hover-red.css') {
-            theme.setAttribute('href', '../../css/connect4/hover-blue.css');
-        } else {
-            theme.setAttribute('href', '../../css/connect4/hover-red.css');
-        }
-    }
-
-    togglePlayer() {
-        this.currenColor = this.currentPlayer == this.player1 ? 'blue' : 'red';
-        this.currentPlayer = this.currentPlayer == this.player1 ? this.player2 : this.player1;
-    }
-
-    checkDirection(row, col, rowIncrement, colIncrement) {
-        let count = 0;
-        for (let dir of [-1, 1]) {
-            let r = row, c = col;
-            while (true) {
-                r += dir * rowIncrement;
-                c += dir * colIncrement;
-                if (r < 0 || r >= rows || c < 0 || c >= cols || this.board[r][c] !== this.currentPlayer.username) break;
-                count++;
-            }
-        }
-        return count >= 3; // We already have the current cell, so we just need 3 more
-    }
-
-    checkWin(row, col) {
-        return this.checkDirection(row, col, 1, 0) ||  // Horizontal
-            this.checkDirection(row, col, 0, 1) ||  // Vertical
-            this.checkDirection(row, col, 1, 1) ||  // Diagonal down-right
-            this.checkDirection(row, col, 1, -1);   // Diagonal down-left
-    }
-
-    placePiece(col) {
-        if (!this.gameActive) return;
-        // Find the lowest empty row in the clicked column
-        console.log(col);
-        for (let row = this.rows - 1; row >= 0; row--) {
-            if (!this.board[row][col]) {
-                this.board[row][col] = this.currentPlayer.username;
-                updateUI(row, col);
-                if (this.checkWin(row, col)) {
-                    document.getElementById('Turn').innerHTML = `<h3>Player ${this.currentPlayer.span}${this.currentPlayer.username}</span> wins!</h3>`;
-                    gameActive = false;
-                } else {
-                    this.togglePlayer();
-                    document.getElementById('Turn').innerHTML = `<h3>It's ${this.currentPlayer.span}${this.currentPlayer.username}</span>'s turn!</h3>`;
-                }
-                return;
-            }
-        }
-    }
 
     sendPlayerMovement(player, col) {
         const movementData = {
@@ -296,6 +269,7 @@ export default class Connect4 {
         this.webSocket.send(JSON.stringify(movementData));
         console.info("Sent", movementData);
     }
+
 
     throttleMovement(playerObj) {
         if (this.gamePause || !this.gameStart) return;
