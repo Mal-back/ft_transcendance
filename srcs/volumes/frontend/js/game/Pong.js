@@ -190,6 +190,7 @@ export default class Pong {
       }
       case "end_state": {
         console.log("END:", data);
+        this.removePongEvent();
         this.printMessage(`${data.winner} won`, "white");
         if (this.mode == "tournament_local") {
           console.log("TOURNAMENT:", this.tournament);
@@ -219,7 +220,6 @@ export default class Pong {
             JSON.stringify(this.tournament),
           );
         }
-        this.removePongEvent();
         navigateTo(this.redirectURL);
         return;
       }
