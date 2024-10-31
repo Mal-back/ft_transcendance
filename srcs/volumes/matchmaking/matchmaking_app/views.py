@@ -71,6 +71,10 @@ class MatchCreate(APIView):
             return Response({'Error': 'You already invited somebody'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = MatchSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
+            print(serializer.validated_data['player2'].username)
+            print(request.user.username)
+            if serializer.validated_data['player2'].username == request.user.username:
+                return Response({'Error': 'You can not play agains yourself'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save(player1=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -94,13 +98,16 @@ class MatchGetPendingInvites(generics.ListAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return super().list(request, *args, **kwargs)
 
-class MatchGetSentInvite(generics.RetrieveAPIView):
-    serializer_class = SentInviteSerializer
+class MatchGetSentInvite(APIView):
     permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try :
+            match = Match.objects.get(player1=request.user.username, status='pending')
+        except Match.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = SentInviteSerializer(match)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get_queryset(self):
-        user = self.request.user
-        return Match.objects.get(player1=user.username, status='pending')
 
 class MatchAcceptInvite(generics.UpdateAPIView):
     queryset = Match.objects.all()

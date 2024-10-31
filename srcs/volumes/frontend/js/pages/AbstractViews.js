@@ -13,6 +13,7 @@ export default class AbstractViews {
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
+    this.handleInvites = this.handleInvites.bind(this);
     this.lang = new Language();
     this.loginToLogout();
     this.closeSidebarOnNavigate();
@@ -135,19 +136,19 @@ export default class AbstractViews {
   // }
 
   populatesInvites() {
-  const inviteList = document.getElementById("inviteList");
-  inviteList.innerHTML = "";
+    const inviteList = document.getElementById("inviteList");
+    inviteList.innerHTML = "";
 
-  if (!AbstractViews.invitesArray.length) {
-    inviteList.innerHTML = "No Invites";
-    return;
-  }
+    if (!AbstractViews.invitesArray.length) {
+      inviteList.innerHTML = "No Invites";
+      return;
+    }
 
-  AbstractViews.invitesArray.forEach((invite) => {
-    const inviteItem = document.createElement("li");
-    inviteItem.className = "list-group-item";
+    AbstractViews.invitesArray.forEach((invite) => {
+      const inviteItem = document.createElement("li");
+      inviteItem.className = "list-group-item";
 
-    inviteItem.innerHTML = `
+      inviteItem.innerHTML = `
       <div class="d-flex align-items-center">
         <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" 
              style="background-image: url('${invite.opponentAvatar}')" 
@@ -172,10 +173,9 @@ export default class AbstractViews {
       </div>
     `;
 
-    inviteList.appendChild(inviteItem);
-  });
-}
-
+      inviteList.appendChild(inviteItem);
+    });
+  }
 
   async getUserInfo(user) {
     try {
@@ -213,8 +213,37 @@ export default class AbstractViews {
         opponentStatus: opponent.is_online,
         message: `${opponentName} invites you to a game of ${item.game_type}`,
       };
-      console.log("invite",invite);
+      console.log("invite", invite);
       AbstractViews.invitesArray.push(invite);
+    }
+  }
+
+  addListenersInvites() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.addEventListener("click", this.handleInvites);
+  }
+
+  removeListenersInvites() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.removeEventListener("click", this.handleInvites);
+  }
+
+  handleInvites(ev) {
+    console.log("CLICKED");
+    // Check if the clicked element is an accept or refuse button
+    const button = ev.target.closest(".accept-button, .refuse-button");
+    if (!button) return; // If not, exit the function
+
+    const inviteId = button.dataset.inviteId;
+    const action = button.dataset.action;
+
+    const invite = AbstractViews.invitesArray.find(
+      (inv) => inv.id === inviteId,
+    );
+    if (invite) {
+      const url =
+        action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
+      console.log(`URL: ${url}; action: ${action}`);
     }
   }
 
@@ -251,21 +280,19 @@ export default class AbstractViews {
     }
   }
 
-   startNotificationPolling() {
+  startNotificationPolling() {
     if (!AbstractViews.pollingInterval) {
       AbstractViews.pollingInterval = setInterval(async () => {
         try {
-        await this.fetchNotifications();
-      }catch (error) {
+          await this.fetchNotifications();
+        } catch (error) {
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
           console.error("startNotificationPolling: ", error);
           navigateTo("/");
-          showModal(
-            "error",
-            error.message
-          )
-        }}, 10000);
+          showModal("error", error.message);
+        }
+      }, 10000);
     }
   }
 

@@ -19,19 +19,19 @@ class MatchSerializer(serializers.ModelSerializer):
                     'id': {'read_only': True},
                 }
         def validate_player2(self, value):            
-            print('coucocu')
             if not MatchUser.objects.filter(username=value).exists():
-                print('coucocu')
                 raise ValidationError('Invited Player does not exists')
             return value
 
 class PendingInviteSerializer(serializers.ModelSerializer):
     accept_invite = serializers.SerializerMethodField()
     decline_invite = serializers.SerializerMethodField()
+    player1_profile = serializers.SerializerMethodField()
+    player2_profile = serializers.SerializerMethodField()
     class Meta :
         model = Match
         fields = ['id', 'player1', 'player2', 'matchId', 'status', 'game_type', 'created_at',
-                  'accept_invite', 'decline_invite']
+                  'accept_invite', 'decline_invite', 'player1_profile', 'player2_profile']
         extra_kwargs = {
                     'matchId': {'read_only': True},
                     'status': {'read_only': True},
@@ -40,23 +40,44 @@ class PendingInviteSerializer(serializers.ModelSerializer):
                 }
     def get_accept_invite(self, obj):
         match_id = obj.id
-        return(f"http://localhost:8080/api/matchmaking/match/{match_id}/accept/")
+        return(f"/api/matchmaking/match/{match_id}/accept/")
     
     def get_decline_invite(self, obj):
         match_id = obj.id
-        return(f"http://localhost:8080/api/matchmaking/match/{match_id}/decline/")
+        return(f"/api/matchmaking/match/{match_id}/decline/")
+
+    def get_player1_profile(self, obj):
+        player1 = obj.player1.username
+        return(f"/api/users/{player1}")
+
+    def get_player2_profile(self, obj):
+        player2 = obj.player2.username
+        return(f"/api/users/{player2}")
+
 
 class AcceptedMatchSerializer(serializers.ModelSerializer):
+    player1_profile = serializers.SerializerMethodField()
+    player2_profile = serializers.SerializerMethodField()
     class Meta :
         model = Match
-        fields = ['player1', 'player2', 'matchId']
+        fields = ['player1', 'player2', 'matchId', 'player1_profile', 'player2_profile']
+
+    def get_player1_profile(self, obj):
+        player1 = obj.player1.username
+        return(f"/api/users/{player1}")
+
+    def get_player2_profile(self, obj):
+        player2 = obj.player2.username
+        return(f"/api/users/{player2}")
 
 class SentInviteSerializer(serializers.ModelSerializer):
-    delete_invite = serializers.SerializerMethodField
+    delete_invite = serializers.SerializerMethodField()
+    player1_profile = serializers.SerializerMethodField()
+    player2_profile = serializers.SerializerMethodField()
     class Meta :
         model = Match
         fields = ['id', 'player1', 'player2', 'matchId', 'status', 'game_type', 'created_at',
-                  'accept_invite', 'decline_invite']
+                  'delete_invite', 'player1_profile', 'player2_profile']
         extra_kwargs = {
                     'matchId': {'read_only': True},
                     'status': {'read_only': True},
@@ -65,7 +86,15 @@ class SentInviteSerializer(serializers.ModelSerializer):
                 }
     def get_delete_invite(self, obj):
         match_id = obj.id
-        return(f"http://localhost:8080/api/matchmaking/match/{match_id}/delete/")
+        return(f"/api/matchmaking/match/{match_id}/delete/")
+
+    def get_player1_profile(self, obj):
+        player1 = obj.player1.username
+        return(f"/api/users/{player1}")
+
+    def get_player2_profile(self, obj):
+        player2 = obj.player2.username
+        return(f"/api/users/{player2}")
 
 GAME_TYPE = [('pong', 'Pong'),
              ('connect_four', 'Connect Four'),
