@@ -39,3 +39,4 @@ function testRemote(game_id, player) {
 }
 
 testRemote("b0ee653e-98e0-48fd-89da-69ce55cf17d1", "xavier");
+
