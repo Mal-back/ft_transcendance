@@ -275,12 +275,4 @@ export default class extends AbstractView {
     //   button.removeEventListener("click", this.handleClick);
     // });
   }
-
-  destroy() {
-    console.log("Destroy Create User");
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
-  }
 }

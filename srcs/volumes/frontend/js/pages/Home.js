@@ -38,9 +38,4 @@ export default class extends AbstractView {
       return;
     }
   }
-
-  destroy() {
-    this.removeCss();
-    this.removeElem();
-  }
 }

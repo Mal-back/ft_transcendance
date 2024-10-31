@@ -320,10 +320,4 @@ export default class extends AbstractView {
       button.removeEventListener("click", this.handleRemoveFriends);
     });
   }
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
-  }
 }

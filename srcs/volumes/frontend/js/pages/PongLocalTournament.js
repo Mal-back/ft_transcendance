@@ -192,6 +192,7 @@ export default class extends AbstractView {
     if (this.tournament.round.current == this.tournament.round.max) {
       sessionStorage.removeItem("tournament_transcendence_local");
       navigateTo("/pong-local-lobby");
+      return;
     }
     // if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
     //   this.tournament.PlayerB[this.tournament.round.currentMatch].win += 1;
@@ -327,6 +328,7 @@ export default class extends AbstractView {
         "Congratulations",
         `${this.getPlayerByRank(1).name} won the tournament`,
       );
+      sessionStorage.removeItem("tournament_transcendence_local");
       return;
     }
   }
@@ -342,41 +344,4 @@ export default class extends AbstractView {
     if (startGameButton)
       startGameButton.removeEventListener("click", this.handleStartGame);
   }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
-  }
 }
-
-`
-round 0; match:0;
-a | null
-b | c
-
-round 0; match:1; SKIP
-a | null
-b | c
-
-
-round 1; match:0;
-a | b
-c | null
-
-
-round 1; match:1; SKIP
-a | b
-c | null
-
-round 2; match:0; SKIP
-a    | c
-null | b
-
-round 2; match:1; 
-a    | c
-null | b
-
-round 3 FIN
-`;

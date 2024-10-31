@@ -230,9 +230,9 @@ export default class extends AbstractView {
   }
 
   destroy() {
-    console.log("Destroy Login");
-    this.removeEventListeners();
+    this.removeInviteEventListeners();
     this.cleanInputs();
+    this.removeEventListeners();
     this.cleanModal();
     this.removeCss();
     this.removeElem();

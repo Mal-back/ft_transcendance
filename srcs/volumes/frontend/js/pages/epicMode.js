@@ -40,8 +40,4 @@ export default class extends AbstractView {
       e.remove();
     });
   }
-  destroy() {
-    this.removeEventListeners();
-    this.removeCss();
-  }
 }

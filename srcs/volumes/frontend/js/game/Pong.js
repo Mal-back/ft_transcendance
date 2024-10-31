@@ -8,6 +8,8 @@ export default class Pong {
     this.mode = "local";
     this.pingInterval = null;
     this.timeout = null;
+    this.redirectURL = null;
+    this.token = null;
 
     this.leftPaddle = { x: 0, y: 0 };
     this.rightPaddle = { x: 0, y: 0 };
@@ -53,6 +55,7 @@ export default class Pong {
     websocket = `wss://localhost:8080/api/game/pong-local/join/`,
     mode = "local",
     scoreId,
+    token = null,
   ) {
     this.canvas = document.getElementById(canvas);
     const computedStyle = window.getComputedStyle(this.canvas);
@@ -63,15 +66,42 @@ export default class Pong {
       height: this.canvas.height,
     });
     this.mode = mode;
+    this.token = token;
+    console.log("INITPONG TOKEN", token);
+    console.log("WEBSOCKETURL: ", websocket);
+    this.redirectURL = "/pong-local";
     this.scoreId = document.getElementById(scoreId);
     this.context = this.canvas.getContext("2d");
     this.webSocket = new WebSocket(websocket);
+  }
+
+  setRedirecturl() {
+    switch (this.mode) {
+      case "tournament_local": {
+        return "/pong-local-tournament";
+      }
+      case "tournament_remote": {
+        return "/pong-remote-tournament";
+      }
+      case "remote": {
+        return "/pong-remote-menu";
+      }
+      default: {
+        return "/pong-local-menu";
+      }
+    }
+  }
+
+  setToken(authToken) {
+    this.token = authToken;
+    console.log("TOKEN IN PONG:", authToken);
   }
 
   setUsername(player1Name, player2Name, tournament) {
     this.player1.username = player1Name;
     this.player2.username = player2Name;
     this.tournament = tournament;
+    this.redirectURL = this.setRedirecturl();
   }
 
   getUsername() {
@@ -82,8 +112,19 @@ export default class Pong {
     };
   }
 
-  handleWebSocketOpen(ev) {
+  async handleWebSocketOpen(ev) {
     console.log("WEBSOCKET IS OPEN");
+    if (this.mode == "remote") {
+      let uuid = sessionStorage.getItem("transcendence_game_id");
+
+      const body = {
+        type: "join_game",
+        game_id: uuid,
+        auth_key: this.token,
+      };
+      console.log("BODY JOIN:", body);
+      this.webSocket.send(JSON.stringify(body));
+    }
     this.webSocket.send(JSON.stringify({ type: "init_game" }));
     this.webSocket.send(JSON.stringify({ type: "get_config" }));
     this.startTimeout();
@@ -122,9 +163,11 @@ export default class Pong {
     switch (data.type) {
       case "ping": {
         this.webSocket.send(JSON.stringify({ type: "pong" }));
+        break;
       }
       case "pong": {
         clearTimeout(this.pingInterval);
+        break;
       }
       case "config": {
         this.configGame(data);
@@ -176,11 +219,10 @@ export default class Pong {
             "tournament_transcendence_local",
             JSON.stringify(this.tournament),
           );
-          navigateTo("/pong-local-tournament");
         }
         this.removePongEvent();
-        // this.endGame();
-        break;
+        navigateTo(this.redirectURL);
+        return;
       }
       default: {
         console.log("Unknown message: ", data);
@@ -198,114 +240,121 @@ export default class Pong {
   }
 
   sendPing() {
-    this.webSocket.send(JSON.stringify({ type: "ping" }));
-    this.pingInterval = setTimeout(() => {
-      console.error("No response from the server");
-      this.webSocket.close();
-    }, 2000);
+    if (this.webSocket.readyState === WebSocket.OPEN) {
+      this.webSocket.send(JSON.stringify({ type: "ping" }));
+      this.pingInterval = setTimeout(() => {
+        console.error("No response from the server");
+        this.webSocket.close();
+      }, 2000);
+    }
   }
 
   handleUnloadPage(ev) {
     if (this.webSocket) {
       if (this.webSocket.readyState === WebSocket.OPEN) this.webSocket.close();
     }
+    clearTimeout(this.timeout);
   }
 
   handleKeyDown(ev) {
-    switch (ev.key) {
-      case " ": {
-        console.log("SPACE");
-        ev.preventDefault();
-        if (!this.gameStart) {
-          this.webSocket.send(JSON.stringify({ type: "start_game" }));
-          this.gameStart = true;
-        } else {
-          if (!this.gamePause) {
-            this.webSocket.send(
-              JSON.stringify({ type: "pause", action: "stop" }),
-            );
-            this.player1.keyPressTimeout = null;
-            this.player1.upPressed = false;
-            this.player1.downPressed = false;
-            this.player1.lastDirection = null;
-            this.player2.keyPressTimeout = null;
-            this.player2.upPressed = false;
-            this.player2.downPressed = false;
-            this.player2.lastDirection = null;
+    if (this.webSocket.readyState === WebSocket.OPEN) {
+      switch (ev.key) {
+        case " ": {
+          console.log("SPACE");
+          ev.preventDefault();
+          if (!this.gameStart) {
+            this.webSocket.send(JSON.stringify({ type: "start_game" }));
+            this.gameStart = true;
           } else {
-            this.webSocket.send(
-              JSON.stringify({ type: "pause", action: "start" }),
-            );
+            if (!this.gamePause) {
+              this.webSocket.send(
+                JSON.stringify({ type: "pause", action: "stop" }),
+              );
+              this.player1.keyPressTimeout = null;
+              this.player1.upPressed = false;
+              this.player1.downPressed = false;
+              this.player1.lastDirection = null;
+              this.player2.keyPressTimeout = null;
+              this.player2.upPressed = false;
+              this.player2.downPressed = false;
+              this.player2.lastDirection = null;
+            } else {
+              this.webSocket.send(
+                JSON.stringify({ type: "pause", action: "start" }),
+              );
+            }
           }
+          break;
         }
-        break;
-      }
-      case "W":
-      case "w": {
-        ev.preventDefault();
-        if (!this.player1.upPressed) {
-          this.player1.upPressed = true;
-          this.player1.lastDirection = "UP";
-          this.throttleMovement(this.player1);
+        case "W":
+        case "w": {
+          ev.preventDefault();
+          if (!this.player1.upPressed) {
+            this.player1.upPressed = true;
+            this.player1.lastDirection = "UP";
+            this.throttleMovement(this.player1);
+          }
+          break;
         }
-        break;
-      }
-      case "S":
-      case "s": {
-        ev.preventDefault();
-        if (!this.player1.downPressed) {
-          this.player1.downPressed = true;
-          this.player1.lastDirection = "DOWN";
-          this.throttleMovement(this.player1);
+        case "S":
+        case "s": {
+          ev.preventDefault();
+          if (!this.player1.downPressed) {
+            this.player1.downPressed = true;
+            this.player1.lastDirection = "DOWN";
+            this.throttleMovement(this.player1);
+          }
+          break;
         }
-        break;
-      }
-      case "ArrowUp": {
-        if (this.mode == "remote") return;
-        ev.preventDefault();
-        if (!this.player2.upPressed) {
-          this.player2.upPressed = true;
-          this.player2.lastDirection = "UP";
-          this.throttleMovement(this.player2);
+        case "ArrowUp": {
+          if (this.mode == "remote") return;
+          ev.preventDefault();
+          if (!this.player2.upPressed) {
+            this.player2.upPressed = true;
+            this.player2.lastDirection = "UP";
+            this.throttleMovement(this.player2);
+          }
+          break;
         }
-        break;
-      }
-      case "ArrowDown": {
-        if (this.mode == "remote") return;
-        ev.preventDefault();
-        if (!this.player2.downPressed) {
-          this.player2.downPressed = true;
-          this.player2.lastDirection = "DOWN";
-          this.throttleMovement(this.player2);
+        case "ArrowDown": {
+          if (this.mode == "remote") return;
+          ev.preventDefault();
+          if (!this.player2.downPressed) {
+            this.player2.downPressed = true;
+            this.player2.lastDirection = "DOWN";
+            this.throttleMovement(this.player2);
+          }
+          break;
         }
-        break;
       }
     }
   }
 
   handleKeyUp(ev) {
-    switch (ev.key) {
-      case "W":
-      case "w": {
-        this.player1.upPressed = false;
-        break;
-      }
-      case "S":
-      case "s": {
-        this.player1.downPressed = false;
-        break;
-      }
-      case "ArrowUp": {
-        if (this.mode == "remote") return;
-        ev.preventDefault();
-        this.player2.upPressed = false;
-        break;
-      }
-      case "ArrowDown": {
-        if (this.mode == "remote") return;
-        ev.preventDefault();
-        this.player2.downPressed = false;
-        break;
+    if (this.webSocket.readyState === WebSocket.OPEN) {
+      switch (ev.key) {
+        case "W":
+        case "w": {
+          this.player1.upPressed = false;
+          break;
+        }
+        case "S":
+        case "s": {
+          this.player1.downPressed = false;
+          break;
+        }
+        case "ArrowUp": {
+          if (this.mode == "remote") return;
+          ev.preventDefault();
+          this.player2.upPressed = false;
+          break;
+        }
+        case "ArrowDown": {
+          if (this.mode == "remote") return;
+          ev.preventDefault();
+          this.player2.downPressed = false;
+          break;
+        }
       }
     }
   }

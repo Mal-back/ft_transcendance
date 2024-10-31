@@ -10,12 +10,14 @@ import CustomError from "../Utils/CustomError.js";
 export default class AbstractViews {
   static invitesArray = [];
   static pollingInterval = null;
+  static AcceptInterval = null;
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
     this.handleInvites = this.handleInvites.bind(this);
     this.lang = new Language();
     this.loginToLogout();
+    this.addInviteListeners();
     this.closeSidebarOnNavigate();
   }
 
@@ -35,6 +37,16 @@ export default class AbstractViews {
         offcanvasInstance.hide();
       }
     }
+  }
+
+  addInviteListeners() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.addEventListener("click", this.handleInvites);
+  }
+
+  removeInviteEventListeners() {
+    const inviteList = document.getElementById("inviteList");
+    inviteList.removeEventListener("click", this.handleInvites);
   }
 
   createPageCss(refCss) {
@@ -98,42 +110,6 @@ export default class AbstractViews {
       }
     }
   }
-
-  // populatesInvites() {
-  //   const inviteList = document.getElementById("inviteList");
-  //   inviteList.innerHTML = "";
-  //   console.log("LENGTH:", AbstractViews.invitesArray.length);
-  //   if (!AbstractViews.invitesArray.length) {
-  //     inviteList.innerHTML = "No Invites";
-  //     return;
-  //   }
-  //   // <!-- <img src="${invite.profilePic}" alt="${invite.name}" class="rounded-circle me-3" width="50" height="50"> -->
-  //   AbstractViews.invitesArray.forEach((invite) => {
-  //     const inviteItem = document.createElement("li");
-  //     inviteItem.className = "list-group-item";
-  //     inviteItem.innerHTML = `
-  //   <div class="d-flex align-items-cente"r>
-  //     <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" style="background-image: url('${invite.opponentAvatar}')" alt="Avatar">
-  //       </div>
-  //     <div class="flex-grow-1">
-  //         <h5><strong>${invite.player}</strong></h5>
-  //         <br>
-  //         <p>${invite.message}</p>
-  //     </div>
-  //   </div>
-  //   <div class="d-flex justify-content-end mt-2">
-  //       <button class="btn btn-success btn-sm me-2 accept-button" data-invite-id="${invite.id}" data-action="accept">
-  //           <i class="bi bi-check-circle"></i> Accept
-  //       </button>
-  //       <button class="btn btn-danger btn-sm" data-invite-id="${invite.id}" data-action="refuse">
-  //           <i class="bi bi-x-circle"></i> Refuse
-  //       </button>
-  //   </div>
-  //           `;
-  //     inviteList.appendChild(inviteItem);
-  //
-  //   });
-  // }
 
   populatesInvites() {
     const inviteList = document.getElementById("inviteList");
@@ -218,22 +194,32 @@ export default class AbstractViews {
     }
   }
 
-  addListenersInvites() {
-    const inviteList = document.getElementById("inviteList");
-    inviteList.addEventListener("click", this.handleInvites);
+  async inviteRequest(url, action) {
+    try {
+      const request = await this.makeRequest(url, "PATCH");
+      const response = await fetch(request);
+      console.log("inviteRequest: response", response);
+      if (response.ok) {
+        const data = await this.getErrorLogfromServer(response, true);
+        console.log("inviteRequest: response:ok:data", data);
+        sessionStorage.setItem("transcendence_game_id", data.MatchId);
+        navigateTo(`/pong-local?mode=remote`);
+      } else {
+        const dataError = await this.getErrorLogfromServer(response);
+        console.log("inviteRequest: fail response:data:", dataError);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("inviteRequest:", error);
+      }
+    }
   }
 
-  removeListenersInvites() {
-    const inviteList = document.getElementById("inviteList");
-    inviteList.removeEventListener("click", this.handleInvites);
-  }
-
-  handleInvites(ev) {
-    console.log("CLICKED");
-    // Check if the clicked element is an accept or refuse button
+  async handleInvites(ev) {
+    console.log("event handleInvite");
     const button = ev.target.closest(".accept-button, .refuse-button");
-    if (!button) return; // If not, exit the function
-
+    if (!button) return;
     const inviteId = button.dataset.inviteId;
     const action = button.dataset.action;
 
@@ -244,6 +230,7 @@ export default class AbstractViews {
       const url =
         action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
       console.log(`URL: ${url}; action: ${action}`);
+      await this.inviteRequest(url, action);
     }
   }
 
@@ -372,7 +359,7 @@ export default class AbstractViews {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -392,9 +379,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -550,5 +537,15 @@ export default class AbstractViews {
     return authToken;
   }
 
-  destroy() { }
+  removeEventListeners() {
+    return;
+  }
+
+  destroy() {
+    this.removeInviteEventListeners();
+    this.removeEventListeners();
+    this.cleanModal();
+    this.removeCss();
+    this.removeElem();
+  }
 }

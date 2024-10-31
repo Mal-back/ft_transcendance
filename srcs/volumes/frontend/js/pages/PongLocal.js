@@ -45,37 +45,47 @@ export default class extends AbstractView {
   }
 
   async game() {
-    const params = new URLSearchParams(window.location.search);
-    let mode = params.get("mode");
-    if (!mode) mode = "local";
-    console.log("Init Game");
-    this.pong.initPong(
-      "ongoing-game",
-      "wss://localhost:8080/api/game/pong-local/join/",
-      mode,
-      "scoreId",
-    );
-    const leftPlayerText = document.getElementById("leftPlayer");
-    const rightPlayerText = document.getElementById("rightPlayer");
-    if (mode == "tournament_local") {
-      console.log("tournament mode")
-      this.tournament = JSON.parse(
-        sessionStorage.getItem("tournament_transcendence_local"),
+    try {
+      const params = new URLSearchParams(window.location.search);
+      let mode = params.get("mode");
+      if (!mode) mode = "local";
+      console.log("Init Game");
+      let webScoketURL = "wss://localhost:8080/api/game/pong-local/join/";
+      if (mode != "local")
+        webScoketURL = "wss://localhost:8080/api/game/pong-remote/join/";
+      const auth_token = await this.getToken();
+      console.log("AUTH TOKEN:", auth_token);
+      this.pong.initPong(
+        "ongoing-game",
+        webScoketURL,
+        mode,
+        "scoreId",
+        auth_token,
       );
-      console.log("TOURNAMENT START PONG:", this.tournament);
-      this.pong.setUsername(
-        this.tournament.PlayerA[this.tournament.round.currentMatch].name,
-        this.tournament.PlayerB[this.tournament.round.currentMatch].name,
-        this.tournament
-      );
+      const leftPlayerText = document.getElementById("leftPlayer");
+      const rightPlayerText = document.getElementById("rightPlayer");
+      if (mode == "tournament_local") {
+        console.log("tournament mode");
+        this.tournament = JSON.parse(
+          sessionStorage.getItem("tournament_transcendence_local"),
+        );
+        console.log("TOURNAMENT START PONG:", this.tournament);
+        this.pong.setUsername(
+          this.tournament.PlayerA[this.tournament.round.currentMatch].name,
+          this.tournament.PlayerB[this.tournament.round.currentMatch].name,
+          this.tournament,
+        );
+      }
 
-    } else {
-            console.log("not tournament mode")
-
+      const objectPlayers = this.pong.getUsername();
+      leftPlayerText.innerText = objectPlayers.leftPlayer;
+      rightPlayerText.innerText = objectPlayers.rightPlayer;
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("game:", error);
+      }
     }
-    const objectPlayers = this.pong.getUsername();
-    leftPlayerText.innerText = objectPlayers.leftPlayer;
-    rightPlayerText.innerText = objectPlayers.rightPlayer;
   }
 
   async addEventListeners() {

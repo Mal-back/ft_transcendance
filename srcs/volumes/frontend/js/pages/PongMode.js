@@ -63,11 +63,4 @@ export default class extends AbstractView {
     if (remote)
       remote.removeEventListener("click", this.handleRemoteRedirection);
   }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
-  }
 }
