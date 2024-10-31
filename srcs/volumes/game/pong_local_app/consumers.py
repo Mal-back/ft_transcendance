@@ -218,11 +218,6 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.send(dumps(data))
 		except:
 			log.info("Can not send on closed websocket")
-  
-	async def end_game(self, event):
-		log.info("End game function called in WebsocketConsumer " + self.group_name)
-		self.delete = True
-		await self.close()
 	
 	async def receive(self, text_data=None, bytes_data=None):
 		content = loads(text_data)
