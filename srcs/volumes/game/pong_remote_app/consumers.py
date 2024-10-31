@@ -239,21 +239,23 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
  
 	async def auth(self, game_instance : PongRemoteGame) -> bool:
 		# Uncomment bellow to activate user authentication
-		# try :
-		# 	clear_token = jwt.decode(self.auth_key,
-        #                     settings.SIMPLE_JWT['VERIFYING_KEY'],
-        #                     settings.SIMPLE_JWT['ALGORITHM'] 
-		# 	)
-		# except jwt.ExpiredSignatureError:
-		# 	log.info("ExpiredSignatureError from authenticate user")
-		# 	return False
-		# except jwt.InvalidTokenError:
-		# 	log.info("InvalidTokenError from authenticate user")
-		# 	return False
-		# self.username = clear_token.get('username')
+		try :
+			clear_token = jwt.decode(self.auth_key,
+                            settings.SIMPLE_JWT['VERIFYING_KEY'],
+                            settings.SIMPLE_JWT['ALGORITHM'] 
+			)
+		except jwt.ExpiredSignatureError:
+			log.info("ExpiredSignatureError from authenticate user")
+			return False
+		except jwt.InvalidTokenError:
+			log.info("InvalidTokenError from authenticate user")
+			return False
+		self.username = clear_token.get('username')
   
-		self.username = self.auth_key
-  
+		# self.username = self.auth_key
+		log.info("player_1_name expected:" + game_instance.player_1_name)
+		log.info("player_2_name expected:" + game_instance.player_2_name)
+		log.info("username trying to connect: " + self.username);
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
 			game_instance.player_1_connected = True

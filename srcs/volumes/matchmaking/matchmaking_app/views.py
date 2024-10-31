@@ -4,11 +4,12 @@ from django.shortcuts import get_object_or_404
 from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
-from .models import MatchUser, Match
+from .models import MatchUser, Match, InQueueUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
+from .matchmaking_queue import get_opponent
 
 # Create your views here.
 
@@ -29,10 +30,13 @@ class MatchUserUpdate(generics.UpdateAPIView):
         new_username = request.data.get('username')
         accepted_matches = Match.objects.filter(player2=old_username, status__in=['accepted', 'in_progress'])
         matches_as_player1 = Match.objects.filter(player1=old_username, status__in=['accepted', 'in_progress'])
+        is_in_queue = InQueueUser.objects.filter(user=old_username).exists()
         if accepted_matches.exists():
             return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
         elif matches_as_player1.exists():
             return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
+        elif is_in_queue:
+            return Response({'Error':'You are in matchmaking'}, status=status.HTTP_400_BAD_REQUEST)
 
         with transaction.atomic():
             user.username = new_username
@@ -52,10 +56,13 @@ class MatchUserDelete(generics.DestroyAPIView):
         username = instance.username
         accepted_matches = Match.objects.filter(player2=username, status__in=['accepted', 'in_progress'])
         matches_as_player1 = Match.objects.filter(player1=username, status__in=['accepted', 'in_progress'])
+        is_in_queue = InQueueUser.objects.filter(user=username).exists()
         if accepted_matches.exists():
             return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
         elif matches_as_player1.exists():
             return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
+        elif is_in_queue:
+            return Response({'Error':'You are in matchmaking'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             Match.objects.filter(player1=username).delete()
             Match.objects.filter(player2=username).delete()
@@ -67,8 +74,11 @@ class MatchCreate(APIView):
 
     def post(self, request, *args, **kwargs):
         existing_matches = Match.objects.filter(player1=request.user.username, status__in=['pending', 'accepted', 'in_progress'])
+        is_in_queue = InQueueUser.objects.filter(user=request.user.username).exists()
         if existing_matches.exists():
             return Response({'Error': 'You already invited somebody'}, status=status.HTTP_400_BAD_REQUEST)
+        elif is_in_queue:
+            return Response({'Error':'You are in matchmaking'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = MatchSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             print(serializer.validated_data['player2'].username)
@@ -120,10 +130,13 @@ class MatchAcceptInvite(generics.UpdateAPIView):
         self.check_object_permissions(request, match)
         accepted_matches = Match.objects.filter(player2=username, status__in=['accepted', 'in_progress'])
         matches_as_player1 = Match.objects.filter(player1=username, status__in=['pending', 'accepted', 'in_progress'])
+        is_in_queue = InQueueUser.objects.filter(user=request.user.username).exists()
         if accepted_matches.exists():
             return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
         elif matches_as_player1.exists():
             return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
+        elif is_in_queue:
+            return Response({'Error':'You are in matchmaking'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != 'pending':
             return Response({'Error':'You can\'t accept this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'accepted'
@@ -135,8 +148,8 @@ class MatchAcceptInvite(generics.UpdateAPIView):
                     expected_status=[201],
                     method='post',
                     body={
-                        'player_1_name':f'{match.player1}',
-                        'player_2_name':f'{match.player2}',
+                        'player_1_name':f'{match.player1.username}',
+                        'player_2_name':f'{match.player2.username}',
                         }
                     )
             response = ret['http://game:8443/api/game/pong-remote/create/'] 
@@ -144,7 +157,7 @@ class MatchAcceptInvite(generics.UpdateAPIView):
             match.status = 'in_progress'
             match.matchId = matchId
             match.save()
-            return Response({'Ok': 'Match Created', 'MatchId': f'{matchId}'}, status=status.HTTP_206_PARTIAL_CONTENT)
+            return Response({'Ok': 'Match Created', 'MatchId': f'{matchId}'}, status=status.HTTP_201_CREATED)
         except (RequestsFailed, InvalidCredentialsException):
             return Response({'Error': 'Request failed'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
@@ -157,7 +170,7 @@ class MatchDeclineInvite(generics.UpdateAPIView):
         match = self.get_object()
         self.check_object_permissions(request, match)
         if match.status != 'pending':
-            return Response({'Error':'You can\'t declined this match'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Error':'You can\'t decline this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = 'declined'
         match.delete()
         return Response({'OK':'Match Declined'}, status=status.HTTP_200_OK)
@@ -184,7 +197,7 @@ class GetAcceptedMatch(generics.RetrieveAPIView):
     def get_object(self):
         user = self.request.user.username
         queryset = self.get_queryset()
-        obj = generics.get_object_or_404(queryset, Q(player1=user) | Q(player2=user), status='accepted')
+        obj = generics.get_object_or_404(queryset, Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress'])
         return obj
 
 class HandleMatchResult(APIView):
@@ -217,3 +230,35 @@ class DebugSetGameAsFinished(generics.UpdateAPIView):
         match.status = 'finished'
         match.save()
         return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
+
+
+def win_rate(user):
+    total_matches = user.match_lost + user.match_won
+    return user.match_won / total_matches if total_matches != 0 else 0
+
+class MatchMakingJoinQueue(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        accepted_matches = Match.objects.filter(player2=request.user.username, status__in=['accepted', 'in_progress'])
+        matches_as_player1 = Match.objects.filter(player1=request.user.username, status__in=['pending', 'accepted', 'in_progress'])
+        if InQueueUser.objects.filter(user=request.user.username).exists():
+            return Response({'Error': 'You\'re already in the queue'}, status=status.HTTP_400_BAD_REQUEST)
+        elif accepted_matches.exists():
+            return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
+        elif matches_as_player1.exists():
+            return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
+        user_wr = win_rate(request.user)
+        new_user = InQueueUser.objects.create(user=request.user, win_rate=user_wr)
+        return Response({'Ok':'You are in queue'}, status=status.HTTP_201_CREATED)
+
+class MatchMakingRequestMatch(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try :
+            queueUser = InQueueUser.objects.get(user=request.user.username)
+        except queueUser.DoesNotExist :
+            return Response({'Error': 'You\'not in the queue'}, status=status.HTTP_400_BAD_REQUEST)
+        new_match = get_opponent(queueUser)
+

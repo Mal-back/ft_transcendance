@@ -67,11 +67,4 @@ export default class extends AbstractView {
       this.handleLocalTournamentRedirection,
     );
   }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
-  }
 }

@@ -35,6 +35,7 @@ mkdir -p $DJANGO_USERS
 mkdir -p $DJANGO_GAME
 mkdir -p $DJANGO_MATCHMAKING
 mkdir -p $DJANGO_AVATAR
+mkdir -p $DJANGO_HISTORY
 mkdir -p $NGINX
 mkdir -p $PGSQL_AUTH
 mkdir -p $FRONTEND
@@ -42,7 +43,6 @@ mkdir -p $PGSQL_USERS
 mkdir -p $PGSQL_GAME
 mkdir -p $PGSQL_MATCHMAKING
 mkdir -p $PGSQL_AVATAR
-mkdir -p $DJANGO_HISTORY
 mkdir -p $PGSQL_HISTORY
 mkdir -p $WORKER
 

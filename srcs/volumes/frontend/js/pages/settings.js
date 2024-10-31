@@ -965,13 +965,6 @@ export default class extends AbstractView {
       changeMailButton.removeEventListener("click", this.changeMail);
     }
   }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
-  }
 }
 // const confirmButton = document.getElementById('confirm-profile-background-btn');
 // if (confirmButton) {

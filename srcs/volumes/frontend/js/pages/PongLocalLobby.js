@@ -231,18 +231,12 @@ export default class extends AbstractView {
   }
 
   removeEventListeners() {
+    console.log("WHY CALL");
     const generateBtn = document.getElementById("usernameCount");
     generateBtn.removeEventListener("input", this.handleGeneratePlayers);
     generateBtn.removeEventListener("change", this.handleGeneratePlayers);
     const startGameBtn = document.querySelector("#startGameBtn");
     startGameBtn.removeEventListener("click", this.handleStartGame);
     this.cleanUpPlayersInput();
-  }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
   }
 }

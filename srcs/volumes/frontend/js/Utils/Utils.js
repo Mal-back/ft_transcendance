@@ -3,7 +3,6 @@ export function removeSessionStorage() {
   sessionStorage.removeItem("refreshJWT_transcendence");
   sessionStorage.removeItem("username_transcendence");
   removeTournamentStorage();
-  
 }
 
 export function removeTournamentStorage() {
@@ -56,4 +55,22 @@ export function showModal(title, message) {
     ev.preventDefault();
     closeModal();
   };
+}
+
+export function getIpPortAdress() {
+  const url = new URL(window.location.href);
+
+  // Regex for IP addresses or domain names with letters, numbers, hyphens, and dots
+  const validHostnamePattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+
+  const hostname = url.hostname;
+  const port = url.port || (url.protocol === "https:" ? "443" : "80"); // Default ports if none specified
+
+  if (validHostnamePattern.test(hostname)) {
+    const hostAndPort = `${hostname}:${port}`;
+    console.log("Host and Port:", hostAndPort); // Output like "blob-54-f45.fr:8080"
+    return hostAndPort;
+  } else {
+    console.log("Invalid Hostname:", hostname);
+  }
 }
