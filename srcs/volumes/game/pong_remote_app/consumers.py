@@ -179,6 +179,13 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		except:
 			log.info("Can not send on closed websocket")
 		
+	async def send_wait_opponent(self, event):
+		data = {"type" : "wait"}
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
+  
 	async def send_end_state(self, event):
 		data = {"type" : "end_state"}
 		data.update(event["End_state"])
@@ -351,13 +358,13 @@ class PongRemoteGameConsumer(SyncConsumer):
 		except Exception:
 			print("Game thread " + str(game_id) + " can not surrend because not initialized")
 
-	def end_thread(self, event):
-		game_id = event["game_id"]
-		try :
-			print("Ending thread " + game_id)
-			self.game_instances[game_id].end_thread()
-		except Exception:
-			print("Error: Can not end thread " + str(game_id))
+	# def end_thread(self, event):
+	# 	game_id = event["game_id"]
+	# 	try :
+	# 		print("Ending thread " + game_id)
+	# 		self.game_instances[game_id].end_thread()
+	# 	except Exception:
+	# 		print("Error: Can not end thread " + str(game_id))
    
 	def join_thread(self, event):
 		game_id = event["game_id"]

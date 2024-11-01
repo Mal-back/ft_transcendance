@@ -1,14 +1,14 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import Pong from "../game/Pong.js";
-import { getIpPortAdress } from "../Utils/Utils.js";
+import CustomError from "../Utils/CustomError.js";
+import { getIpPortAdress, showModal } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
     super();
     this.setTitle("Local Pong");
-    this.tournament = null;
-    this.pong = new Pong();
+    this.pong = new Pong(this.handleGetUsername.bind(this));
   }
 
   async loadCss() {
@@ -22,7 +22,7 @@ export default class extends AbstractView {
                 <div class="background background-battle d-flex flex-column align-items-center">
                     <div class="d-flex flex-row justify-content-between text-white text-section mt-3 w-80">
                         <div class="text-center d-flex"> 
-                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar"></div>
+                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div>
                           <h3 id="leftPlayer" class=""></h3>
                         </div>
                         <div class="text-center spacingScore">
@@ -30,7 +30,7 @@ export default class extends AbstractView {
                         </div>
                         <div class="text-center d-flex">
                           <h3 id="rightPlayer"></h3>
-                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar"></div>
+                          <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>
                         </div>
                     </div>
                     <div class="canvas-container">
@@ -50,14 +50,13 @@ export default class extends AbstractView {
       const params = new URLSearchParams(window.location.search);
       let auth_token = null;
       let mode = params.get("mode");
-      if (!mode) mode = "local";
-      console.log("Init Game");
+      let connection = params.get("connection");
+      if (!connection) connection = "local";
       let webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-local/join/`;
-      if (mode != "local") {
+      if (connection != "local") {
         webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-remote/join/`;
-         auth_token = await this.getToken();
-      } 
-      console.log("AUTH TOKEN:", auth_token);
+        auth_token = await this.getToken();
+      }
       this.pong.initPong(
         "ongoing-game",
         webScoketURL,
@@ -65,29 +64,102 @@ export default class extends AbstractView {
         "scoreId",
         auth_token,
       );
-      const leftPlayerText = document.getElementById("leftPlayer");
-      const rightPlayerText = document.getElementById("rightPlayer");
-      if (mode == "tournament_local") {
+      if (mode == "tournament") {
         console.log("tournament mode");
-        this.tournament = JSON.parse(
-          sessionStorage.getItem("tournament_transcendence_local"),
+        const tournament = sessionStorage.getItem(
+          "tournament_transcendence_local",
         );
-        console.log("TOURNAMENT START PONG:", this.tournament);
+        if (!tournament) {
+          navigateTo("/pong-local-lobby");
+          showModal(
+            "Error",
+            "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+          );
+          return;
+        }
+        const parsedTournament = JSON.parse(tournament);
+        if (
+          !parsedTournament.round ||
+          !parsedTournament.PlayerA ||
+          !parsedTournament.PlayerB
+        ) {
+          {
+            navigateTo("/pong-local-lobby");
+            showModal(
+              "Error",
+              "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+            );
+            return;
+          }
+        }
+        console.log("TOURNAMENT START PONG:", parsedTournament);
         this.pong.setUsername(
-          this.tournament.PlayerA[this.tournament.round.currentMatch].name,
-          this.tournament.PlayerB[this.tournament.round.currentMatch].name,
-          this.tournament,
+          parsedTournament.PlayerA[this.tournament.round.currentMatch].name,
+          parsedTournament.PlayerB[this.tournament.round.currentMatch].name,
+          parsedTournament,
         );
       }
-
-      const objectPlayers = this.pong.getUsername();
-      leftPlayerText.innerText = objectPlayers.leftPlayer;
-      rightPlayerText.innerText = objectPlayers.rightPlayer;
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
         console.error("game:", error);
       }
+    }
+  }
+
+  async requestAvatars(player_1Username, player_2Username) {
+    let ret = [];
+    try {
+      const requestUser1 = await this.makeRequest(
+        `api/users/${player_1Username}`,
+        "GET",
+      );
+      const responseUser1 = await fetch(requestUser1);
+      if (responseUser1.ok) {
+        const data = await this.getErrorLogfromServer(responseUser1, true);
+        ret.push(data.profilePic);
+      } else {
+        const data = await this.getErrorLogfromServer(responseUser1);
+        console.error(`RequestAvatars: fail for ${player_1Username}`, data);
+      }
+      const requestUser2 = await this.makeRequest(
+        `api/users/${player_2Username}`,
+        "GET",
+      );
+      const responseUser2 = await fetch(requestUser2);
+      if (responseUser2.ok) {
+        const data = await this.getErrorLogfromServer(responseUser2, true);
+        ret.push(data.profilePic);
+      } else {
+        const data = await this.getErrorLogfromServer(responseUser2);
+        console.error(`RequestAvatars: fail for ${player_2Username}`, data);
+      }
+      return ret;
+    } catch (error) {
+      console.error("requestAvatars:", error);
+    }
+  }
+
+  async handleGetUsername(player_1Username, player_2Username) {
+    try {
+      console.log("View:handleGetUsername");
+      const avatars = await this.requestAvatars(
+        player_1Username,
+        player_2Username,
+      );
+      const leftPlayerText = document.getElementById("leftPlayer");
+      const rightPlayerText = document.getElementById("rightPlayer");
+      const leftPlayerAvatar = document.getElementById("leftPlayerAvatar");
+      const rightPlayerAvatar = document.getElementById("rightPlayerAvatar");
+
+      leftPlayerText.innerText = player_1Username;
+      rightPlayerText.innerText = player_2Username;
+      if (avatars) {
+        leftPlayerAvatar.style = `background-image: url(${avatars[0]})`;
+        rightPlayerAvatar.style = `background-image: url(${avatars[1]})`;
+      }
+    } catch (error) {
+      console.error("handleSetUsername:", error);
     }
   }
 

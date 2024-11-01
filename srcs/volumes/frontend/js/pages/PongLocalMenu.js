@@ -41,7 +41,7 @@ export default class extends AbstractView {
 
   handleLocalGameRedirection(ev) {
     ev.preventDefault();
-    navigateTo("/ponglocal");
+    navigateTo("/pong?connection=local");
   }
 
   handleLocalTournamentRedirection(ev) {

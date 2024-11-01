@@ -5,11 +5,9 @@ import copy
 import threading
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-import logging
 from .Frame import Frame
 from .Config import Config
 
-log = logging.getLogger(__name__)
 allowed_movement = ["UP", "DOWN", "NONE"]
 	
 class PongRemoteEngine(threading.Thread):
@@ -31,23 +29,36 @@ class PongRemoteEngine(threading.Thread):
 		self.start_lock = threading.Lock()
 		self.runing_player_1 = "stop"
 		self.runing_player_2 = "stop"
-		self.end_lock = threading.Lock()
-		self.end = False
 		self.surrender = "None"
 		self.surrender_lock = threading.Lock()
 		self.winner = "None"
 		
 	def wait_start(self):
-		print("Waiting for game instance " + self.game_id + " to start | player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
+		print("Waiting for pong remote game instance " + self.game_id + " to start | player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
+		waiting_opponent = 0
 		while True:
 			with self.start_lock:
 				if self.runing_player_1 == "start" and self.runing_player_2 == "start":
 					break
-			with self.end_lock:
-				if self.end == True:
-					break
+				if self.runing_player_1 == "start" or self.runing_player_2 == "start":
+					if waiting_opponent == 0:
+						self.send_wait_opponent()
+					waiting_opponent += 1
+			if waiting_opponent * self.frame_rate >= 30:
+				with self.start_lock:
+					with self.surrender_lock:
+						self.surrender = "player_1" if self.runing_player_1 == "stop" else "player_2"
+				break
 			time.sleep(self.frame_rate)
 		print("player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
+
+	def send_wait_opponent(self):
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type": "send.wait.opponent",
+			})
+		except Exception:
+			print("Can not send frame to group channel " + self.game_id)
 
 	def start_game(self, player : str):
 		with self.start_lock:
@@ -59,9 +70,6 @@ class PongRemoteEngine(threading.Thread):
 	def run(self) -> None:
 		self.wait_start()
 		while True:
-			with self.end_lock:
-				if self.end == True:
-					break
 			self.frame = self.get_next_frame()
 			self.send_frame()
 			if self.frame.end == True or self.check_surrender() == True:
@@ -72,8 +80,7 @@ class PongRemoteEngine(threading.Thread):
 		self.clean_game()
 		self.join_thread()
 		print("End of run function for thread " + self.game_id)
-					
-		
+							
 	def join_thread(self):
 		try:
 			async_to_sync(self.channel_layer.send)("pong_remote_engine", {
@@ -194,9 +201,6 @@ class PongRemoteEngine(threading.Thread):
 		new_frame = self.move_ball(new_frame)
 		return new_frame
  
-	def end_thread(self) -> None:
-		with self.end_lock:
-			self.end = True
    
 	def send_frame(self) -> None:
 		try:
@@ -226,6 +230,7 @@ class PongRemoteEngine(threading.Thread):
 			})
 		except Exception:
 			print("Can not send pause to group channel " + self.game_id)
+
 		
 	def send_end_state(self, last_frame) -> None:
 		winner_points = last_frame.player_1.score if self.winner == self.player_1_username else last_frame.player_2.score

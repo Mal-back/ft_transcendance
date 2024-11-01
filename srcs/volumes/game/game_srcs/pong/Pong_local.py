@@ -5,11 +5,9 @@ import threading
 import copy
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-import logging
 from .Frame import Frame
 from .Config import Config
 
-log = logging.getLogger(__name__)
 allowed_movement = ["UP", "DOWN", "NONE"]
 	
 class PongLocalEngine(threading.Thread):
@@ -34,7 +32,7 @@ class PongLocalEngine(threading.Thread):
 		self.winner = "None"
 		
 	def wait_start(self):
-		print("Waiting for game instance " + self.game_id + " to start")
+		print("Waiting for Pong Local Game instance " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
 				if self.runing == True:
@@ -47,9 +45,9 @@ class PongLocalEngine(threading.Thread):
 	def start_game(self):
 		with self.start_lock:
 			if self.runing == True:
-				print("Game instance " + self.game_id + "is already runing, this function returns without doing anything")
+				print("pong Local Game instance " + self.game_id + "is already runing, this function returns without doing anything")
 			else:
-				print("Starting game instance " + self.game_id)
+				print("Starting Pong Local Game instance " + self.game_id)
 				self.runing = True
  
 	def run(self) -> None:
@@ -65,15 +63,17 @@ class PongLocalEngine(threading.Thread):
 				break
 			time.sleep(self.frame_rate)
 			self.check_pause()
+		self.join_thread()
+		print("End of run function for thread " + self.game_id)
+
+	def join_thread(self):
 		try:
 			async_to_sync(self.channel_layer.send)("pong_local_engine", {
-				"type": "join_thread",
+				"type": "join.thread",
 				"game_id": self.game_id
 			})
 		except:
-			print("Can not send join thread to pong_local_engine from thread num " + self.game_id)
-		print("End of run function for thread " + self.game_id)
-					
+			print("Can not send join thread to pong_remote_engine from thread num " + self.game_id)					
 		
 	def receive_movement(self, player : str, direction : str):
 		with self.start_lock:

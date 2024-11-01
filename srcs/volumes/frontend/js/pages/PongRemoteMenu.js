@@ -16,6 +16,7 @@ export default class extends AbstractView {
       this.handleRemoteTournamentRedirection.bind(this);
     this.handleShowInviteModal = this.handleShowInviteModal.bind(this);
     this.handleMatchRemote = this.handleMatchRemote.bind(this);
+    this.handleInputOpponent = this.handleInputOpponent.bind(this);
   }
 
   async loadCss() {
@@ -46,6 +47,7 @@ export default class extends AbstractView {
             </div>
             <div class="modal-body">
               <input type="text" id="opponentUsername" class="form-control" placeholder="Enter opponent's username">
+              <div id="opponentUsernameError"></div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" id="inviteButton">Invite</button>
@@ -70,14 +72,33 @@ export default class extends AbstractView {
     inviteModal.show();
   }
 
+  validateOpponentName(opponentInput) {
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#opponentUsernameError");
+    errorDiv.innerHTML = "";
+    if (opponentInput.value.trim() === "") {
+      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+    } else if (!this.sanitizeInput(opponentInput.value)) {
+      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+    }
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
+  }
+
   async handleMatchRemote(ev) {
     ev.preventDefault();
-    //validate username
+    const opponent = document.querySelector("#opponentUsername");
+    if (this.validateOpponentName(opponent)) return;
     try {
       const request = await this.makeRequest(
         "/api/matchmaking/match/create/",
         "POST",
-        { player2: "toi", game_type: "pong" },
+        { player2: opponent.value, game_type: "pong" },
       );
       const response = await fetch(request);
       console.log("Request:", request);
@@ -94,12 +115,18 @@ export default class extends AbstractView {
               "GET",
             );
             const responseInvite = await fetch(requestInvite);
-            const dataInvite = await this.getErrorLogfromServer(responseInvite, true);
+            const dataInvite = await this.getErrorLogfromServer(
+              responseInvite,
+              true,
+            );
             console.log("Response sent invite:", dataInvite);
             if (responseInvite.ok) {
               clearInterval(AbstractView.AcceptInterval);
-              sessionStorage.setItem("transcendence_game_id", dataInvite.matchId);
-              navigateTo("/pong-local?mode=remote");
+              sessionStorage.setItem(
+                "transcendence_game_id",
+                dataInvite.matchId,
+              );
+              navigateTo("/pong?connection=remote");
             }
           } catch (error) {
             clearInterval(AbstractView.AcceptInterval);
@@ -118,6 +145,11 @@ export default class extends AbstractView {
     }
   }
 
+  handleInputOpponent(ev) {
+    ev.preventDefault();
+    this.validateOpponentName(document.querySelector("#opponentUsername"));
+  }
+
   async addEventListeners() {
     const playButton = document.querySelector("#PongRemotePlayButton");
     playButton.addEventListener("click", this.handleShowInviteModal);
@@ -126,6 +158,10 @@ export default class extends AbstractView {
       "click",
       this.handleRemoteTournamentRedirection,
     );
+
+    const opponentInput = document.getElementById("opponentUsername");
+    opponentInput.addEventListener("input", this.handleInputOpponent);
+
     const inviteButton = document.querySelector("#inviteButton");
     inviteButton.addEventListener("click", this.handleMatchRemote);
   }
@@ -141,6 +177,8 @@ export default class extends AbstractView {
         this.handleRemoteTournamentRedirection,
       );
 
+    const opponentInput = document.getElementById("opponentUsername");
+    opponentInput.removeEventListener("input", this.handleInputOpponent);
     const inviteButton = document.querySelector("#inviteButton");
     if (inviteButton)
       inviteButton.removeEventListener("click", this.handleMatchRemote);

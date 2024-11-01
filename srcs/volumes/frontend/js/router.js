@@ -45,7 +45,7 @@ const router = async () => {
     { path: "/friends", view: Friends },
     { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
-    { path: "/pong-local", view: PongLocal },
+    { path: "/pong", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
     { path: "/pong-local-menu", view: PongLocalMenu },
     { path: "/pong-remote-menu", view: PongRemoteMenu },
@@ -195,6 +195,14 @@ document.addEventListener("keydown", (ev) => {
     modalInstance.hide();
   }
 });
+
+document
+  .getElementById("buttonOnGoingGame")
+  .addEventListener("click", (ev) => {
+    ev.preventDefault();
+    const url = ev.currentTarget.dataset.redirectUrl;
+    if (url) navigateTo(url);
+  });
 
 // const inviteList = document.getElementById("inviteList");
 //

@@ -1,0 +1,70 @@
+######## GLOBAL ############
+
+HOSTNAME=bess-f2r2s5.clusters.42paris.fr
+DUMP_DATA="False" # Please don't set this to true if you're unsure, it could reallye fucked up data consistency across all apps
+LOAD_DATA="False" # same as above
+DJANGO_DEBUG=True
+HOT_RELOAD='--reload'
+POSTGRES_PASSWORD='nikleproc1312'
+
+
+####### AUTH ###########
+
+DJANGO_AUTH_KEY='94-b-_gfc-4s5=#*%jw22rb9)t(_4zhn$x#wdl4ex!ks7_4+e&'
+AUTH_DB_NAME='braklabnp1312'
+AUTH_DB_USER='redouanefaid'
+AUTH_DB_PASSWORD='n1kl@bak1312'
+AUTH_DB_HOST=postgresql_auth
+AUTH_DB_PORT=5432
+
+######### USERS ########
+
+DJANGO_USERS_KEY='94-b-_gfc-4s5=#*%jw22rb9)t(_4zhn$x#wdl4ex!ks7_4+e&'
+USERS_DB_NAME='braklalcl1312'
+USERS_DB_USER='jacquesmesrine'
+USERS_DB_PASSWORD='n1kl3pr0c1312'
+USERS_DB_HOST=postgresql_users
+USERS_DB_PORT=5432
+
+######### GAME ########
+
+DJANGO_GAME_KEY='94-b-_gfc-4s5=#*%jw22rb9)t(_4zhn$x#wdl4ex!ks7_4+e&'
+GAME_DB_NAME='ponggame'
+GAME_DB_USER='mrpong'
+GAME_DB_PASSWORD='jaimelepong'
+GAME_DB_HOST=postgresql_game
+GAME_DB_PORT=5432
+DJANGO_GAME_AUTH_NAME="game"
+DJANGO_GAME_AUTH_PASSWORD="HZX3#su-.CYF4g&8.Dfl"
+
+######### REDIS ########
+REDIS_PASSWORD='zzzredis123'
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+######### MatchMaking ########
+
+DJANGO_MATCHMAKING_KEY='94-b-_gfc-4s5=#*%jw22rb9)t(_4zhn$x#wdl4ex!ks7_4+e&'
+MATCHMAKING_DB_NAME='braklecreditlyonnais1312'
+MATCHMAKING_DB_USER='jmrouillan'
+MATCHMAKING_DB_PASSWORD='n1kl3Jug31312'
+MATCHMAKING_DB_HOST=postgresql_matchmaking
+MATCHMAKING_DB_PORT=5432
+
+######### Avatar Management ########
+
+DJANGO_AVATAR_KEY='94-b-_gfc-4s5=#*%jw22rb9)t(_4zhn$x#wdl4ex!ks7_4+e&'
+AVATAR_DB_NAME='braklecreditagr1c0l1312'
+AVATAR_DB_USER='andreasbaader'
+AVATAR_DB_PASSWORD='n1kl3JLD1312'
+AVATAR_DB_HOST=postgresql_avatar
+AVATAR_DB_PORT=5432
+
+######### History ########
+
+DJANGO_HISTORY_KEY='94-b-_gfc-4s5=#*%jw22rb9)t(_4zhn$x#wdl4ex!ks7_4+e&'
+HISTORY_DB_NAME='braklasocietg3n3ral31312'
+HISTORY_DB_USER='louisemichel'
+HISTORY_DB_PASSWORD='n1kl3sp1p1312'
+HISTORY_DB_HOST=postgresql_history
+HISTORY_DB_PORT=5432
