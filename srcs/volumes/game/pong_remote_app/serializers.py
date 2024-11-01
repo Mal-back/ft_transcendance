@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import PongRemoteGame
-import uuid
 
-class RemoteGameSerializer(serializers.ModelSerializer):
+class PongRemoteGameSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = PongRemoteGame

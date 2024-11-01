@@ -1,3 +1,4 @@
 from django.db import models
 
-# Create your models here.
+class C4LocalGame(models.Model):
+    game_id = models.CharField(max_length= 100, unique=True)

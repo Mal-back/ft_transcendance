@@ -4,7 +4,7 @@ from json import dumps, loads
 import logging
 from asgiref.sync import async_to_sync, sync_to_async
 from .models import PongRemoteGame
-from game_srcs.Pong_remote import PongRemoteEngine
+from game_srcs.pong.Pong_remote import PongRemoteEngine
 from ms_client.ms_client import MicroServiceClient, RequestsFailed
 
 from rest_framework.exceptions import AuthenticationFailed
@@ -51,7 +51,7 @@ def propagate_exceptions(func):
 ####### WARNING #####
 
 @apply_wrappers
-class RemotePlayerConsumer(AsyncWebsocketConsumer):
+class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = "None"
 		await self.accept()		
@@ -74,7 +74,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending init_game to LocalEngine")
-			self.close()
+			await self.close()
 		
 	async def get_config(self):
 		try:
@@ -85,7 +85,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending get_config to LocalEngine")
-			self.close()
+			await self.close()
 
 	async def start_game(self):
 		try:
@@ -97,7 +97,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending start_game to LocalEngine")
-			self.close()   
+			await self.close()   
 
 	async def move(self, content):
 		try:
@@ -115,7 +115,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending move to LocalEngine")
-			self.close()
+			await self.close()
 		
 	async def pause(self, content):
 		try:
@@ -133,7 +133,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending pause to LocalEngine")
-			self.close()
+			await self.close()
   
 	async def surrend(self, content):
 		try:
@@ -145,7 +145,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			})
 		except:
 			log.info("Error sending surrend to LocalEngine")
-			self.close()
+			await self.close()
 
 	async def send_error(self, event):
 		data = {"type" : "error"}
@@ -179,6 +179,13 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 		except:
 			log.info("Can not send on closed websocket")
 		
+	async def send_wait_opponent(self, event):
+		data = {"type" : "wait"}
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
+  
 	async def send_end_state(self, event):
 		data = {"type" : "end_state"}
 		data.update(event["End_state"])
@@ -189,17 +196,19 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 		self.game_ended = True
 		await self.close()
   
-	async def end_game(self, event):
-		log.info("End game function called in WebsocketConsumer " + self.group_name)
-		self.delete = True
-		await self.close()
+	async def send_pong(self):
+		data = {"type" : "pong"}
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("Can not send on closed websocket")
 
 	async def receive(self, text_data=None, bytes_data=None):
 		content = loads(text_data)
 		try:
 			type = content["type"]
 		except KeyError:
-			log.error("Key error in RemotePlayerConsumer.receive()")
+			log.error("Key error in PongRemotePlayerConsumer.receive()")
 			return
 		if type == "join_game":
 			await self.join_game(content)
@@ -217,6 +226,8 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			await self.pause(content)
 		elif type == "surrend":
 			await self.surrend(content)
+		elif type == "ping":
+			await self.send_pong()
 		else:
 			log.info("Wrong type receive in LocalPlayerConsumer : " + type)
  
@@ -228,28 +239,30 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			elif self.player == "player_2":
 				game_instance.player_2_connected = False
 			await game_instance.asave()
-			self.channel_layer.group_discard(self.group_name, self.channel_name)
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except Exception:
 			log.info("Problem leaving game " + self.group_name + " for player " + self.username)
 		await self.pause({"action" : "stop"})
  
 	async def auth(self, game_instance : PongRemoteGame) -> bool:
 		# Uncomment bellow to activate user authentication
-		# try :
-		# 	clear_token = jwt.decode(self.auth_key,
-        #                     settings.SIMPLE_JWT['VERIFYING_KEY'],
-        #                     settings.SIMPLE_JWT['ALGORITHM'] 
-		# 	)
-		# except jwt.ExpiredSignatureError:
-		# 	log.info("ExpiredSignatureError from authenticate user")
-		# 	return False
-		# except jwt.InvalidTokenError:
-		# 	log.info("InvalidTokenError from authenticate user")
-		# 	return False
-		# self.username = clear_token.get('username')
+		try :
+			clear_token = jwt.decode(self.auth_key,
+                            settings.SIMPLE_JWT['VERIFYING_KEY'],
+                            settings.SIMPLE_JWT['ALGORITHM'] 
+			)
+		except jwt.ExpiredSignatureError:
+			log.info("ExpiredSignatureError from authenticate user")
+			return False
+		except jwt.InvalidTokenError:
+			log.info("InvalidTokenError from authenticate user")
+			return False
+		self.username = clear_token.get('username')
   
-		self.username = self.auth_key
-  
+		# self.username = self.auth_key
+		log.info("player_1_name expected:" + game_instance.player_1_name)
+		log.info("player_2_name expected:" + game_instance.player_2_name)
+		log.info("username trying to connect: " + self.username);
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
 			game_instance.player_1_connected = True
@@ -264,7 +277,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			await game_instance.asave(force_update=True)
 			await self.channel_layer.group_add(self.group_name, self.channel_name)
 		except Exception:
-			log.info("Problem in auth() RemotePlayerConsumer " + self.username + " for game " + self.group_name)
+			log.info("Problem in auth() PongRemotePlayerConsumer " + self.username + " for game " + self.group_name)
 			await self.close()
 		log.info("Player " + self.username + " connected to game " + str(game_instance.game_id) + " as " + self.player)  
 		return True
@@ -274,7 +287,7 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			self.group_name = content["game_id"]
 			self.auth_key = content["auth_key"]
 		except:
-			log.error("Key error in RemotePlayerConsumer.join_game()")
+			log.error("Key error in PongRemotePlayerConsumer.join_game()")
 			return
 		try:
 			game = await sync_to_async(PongRemoteGame.objects.get)(game_id=self.group_name)
@@ -286,9 +299,9 @@ class RemotePlayerConsumer(AsyncWebsocketConsumer):
 			log.info("Can not auth player " + self.username + " to game " + self.group_name)
 			await self.close()
 
-class RemoteGameConsumer(SyncConsumer):
+class PongRemoteGameConsumer(SyncConsumer):
 	def __init__(self, *args, **kwargs):
-		print("RemoteGameConsumer created")
+		print("PongRemoteGameConsumer created")
 		self.game_instances = {}
 	
 	def error(self, error_msg, game_id, close):
@@ -338,20 +351,20 @@ class RemoteGameConsumer(SyncConsumer):
 			print("Game thread " + str(game_id) + " can not move because not initialized")
 			
 	def surrend(self, event):
-		print("Surrend function in LocalGameConsumer")
+		print("Surrend function in PongLocalGameConsumer")
 		game_id = event["game_id"]
 		try:
 			self.game_instances[game_id].receive_surrend(event["surrender"])
 		except Exception:
 			print("Game thread " + str(game_id) + " can not surrend because not initialized")
 
-	def end_thread(self, event):
-		game_id = event["game_id"]
-		try :
-			print("Ending thread " + game_id)
-			self.game_instances[game_id].end_thread()
-		except Exception:
-			print("Error: Can not end thread " + str(game_id))
+	# def end_thread(self, event):
+	# 	game_id = event["game_id"]
+	# 	try :
+	# 		print("Ending thread " + game_id)
+	# 		self.game_instances[game_id].end_thread()
+	# 	except Exception:
+	# 		print("Error: Can not end thread " + str(game_id))
    
 	def join_thread(self, event):
 		game_id = event["game_id"]

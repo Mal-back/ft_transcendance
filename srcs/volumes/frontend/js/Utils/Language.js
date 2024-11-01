@@ -44,8 +44,10 @@ export default class Language {
   }
 
   translateIndex() {
-    const menuGame = document.getElementById("menuGame");
-    menuGame.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["menu", "game"])}`;
+    const menuPong = document.getElementById("menuPong");
+    menuPong.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["menu", "pong"])}`;
+    const menuConnect4 = document.getElementById("menuConnect4");
+    menuConnect4.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["menu", "connect4"])}`;
     document.getElementById("menuProfile").innerHTML =
       `<i class="bi bi-person"></i> ${this.getTranslation(["menu", "profile"])}`;
     document.getElementById("menuFriends").innerHTML =

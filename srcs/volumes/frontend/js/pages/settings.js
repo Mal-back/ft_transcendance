@@ -31,13 +31,6 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    if (!sessionStorage.getItem("username_transcendence")) {
-      throw new CustomError(
-        this.lang.getTranslation(["modal", "error"]),
-        this.lang.getTranslation(["error", "notAuthentified"]),
-        "/",
-      );
-    }
     const currentAvatar = await this.getCurrentAvatar();
     const defaultAvatar = await this.getDefaultAvatar(currentAvatar);
     const htmlContent = `
@@ -964,19 +957,13 @@ export default class extends AbstractView {
       uploadProfileBackgroundInput.removeEventListener(
         "change",
         this.uploadProfileBackground,
+        nn,
       );
     }
     const changeMailButton = document.querySelector("#confirmChangesMail");
     if (changeMailButton) {
       changeMailButton.removeEventListener("click", this.changeMail);
     }
-  }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
-    this.removeElem();
   }
 }
 // const confirmButton = document.getElementById('confirm-profile-background-btn');

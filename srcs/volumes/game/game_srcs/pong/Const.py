@@ -6,7 +6,7 @@ class Const(Enum):
     BOARD_HEIGHT = 500
     DIMENSION = Coordinates(BOARD_LEN,BOARD_HEIGHT)
     CENTER = Coordinates(int(BOARD_LEN / 2), int(BOARD_HEIGHT / 2))
-    BALL_DIR = Direction(4, 6)
+    BALL_DIR = Direction(4, 10)
     PAD_LEN = int(BOARD_LEN * 2 / 100 / 2)
     PAD_HEIGHT = int(BOARD_HEIGHT * 20 / 100 / 2)
     PAD_SPEED = int(BOARD_HEIGHT / 200 * 2)

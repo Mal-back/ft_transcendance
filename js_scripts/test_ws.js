@@ -61,7 +61,7 @@ function testInit() {
 function testStart() {
 
 	const WebSocket = require('ws');
-	const socket = new WebSocket('ws://localhost:8080/api/game/pong-local/join/');
+	const socket = new WebSocket('wss://localhost:8080/api/game/pong-local/join/');
 	socket.onopen = function(event) {
 		console.log("Socket connected")
 		setTimeout(() => { 	socket.send(JSON.stringify({
@@ -519,13 +519,13 @@ function testWss() {
 
 
 
-// testInit();
-// testStart();
-// testGetConfig();
-// testPause();
-// testMove();
-// testSurrend();
-// testChannelFUll();
-// testWss();
-// testMultipleInstances(50)
-testRemote();
+testInit();
+testStart();
+testGetConfig();
+testPause();
+testMove();
+testSurrend();
+testChannelFUll();
+testWss();
+testMultipleInstances(50)
+// testRemote();

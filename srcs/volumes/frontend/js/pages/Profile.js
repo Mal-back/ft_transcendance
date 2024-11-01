@@ -55,17 +55,9 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    if (!sessionStorage.getItem("username_transcendence")) {
-      throw new CustomError(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        `${this.lang.getTranslation(["error", "notAuthentified"])}`,
-        "/",
-      );
-    }
     this.setTitle(`${this.lang.getTranslation(["menu", "profile"])}`);
     let userData = null;
     try {
-      const tokenProfile = await this.getToken();
       userData = await this.loadUserData();
     } catch (error) {
       throw error;
@@ -201,11 +193,5 @@ export default class extends AbstractView {
       console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.handleClick);
     });
-  }
-
-  destroy() {
-    this.cleanModal();
-    this.removeEventListeners();
-    this.removeCss();
   }
 }

@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('DJANGO_AUTH_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['auth', 'localhost', 'http://localhost:8080', 'frontend', 'users', 'avatar_manager']
+ALLOWED_HOSTS = ['auth', 'localhost', 'http://localhost:8080', 'frontend', 'users', 'avatar_manager', os.getenv('HOSTNAME')]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 

@@ -259,6 +259,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/auth
+
   data_django_users:
     name: data_django_users
     driver: local
@@ -266,6 +267,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/users
+
   data_django_game:
     name: data_django_game
     driver: local
@@ -273,6 +275,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/game
+
   data_django_matchmaking:
     name: data_django_matchmaking
     driver: local
@@ -288,6 +291,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/history
+
   data_django_avatar_management:
     name: data_django_avatar_management
     driver: local
@@ -295,6 +299,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/avatar_management
+
   data_avatar_media:
     name: data_avatar_media
     driver: local
@@ -302,6 +307,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/avatar_media
+
   data_frontend:
     name: data_frontend
     driver: local
@@ -309,6 +315,7 @@ volumes:
       type: 'none'
       o: 'bind'
       device: placeholder/srcs/volumes/frontend
+
   data_static:
     name: data_static
     driver: local
