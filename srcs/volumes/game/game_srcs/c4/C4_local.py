@@ -1,4 +1,5 @@
 import json
+import sys
 
 class FullError(Exception):
 	"""
@@ -19,6 +20,7 @@ class IndexColError(Exception):
 	def __init__(self, message="Index out of range, please try again! :(("):
 		self.message = message
 	
+ 
 	def __str__(self):
 		return self.message
 	
@@ -31,6 +33,7 @@ class Win(Exception):
 		self.player = player
 		self.message = f'Congratulations {player}! You won :))'
 	
+ 
 	def __str__(self):
 		return self.message
 
@@ -54,6 +57,7 @@ class Board:
 		self.disk = self.pieces[0]
 		self.winner=None
 
+
 	def __str__(self):
 		"""Function that returns the printable object as a string"""
 		s= f'Row : {self.row}, Columns : {self.column}\n'
@@ -67,19 +71,11 @@ class Board:
 
 	def getConfig(self) -> dict:
 		config = {
-			"board":{
-				"line1" : ' '.join(self.board[0]),
-				"line2" : ' '.join(self.board[1]), 
-				"line3" : ' '.join(self.board[2]), 
-				"line4" : ' '.join(self.board[3]), 
-				"line5" : ' '.join(self.board[4]), 
-				"line6" : ' '.join(self.board[5])
-			},
 			"startingPlayer" : self.player1,
 			"player1" : self.player1,
 			"player2" : self.player2,
-			"player1-piece":self.pieces[0],
-			"player2-piece":self.pieces[1],
+			"player1_piece":self.pieces[0],
+			"player2_piece":self.pieces[1],
 		}
 		return config
 
@@ -94,16 +90,14 @@ class Board:
 				"line5" : ' '.join(self.board[4]), 
 				"line6" : ' '.join(self.board[5])
 			}, 
-			"over": self.over,
 			"player1": self.player1,
 			"player2": self.player2,
-			"pieces": self.pieces,
 			"turn": self.turn,
 			"currentPlayer":self.currrentPlayer,
 			"tie": self.tie,
-			"winner": self.winner.player if self.winner else None
 		}
 		return state
+
 
 	def flush_board(self) -> None:
 		"""Function that flushes board and reset the turns if the board is full"""
@@ -113,6 +107,7 @@ class Board:
 			self.tie +=1
 			print("Board flushed")
 		else : print("Board not flushed")
+
 
 	def board_is_full(self) -> bool:
 		"""Function to check if the board is full"""
@@ -125,18 +120,25 @@ class Board:
 
 	def put_disk(self, column, name) -> bool:
 		"""Function to put the disk in the board, it returns false if the game is over and true if it succeeds"""
-		if self.over:
-			return False
 		if self.currrentPlayer != name:
 			return False
+		if self.over:
+			return False
+		# if self.currrentPlayer != name:
+			# print("Not " + name + " ")
+			# return False
+		# print(self.disk, name, self.currrentPlayer , sep=" | ",file=sys.stderr, flush=True)
+		self.disk = self.pieces[self.turn % 2]
 		if column < 0 or column >= self.column :
-			raise IndexColError()
+			return False
 		for i in range(self.row -1 , -1, -1):
 			if self.board[i][column] == ".":
 				self.board[i][column] = self.disk
 				break
 			if i - 1 == -1:
 				return False
+		self.turn+=1
+		self.currrentPlayer = self.player1 if self.turn % 2 == 0 else self.player2
 		self.tick += 1
 		return True
 
@@ -218,20 +220,19 @@ class Board:
 		if (w :=self.check_column_win()) >= 0:
 			print(self)
 			player = self.player1 if w == 0 else self.player2
-			return Win(player)
+			return player
 		elif (w :=self.check_row_win()) >= 0:
 			print(self)
 			player = self.player1 if w == 0 else self.player2
-			return Win(player)
+			return player
 		elif (w :=self.check_upward_diag_win()) >= 0:
 			print(self)
 			player = self.player1 if w == 0 else self.player2
-			return Win(player)
+			return player
 		elif (w :=self.check_downward_diag_win()) >= 0:
 			print(self)
 			player = self.player1 if w == 0 else self.player2
-			return Win(player)
-		self.turn+=1
+			return player
 		if self.board_is_full():
 			self.flush_board()
 		return None
@@ -249,8 +250,6 @@ class Board:
 
 			try:
 				column = int(input())
-				self.disk = self.pieces[self.turn % 2]
-				self.currrentPlayer = self.player1 if self.turn % 2 == 0 else self.player2
 				self.put_disk(column,self.currrentPlayer)
 				if (winner:= self.winning_board()) != None:
 					print(winner)
@@ -279,8 +278,8 @@ class C4LocalEngine(threading.Thread):
 	def __init__(self, game_id, **kwargs):
 		super().__init__(daemon=True)
 		self.board = copy.deepcopy(Board("player_1", "player_2"))
+		self.conf = self.board.getConfig()
 		self.tick = 0
-		self.board_lock = threading.Lock()
 		self.winner = "None"
 		self.surrender = "None"
 		self.surrender_lock = threading.Lock()
@@ -289,40 +288,139 @@ class C4LocalEngine(threading.Thread):
 		self.end = False
 		self.end_lock = threading.Lock()
 		self.start_lock= threading.Lock()
-		self.running
+		self.running = False
+		self.sleep = 0.01
+		self.input_lock = threading.Lock()
+		self.input_receive = False
+		self.input_player = "None"
+		self.input_column = "None"
 
 
 	def wait_start(self):
 		print("Waiting for C4 Local Game Instance " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
-				if self.runing == True:
+				if self.running == True:
 					break
 			with self.end_lock:
 				if self.end == True:
 					break
-			time.sleep(0.01)
+			time.sleep(self.sleep)
+   
    
 	def start_game(self):
 		with self.start_lock:
-			if self.runing == True:
-				print("C4 Local Game instance " + self.game_id + "is already runing, this function returns without doing anything")
+			if self.running == True:
+				print("C4 Local Game instance " + self.game_id + "is already running, this function returns without doing anything")
 			else:
 				print("Starting C4 Local Game instance " + self.game_id)
-				self.runing = True
+				self.running = True
+
 
 	def run(self):
+		self.wait_start()
 		while not self.board.over:
-			if self.tick != self.board.tick:
-				self.board.tick = 0
-				self.board.returnBoardState()
-			
-	def receive_input(self, event):
-		col_num = event["col"]
-		player = event["player"]
-		self.board.put_disk()
-		return
+			with self.end_lock:
+				if self.end == True:
+					break
+			self.check_input()
+			self.check_winner()
+			if self.board.over == 1 or self.check_surrender() == True:
+				self.send_end_state()
+				break
+			time.sleep(self.sleep)
+		self.join_thread()
+		print("End of run function for thread " + self.game_id)
 
-	def send_state(self):
-		return
+
+	def join_thread(self):
+		try:
+			async_to_sync(self.channel_layer.send)("c4_local_engine", {
+				"type": "join.thread",
+				"game_id": self.game_id
+			})
+		except:
+			print("Can not send join thread to c4_local_engine from thread num " + self.game_id)	
+
+	
+	def check_winner(self):
+		if (winner:= self.board.winning_board()) != None:
+			self.winner = winner
+			self.board.over = 1
+
+
+	def check_input(self):
+		with self.input_lock:
+			if self.input_receive == True:
+				self.input_receive = False
+				self.board.put_disk(self.input_column, self.input_player)
+		if self.tick != self.board.tick:
+			self.board.tick = 0
+			self.send_frame()	
+
+
+	def end_thread(self) -> None:
+		with self.end_lock:
+			self.end = True
+   
+   
+	def send_config(self) -> None:
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type": "send.config",
+				"Config": self.conf,
+			})
+		except Exception:
+			print("Can not send config to group channel " + self.game_id)
+ 
+ 
+	def send_end_state(self) -> None:
+		looser = "player_1" if self.winner == "player_2" else "player_2"
+		data = {"winner" : self.winner,
+		  "looser" : looser,
+		}
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type" : "send.end.state",
+				"End_state" : data,
+			})
+		except Exception:
+			print("Can not send end state to group channel " + self.game_id)
+		# async_to_sync(self.channel_layer.group_send)(self.game_id, {
+		# 	"type" : "send.end.state",
+		# 	"End_state" : data,
+		# })
+
+	def send_frame(self):
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+				"type": "send.frame",
+				"Frame": self.board.returnBoardState(),
+			})
+		except Exception:
+			print("Can not send frame to group channel " + self.game_id)
+
+
+	def receive_input(self, player : str, column : str):
+		with self.input_lock:
+			try:
+				self.input_column = int(column)
+				self.input_receive = True
+				self.input_player = player
+			except Exception:
+				return
+
+
+	def receive_surrend(self, surrender : str) -> None:
+		with self.surrender_lock:
+			if (surrender == "player_1" or surrender == "player_2") and self.surrender == "None":
+				self.surrender = surrender   
+   
+   
+	def check_surrender(self) -> bool:
+		with self.surrender_lock:
+			if self.surrender == "player_1" or self.surrender == "player_2":
+				self.winner = "player_1" if self.surrender == "player_2" else "player_2"
+				return True
+		return False
 			
