@@ -167,12 +167,12 @@ B - Remote game:
 
 1 - Join a room :
 
-	Establish a websocket connection to "ws://application_host/api/game/remote-local/join/" where :
+	Establish a websocket connection to "ws://application_host/api/game/pong-remote/join/" where :
 		- application_host is the combination host-port of the application (ex: localhost:8080).
 	
 	This will create a room in Django Channel to communicate with the game engine. To join the game room, you need to first send a message in JSON format :
 
-		{"type" : "join_room",
+		{"type" : "join_game",
 			"game_id" : value,
 			"auth_key" : value,
 		}
