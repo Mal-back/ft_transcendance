@@ -247,8 +247,9 @@ export default class AbstractViews {
       const data = await this.getErrorLogfromServer(response, true);
       console.log(response);
       console.log(data);
+      const count = data.count ? data.count : 0;
       const badge = document.getElementById("notificationbell");
-      if (data.count  + boolGame == 0) {
+      if (count  + boolGame == 0) {
         badge.innerHTML = "";
         return;
       }

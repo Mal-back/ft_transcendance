@@ -104,7 +104,11 @@ export default class Pong {
 
   getUsername() {
     console.log("Pong:getUsername");
-    this.setUsernameCallBack(this.player1.username, this.player2.username);
+    this.setUsernameCallBack(
+      this.mode,
+      this.player1.username,
+      this.player2.username,
+    );
   }
 
   async handleWebSocketOpen(ev) {
@@ -188,7 +192,7 @@ export default class Pong {
         console.log("END:", data);
         this.removePongEvent();
         this.printMessage(`${data.winner} won`, "white");
-        if (this.mode == "tournament_local") {
+        if (this.tournament) {
           console.log("TOURNAMENT:", this.tournament);
           const playerA =
             this.tournament.PlayerA[this.tournament.round.currentMatch];
@@ -248,7 +252,6 @@ export default class Pong {
     if (this.webSocket) {
       if (this.webSocket.readyState === WebSocket.OPEN) this.webSocket.close();
     }
-    clearTimeout(this.timeout);
   }
 
   handleKeyDown(ev) {
@@ -420,7 +423,9 @@ export default class Pong {
     this.ballRadius = data.ball_size;
     console.log("BallRadius:", this.ballRadius);
     console.log("Ball:", this.ball);
-    this.setUsername(data.player_1.username, data.player_2.username);
+    if (this.mode == "remote")
+      this.setUsername(data.player_1.username, data.player_2.username);
+    this.getUsername();
     this.draw();
   }
 
