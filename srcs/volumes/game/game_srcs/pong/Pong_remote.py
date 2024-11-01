@@ -69,6 +69,7 @@ class PongRemoteEngine(threading.Thread):
  
 	def run(self) -> None:
 		self.wait_start()
+		self.send_pause("start")
 		while True:
 			self.frame = self.get_next_frame()
 			self.send_frame()
@@ -209,7 +210,8 @@ class PongRemoteEngine(threading.Thread):
 				"Frame": self.frame.render(),
 			})
 		except Exception:
-			print("Can not send frame to group channel " + self.game_id)
+			print("Can not send frame to  channel " + channel)
+
 
 	def send_frame(self) -> None:
 		try:
@@ -219,7 +221,8 @@ class PongRemoteEngine(threading.Thread):
 			})
 		except Exception:
 			print("Can not send frame to group channel " + self.game_id)
-		
+	
+ 	
 	def send_config(self, channel_name : str) -> None:
 		conf = self.config.render()
 		try:
@@ -234,7 +237,7 @@ class PongRemoteEngine(threading.Thread):
 				else:
 					self.send_pause_channel("start", channel_name)
 		except Exception:
-			print("Can not send config to group channel " + self.game_id)
+			print("Can not send config to channel " + channel_name)
   
   
 	def send_pause_channel(self, action : str, channel : str) -> None:
@@ -244,7 +247,7 @@ class PongRemoteEngine(threading.Thread):
 				"Pause": action
 			})
 		except Exception:
-			print("Can not send pause to group channel " + self.game_id)
+			print("Can not send pause to  channel " + channel)
 
 
 	def send_pause(self, action : str) -> None:
