@@ -1,13 +1,14 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import Connect4 from "../game/Connect4.js";
+import CustomError from "../Utils/CustomError.js";
+import { getIpPortAdress, showModal } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Local Connect4");
-        this.tournament = null;
-        this.connect4 = new Connect4();
+        this.connect4 = new Connect4(this.handleGetUsername.bind(this));
     }
 
     async loadCss() {
@@ -162,38 +163,53 @@ export default class extends AbstractView {
     }
 
     async game() {
-        const params = new URLSearchParams(window.location.search);
-        let mode = params.get("mode");
-        if (!mode) mode = "local";
-        console.log("Init Game");
-        this.connect4.initC4(
-            "ongoing-game",
-            "wss://localhost:8080/api/game/c4-local/join/",
-            mode,
-        );
-        const User1Text = document.getElementById("leftUser");
-        const User2Text = document.getElementById("rightUser");
-        const UserTurnText = document.getElementById("userTurn");
-        if (mode == "tournament_local") {
-            console.log("tournament mode")
-            this.tournament = JSON.parse(
-                sessionStorage.getItem("tournament_transcendence_local"),
+        try {
+            const params = new URLSearchParams(window.location.search);
+            let auth_token = null;
+            let mode = params.get("mode");
+            let connection = params.get("connection");
+            if (!connection) connection = "local";
+            console.log("Init Game");
+            let webScoketURL = `wss://${getIpPortAdress()}/api/game/c4-local/join/`;
+            if (connection != "local") {
+                webScoketURL = `wss://${getIpPortAdress()}/api/game/c4-remote/join/`;
+                auth_token = await this.getToken();
+            }
+            this.connect4.initC4(
+                "ongoing-game",
+                webScoketURL,
+                mode,
+                auth_token,
             );
-            console.log("TOURNAMENT START CONNECT4:", this.tournament);
-            this.connect4.setUsername(
-                this.tournament.PlayerA[this.tournament.round.currentMatch].name,
-                this.tournament.PlayerB[this.tournament.round.currentMatch].name,
-                this.tournament
-            );
+            const User1Text = document.getElementById("leftUser");
+            const User2Text = document.getElementById("rightUser");
+            const UserTurnText = document.getElementById("userTurn");
+            if (mode == "tournament_local") {
+                console.log("tournament mode")
+                this.tournament = JSON.parse(
+                    sessionStorage.getItem("tournament_transcendence_local"),
+                );
+                console.log("TOURNAMENT START CONNECT4:", this.tournament);
+                this.connect4.setUsername(
+                    this.tournament.PlayerA[this.tournament.round.currentMatch].name,
+                    this.tournament.PlayerB[this.tournament.round.currentMatch].name,
+                    this.tournament
+                );
 
-        } else {
-            console.log("not tournament mode")
+            } else {
+                console.log("not tournament mode")
 
+            }
+            const objectPlayers = this.connect4.getUsername();
+            User1Text.innerText = objectPlayers.User1;
+            User2Text.innerText = objectPlayers.User2;
+            UserTurnText.innerText = objectPlayers.UserTurn;
+        } catch (error) {
+            if (error instanceof CustomError) throw error;
+            else {
+                console.error("game:", error);
+            }
         }
-        const objectPlayers = this.connect4.getUsername();
-        User1Text.innerText = objectPlayers.User1;
-        User2Text.innerText = objectPlayers.User2;
-        UserTurnText.innerText = objectPlayers.UserTurn;
     }
 
     async addEventListeners() {

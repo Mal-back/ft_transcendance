@@ -1,4 +1,5 @@
 import { navigateTo } from "../router.js";
+import { getIpPortAdress } from "../Utils/Utils.js";
 
 export default class Connect4 {
     constructor() {
@@ -41,7 +42,7 @@ export default class Connect4 {
 
     initC4(
         canvas = "ongoing-game",
-        websocket = `wss://localhost:8080/api/game/c4-local/join/`,
+        websocket = `wss://${getIpPortAdress()}/api/game/c4-local/join/`,
         mode = "local",
     ) {
         this.canvas = document.getElementById(canvas);
