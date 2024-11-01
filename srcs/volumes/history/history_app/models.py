@@ -28,4 +28,4 @@ class Match(models.Model):
     looser_points = models.IntegerField(default=0)
     game_type = models.TextField(choices=[('pong', 'Pong'),
                                            ('connect_four', 'Connect four')])
-    played_at = models.DateTimeField()
+    played_at = models.DateTimeField(auto_now_add=True)

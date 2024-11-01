@@ -5,11 +5,11 @@ from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match, InQueueUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
-from .matchmaking_queue import get_opponent
+from .matchmaking_queue import get_opponent, YouHaveNoOpps
 
 # Create your views here.
 
@@ -81,8 +81,6 @@ class MatchCreate(APIView):
             return Response({'Error':'You are in matchmaking'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = MatchSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            print(serializer.validated_data['player2'].username)
-            print(request.user.username)
             if serializer.validated_data['player2'].username == request.user.username:
                 return Response({'Error': 'You can not play agains yourself'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save(player1=request.user)
@@ -212,14 +210,13 @@ class HandleMatchResult(APIView):
         serializer = MatchResultSerializer(data=request.data)
         match = self.get_object(kwargs['matchId'])
         if serializer.is_valid():
-            data = serializer.save()
-        if match.tournament is None :
-            end_single_match(match, data)
-            return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
-        else :
-            # tournament logic here
-            pass
-        return Response({'Error':'Error'}, status=status.HTTP_400_BAD_REQUEST)
+            if match.tournament is None :
+                end_single_match(match, serializer.validated_data)
+                return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
+            else :
+                # tournament logic here
+                pass
+        return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class DebugSetGameAsFinished(generics.UpdateAPIView):
     queryset = Match.objects.all()
@@ -230,11 +227,6 @@ class DebugSetGameAsFinished(generics.UpdateAPIView):
         match.status = 'finished'
         match.save()
         return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
-
-
-def win_rate(user):
-    total_matches = user.match_lost + user.match_won
-    return user.match_won / total_matches if total_matches != 0 else 0
 
 class MatchMakingJoinQueue(APIView):
     permission_classes = [IsAuthenticated]
@@ -248,9 +240,11 @@ class MatchMakingJoinQueue(APIView):
             return Response({'Error':'You already have game in progress'}, status=status.HTTP_400_BAD_REQUEST)
         elif matches_as_player1.exists():
             return Response({'Error':'You already send invite'}, status=status.HTTP_400_BAD_REQUEST)
-        user_wr = win_rate(request.user)
-        new_user = InQueueUser.objects.create(user=request.user, win_rate=user_wr)
-        return Response({'Ok':'You are in queue'}, status=status.HTTP_201_CREATED)
+        serializer = MatchMakingQueueSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, win_rate=request.user.win_rate)
+            return Response({'Ok':'You are in queue'}, status=status.HTTP_201_CREATED)
+        return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class MatchMakingRequestMatch(APIView):
     permission_classes = [IsAuthenticated]
@@ -259,6 +253,13 @@ class MatchMakingRequestMatch(APIView):
         try :
             queueUser = InQueueUser.objects.get(user=request.user.username)
         except queueUser.DoesNotExist :
-            return Response({'Error': 'You\'not in the queue'}, status=status.HTTP_400_BAD_REQUEST)
-        new_match = get_opponent(queueUser)
+            return Response({'Error': 'You\'re not in the queue'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            new_match = get_opponent(queueUser)
+            serializer = AcceptedMatchSerializer(new_match)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except YouHaveNoOpps:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
+class MatchMakingLeaveQueue(APIView):
+    pass
