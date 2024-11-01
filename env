@@ -1,6 +1,6 @@
 ######## GLOBAL ############
 
-HOSTNAME=bess-f2r2s5.clusters.42paris.fr
+HOSTNAME=bess-f2r1s6.clusters.42paris.fr
 DUMP_DATA="False" # Please don't set this to true if you're unsure, it could reallye fucked up data consistency across all apps
 LOAD_DATA="False" # same as above
 DJANGO_DEBUG=True

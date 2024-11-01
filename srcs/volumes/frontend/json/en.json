@@ -146,7 +146,11 @@
     },
     "Language": {
       "label": "Language",
-      "options": ["English", "Spanish", "French"],
+      "options": [
+        "English",
+        "Spanish",
+        "French"
+      ],
       "saveButton": "Save Language"
     },
     "DataHandler": {
@@ -179,15 +183,21 @@
     }
   },
   "game": {
-    "maj": {
-      "pong": "PONG",
-      "local": "LOCAL",
-      "remote": "REMOTE",
-      "play": "PLAY",
-      "tournament": "TOURNAMENT"
+    "pong": {
+      "title": "PONG"
     },
+    "c4": {
+      "title": "CONNECT 4"
+    },
+    "Ranking": "RANKING",
+    "label": "Game",
+    "remote": "REMOTE",
+    "play": "PLAY",
+    "tournament": "TOURNAMENT",
+    "local": "LOCAL",
     "numberPlayer": "Select number of players (3 to 10):",
     "player": "Player",
+    "NextGame": "NEXT GAME",
     "start": "Start Game"
   }
 }

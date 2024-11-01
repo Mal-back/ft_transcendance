@@ -18,6 +18,7 @@ export default class Connect4 {
             name: "player_1",
             color: 'Red',
             span: `<span class="user1-txt">`,
+            piece: "X",
         };
         this.player2 = {
             player: "player_2",
@@ -26,6 +27,7 @@ export default class Connect4 {
             name: "player_2",
             color: 'Blue',
             span: `<span class="user2-txt">`,
+            piece: "0",
         };
         this.currentPlayer = this.player1;
         this.currenColor = 'red';
@@ -33,7 +35,7 @@ export default class Connect4 {
         this.handleWebSocketClose = this.handleWebSocketClose.bind(this);
         this.handleWebSocketError = this.handleWebSocketError.bind(this);
         this.handleWebSocketMessage = this.handleWebSocketMessage.bind(this);
-        this.placePiece = this.placePiece.bind(this);
+        this.placePiece = this.sendPlayerMovement.bind(this);
         this.handleUnloadPage = this.handleUnloadPage.bind(this);
     }
 
@@ -92,7 +94,11 @@ export default class Connect4 {
         this.gameStart = false;
     }
 
-    printMessage() {
+    printMessage(data) {
+        if (data.currentPlayer !== this.currentPlayer.player) {
+            this.togglePlayer();
+            this.updateUI();
+        }
         document.getElementById('Turn').innerHTML = `<h3>Player ${currentPlayer.span}${currentPlayer.username}</span> wins!</h3>`;
         gameActive = false;
     }
@@ -161,7 +167,7 @@ export default class Connect4 {
             }
             case "end_state": {
                 console.log("END:", data);
-                this.printMessage();
+                this.printMessage(data);
                 if (this.mode == "tournament_local") {
                     console.log("TOURNAMENT:", this.tournament);
                     const playerA =
@@ -230,7 +236,7 @@ export default class Connect4 {
         this.webSocket.addEventListener("message", this.handleWebSocketMessage);
         document.addEventListener("beforeunload", this.handleUnloadPage);
         document.querySelectorAll('.cell').forEach((cell, index) => {
-            const col = index % cols;
+            const col = index % this.cols;
             cell.addEventListener('click', this.sendPlayerMovement(col));
         });
     }
@@ -250,14 +256,18 @@ export default class Connect4 {
         }
         document.removeEventListener("beforeunload", this.handleUnloadPage);
         document.querySelectorAll('.cell').forEach((cell, index) => {
-            const col = index % cols;
-            cell.removeEventListener('click', this.placePiece(col));
+            const col = index % this.cols;
+            cell.removeEventListener('click', this.sendPlayerMovement(col));
         });
     }
 
 
     configGame(data) {
         console.log(data);
+        this.player1.piece = data.player1_piece;
+        this.player2.piece = data.player2_piece;
+        this.player1.username = data.player1;
+        this.player2.username = data.player2;
     }
 
 

@@ -136,8 +136,8 @@ export default class extends AbstractView {
 
                         <!-- ROW 5 -->
                         <div id="cell5-0" class="cell cell-empty"></div>
-                        <div id="cell5-1" class="cell cell-red"></div>
-                        <div id="cell5-2" class="cell cell-blue"></div>
+                        <div id="cell5-1" class="cell cell-empty"></div>
+                        <div id="cell5-2" class="cell cell-empty"></div>
                         <div id="cell5-3" class="cell cell-empty"></div>
                         <div id="cell5-4" class="cell cell-empty"></div>
                         <div id="cell5-5" class="cell cell-empty"></div>
