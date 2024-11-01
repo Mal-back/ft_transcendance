@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.utils import choices
 from rest_framework import serializers
-from .models import MatchUser, Match
+from .models import MatchUser, Match, InQueueUser
 
 class MatchUserSerializer(serializers.ModelSerializer):
     class Meta :
@@ -106,3 +106,8 @@ class MatchResultSerializer(serializers.Serializer):
     winner_points = serializers.IntegerField(required=True)
     looser_points = serializers.IntegerField(required=True)
     game_type = serializers.ChoiceField(choices=GAME_TYPE)
+
+class MatchMakingQueueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InQueueUser
+        fields = ['game_type']

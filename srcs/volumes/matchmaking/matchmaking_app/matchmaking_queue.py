@@ -11,7 +11,8 @@ def check_range_update(user:InQueueUser):
 
 def get_opponent(user:InQueueUser):
     check_range_update(user)
-    potential_opps = InQueueUser.objects.filter(win_rate__range=(user.minimal_wr, user.maximal_wr)).exclude(user=user.user).order_by('?')
+    potential_opps = InQueueUser.objects.filter(win_rate__range=(user.minimal_wr, user.maximal_wr),
+                                                game_type=user.game_type).exclude(user=user.user).order_by('?')
     for potential_opp in potential_opps:
         check_range_update(potential_opp)
         reverse_opps = InQueueUser.objects.filter(win_rate__range=(potential_opp.minimal_wr, potential_opp.maximal_wr))
@@ -29,14 +30,21 @@ def get_opponent(user:InQueueUser):
                         )
                 response = ret['http://game:8443/api/game/pong-remote/create/'] 
                 matchId = response.text.strip('"')
-                Match.objects.create
             except (RequestsFailed, InvalidCredentialsException):
-                pass
+                raise YouHaveNoOpps('You\'re an OG with no opps')
             try:
                 player1 = MatchUser.objects.get(username=user.user)
                 player2 = MatchUser.objects.get(username=potential_opp.user)
             except MatchUser.DoesNotExit:
-                pass
+                raise YouHaveNoOpps('You\'re an OG with no opps')
+            match = Match.objects.create(player1=player1,
+                                 player2=player2,
+                                 game_type=user.game_type,
+                                 matchId=matchId,
+                                 status='in_progress')
+            user.delete()
+            potential_opp.delete()
+            return match
     raise YouHaveNoOpps('You\'re an OG with no opps')
 
 class YouHaveNoOpps(Exception):
