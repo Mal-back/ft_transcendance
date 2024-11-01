@@ -210,14 +210,13 @@ class HandleMatchResult(APIView):
         serializer = MatchResultSerializer(data=request.data)
         match = self.get_object(kwargs['matchId'])
         if serializer.is_valid():
-            data = serializer.save()
-        if match.tournament is None :
-            end_single_match(match, data)
-            return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
-        else :
-            # tournament logic here
-            pass
-        return Response({'Error':'Error'}, status=status.HTTP_400_BAD_REQUEST)
+            if match.tournament is None :
+                end_single_match(match, serializer.validated_data)
+                return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
+            else :
+                # tournament logic here
+                pass
+        return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class DebugSetGameAsFinished(generics.UpdateAPIView):
     queryset = Match.objects.all()
@@ -263,4 +262,4 @@ class MatchMakingRequestMatch(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 class MatchMakingLeaveQueue(APIView):
-
+    pass

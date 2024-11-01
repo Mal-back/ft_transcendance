@@ -387,6 +387,7 @@ class PongRemoteGameConsumer(SyncConsumer):
 
 	def send_result(self, event):
 		url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
+		event["End_state"].update({'game_type':'pong'})
 		print("Sending result to url : " + url)
 		print("End state = " + str(event["End_state"]))
 		try: 

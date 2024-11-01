@@ -11,7 +11,7 @@ class MatchUserSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ['winner', 'looser', 'winner_points', 'looser_points', 'game_type', 'played_at']
+        fields = ['winner', 'looser', 'winner_points', 'looser_points', 'game_type',]
 
 class MatchGetSerializer(serializers.ModelSerializer):
     winner_profile = serializers.SerializerMethodField()

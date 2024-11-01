@@ -14,8 +14,7 @@ def end_single_match(match, data):
         except (RequestsFailed, InvalidCredentialsException):
             pass
         try :
-            data.update({'played_at':match.created_at})
-            sender.send_requests(urls=["http://matchmaking:8443/api/history/match/create/"],
+            sender.send_requests(urls=["http://history:8443/api/history/match/create/"],
                                  method='post',
                                  expected_status=[201],
                                  body=data) 
