@@ -101,7 +101,7 @@ const router = async () => {
     document.querySelector("#app").innerHTML = "";
     await view.checkLogin();
     document.querySelector("#app").innerHTML = await view.getHtml();
-    if (match.route.path == "/pong-local" || match.route.path == "/pong")
+    if (match.route.path == "/c4" || match.route.path == "/pong")
       await view.game();
     await view.addEventListeners();
   } catch (error) {

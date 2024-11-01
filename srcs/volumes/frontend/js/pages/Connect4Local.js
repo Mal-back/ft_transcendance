@@ -28,6 +28,7 @@ export default class extends AbstractView {
                 <div class="d-flex justify-content-center text-black text-section mt-4 w-80">
                     <div class="row w-100 text-center">
                         <div class="col-4 d-flex justify-content-center" id="User1">
+                        <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div>
                             <h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal"
                                 data-bs-target="#playerModal1"><span id="leftUser" class="user1-txt"></span></h3>
                         </div>
@@ -37,6 +38,7 @@ export default class extends AbstractView {
                         <div class="col-4 d-flex justify-content-center" id="User2">
                             <h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal"
                                 data-bs-target="#playerModal2"><span id="rightUser" class="user2-txt"></span></h3>
+                            <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>
                         </div>
                     </div>
                 </div>
@@ -163,13 +165,13 @@ export default class extends AbstractView {
     }
 
     async game() {
+        console.log("COUCOU");
         try {
             const params = new URLSearchParams(window.location.search);
             let auth_token = null;
             let mode = params.get("mode");
             let connection = params.get("connection");
             if (!connection) connection = "local";
-            console.log("Init Game");
             let webScoketURL = `wss://${getIpPortAdress()}/api/game/c4-local/join/`;
             if (connection != "local") {
                 webScoketURL = `wss://${getIpPortAdress()}/api/game/c4-remote/join/`;
@@ -178,37 +180,109 @@ export default class extends AbstractView {
             this.connect4.initC4(
                 "ongoing-game",
                 webScoketURL,
-                mode,
+                connection,
                 auth_token,
             );
-            const User1Text = document.getElementById("leftUser");
-            const User2Text = document.getElementById("rightUser");
-            const UserTurnText = document.getElementById("userTurn");
-            if (mode == "tournament_local") {
-                console.log("tournament mode")
-                this.tournament = JSON.parse(
-                    sessionStorage.getItem("tournament_transcendence_local"),
+            if (mode == "tournament") {
+                console.log("tournament mode");
+                const tournament = sessionStorage.getItem(
+                    "tournament_transcendence_local",
                 );
-                console.log("TOURNAMENT START CONNECT4:", this.tournament);
+                if (!tournament) {
+                    navigateTo("/c4-local-lobby");
+                    showModal(
+                        "Error",
+                        "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+                    );
+                    return;
+                }
+                const parsedTournament = JSON.parse(tournament);
+                if (
+                    !parsedTournament.round ||
+                    !parsedTournament.PlayerA ||
+                    !parsedTournament.PlayerB
+                ) {
+                    {
+                        navigateTo("/c4-local-lobby");
+                        showModal(
+                            "Error",
+                            "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+                        );
+                        return;
+                    }
+                }
+                console.log("TOURNAMENT START C4:", parsedTournament);
                 this.connect4.setUsername(
-                    this.tournament.PlayerA[this.tournament.round.currentMatch].name,
-                    this.tournament.PlayerB[this.tournament.round.currentMatch].name,
-                    this.tournament
+                    parsedTournament.PlayerA[parsedTournament.round.currentMatch].name,
+                    parsedTournament.PlayerB[parsedTournament.round.currentMatch].name,
+                    parsedTournament,
                 );
-
-            } else {
-                console.log("not tournament mode")
-
             }
-            const objectPlayers = this.connect4.getUsername();
-            User1Text.innerText = objectPlayers.User1;
-            User2Text.innerText = objectPlayers.User2;
-            UserTurnText.innerText = objectPlayers.UserTurn;
         } catch (error) {
             if (error instanceof CustomError) throw error;
             else {
                 console.error("game:", error);
             }
+        }
+    }
+
+    async requestAvatars(player_1Username, player_2Username) {
+        let ret = [];
+        try {
+            const requestUser1 = await this.makeRequest(
+                `api/users/${player_1Username}`,
+                "GET",
+            );
+            const responseUser1 = await fetch(requestUser1);
+            if (responseUser1.ok) {
+                const data = await this.getErrorLogfromServer(responseUser1, true);
+                ret.push(data.profilePic);
+            } else {
+                const data = await this.getErrorLogfromServer(responseUser1);
+                console.error(`RequestAvatars: fail for ${player_1Username}`, data);
+            }
+            const requestUser2 = await this.makeRequest(
+                `api/users/${player_2Username}`,
+                "GET",
+            );
+            const responseUser2 = await fetch(requestUser2);
+            if (responseUser2.ok) {
+                const data = await this.getErrorLogfromServer(responseUser2, true);
+                ret.push(data.profilePic);
+            } else {
+                const data = await this.getErrorLogfromServer(responseUser2);
+                console.error(`RequestAvatars: fail for ${player_2Username}`, data);
+            }
+            return ret;
+        } catch (error) {
+            console.error("requestAvatars:", error);
+        }
+    }
+
+    async handleGetUsername(mode, player_1Username, player_2Username, currentPlayer) {
+        try {
+            console.log("View:handleGetUsername");
+            if (mode == "remote") {
+                const avatars = await this.requestAvatars(
+                    player_1Username,
+                    player_2Username,
+                );
+                const User1Avatar = document.getElementById("User1Avatar");
+                const User2Avatar = document.getElementById("User2Avatar");
+                if (avatars) {
+                    User1Avatar.style = `background-image: url(${avatars[0]})`;
+                    User2Avatar.style = `background-image: url(${avatars[1]})`;
+                }
+            }
+            const User1Text = document.getElementById("leftUser");
+            const User2Text = document.getElementById("rightUser");
+            const UserTurnText = document.getElementById("userTurn");
+
+            User1Text.innerText = player_1Username;
+            User2Text.innerText = player_2Username;
+            UserTurnText.innerText = currentPlayer;
+        } catch (error) {
+            console.error("handleSetUsername:", error);
         }
     }
 

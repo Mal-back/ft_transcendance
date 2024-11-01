@@ -2,7 +2,7 @@ import { navigateTo } from "../router.js";
 import { getIpPortAdress } from "../Utils/Utils.js";
 
 export default class Connect4 {
-    constructor() {
+    constructor(setUsernameCallBack) {
         this.rows = 6;
         this.cols = 7;
         this.context = null;
@@ -10,10 +10,12 @@ export default class Connect4 {
         this.mode = "local";
         this.pingInterval = null;
         this.timeout = null;
+        this.redirectURL = null;
+        this.token = null;
+
         this.gameActive = true;
         this.gameStart = false;
         this.player1 = {
-            player: "player_1",
             username: "Folklore",
             keyPressTimeout: null,
             name: "player_1",
@@ -22,7 +24,6 @@ export default class Connect4 {
             piece: "X",
         };
         this.player2 = {
-            player: "player_2",
             username: "Evermore",
             keyPressTimeout: null,
             name: "player_2",
@@ -36,45 +37,83 @@ export default class Connect4 {
         this.handleWebSocketClose = this.handleWebSocketClose.bind(this);
         this.handleWebSocketError = this.handleWebSocketError.bind(this);
         this.handleWebSocketMessage = this.handleWebSocketMessage.bind(this);
-        this.placePiece = this.sendPlayerMovement.bind(this);
+        this.sendPlayerMovement = this.sendPlayerMovement.bind(this);
         this.handleUnloadPage = this.handleUnloadPage.bind(this);
+        this.setUsernameCallBack = setUsernameCallBack;
     }
 
     initC4(
         canvas = "ongoing-game",
         websocket = `wss://${getIpPortAdress()}/api/game/c4-local/join/`,
         mode = "local",
+        token = null,
     ) {
-        this.canvas = document.getElementById(canvas);
+        // this.canvas = document.getElementById(canvas);
+        // this.context = this.canvas.getContext("2d");
         this.mode = mode;
-        this.context = this.canvas.getContext("2d");
+        this.token = token;
+        console.log("COUCOU");
+        this.redirectURL = this.setRedirecturl();
+        document.getElementById('User1').innerHTML = `<h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#playerModal1">${this.player1.span}${this.player1.username}</span></h3>`
+        document.getElementById('User2').innerHTML = `<h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#playerModal2">${this.player2.span}${this.player2.username}</span></h3>`
+        document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
+        document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
+        document.getElementById('user1-modal').innerHTML = `<p>${this.player1.username} is <span class="user1-txt">${this.player1.color}</span></p>`;
+        document.getElementById('user2-modal').innerHTML = `<p>${this.player2.username} is <span class="user2-txt">${this.player2.color}</span></p>`;
+        document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
         this.webSocket = new WebSocket(websocket);
-        document.getElementById('User1').innerHTML = `<h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#playerModal1">${p1.span}${p1.username}</span></h3>`
-        document.getElementById('User2').innerHTML = `<h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#playerModal2">${p2.span}${p2.username}</span></h3>`
-        document.getElementById('User1').setAttribute('title', `${p1.username} is ${p1.color}`);
-        document.getElementById('User2').setAttribute('title', `${p2.username} is ${p2.color}`);
-        document.getElementById('user1-modal').innerHTML = `<p>${p1.username} is <span class="user1-txt">${p1.color}</span></p>`;
-        document.getElementById('user2-modal').innerHTML = `<p>${p2.username} is <span class="user2-txt">${p2.color}</span></p>`;
-        document.getElementById("Turn").innerHTML = `<h3>It's ${p1.span}${p1.username}</span>'s turn!</h3>`;
+    }
+
+    setRedirecturl() {
+        if (this.tournament) {
+            return "/c4-local-tournament";
+        }
+        switch (this.mode) {
+            case "remote": {
+                return "/c4-remote-menu";
+            }
+            default: {
+                return "/c4-local-menu";
+            }
+        }
+    }
+
+    setToken(authToken) {
+        this.token = authToken;
+        console.log("TOKEN IN PONG:", authToken);
     }
 
     setUsername(player1Name, player2Name, tournament) {
         this.player1.username = player1Name;
         this.player2.username = player2Name;
         this.tournament = tournament;
+        this.redirectURL = this.setRedirecturl();
     }
 
     getUsername() {
-        return {
-            mode: this.mode,
-            User1: this.player1.username,
-            User2: this.player2.username,
-            UserTurn: this.currentPlayer.username
-        };
+        console.log("Pong:getUsername");
+        this.setUsernameCallBack(
+            this.mode,
+            this.player1.username,
+            this.player2.username,
+            this.currentPlayer.username
+        );
     }
 
     handleWebSocketOpen(ev) {
         console.log("WEBSOCKET IS OPEN");
+        if (this.mode == "remote") {
+            console.log("CouCOU");
+            let uuid = sessionStorage.getItem("transcendence_game_id");
+
+            const body = {
+                type: "join_game",
+                game_id: uuid,
+                auth_key: this.token,
+            };
+            console.log("BODY JOIN:", body);
+            this.webSocket.send(JSON.stringify(body));
+        }
         this.webSocket.send(JSON.stringify({ type: "init_game" }));
         this.webSocket.send(JSON.stringify({ type: "get_config" }));
         this.startTimeout();
@@ -84,15 +123,14 @@ export default class Connect4 {
         console.error("Socket is closed");
         this.removeC4Event();
         this.gameStart = false;
-        if (this.mode == "tournament_local") {
-            navigateTo("/pong-local-tournament");
-        }
+        navigateTo(this.redirectURL);
     }
 
     handleWebSocketError(ev) {
         console.error("Websocket fail: ", ev);
         this.removeC4Event();
         this.gameStart = false;
+        navigateTo(this.redirectURL);
     }
 
     printMessage(data) {
@@ -121,6 +159,7 @@ export default class Connect4 {
 
 
     drawFrame(data) {
+        console.log(data)
         if (data.currentPlayer !== this.currentPlayer.player) {
             this.togglePlayer();
             this.updateUI();
@@ -168,8 +207,9 @@ export default class Connect4 {
             }
             case "end_state": {
                 console.log("END:", data);
+                this.removeC4Event();
                 this.printMessage(data);
-                if (this.mode == "tournament_local") {
+                if (this.tournament) {
                     console.log("TOURNAMENT:", this.tournament);
                     const playerA =
                         this.tournament.PlayerA[this.tournament.round.currentMatch];
@@ -196,10 +236,9 @@ export default class Connect4 {
                         "tournament_transcendence_local",
                         JSON.stringify(this.tournament),
                     );
-                    navigateTo("/c4-local-tournament");
                 }
-                this.removeC4Event();
-                break;
+                navigateTo(this.redirectURL);
+                return;
             }
             default: {
                 console.log("Unknown message: ", data);
@@ -273,13 +312,16 @@ export default class Connect4 {
 
 
     sendPlayerMovement(player, col) {
-        const movementData = {
-            type: "move",
-            player: player,
-            col: col
-        };
-        this.webSocket.send(JSON.stringify(movementData));
-        console.info("Sent", movementData);
+        if (this.webSocket.readyState === WebSocket.OPEN) {
+            console.log(player)
+            const movementData = {
+                type: "put",
+                player: player,
+                column: col
+            };
+            this.webSocket.send(JSON.stringify(movementData));
+            console.info("Sent", movementData);
+        }
     }
 
 
