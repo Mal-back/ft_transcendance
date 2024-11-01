@@ -72,6 +72,7 @@ export default class Pong {
     this.redirectURL = this.setRedirecturl();
     this.scoreId = document.getElementById(scoreId);
     this.context = this.canvas.getContext("2d");
+    console.log("connecting to :", websocket);
     this.webSocket = new WebSocket(websocket);
   }
 
@@ -107,8 +108,9 @@ export default class Pong {
   }
 
   async handleWebSocketOpen(ev) {
-    console.log("WEBSOCKET IS OPEN");
+    console.log("WEBSOCKET IS OPEN: mode = ", this.mode);
     if (this.mode == "remote") {
+      console.log("CouCOU");
       let uuid = sessionStorage.getItem("transcendence_game_id");
 
       const body = {

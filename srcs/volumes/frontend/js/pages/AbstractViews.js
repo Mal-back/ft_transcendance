@@ -234,7 +234,7 @@ export default class AbstractViews {
     }
   }
 
-  async fetchInvites() {
+  async fetchInvites(boolGame) {
     AbstractViews.invitesArray = [];
     console.log("fetchNotifications");
     try {
@@ -248,16 +248,17 @@ export default class AbstractViews {
       console.log(response);
       console.log(data);
       const badge = document.getElementById("notificationbell");
-      if (data.count == 0) {
+      if (data.count  + boolGame == 0) {
         badge.innerHTML = "";
         return;
       }
+      badge.innerHTML = `<div class="notification-badge">${boolGame} </div>`;
       const username = sessionStorage.getItem("username_transcendence");
       if (response.status != 200) {
         return;
       }
       await this.createInvites(data, username);
-      badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length}</div>`;
+      badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length + boolGame} </div>`;
     } catch (error) {
       console.log("caught error");
       if (error instanceof CustomError) throw error;
@@ -269,7 +270,7 @@ export default class AbstractViews {
 
   async updateOnGoing(data) {
     const opponentInviteId = document.querySelector("#opponentInviteId");
-    const opponentInviteAvatar = document.querySelector("opponentInviteAvatar");
+    const opponentInviteAvatar = document.querySelector("#opponentInviteAvatar");
     let opponent = data.player1;
     const username = sessionStorage.getItem("username_transcendence");
     if (username != data.player1) {
@@ -307,13 +308,15 @@ export default class AbstractViews {
         console.log("OngoingGame:", response);
         const data = await this.getErrorLogfromServer(response, true);
         console.log("OngoingGame:", data);
-        await updateOnGoing(data);
+        await this.updateOnGoing(data);
         sessionStorage.setItem("transcendence_game_id", data.matchId);
         onGoingGame.style.display = "block";
         joinButton.dataset.redirectUrl = "/pong?connection=remote";
+        return (1);
       } else {
         joinButton.dataset.redirectUrl = "";
         onGoingGame.style.display = "none";
+        return (0);
       }
     } catch (error) {
       if (error instanceof CustomError) throw error;
@@ -325,8 +328,9 @@ export default class AbstractViews {
 
   async fetchNotifications() {
     try {
-      await this.fetchOnGoingGame();
-      await this.fetchInvites();
+      const boolGame = await this.fetchOnGoingGame();
+      console.log("BoolGame = ", boolGame);
+      await this.fetchInvites(boolGame);
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
@@ -392,6 +396,8 @@ export default class AbstractViews {
       logIcon.title = this.lang.getTranslation(["menu", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
+      const badge = document.getElementById("notificationbell");
+      badge.innerHTML = "";
       if (notifButton.style.display == "block") {
         notifButton.style.display = "none";
         inviteModalEl.removeEventListener(

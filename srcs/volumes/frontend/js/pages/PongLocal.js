@@ -60,7 +60,7 @@ export default class extends AbstractView {
       this.pong.initPong(
         "ongoing-game",
         webScoketURL,
-        mode,
+        connection,
         "scoreId",
         auth_token,
       );
@@ -99,6 +99,7 @@ export default class extends AbstractView {
           parsedTournament,
         );
       }
+      rightPlayerText.innerText = objectPlayers.rightPlayer;
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
