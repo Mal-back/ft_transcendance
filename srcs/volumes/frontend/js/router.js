@@ -197,7 +197,7 @@ document.addEventListener("keydown", (ev) => {
 });
 
 document
-  .getElementById("#buttonOnGoingGame")
+  .getElementById("buttonOnGoingGame")
   .addEventListener("click", (ev) => {
     ev.preventDefault();
     const url = ev.currentTarget.dataset.redirectUrl;
