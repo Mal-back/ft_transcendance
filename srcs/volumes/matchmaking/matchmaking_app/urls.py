@@ -14,6 +14,11 @@ urlpatterns = [
         path('match/<int:pk>/delete/', views.MatchDeleteInvite.as_view(), name='match-delete-invite'),
         path('match/get_accepted/', views.GetAcceptedMatch.as_view(), name='get-accepted-match'),
         path('match/<uuid:matchId>/finished/', views.HandleMatchResult.as_view(), name='handle-match-result'),
+        path('matchmaking/join/', views.MatchMakingJoinQueue.as_view(), name='matchmaking-join-queue'),
+        path('matchmaking/get_match/', views.MatchMakingRequestMatch.as_view(), name='matchmaking-join-queue'),
+        path('matchmaking/leave/', views.MatchMakingLeaveQueue.as_view(), name='matchmaking-leave-queue'),
+        path('matchmaking/<str:username>/win/', views.DebugIncrementVictory.as_view(), name='matchmaking-leave-queue'),
+        path('matchmaking/<str:username>/lost/', views.DebugIncrementLoose.as_view(), name='matchmaking-leave-queue'),
         path('match/<int:pk>/debug_force_finished/', views.DebugSetGameAsFinished.as_view(), name='force-finished-game',),
 ]
 

@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404
 from requests import delete
 from rest_framework import generics, response, status
@@ -216,14 +216,12 @@ class HandleMatchResult(APIView):
             else :
                 # tournament logic here
                 pass
-        return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class DebugSetGameAsFinished(generics.UpdateAPIView):
-    queryset = Match.objects.all()
-    lookup_field = 'pk'
-
-    def update(self, request, *args, **kwargs):
-        match = self.get_object()
+class DebugSetGameAsFinished(APIView):
+    def get(self, request, *args, **kwargs):
+        id = self.kwargs.get('pk')
+        match = Match.objects.get(id=id)
         match.status = 'finished'
         match.save()
         return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
@@ -243,16 +241,18 @@ class MatchMakingJoinQueue(APIView):
         serializer = MatchMakingQueueSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, win_rate=request.user.win_rate)
+            print(request.user.win_rate)
             return Response({'Ok':'You are in queue'}, status=status.HTTP_201_CREATED)
-        return Response({serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MatchMakingRequestMatch(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try :
             queueUser = InQueueUser.objects.get(user=request.user.username)
-        except queueUser.DoesNotExist :
+            print('cc')
+        except InQueueUser.DoesNotExist :
             return Response({'Error': 'You\'re not in the queue'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             new_match = get_opponent(queueUser)
@@ -262,4 +262,26 @@ class MatchMakingRequestMatch(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 class MatchMakingLeaveQueue(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        try :
+            queueUser = InQueueUser.objects.get(user=request.user.username)
+        except InQueueUser.DoesNotExist :
+            return Response({'Error': 'You\'re not in the queue'}, status=status.HTTP_400_BAD_REQUEST)
+        queueUser.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class DebugIncrementVictory(APIView):
+    def get(self, request, *args, **kwargs):
+        username = self.kwargs.get('username')
+        if username is not None:
+            MatchUser.objects.filter(username=username).update(match_won=F('match_won') + 1) 
+        return Response({'Ok':'Kr'}, status=status.HTTP_200_OK)
+
+class DebugIncrementLoose(APIView):
+    def get(self, request, *args, **kwargs):
+        username = self.kwargs.get('username')
+        if username is not None:
+            MatchUser.objects.filter(username=username).update(match_lost=F('match_lost') + 1) 
+        return Response({'Ok':'Kr'}, status=status.HTTP_200_OK)
