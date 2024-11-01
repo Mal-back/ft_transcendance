@@ -51,7 +51,7 @@ class IsGame(permissions.BasePermission):
 
             # Check if the service_name is "Auth"
             service_name = decoded_token.get('service_name')
-            if service_name != 'pong' or service_name != 'connect_four':
+            if service_name != 'game':
                 return False  # Service name does not match
 
             return True  # Service name matches "Auth"

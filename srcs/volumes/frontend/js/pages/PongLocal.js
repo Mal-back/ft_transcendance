@@ -7,7 +7,7 @@ import { getIpPortAdress, showModal } from "../Utils/Utils.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Local Pong");
+    this.setTitle("Pong");
     this.pong = new Pong(this.handleGetUsername.bind(this));
   }
 
@@ -36,6 +36,10 @@ export default class extends AbstractView {
                     <div class="canvas-container">
                       <canvas id="ongoing-game"></canvas>
                     </div>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-secondary" style="margin-right: 5vw;">HELP</button>
+                        <button type="button" class="btn btn-danger">GIVE UP</button>
+                    </div>
                 </div>
             </div>`;
     return htmlContent;
@@ -60,7 +64,7 @@ export default class extends AbstractView {
       this.pong.initPong(
         "ongoing-game",
         webScoketURL,
-        mode,
+        connection,
         "scoreId",
         auth_token,
       );
@@ -94,8 +98,8 @@ export default class extends AbstractView {
         }
         console.log("TOURNAMENT START PONG:", parsedTournament);
         this.pong.setUsername(
-          parsedTournament.PlayerA[this.tournament.round.currentMatch].name,
-          parsedTournament.PlayerB[this.tournament.round.currentMatch].name,
+          parsedTournament.PlayerA[parsedTournament.round.currentMatch].name,
+          parsedTournament.PlayerB[parsedTournament.round.currentMatch].name,
           parsedTournament,
         );
       }
@@ -140,24 +144,26 @@ export default class extends AbstractView {
     }
   }
 
-  async handleGetUsername(player_1Username, player_2Username) {
+  async handleGetUsername(mode, player_1Username, player_2Username) {
     try {
       console.log("View:handleGetUsername");
-      const avatars = await this.requestAvatars(
-        player_1Username,
-        player_2Username,
-      );
+      if (mode == "remote") {
+        const avatars = await this.requestAvatars(
+          player_1Username,
+          player_2Username,
+        );
+        const leftPlayerAvatar = document.getElementById("leftPlayerAvatar");
+        const rightPlayerAvatar = document.getElementById("rightPlayerAvatar");
+        if (avatars) {
+          leftPlayerAvatar.style = `background-image: url(${avatars[0]})`;
+          rightPlayerAvatar.style = `background-image: url(${avatars[1]})`;
+        }
+      }
       const leftPlayerText = document.getElementById("leftPlayer");
       const rightPlayerText = document.getElementById("rightPlayer");
-      const leftPlayerAvatar = document.getElementById("leftPlayerAvatar");
-      const rightPlayerAvatar = document.getElementById("rightPlayerAvatar");
 
       leftPlayerText.innerText = player_1Username;
       rightPlayerText.innerText = player_2Username;
-      if (avatars) {
-        leftPlayerAvatar.style = `background-image: url(${avatars[0]})`;
-        rightPlayerAvatar.style = `background-image: url(${avatars[1]})`;
-      }
     } catch (error) {
       console.error("handleSetUsername:", error);
     }

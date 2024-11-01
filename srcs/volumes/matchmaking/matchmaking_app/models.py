@@ -13,6 +13,11 @@ class MatchUser(models.Model):
     @property
     def is_authenticated(self):
         return True
+
+    @property
+    def win_rate(self):
+        total_matches = self.match_lost + self.match_won
+        return self.match_won / total_matches if total_matches != 0 else 0
         
 class InQueueUser(models.Model):
     user = models.ForeignKey('MatchUser',
@@ -22,6 +27,8 @@ class InQueueUser(models.Model):
     win_rate = models.FloatField()
     range_to_search = models.FloatField(default=0.05)
     last_range_update = models.DateTimeField(default=now)
+    game_type = models.TextField(choices=[('pong', 'Pong'),
+                                           ('connect_four', 'Connect four')])
 
     @property
     def minimal_wr(self):
