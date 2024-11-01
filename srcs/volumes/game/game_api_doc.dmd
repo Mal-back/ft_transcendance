@@ -227,6 +227,8 @@ B - Remote game:
 
 	Info : coordinates [0, 0] is at top-left of the board.
 	Warning : If you get configuration while game runing, you can not access to current player's and ball's positions with the configuration. It will always send you initial coordinates.
+	
+	IMPORTANT : In remote game, "get_config" will trigger a "pause" and "frame" send from the server, so you can know the current state of the game in case of reconection into a game.
 
 
 4 - Start the game :
@@ -245,6 +247,8 @@ B - Remote game:
 
 Player's coordinates are the top-left coordinates of the pad.
 Ball's coordinates are the center of the ball.
+
+IMPORTANT : Before the first frame, you will receive a "pause start" event, this means both players a ready and the game is about to start.
 
 5 - Move the player :
 
