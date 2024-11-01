@@ -77,7 +77,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 					"game_id": self.group_name,
 				})
 			except:
-				log.info("Error sending end_thread to LocalEngine")
+				log.info("Error sending end_thread to PongLocalEngine")
 		try:
 			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except:
@@ -95,7 +95,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 				"game_id": self.group_name,
 			})
 		except:
-			log.info("Error sending init_game to LocalEngine")
+			log.info("Error sending init_game to PongLocalEngine")
 			await self.close()
 		
 	async def get_config(self):
@@ -105,7 +105,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 				"game_id": self.group_name,
 			})
 		except:
-			log.info("Error sending get_config to LocalEngine")
+			log.info("Error sending get_config to PongLocalEngine")
 			await self.close()
 
 	async def start_game(self):
@@ -115,7 +115,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 				"game_id": self.group_name,
 			})
 		except:
-			log.info("Error sending start_game to LocalEngine")
+			log.info("Error sending start_game to PongLocalEngine")
 			await self.close()   
 
 	async def move(self, content):
@@ -133,7 +133,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 				"direction": direction
 			})
 		except:
-			log.info("Error sending move to LocalEngine")
+			log.info("Error sending move to PongLocalEngine")
 			await self.close()
 		
 	async def pause(self, content):
@@ -149,7 +149,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 				"action" : action,
 			})
 		except:
-			log.info("Error sending pause to LocalEngine")
+			log.info("Error sending pause to PongLocalEngine")
 			await self.close()
   
 	async def surrend(self, content):
@@ -165,7 +165,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 				"surrender": surrender,
 			})
 		except:
-			log.info("Error sending surrend to LocalEngine")
+			log.info("Error sending surrend to PongLocalEngine")
 			await self.close()
 
 	async def send_error(self, event):
@@ -175,7 +175,7 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 			await self.send(dumps(data))
 		except:
 			log.info("Can not send on closed websocket")
-		if data["close"] == "true":
+		if event["close"] == "true":
 			await self.close()
 
 	async def send_frame(self, event):
@@ -264,7 +264,7 @@ class PongLocalGameConsumer(SyncConsumer):
 			self.game_instances[game_id] = PongLocalEngine(game_id=game_id)
 			self.game_instances[game_id].start()
 		except Exception:
-			self.error("can not init the game", "true")
+			self.error("can not init the game", game_id,  "true")
 
 	def start_game(self, event):
 		game_id = event["game_id"]

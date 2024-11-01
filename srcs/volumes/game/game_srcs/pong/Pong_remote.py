@@ -71,7 +71,7 @@ class PongRemoteEngine(threading.Thread):
 		self.wait_start()
 		while True:
 			self.frame = self.get_next_frame()
-			self.send_frame()
+			self.send_frame("")
 			if self.frame.end == True or self.check_surrender() == True:
 				self.send_end_state(self.frame)
 				break
@@ -165,7 +165,7 @@ class PongRemoteEngine(threading.Thread):
 			else:
 				self.runing_player_1 = "stop"
 				self.runing_player_2 = "stop"
-				self.send_pause("stop")
+				self.send_pause("stop", "")
 		count = 0
 		while True:
 			with self.start_lock:
@@ -179,7 +179,7 @@ class PongRemoteEngine(threading.Thread):
 			# 		break
 			count += 1
 			time.sleep(self.frame_rate)
-		self.send_pause("start")
+		self.send_pause("start", "")
 
 	   
 	def check_surrender(self) -> bool:
@@ -202,9 +202,11 @@ class PongRemoteEngine(threading.Thread):
 		return new_frame
  
    
-	def send_frame(self) -> None:
+	def send_frame(self, dest : str) -> None:
+		if dest == "":
+			dest = self.game_id
 		try:
-			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+			async_to_sync(self.channel_layer.group_send)(dest, {
 				"type": "send.frame",
 				"Frame": self.frame.render(),
 			})
@@ -218,13 +220,21 @@ class PongRemoteEngine(threading.Thread):
 				"type": "send.config",
 				"Config": conf,
 			})
+			self.send_frame(channel_name)
+			with self.start_lock:
+				if self.runing_player_1 == "stop" or self.runing_player_2 == "stop":
+					self.send_pause("stop", channel_name)
+				else:
+					self.send_pause("start", channel_name)
 		except Exception:
 			print("Can not send config to group channel " + self.game_id)
   
 
-	def send_pause(self, action : str) -> None:
+	def send_pause(self, action : str, dest : str) -> None:
+		if dest == "":
+			dest = self.game_id
 		try:
-			async_to_sync(self.channel_layer.group_send)(self.game_id, {
+			async_to_sync(self.channel_layer.group_send)(dest, {
 				"type": "send.pause",
 				"Pause": action
 			})
