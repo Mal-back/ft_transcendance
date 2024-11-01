@@ -69,6 +69,7 @@ class PongRemoteEngine(threading.Thread):
  
 	def run(self) -> None:
 		self.wait_start()
+		self.send_pause("start");
 		while True:
 			self.frame = self.get_next_frame()
 			self.send_frame()

@@ -177,6 +177,7 @@ export default class Pong {
         break;
       }
       case "pause": {
+        console.log("receive pause");
         console.log(data);
         if (data.action == "start") {
           this.context.strokeText("", 10, 80);
@@ -262,9 +263,11 @@ export default class Pong {
           ev.preventDefault();
           if (!this.gameStart) {
             this.webSocket.send(JSON.stringify({ type: "start_game" }));
+            console.log("START");
             this.gameStart = true;
           } else {
             if (!this.gamePause) {
+              console.log("send pause");
               this.webSocket.send(
                 JSON.stringify({ type: "pause", action: "stop" }),
               );
@@ -277,6 +280,7 @@ export default class Pong {
               this.player2.downPressed = false;
               this.player2.lastDirection = null;
             } else {
+              console.log("send start");
               this.webSocket.send(
                 JSON.stringify({ type: "pause", action: "start" }),
               );
@@ -393,12 +397,12 @@ export default class Pong {
     console.log(data);
     this.serverWidth = data.board_len;
     this.serverHeight = data.board_height;
-    console.log(`Board Dimensions: ${this.serverWidth} * ${this.serverHeight}`);
+    // console.log(`Board Dimensions: ${this.serverWidth} * ${this.serverHeight}`);
 
     this.scaleX = this.canvas.width / this.serverWidth;
     this.scaleY = this.canvas.height / this.serverHeight;
-    console.log("scaleX", this.scaleX);
-    console.log("scaleY", this.scaleY);
+    // console.log("scaleX", this.scaleX);
+    // console.log("scaleY", this.scaleY);
 
     this.leftPaddle = {
       x: data.player_1.pos[0],
@@ -406,23 +410,23 @@ export default class Pong {
     };
     this.paddleHeight = data.pad_height;
     this.paddleWidth = data.pad_len;
-    console.log("paddleHeight:", this.paddleHeight);
-    console.log("paddleWidth:", this.paddleWidth);
-    console.log("LeftPaddle:", this.leftPaddle);
+    // console.log("paddleHeight:", this.paddleHeight);
+    // console.log("paddleWidth:", this.paddleWidth);
+    // console.log("LeftPaddle:", this.leftPaddle);
 
     this.rightPaddle = {
       x: data.player_2.pos[0],
       y: data.player_2.pos[1],
     };
-    console.log("RightPaddle:", this.rightPaddle);
+    // console.log("RightPaddle:", this.rightPaddle);
 
     this.ball = {
       x: data.ball[0],
       y: data.ball[1],
     };
     this.ballRadius = data.ball_size;
-    console.log("BallRadius:", this.ballRadius);
-    console.log("Ball:", this.ball);
+    // console.log("BallRadius:", this.ballRadius);
+    // console.log("Ball:", this.ball);
     if (this.mode == "remote")
       this.setUsername(data.player_1.username, data.player_2.username);
     this.getUsername();
@@ -434,20 +438,20 @@ export default class Pong {
       x: data.player_1.position[0],
       y: data.player_1.position[1],
     };
-    console.log("UpdatedLeftPaddle:", this.leftPaddle);
+    // console.log("UpdatedLeftPaddle:", this.leftPaddle);
 
     this.rightPaddle = {
       x: data.player_2.position[0],
       y: data.player_2.position[1],
     };
-    console.log("UpdatedRightPaddle:", this.rightPaddle);
+    // console.log("UpdatedRightPaddle:", this.rightPaddle);
 
     this.ball = {
       x: data.ball.position[0],
       y: data.ball.position[1],
     };
     this.scoreId.innerText = `${data.player_1.score} - ${data.player_2.score}`;
-    console.log("UpdatedBall:", this.ball);
+    // console.log("UpdatedBall:", this.ball);
     this.draw();
   }
 
@@ -459,12 +463,12 @@ export default class Pong {
       this.paddleWidth * this.scaleX,
       this.paddleHeight * this.scaleY,
     );
-    console.log("LeftPaddleInCanvas:", {
-      x: this.leftPaddle.x * this.scaleX,
-      y: this.leftPaddle.y * this.scaleY,
-      width: this.paddleWidth * this.scaleX,
-      height: this.paddleHeight * this.scaleY,
-    });
+    // console.log("LeftPaddleInCanvas:", {
+    //   x: this.leftPaddle.x * this.scaleX,
+    //   y: this.leftPaddle.y * this.scaleY,
+    //   width: this.paddleWidth * this.scaleX,
+    //   height: this.paddleHeight * this.scaleY,
+    // });
 
     this.context.fillStyle = "red";
     this.context.fillRect(
@@ -473,12 +477,12 @@ export default class Pong {
       this.paddleWidth * this.scaleX,
       this.paddleHeight * this.scaleY,
     );
-    console.log("rightPaddleInCanvas:", {
-      x: this.rightPaddle.x * this.scaleX,
-      y: this.rightPaddle.y * this.scaleY,
-      width: this.paddleWidth * this.scaleX,
-      height: this.paddleHeight * this.scaleY,
-    });
+    // console.log("rightPaddleInCanvas:", {
+    //   x: this.rightPaddle.x * this.scaleX,
+    //   y: this.rightPaddle.y * this.scaleY,
+    //   width: this.paddleWidth * this.scaleX,
+    //   height: this.paddleHeight * this.scaleY,
+    // });
     this.context.fillStyle = "white";
     this.context.beginPath();
     this.context.arc(
@@ -488,16 +492,16 @@ export default class Pong {
       0,
       Math.PI * 2,
     );
-    console.log("BallInCanvas:", {
-      x: this.ball.x * this.scaleX,
-      y: this.ball.y * this.scaleY,
-      radius: this.ballRadius * this.scaleX,
-    });
+    // console.log("BallInCanvas:", {
+    //   x: this.ball.x * this.scaleX,
+    //   y: this.ball.y * this.scaleY,
+    //   radius: this.ballRadius * this.scaleX,
+    // });
     this.context.fill();
     this.context.closePath();
   }
   draw() {
-    console.log("DRAW");
+    // console.log("DRAW");
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawPaddles();
   }
