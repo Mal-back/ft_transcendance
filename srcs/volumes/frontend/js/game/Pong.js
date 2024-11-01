@@ -2,7 +2,7 @@ import { navigateTo } from "../router.js";
 import { getIpPortAdress } from "../Utils/Utils.js";
 
 export default class Pong {
-  constructor() {
+  constructor(setUsernameCallBack) {
     this.canvas = null;
     this.context = null;
     this.webSocket = null;
@@ -49,6 +49,7 @@ export default class Pong {
     this.handleUnloadPage = this.handleUnloadPage.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.setUsernameCallBack = setUsernameCallBack;
   }
 
   initPong(
@@ -68,20 +69,17 @@ export default class Pong {
     });
     this.mode = mode;
     this.token = token;
-    this.setRedirecturl();
+    this.redirectURL = this.setRedirecturl();
     this.scoreId = document.getElementById(scoreId);
     this.context = this.canvas.getContext("2d");
     this.webSocket = new WebSocket(websocket);
   }
 
   setRedirecturl() {
+    if (this.tournament) {
+      return "/pong-local-tournament";
+    }
     switch (this.mode) {
-      case "tournament_local": {
-        return "/pong-local-tournament";
-      }
-      case "tournament_remote": {
-        return "/pong-remote-tournament";
-      }
       case "remote": {
         return "/pong-remote-menu";
       }
@@ -104,11 +102,8 @@ export default class Pong {
   }
 
   getUsername() {
-    return {
-      mode: this.mode,
-      leftPlayer: this.player1.username,
-      rightPlayer: this.player2.username,
-    };
+    console.log("Pong:getUsername");
+    this.setUsernameCallBack(this.player1.username, this.player2.username);
   }
 
   async handleWebSocketOpen(ev) {
@@ -133,15 +128,14 @@ export default class Pong {
     console.error("Socket is closed");
     this.removePongEvent();
     this.gameStart = false;
-    if (this.mode == "tournament_local") {
-      navigateTo("/pong-local-tournament");
-    }
+    navigateTo(this.redirectURL);
   }
 
   handleWebSocketError(ev) {
     console.error("Websocket fail: ", ev);
     this.removePongEvent();
     this.gameStart = false;
+    navigateTo(this.redirectURL);
   }
 
   printMessage(message, color) {
@@ -374,6 +368,7 @@ export default class Pong {
     clearTimeout(this.pingInterval);
     clearTimeout(this.timeout);
     if (this.webSocket) {
+      console.log("Closing Websocket");
       this.webSocket.close();
       this.webSocket.removeEventListener("open", this.handleWebSocketOpen);
       this.webSocket.removeEventListener("close", this.handleWebSocketClose);
@@ -382,6 +377,7 @@ export default class Pong {
         "message",
         this.handleWebSocketMessage,
       );
+      this.webSocket = null;
     }
     document.removeEventListener("beforeunload", this.handleUnloadPage);
     document.removeEventListener("keydown", this.handleKeyDown);
@@ -422,6 +418,7 @@ export default class Pong {
     this.ballRadius = data.ball_size;
     console.log("BallRadius:", this.ballRadius);
     console.log("Ball:", this.ball);
+    this.setUsername(data.player_1.username, data.player_2.username);
     this.draw();
   }
 

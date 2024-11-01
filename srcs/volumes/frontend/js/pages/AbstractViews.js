@@ -203,7 +203,7 @@ export default class AbstractViews {
         const data = await this.getErrorLogfromServer(response, true);
         console.log("inviteRequest: response:ok:data", data);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
-        navigateTo(`/pong-local?mode=remote`);
+        navigateTo(`/pong?connection=remote`);
       } else {
         const dataError = await this.getErrorLogfromServer(response);
         console.log("inviteRequest: fail response:data:", dataError);
@@ -234,7 +234,7 @@ export default class AbstractViews {
     }
   }
 
-  async fetchNotifications() {
+  async fetchInvites() {
     AbstractViews.invitesArray = [];
     console.log("fetchNotifications");
     try {
@@ -260,6 +260,74 @@ export default class AbstractViews {
       badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length}</div>`;
     } catch (error) {
       console.log("caught error");
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("fetchNotifications:", error);
+      }
+    }
+  }
+
+  async updateOnGoing(data) {
+    const opponentInviteId = document.querySelector("#opponentInviteId");
+    const opponentInviteAvatar = document.querySelector("opponentInviteAvatar");
+    let opponent = data.player1;
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username != data.player1) {
+      opponent = data.player2;
+    }
+    opponentInviteId.innerText = "";
+    opponentInviteId.innerText = opponent;
+    try {
+      const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
+      const response = await fetch(request);
+      if (response.ok) {
+        const data = await this.getErrorLogfromServer(response, true);
+        opponentInviteAvatar.style = `background-image: url(${data.profilePic})`;
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("updateOnGoing", error);
+      }
+    }
+  }
+
+  async fetchOnGoingGame() {
+    const onGoingGame = document.querySelector("#divOnGoingGame");
+    const joinButton = document.querySelector("#buttonOnGoingGame");
+    if (AbstractViews.AcceptInterval) return;
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/match/get_accepted",
+        "GET",
+      );
+      const response = await fetch(request);
+      if (response.status == 200) {
+        console.log("HERE");
+        console.log("OngoingGame:", response);
+        const data = await this.getErrorLogfromServer(response, true);
+        console.log("OngoingGame:", data);
+        await updateOnGoing(data);
+        sessionStorage.setItem("transcendence_game_id", data.matchId);
+        onGoingGame.style.display = "block";
+        joinButton.dataset.redirectUrl = "/pong?connection=remote";
+      } else {
+        joinButton.dataset.redirectUrl = "";
+        onGoingGame.style.display = "none";
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("FetchOnGoingGame:", error);
+      }
+    }
+  }
+
+  async fetchNotifications() {
+    try {
+      await this.fetchOnGoingGame();
+      await this.fetchInvites();
+    } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
         console.error("fetchNotifications:", error);

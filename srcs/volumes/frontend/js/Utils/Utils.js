@@ -72,5 +72,6 @@ export function getIpPortAdress() {
     return hostAndPort;
   } else {
     console.log("Invalid Hostname:", hostname);
+    return `${hostname}:${port}`;
   }
 }

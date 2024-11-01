@@ -163,17 +163,17 @@ export default class extends AbstractView {
       return;
     }
     try {
-      const usernameURIencoded = encodeURIComponent(nameForm);
+      // const usernameURIencoded = encodeURIComponent(nameForm);
       console.log("login before make request");
       const request = await this.makeRequest("/api/auth/login", "POST", {
-        username: usernameURIencoded,
+      username: nameForm,
         password: paswordForm,
       });
       const response = await fetch(request);
       console.log("Response: ", response);
       if (response.ok) {
         const data = await response.json();
-        setSessionStorage(data, usernameURIencoded);
+        setSessionStorage(data, nameForm);
         navigateTo("/");
       } else {
         const log = await this.getErrorLogfromServer(response);
