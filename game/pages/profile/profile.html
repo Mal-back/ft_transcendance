@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/colors/colors.css">
+    <link rel="stylesheet" href="../../css/profile.css">
+    <link rel="stylesheet" href="../../css/battle-history.css">
+    <link rel="stylesheet" href="../../css/background-basic.css">
+    <link rel="stylesheet" href="../../css/background-profile.css">
+    <title>Login</title>
+    <style>
+        .box {
+            border: 2px solid black;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .player-name {
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .history {
+            max-height: 50vh;
+            /* Set a max height for the scrollable area */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            /* border: 1px solid #ccc; */
+            /* Add a border */
+            padding: 10px;
+            /* Add some padding */
+            background-color: rgb(0, 0, 0, 0);
+            /* Background color */
+            border-radius: 5px;
+            /* Rounded corners */
+            scrollbar-width: thin;
+            /* Makes the scrollbar thinner */
+            scrollbar-color: rgba(255, 255, 255, 0.2);
+            /* Thumb color and background */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="background-color: gray;">
+            <div class="container d-flex align-items-center py-2">
+                <div class="icon-container d-flex align-items-center">
+                    <button class="btn btn-light" id="toggleSidebar" data-bs-toggle="offcanvas"
+                        data-bs-target="#sidebar" aria-controls="sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <a href="/" class="btn btn-light" title="Home">
+                        <i class="bi bi-house-fill"></i>
+                    </a>
+                    <a href="/authentification" class="btn btn-light" title="Logout">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+                </div>
+
+                <div id="mainTitle" class="text-black text-center flex-grow-1" style="font-size: 3.5vh;">
+                    FT_TRANSCENDENCE
+                </div>
+
+                <div class="icon-container-right dropdown d-flex align-items-center p">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="languageDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                        <li><a class="dropdown-item" href="?lang=fr">Français</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="offcanvas offcanvas-start bg-dark text-white" id="sidebar" tabindex="-1"
+                aria-labelledby="sidebarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="nav flex-column">
+                        <a class="nav-link text-white my-4" href="/" data-link id="menuHome"><i
+                                class="bi bi-house-fill"></i> HOME</a>
+                        <a class="nav-link text-white my-4" href="/game" data-link id="menuGame"><i
+                                class="bi bi-controller"></i> Game</a>
+                        <a class="nav-link text-white my-4" href="/profile" data-link id="menuProfile"><i
+                                class="bi bi-person"></i> Profile</a>
+                        <a class="nav-link text-white my-4" href="/friends" data-link id="menuFriends"><i
+                                class="bi bi-person-heart"></i> Friends</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogout"><i
+                                class="bi bi-box-arrow-in-right"></i> Logout</a>
+                        <a class="nav-link text-white my-4" href="/authentification" data-link id="menuLogin"><i
+                                class="bi bi-box-arrow-in-left"></i> Login</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="col d-flex justify-content-center">
+                <div class="background">
+                    <div class="Profile container">
+                        <div class="d-flex justify-content-center w-100">
+                            <!-- Top profile section (centered) -->
+                            <div class="top-profile d-flex flex-column justify-content-center align-items-center">
+                                <div class="rounded-circle Avatar status-playing" alt="Avatar"></div>
+                                <a class="black-txt">Username</a>
+                            </div>
+                        </div>
+
+                        <!-- Left-aligned profile info -->
+                        <div class="align-items-left mt-3 w-100">
+                            <div class="d-flex row justify-content-center align-items-center box">
+                                <p class="black-txt" id="winRate">Win Rate Pong: 75%</p>
+                                <p class="black-txt">Pong Battle History: <span><button
+                                            class="text-decoration-none text-primary color" data-bs-toggle="modal"
+                                            data-bs-target="#pongBattleHistoryModal">SHOW</button></span></p>
+                            </div>
+                            <div class="d-flex row justify-content-center align-items-center box">
+                                <p class="black-txt" id="winRate">Win Rate Connect4: 75%</p>
+                                <p class="black-txt">Connect4 Battle History: <span><button
+                                            class="text-decoration-none text-primary color" data-bs-toggle="modal"
+                                            data-bs-target="#connect4BattleHistoryModal">SHOW</button></span></p>
+                            </div>
+                        </div>
+                        <div class="align-items-right mt-3 w-100">
+                            <a type="button" class="btn bg-lightgray" id="settingsButton">Settings</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="pongBattleHistoryModal" tabindex="-1" aria-labelledby="termsOfUseModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="pongBattleHistoryModal">Pong Battle History</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                            <div class="row justify-content-center align-items-start">
+                                <div class="col-6">
+                                    <h5 class="text-center mb-3">Remote Battles :</h5>
+                                    <div class="box bg-light history">
+                                        <div class="bg-dark text-white text-center px-3 py-1 mb-1 rounded">
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                <!-- Player 1 -->
+                                                <div class="text-center player-container ">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name"><span>coucouuuuuuuuuuuuuuuu</span></div>
+                                                </div>
+                                                <!-- Match Info -->
+                                                <div class="text-center match-info ">
+                                                    <h5>WIN-LOSE</h5>
+                                                    <h4>1 - 0</h4>
+                                                    <p id="matchDate">DATE</p>
+                                                </div>
+                                                <!-- Player 2 -->
+                                                <div class="text-center player-container">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name">
+                                                        <span>helloooooooooooo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray text-white text-center px-3 py-1 mb-1 rounded">
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                <!-- Player 1 -->
+                                                <div class="text-center player-container ">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name"><span>coucouuuuuuuuuuuuuuuu</span></div>
+                                                </div>
+                                                <!-- Match Info -->
+                                                <div class="text-center match-info ">
+                                                    <h5>WIN-LOSE</h5>
+                                                    <h4>1 - 0</h4>
+                                                    <p id="matchDate">DATE</p>
+                                                </div>
+                                                <!-- Player 2 -->
+                                                <div class="text-center player-container">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name">
+                                                        <span>helloooooooooooo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-dark text-white text-center px-3 py-1 mb-1 rounded">
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                <!-- Player 1 -->
+                                                <div class="text-center player-container ">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name"><span>coucouuuuuuuuuuuuuuuu</span></div>
+                                                </div>
+                                                <!-- Match Info -->
+                                                <div class="text-center match-info ">
+                                                    <h5>WIN-LOSE</h5>
+                                                    <h4>1 - 0</h4>
+                                                    <p id="matchDate">DATE</p>
+                                                </div>
+                                                <!-- Player 2 -->
+                                                <div class="text-center player-container">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name">
+                                                        <span>helloooooooooooo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray text-white text-center px-3 py-1 mb-1 rounded">
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                <!-- Player 1 -->
+                                                <div class="text-center player-container ">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name"><span>coucouuuuuuuuuuuuuuuu</span></div>
+                                                </div>
+                                                <!-- Match Info -->
+                                                <div class="text-center match-info ">
+                                                    <h5>WIN-LOSE</h5>
+                                                    <h4>1 - 0</h4>
+                                                    <p id="matchDate">DATE</p>
+                                                </div>
+                                                <!-- Player 2 -->
+                                                <div class="text-center player-container">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name">
+                                                        <span>helloooooooooooo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-dark text-white text-center px-3 py-1 mb-1 rounded">
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                <!-- Player 1 -->
+                                                <div class="text-center player-container ">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name"><span>coucouuuuuuuuuuuuuuuu</span></div>
+                                                </div>
+                                                <!-- Match Info -->
+                                                <div class="text-center match-info ">
+                                                    <h5>WIN-LOSE</h5>
+                                                    <h4>1 - 0</h4>
+                                                    <p id="matchDate">DATE</p>
+                                                </div>
+                                                <!-- Player 2 -->
+                                                <div class="text-center player-container">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name">
+                                                        <span>helloooooooooooo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray text-white text-center px-3 py-1 mb-1 rounded">
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                <!-- Player 1 -->
+                                                <div class="text-center player-container ">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name"><span>coucouuuuuuuuuuuuuuuu</span></div>
+                                                </div>
+                                                <!-- Match Info -->
+                                                <div class="text-center match-info ">
+                                                    <h5>WIN-LOSE</h5>
+                                                    <h4>1 - 0</h4>
+                                                    <p id="matchDate">DATE</p>
+                                                </div>
+                                                <!-- Player 2 -->
+                                                <div class="text-center player-container">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name">
+                                                        <span>helloooooooooooo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="text-center mb-3">Remote Tournaments :</h5>
+                                    <div class="box bg-light">
+                                        <p class="text-center">n/a</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="js/router.js"></script>
+    <script>
+        // Function to change the language based on loaded translations
+        function changeLanguage(translations) {
+            const translation = translations;
+            console.log(translation);
+            if (translation) {
+                // Update main content translations
+                document.getElementById('winRate').textContent = `${translation.profile.winRateLabel} 75%`;
+                document.getElementById('battleHistoryLabel').textContent = translation.profile.battleHistoryLabel;
+                document.getElementById('matchDate').textContent = translation.profile.matchDate;
+                document.getElementById('matchDate2').textContent = translation.profile.matchDate;
+
+                // Update menu translations using innerHTML
+                document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
+                document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
+                document.getElementById('menuProfile').innerHTML = `<i class="bi bi-person"></i> ${translation.menu.profile}`;
+                document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
+                document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
+                document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
+                document.getElementById('settingsButton').textContent = translation.settings.settingsLabel;
+
+            }
+        }
+
+        // On page load, fetch the translations and apply the selected language
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
+            console.log(selectedLang);
+            const translationFile = selectedLang === 'fr' ? '../../json/fr.json' : '../../json/en.json';
+
+            fetch(translationFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(translations => {
+                    changeLanguage(translations);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -30,9 +30,9 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 65%;
+    /* width: 65%; */
     box-sizing: border-box;
-    margin: 20px auto;
+    margin: 10vh auto;
 }
 
 /* Ensure the top profile section is centered */
