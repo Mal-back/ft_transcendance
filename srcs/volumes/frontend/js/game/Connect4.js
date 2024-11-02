@@ -45,6 +45,7 @@ export default class Connect4 {
         this.handleHelp = this.handleHelp.bind(this);
         this.handleGiveUp = this.handleGiveUp.bind(this);
         this.handleReturn = this.handleReturn.bind(this);
+        this.setBackground = this.setBackground.bind(this);
         this.setUsernameCallBack = setUsernameCallBack;
     }
 
@@ -85,6 +86,10 @@ export default class Connect4 {
         console.log("TOKEN IN PONG:", authToken);
     }
 
+    setBackground() {
+        const element = document.querySelector('.background.background-battle.d-flex.flex-column.align-items-center');
+        element.style = `background-image:url('../img/forest.png');`;
+    }
     setUsername(player1Name, player2Name, tournament) {
         this.player1.username = player1Name;
         this.player2.username = player2Name;
@@ -273,7 +278,7 @@ export default class Connect4 {
 
     handleUnloadPage(ev) {
         if (this.webSocket) {
-            if (this.webSocket.readyState === WebSocket.OPEN) this.webSocket.close();
+            if (this.webSocket.readyState === WebSocket.OPEN) { this.webSocket.close() };
         }
     }
     handleStartGame(ev) {
@@ -318,6 +323,9 @@ export default class Connect4 {
         }
         const local = document.querySelector("#startBtn");
         local.addEventListener("click", this.handleStartGame);
+        document.querySelector("#returnBtn").removeEventListener("click", this.handleReturn);
+        document.querySelector("#helpBtn").removeEventListener("click", this.handleHelp);
+        document.querySelector("#giveUpBtn").removeEventListener("click", this.handleGiveUp);
         document.removeEventListener("beforeunload", this.handleUnloadPage);
         document.querySelectorAll('.cell').forEach((cell, index) => {
             const col = index % this.cols;
@@ -336,11 +344,12 @@ export default class Connect4 {
             this.player1.username = data.player1;
             this.player2.username = data.player2;
         }
-        document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
-        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
-        document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
-        document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
-        // document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
+        if (document.getElementById('User1') && document.getElementById('User2')) {
+            document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
+            document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
+            document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
+            document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
+        }// document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
     }
 
 

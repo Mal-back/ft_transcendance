@@ -23,9 +23,9 @@ import PongLocalTournament from "./pages/PongLocalTournament.js";
 import Connect4Local from "./pages/Connect4Local.js";
 import Connect4Menu from "./pages/Connect4Mode.js";
 import Connect4LocalMenu from "./pages/Connect4LocalMenu.js";
-// import Connect4RemoteMenu from "./pages/Connect4RemoteMenu.js";
+import Connect4RemoteMenu from "./pages/Connect4RemoteMenu.js";
 import Connect4LocalLobby from "./pages/Connect4LocalLobby.js";
-// import Connect4RemoteLobby from "./pages/Connect4RemoteLobby.js";
+import Connect4RemoteLobby from "./pages/Connect4RemoteLobby.js";
 import Connect4LocalTournament from "./pages/Connect4LocalTournament.js";
 import AbstractViews from "./pages/AbstractViews.js";
 
@@ -66,9 +66,9 @@ const router = async () => {
     { path: "/c4", view: Connect4Local },
     { path: "/c4-menu", view: Connect4Menu },
     { path: "/c4-local-menu", view: Connect4LocalMenu },
-    // { path: "/c4-remote-menu", view: Connect4RemoteMenu },
+    { path: "/c4-remote-menu", view: Connect4RemoteMenu },
     { path: "/c4-local-lobby", view: Connect4LocalLobby },
-    // { path: "/c4-remote-lobby", view: Connect4RemoteLobby },
+    { path: "/c4-remote-lobby", view: Connect4RemoteLobby },
     { path: "/c4-local-tournament", view: Connect4LocalTournament },
   ];
 

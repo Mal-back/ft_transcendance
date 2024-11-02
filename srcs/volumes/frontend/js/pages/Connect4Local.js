@@ -13,7 +13,7 @@ export default class extends AbstractView {
 
     async loadCss() {
         this.createPageCss("../../css/normal-mode.css");
-        this.createPageCss("../../css/background-profile.css");
+        // this.createPageCss("../../css/background-profile.css");
         this.createPageCss("../../css/background-c4.css");
         this.createPageCss("../../css/connect4/hover-red.css");
     }
@@ -162,6 +162,7 @@ export default class extends AbstractView {
                     );
                     return;
                 }
+                this.connect4.setBackground();
                 const parsedTournament = JSON.parse(tournament);
                 if (
                     !parsedTournament.round ||

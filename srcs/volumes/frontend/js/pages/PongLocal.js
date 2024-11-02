@@ -13,6 +13,7 @@ export default class extends AbstractView {
 
   async loadCss() {
     this.createPageCss("../css/profile.css");
+    // this.createPageCss("../../css/background-profile.css");
     this.createPageCss("../css/battle-history.css");
     this.createPageCss("../css/background-battle.css");
   }
