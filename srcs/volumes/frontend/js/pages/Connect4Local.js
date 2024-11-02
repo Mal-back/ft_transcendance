@@ -150,7 +150,6 @@ export default class extends AbstractView {
                 auth_token,
             );
             if (mode == "tournament") {
-                data
                 console.log("tournament mode");
                 const tournament = sessionStorage.getItem(
                     "tournament_transcendence_local",

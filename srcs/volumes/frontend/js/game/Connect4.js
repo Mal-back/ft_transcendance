@@ -90,6 +90,9 @@ export default class Connect4 {
         this.player2.username = player2Name;
         this.tournament = tournament;
         this.redirectURL = this.setRedirecturl();
+        document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
+        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
+        document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
     }
 
     getUsername() {
@@ -242,8 +245,8 @@ export default class Connect4 {
                         "tournament_transcendence_local",
                         JSON.stringify(this.tournament),
                     );
+                    navigateTo(this.redirectURL);
                 }
-                // navigateTo(this.redirectURL);
                 return;
             }
             default: {
