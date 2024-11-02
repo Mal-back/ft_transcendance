@@ -118,6 +118,7 @@ export default class extends AbstractView {
                         <button id="helpBtn" type="button" class="btn btn-secondary">HELP</button>
                         <button id="giveUpBtn" type="button" class="btn btn-danger" style="display: none;">GIVE UP</button>
                         <button id="startBtn" type="button" class="removeElem btn btn-success">START</button>
+                        <button id="returnBtn" type="button" class="removeElem btn btn-success" style="display: none;">RETURN</button>
                 </div>
             </div>
         </div>

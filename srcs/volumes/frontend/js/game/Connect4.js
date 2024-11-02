@@ -44,7 +44,7 @@ export default class Connect4 {
         this.handleStartGame = this.handleStartGame.bind(this);
         this.handleHelp = this.handleHelp.bind(this);
         this.handleGiveUp = this.handleGiveUp.bind(this);
-        this.handleReturnToLobby = this.handleReturnToLobby.bind(this);
+        this.handleReturn = this.handleReturn.bind(this);
         this.setUsernameCallBack = setUsernameCallBack;
     }
 
@@ -143,9 +143,10 @@ export default class Connect4 {
         //nothing yet
     }
 
-    handleReturnToLobby(ev) {
-
+    handleReturn(ev) {
+        navigateTo(this.redirectURL);
     }
+
     printMessage(data) {
         console.log(this.currentPlayer, this.player1, this.player2)
         if (data.winner !== this.currentPlayer.player) {
@@ -154,8 +155,7 @@ export default class Connect4 {
         document.getElementById('Turn').innerHTML = `<h3>Player ${this.currentPlayer.span}${this.currentPlayer.username}</span> wins!</h3>`;
         this.gameActive = false;
         document.getElementById('giveUpBtn').style = `display : none;`;
-        document.getElementById('startBtn').style = `display : inline;`;
-        document.getElementById('startBtn').innerText = `RETURN`;
+        document.getElementById('returnBtn').style = `display : inline;`;
     }
 
 
@@ -288,8 +288,10 @@ export default class Connect4 {
         this.webSocket.addEventListener("close", this.handleWebSocketClose);
         this.webSocket.addEventListener("error", this.handleWebSocketError);
         this.webSocket.addEventListener("message", this.handleWebSocketMessage);
-        const local = document.querySelector("#startBtn");
-        local.addEventListener("click", this.handleStartGame);
+        document.querySelector("#startBtn").addEventListener("click", this.handleStartGame);
+        document.querySelector("#returnBtn").addEventListener("click", this.handleReturn);
+        document.querySelector("#helpBtn").addEventListener("click", this.handleHelp);
+        document.querySelector("#giveUpBtn").addEventListener("click", this.handleGiveUp);
         document.addEventListener("beforeunload", this.handleUnloadPage);
         document.querySelectorAll('.cell').forEach((cell, index) => {
             const col = index % this.cols;
