@@ -18,6 +18,7 @@ export default class Connect4 {
         this.player1 = {
             username: "Folklore",
             keyPressTimeout: null,
+            player: "player_1",
             name: "player_1",
             color: 'Red',
             span: `<span class="user1-txt">`,
@@ -26,19 +27,24 @@ export default class Connect4 {
         this.player2 = {
             username: "Evermore",
             keyPressTimeout: null,
+            player: "player_2",
             name: "player_2",
             color: 'Blue',
             span: `<span class="user2-txt">`,
             piece: "0",
         };
         this.currentPlayer = this.player1;
-        this.currenColor = 'red';
+        this.currentColor = 'red';
         this.handleWebSocketOpen = this.handleWebSocketOpen.bind(this);
         this.handleWebSocketClose = this.handleWebSocketClose.bind(this);
         this.handleWebSocketError = this.handleWebSocketError.bind(this);
         this.handleWebSocketMessage = this.handleWebSocketMessage.bind(this);
         this.sendPlayerMovement = this.sendPlayerMovement.bind(this);
         this.handleUnloadPage = this.handleUnloadPage.bind(this);
+        this.handleStartGame = this.handleStartGame.bind(this);
+        this.handleHelp = this.handleHelp.bind(this);
+        this.handleGiveUp = this.handleGiveUp.bind(this);
+        this.handleReturnToLobby = this.handleReturnToLobby.bind(this);
         this.setUsernameCallBack = setUsernameCallBack;
     }
 
@@ -48,18 +54,14 @@ export default class Connect4 {
         mode = "local",
         token = null,
     ) {
-        // this.canvas = document.getElementById(canvas);
-        // this.context = this.canvas.getContext("2d");
         this.mode = mode;
         this.token = token;
         console.log("COUCOU");
         this.redirectURL = this.setRedirecturl();
-        document.getElementById('User1').innerHTML = `<h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#playerModal1">${this.player1.span}${this.player1.username}</span></h3>`
-        document.getElementById('User2').innerHTML = `<h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#playerModal2">${this.player2.span}${this.player2.username}</span></h3>`
+        document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
+        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
         document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
         document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
-        document.getElementById('user1-modal').innerHTML = `<p>${this.player1.username} is <span class="user1-txt">${this.player1.color}</span></p>`;
-        document.getElementById('user2-modal').innerHTML = `<p>${this.player2.username} is <span class="user2-txt">${this.player2.color}</span></p>`;
         document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
         this.webSocket = new WebSocket(websocket);
     }
@@ -103,7 +105,7 @@ export default class Connect4 {
     handleWebSocketOpen(ev) {
         console.log("WEBSOCKET IS OPEN");
         if (this.mode == "remote") {
-            console.log("CouCOU");
+            // console.log("CouCOU");
             let uuid = sessionStorage.getItem("transcendence_game_id");
 
             const body = {
@@ -133,37 +135,36 @@ export default class Connect4 {
         navigateTo(this.redirectURL);
     }
 
+    handleHelp(ev) {
+        //nothing yet
+    }
+
+    handleGiveUp(ev) {
+        //nothing yet
+    }
+
+    handleReturnToLobby(ev) {
+
+    }
     printMessage(data) {
-        if (data.currentPlayer !== this.currentPlayer.player) {
+        console.log(this.currentPlayer, this.player1, this.player2)
+        if (data.winner !== this.currentPlayer.player) {
             this.togglePlayer();
-            this.updateUI();
         }
-        document.getElementById('Turn').innerHTML = `<h3>Player ${currentPlayer.span}${currentPlayer.username}</span> wins!</h3>`;
-        gameActive = false;
+        document.getElementById('Turn').innerHTML = `<h3>Player ${this.currentPlayer.span}${this.currentPlayer.username}</span> wins!</h3>`;
+        this.gameActive = false;
+        document.getElementById('giveUpBtn').style = `display : none;`;
+        document.getElementById('startBtn').style = `display : inline;`;
+        document.getElementById('startBtn').innerText = `RETURN`;
     }
 
 
     togglePlayer() {
-        this.currenColor = this.currentPlayer == this.player1 ? 'blue' : 'red';
+        this.currentColor = this.currentPlayer == this.player1 ? 'blue' : 'red';
         this.currentPlayer = this.currentPlayer == this.player1 ? this.player2 : this.player1;
     }
 
-    updateUI() {
-        const theme = document.getElementById('theme');
-        if (theme.getAttribute('href') == '../../css/connect4/hover-red.css') {
-            theme.setAttribute('href', '../../css/connect4/hover-blue.css');
-        } else {
-            theme.setAttribute('href', '../../css/connect4/hover-red.css');
-        }
-    }
-
-
     drawFrame(data) {
-        console.log(data)
-        if (data.currentPlayer !== this.currentPlayer.player) {
-            this.togglePlayer();
-            this.updateUI();
-        }
         for (let row = 0; row < 6; row++) {
             const line = data.board[`line${row + 1}`].split(" ");
             for (let col = 0; col < 6; col++) {
@@ -171,10 +172,10 @@ export default class Connect4 {
                 if (line[col] == "X") {
                     color = this.player1.color.toLowerCase();
                 }
-                else if (line[col] == "0") {
-                    color = this.player2.color.toUpperCase()
+                else if (line[col] == "O") {
+                    color = this.player2.color.toLowerCase()
                 }
-                if (col !== null) {
+                if (color !== null) {
                     const cell = document.getElementById(`cell${row}-${col}`);
                     cell.classList.remove('cell-empty');
                     cell.classList.add(`cell-${color}`);
@@ -185,6 +186,10 @@ export default class Connect4 {
                     cell.classList.add(`cell`, `cell-empty`);
                 }
             }
+        }
+        if (data.currentPlayer !== this.currentPlayer.player) {
+            this.togglePlayer();
+            document.getElementById('Turn').innerHTML = `<h3>It's ${this.currentPlayer.span}${this.currentPlayer.username}</span>'s turn!</h3>`;
         }
     }
 
@@ -202,6 +207,7 @@ export default class Connect4 {
                 break;
             }
             case "frame": {
+                console.log("FRAME", data);
                 this.drawFrame(data);
                 break;
             }
@@ -237,7 +243,7 @@ export default class Connect4 {
                         JSON.stringify(this.tournament),
                     );
                 }
-                navigateTo(this.redirectURL);
+                // navigateTo(this.redirectURL);
                 return;
             }
             default: {
@@ -250,7 +256,6 @@ export default class Connect4 {
 
     startTimeout() {
         this.timeout = setTimeout(() => {
-            console.log("no frame recieved in the last 3s");
             this.sendPing();
         }, 3000);
     }
@@ -268,16 +273,28 @@ export default class Connect4 {
             if (this.webSocket.readyState === WebSocket.OPEN) this.webSocket.close();
         }
     }
-
+    handleStartGame(ev) {
+        // console.log("CLICKED START")
+        if (this.webSocket.readyState === WebSocket.OPEN && !this.gameStart) {
+            this.webSocket.send(JSON.stringify({ type: "start_game" }));
+            this.gameStart = true;
+            document.getElementById('startBtn').style = `display : none;`;
+            document.getElementById('giveUpBtn').style = `display : inline;`;
+            // console.log("SENT START");
+        }
+    }
     addC4Event() {
         this.webSocket.addEventListener("open", this.handleWebSocketOpen);
         this.webSocket.addEventListener("close", this.handleWebSocketClose);
         this.webSocket.addEventListener("error", this.handleWebSocketError);
         this.webSocket.addEventListener("message", this.handleWebSocketMessage);
+        const local = document.querySelector("#startBtn");
+        local.addEventListener("click", this.handleStartGame);
         document.addEventListener("beforeunload", this.handleUnloadPage);
         document.querySelectorAll('.cell').forEach((cell, index) => {
             const col = index % this.cols;
-            cell.addEventListener('click', this.sendPlayerMovement(col));
+            // console.log(col);
+            cell.addEventListener('click', () => this.sendPlayerMovement(this.currentPlayer.name, col));
         });
     }
 
@@ -294,10 +311,12 @@ export default class Connect4 {
                 this.handleWebSocketMessage,
             );
         }
+        const local = document.querySelector("#startBtn");
+        local.addEventListener("click", this.handleStartGame);
         document.removeEventListener("beforeunload", this.handleUnloadPage);
         document.querySelectorAll('.cell').forEach((cell, index) => {
             const col = index % this.cols;
-            cell.removeEventListener('click', this.sendPlayerMovement(col));
+            cell.removeEventListener('click', () => this.sendPlayerMovement(this.currentPlayer.name, col));
         });
     }
 
@@ -306,38 +325,32 @@ export default class Connect4 {
         console.log(data);
         this.player1.piece = data.player1_piece;
         this.player2.piece = data.player2_piece;
-        this.player1.username = data.player1;
-        this.player2.username = data.player2;
+        this.player1.player = data.player1;
+        this.player2.player = data.player2;
+        if (this.mode !== "local") {
+            this.player1.username = data.player1;
+            this.player2.username = data.player2;
+        }
+        document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
+        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
+        document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
+        document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
+        // document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
     }
 
 
     sendPlayerMovement(player, col) {
-        if (this.webSocket.readyState === WebSocket.OPEN) {
-            console.log(player)
+        console.log("TRYING TO SEND MOVE => Game started? ", this.gameStart);
+        if (this.gameStart) {
+
+            // console.log("SENT:", player)
             const movementData = {
                 type: "put",
                 player: player,
                 column: col
             };
             this.webSocket.send(JSON.stringify(movementData));
-            console.info("Sent", movementData);
-        }
-    }
-
-
-    throttleMovement(playerObj) {
-        if (this.gamePause || !this.gameStart) return;
-
-        if (!playerObj.keyPressTimeout) {
-            playerObj.keyPressTimeout = setTimeout(() => {
-                this.sendPlayerMovement(playerObj.name, playerObj.lastDirection);
-                if (playerObj.upPressed || playerObj.downPressed) {
-                    this.throttleMovement(playerObj);
-                } else {
-                    playerObj.keyPressTimeout = null;
-                }
-            }, 10);
-            playerObj.keyPressTimeout = null;
+            console.info("SENT =>", movementData);
         }
     }
 }

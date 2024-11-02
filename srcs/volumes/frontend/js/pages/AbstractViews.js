@@ -249,7 +249,7 @@ export default class AbstractViews {
       console.log(data);
       const count = data.count ? data.count : 0;
       const badge = document.getElementById("notificationbell");
-      if (count  + boolGame == 0) {
+      if (count + boolGame == 0) {
         badge.innerHTML = "";
         return;
       }
@@ -454,9 +454,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();

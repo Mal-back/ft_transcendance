@@ -29,59 +29,19 @@ export default class extends AbstractView {
                     <div class="row w-100 text-center">
                         <div class="col-4 d-flex justify-content-center" id="User1">
                         <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div>
-                            <h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal"
-                                data-bs-target="#playerModal1"><span id="leftUser" class="user1-txt"></span></h3>
+                            <h3 class="username-outline" style="cursor: pointer;"><span id="leftUser" class="user1-txt"></span></h3>
                         </div>
                         <div class="col-4 d-flex justify-content-center">
                             <h3>VS</h3>
                         </div>
                         <div class="col-4 d-flex justify-content-center" id="User2">
-                            <h3 class="username-outline" style="cursor: pointer;" data-bs-toggle="modal"
-                                data-bs-target="#playerModal2"><span id="rightUser" class="user2-txt"></span></h3>
-                            <div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>
+                            <h3 class="username-outline" style="cursor: pointer;"><span id="rightUser" class="user2-txt"></span></h3>
+                            <div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Modal for Player 1 -->
-                <div class="modal fade" id="playerModal1" tabindex="-1" aria-labelledby="playerModal1Label"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="playerModal1Label">Player Information</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" id="user1-modal">
-                                <p>Folklore is <span class="user1-txt">Red</span></p>
-                            </div>
-                            <div class=" modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Player 2 -->
-                <div class="modal fade" id="playerModal2" tabindex="-1" aria-labelledby="playerModal2Label"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="playerModal2Label">Player Information</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" id="user2-modal">
-                                <p>Evermore is <span class="user2-txt">Blue</span></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
 
                 <div class="canvas-container">
                     <div class="grid">
@@ -154,6 +114,11 @@ export default class extends AbstractView {
                         <h3>It's <span class="user1-txt" id="userTurn"></span>'s turn!</h3>
                     </div>
                 </div>
+                <div class="m-3">
+                        <button id="helpBtn" type="button" class="btn btn-secondary">HELP</button>
+                        <button id="giveUpBtn" type="button" class="btn btn-danger" style="display: none;">GIVE UP</button>
+                        <button id="startBtn" type="button" class="removeElem btn btn-success">START</button>
+                </div>
             </div>
         </div>
             `;
@@ -184,6 +149,7 @@ export default class extends AbstractView {
                 auth_token,
             );
             if (mode == "tournament") {
+                data
                 console.log("tournament mode");
                 const tournament = sessionStorage.getItem(
                     "tournament_transcendence_local",
