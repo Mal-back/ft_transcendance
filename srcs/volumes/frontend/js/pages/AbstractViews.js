@@ -203,6 +203,9 @@ export default class AbstractViews {
         const data = await this.getErrorLogfromServer(response, true);
         console.log("inviteRequest: response:ok:data", data);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
+        const modalInvitesDiv = document.getElementById("inviteUserModal");
+        const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        modalInvitesElem.hide();
         navigateTo(`/pong?connection=remote`);
       } else {
         const dataError = await this.getErrorLogfromServer(response);
@@ -248,6 +251,7 @@ export default class AbstractViews {
       console.log(response);
       console.log(data);
       const count = data.count ? data.count : 0;
+      console.log("bell = ", count + boolGame);
       const badge = document.getElementById("notificationbell");
       if (count + boolGame == 0) {
         badge.innerHTML = "";
@@ -271,7 +275,9 @@ export default class AbstractViews {
 
   async updateOnGoing(data) {
     const opponentInviteId = document.querySelector("#opponentInviteId");
-    const opponentInviteAvatar = document.querySelector("#opponentInviteAvatar");
+    const opponentInviteAvatar = document.querySelector(
+      "#opponentInviteAvatar",
+    );
     let opponent = data.player1;
     const username = sessionStorage.getItem("username_transcendence");
     if (username != data.player1) {
@@ -295,9 +301,9 @@ export default class AbstractViews {
   }
 
   async fetchOnGoingGame() {
-    const onGoingGame = document.querySelector("#divOnGoingGame");
+    console.log("ONGOING");
     const joinButton = document.querySelector("#buttonOnGoingGame");
-    if (AbstractViews.AcceptInterval) return;
+    if (AbstractViews.AcceptInterval) return 0;
     try {
       const request = await this.makeRequest(
         "/api/matchmaking/match/get_accepted",
@@ -305,31 +311,56 @@ export default class AbstractViews {
       );
       const response = await fetch(request);
       if (response.status == 200) {
-        console.log("HERE");
-        console.log("OngoingGame:", response);
         const data = await this.getErrorLogfromServer(response, true);
         console.log("OngoingGame:", data);
         await this.updateOnGoing(data);
         sessionStorage.setItem("transcendence_game_id", data.matchId);
-        onGoingGame.style.display = "block";
+        joinButton.classList.remove("btn-danger");
+        joinButton.classList.add("btn-success");
+        joinButton.innerText = "JOIN";
         joinButton.dataset.redirectUrl = "/pong?connection=remote";
-        return (1);
+        return 1;
       } else {
-        joinButton.dataset.redirectUrl = "";
-        onGoingGame.style.display = "none";
-        return (0);
+        return 0;
       }
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
         console.error("FetchOnGoingGame:", error);
+        return 0;
       }
     }
   }
 
+  async fetchSentInvite() {
+    const request = await this.makeRequest(
+      "api/matchmaking/match/sent_invite/",
+      "GET",
+    );
+    const response = await fetch(request);
+    const data = await this.getErrorLogfromServer(response, true);
+    console.log("SentInvite: ", data);
+    console.log("SentInvite:data.delete_invite:", data.delete_invite);
+    if (response.status == 200) {
+      this.updateOnGoing(data);
+      const onGoingGameButton = document.querySelector("#buttonOnGoingGame");
+      onGoingGameButton.innerText = "CANCEL";
+      onGoingGameButton.dataset.redirectUrl = data.delete_invite;
+      onGoingGameButton.classList.remove("btn-success");
+      onGoingGameButton.classList.add("btn-danger");
+      return 1;
+    }
+    return 0;
+  }
+
   async fetchNotifications() {
     try {
-      const boolGame = await this.fetchOnGoingGame();
+      let boolGame = await this.fetchOnGoingGame();
+      boolGame += await this.fetchSentInvite();
+      const onGoingGame = document.querySelector("#divOnGoingGame");
+      if (boolGame == 0) {
+        onGoingGame.style.display = "none";
+      } else onGoingGame.style.display = "block";
       console.log("BoolGame = ", boolGame);
       await this.fetchInvites(boolGame);
     } catch (error) {

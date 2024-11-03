@@ -38,8 +38,8 @@ export default class extends AbstractView {
                       <canvas id="ongoing-game"></canvas>
                     </div>
                     <div class="mt-3">
-                        <button type="button" class="btn btn-secondary" style="margin-right: 5vw;">HELP</button>
-                        <button type="button" class="btn btn-danger">GIVE UP</button>
+                        <button id="helpButton" type="button" class="btn btn-secondary" style="margin-right: 5vw;">HELP</button>
+                        <button id="giveUpButton" type="button" class="btn btn-danger">GIVE UP</button>
                     </div>
                 </div>
             </div>`;

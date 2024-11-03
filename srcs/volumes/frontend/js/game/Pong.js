@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { getIpPortAdress } from "../Utils/Utils.js";
+import { getIpPortAdress, showModal } from "../Utils/Utils.js";
 
 export default class Pong {
   constructor(setUsernameCallBack) {
@@ -49,6 +49,7 @@ export default class Pong {
     this.handleUnloadPage = this.handleUnloadPage.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleGiveUp = this.handleGiveUp.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
 
@@ -145,6 +146,7 @@ export default class Pong {
   }
 
   printMessage(message, color) {
+    this.draw();
     const fontSize = 50;
     this.context.font = `${fontSize}px Arial`;
     const textWidth = this.context.measureText(message).width;
@@ -155,6 +157,49 @@ export default class Pong {
     this.context.strokeText(message, x, y + fontSize * 0.5);
     this.context.fillStyle = color;
     this.context.fillText(message, x, y + fontSize * 0.5);
+  }
+
+  handleTournamentData(data) {
+    console.log("TOURNAMENT:", this.tournament);
+    const playerA = this.tournament.PlayerA[this.tournament.round.currentMatch];
+    const playerB = this.tournament.PlayerB[this.tournament.round.currentMatch];
+    if (data.winner == "player_1") {
+      playerA.win += 1;
+      playerA.winRate = (playerA.win / (playerA.win + playerA.loss)) * 100;
+      playerB.loss += 1;
+      playerB.winRate = (playerB.win / (playerB.win + playerB.loss)) * 100;
+    } else {
+      playerB.win += 1;
+      playerB.winRate = (playerB.win / (playerB.win + playerB.loss)) * 100;
+      playerA.loss += 1;
+      playerA.winRate = (playerA.win / (playerA.win + playerA.loss)) * 100;
+    }
+    this.tournament.round.currentMatch += 1;
+    console.log("CURRENT MATCH = ", this.tournament.round.currentMatch);
+    sessionStorage.setItem(
+      "tournament_transcendence_local",
+      JSON.stringify(this.tournament),
+    );
+  }
+
+  showResultModal(data) {
+    let modalTitle = "";
+    let modalMessage = "";
+    const username = sessionStorage.getItem("username_transcendence");
+    if (this.mode == "local") {
+      let winner = data.winner == "player_1" ? "BluePlayer" : "RedPlayer";
+      let score =
+        data.winner == "player_1"
+          ? `${data.score_1} - ${data.score_2}`
+          : `${data.score_2} ${data.score_1}`;
+      modalTitle = "Local Game Results";
+      modalMessage = `${winner} won ${score} ! Congratulations`;
+    } else {
+      let boolWin = username == data.winner;
+      modalTitle = `${boolWin ? "Won" : "Lost"}`;
+      modalMessage = `You ${modalTitle} vs ${boolWin ? data.looser : data.winner} ${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}<br> ${boolWin ? "Congratulations!" : "Better luck next time!"}`;
+    }
+    showModal(modalTitle, modalMessage);
   }
 
   handleWebSocketMessage(ev) {
@@ -177,6 +222,7 @@ export default class Pong {
         break;
       }
       case "pause": {
+        console.log("receive pause");
         console.log(data);
         if (data.action == "start") {
           this.context.strokeText("", 10, 80);
@@ -188,38 +234,18 @@ export default class Pong {
         }
         break;
       }
+      case "wait": {
+        this.printMessage("Waiting for your opponent");
+        break;
+      }
       case "end_state": {
         console.log("END:", data);
         this.removePongEvent();
         this.printMessage(`${data.winner} won`, "white");
         if (this.tournament) {
-          console.log("TOURNAMENT:", this.tournament);
-          const playerA =
-            this.tournament.PlayerA[this.tournament.round.currentMatch];
-          const playerB =
-            this.tournament.PlayerB[this.tournament.round.currentMatch];
-          if (data.winner == "player_1") {
-            playerA.win += 1;
-            playerA.winRate =
-              (playerA.win / (playerA.win + playerA.loss)) * 100;
-            playerB.loss += 1;
-            playerB.winRate =
-              (playerB.win / (playerB.win + playerB.loss)) * 100;
-          } else {
-            playerB.win += 1;
-            playerB.winRate =
-              (playerB.win / (playerB.win + playerB.loss)) * 100;
-            playerA.loss += 1;
-            playerA.winRate =
-              (playerA.win / (playerA.win + playerA.loss)) * 100;
-          }
-          this.tournament.round.currentMatch += 1;
-          console.log("CURRENT MATCH = ", this.tournament.round.currentMatch);
-          sessionStorage.setItem(
-            "tournament_transcendence_local",
-            JSON.stringify(this.tournament),
-          );
+          this.handleTournamentData(data);
         }
+        this.showResultModal(data);
         navigateTo(this.redirectURL);
         return;
       }
@@ -262,9 +288,11 @@ export default class Pong {
           ev.preventDefault();
           if (!this.gameStart) {
             this.webSocket.send(JSON.stringify({ type: "start_game" }));
+            console.log("START");
             this.gameStart = true;
           } else {
             if (!this.gamePause) {
+              console.log("send pause");
               this.webSocket.send(
                 JSON.stringify({ type: "pause", action: "stop" }),
               );
@@ -277,6 +305,7 @@ export default class Pong {
               this.player2.downPressed = false;
               this.player2.lastDirection = null;
             } else {
+              console.log("send start");
               this.webSocket.send(
                 JSON.stringify({ type: "pause", action: "start" }),
               );
@@ -357,6 +386,16 @@ export default class Pong {
     }
   }
 
+  handleGiveUp(ev) {
+    ev.preventDefault();
+    console.log("give up");
+    if (this.gamePause) {
+      this.webSocket.send(JSON.stringify({ type: "pause", action: "start" }));
+    }
+    console.log("sent ", JSON.stringify({ type: "surrend" }));
+    this.webSocket.send(JSON.stringify({ type: "surrend" }));
+  }
+
   addPongEvent() {
     this.webSocket.addEventListener("open", this.handleWebSocketOpen);
     this.webSocket.addEventListener("close", this.handleWebSocketClose);
@@ -365,6 +404,8 @@ export default class Pong {
     document.addEventListener("beforeunload", this.handleUnloadPage);
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("keyup", this.handleKeyUp);
+    const giveUpButton = document.querySelector("#giveUpButton");
+    giveUpButton.addEventListener("click", this.handleGiveUp);
   }
 
   removePongEvent() {
@@ -393,12 +434,12 @@ export default class Pong {
     console.log(data);
     this.serverWidth = data.board_len;
     this.serverHeight = data.board_height;
-    console.log(`Board Dimensions: ${this.serverWidth} * ${this.serverHeight}`);
+    // console.log(`Board Dimensions: ${this.serverWidth} * ${this.serverHeight}`);
 
     this.scaleX = this.canvas.width / this.serverWidth;
     this.scaleY = this.canvas.height / this.serverHeight;
-    console.log("scaleX", this.scaleX);
-    console.log("scaleY", this.scaleY);
+    // console.log("scaleX", this.scaleX);
+    // console.log("scaleY", this.scaleY);
 
     this.leftPaddle = {
       x: data.player_1.pos[0],
@@ -406,23 +447,23 @@ export default class Pong {
     };
     this.paddleHeight = data.pad_height;
     this.paddleWidth = data.pad_len;
-    console.log("paddleHeight:", this.paddleHeight);
-    console.log("paddleWidth:", this.paddleWidth);
-    console.log("LeftPaddle:", this.leftPaddle);
+    // console.log("paddleHeight:", this.paddleHeight);
+    // console.log("paddleWidth:", this.paddleWidth);
+    // console.log("LeftPaddle:", this.leftPaddle);
 
     this.rightPaddle = {
       x: data.player_2.pos[0],
       y: data.player_2.pos[1],
     };
-    console.log("RightPaddle:", this.rightPaddle);
+    // console.log("RightPaddle:", this.rightPaddle);
 
     this.ball = {
       x: data.ball[0],
       y: data.ball[1],
     };
     this.ballRadius = data.ball_size;
-    console.log("BallRadius:", this.ballRadius);
-    console.log("Ball:", this.ball);
+    // console.log("BallRadius:", this.ballRadius);
+    // console.log("Ball:", this.ball);
     if (this.mode == "remote")
       this.setUsername(data.player_1.username, data.player_2.username);
     this.getUsername();
@@ -434,20 +475,20 @@ export default class Pong {
       x: data.player_1.position[0],
       y: data.player_1.position[1],
     };
-    console.log("UpdatedLeftPaddle:", this.leftPaddle);
+    // console.log("UpdatedLeftPaddle:", this.leftPaddle);
 
     this.rightPaddle = {
       x: data.player_2.position[0],
       y: data.player_2.position[1],
     };
-    console.log("UpdatedRightPaddle:", this.rightPaddle);
+    // console.log("UpdatedRightPaddle:", this.rightPaddle);
 
     this.ball = {
       x: data.ball.position[0],
       y: data.ball.position[1],
     };
     this.scoreId.innerText = `${data.player_1.score} - ${data.player_2.score}`;
-    console.log("UpdatedBall:", this.ball);
+    // console.log("UpdatedBall:", this.ball);
     this.draw();
   }
 
@@ -459,12 +500,12 @@ export default class Pong {
       this.paddleWidth * this.scaleX,
       this.paddleHeight * this.scaleY,
     );
-    console.log("LeftPaddleInCanvas:", {
-      x: this.leftPaddle.x * this.scaleX,
-      y: this.leftPaddle.y * this.scaleY,
-      width: this.paddleWidth * this.scaleX,
-      height: this.paddleHeight * this.scaleY,
-    });
+    // console.log("LeftPaddleInCanvas:", {
+    //   x: this.leftPaddle.x * this.scaleX,
+    //   y: this.leftPaddle.y * this.scaleY,
+    //   width: this.paddleWidth * this.scaleX,
+    //   height: this.paddleHeight * this.scaleY,
+    // });
 
     this.context.fillStyle = "red";
     this.context.fillRect(
@@ -473,12 +514,12 @@ export default class Pong {
       this.paddleWidth * this.scaleX,
       this.paddleHeight * this.scaleY,
     );
-    console.log("rightPaddleInCanvas:", {
-      x: this.rightPaddle.x * this.scaleX,
-      y: this.rightPaddle.y * this.scaleY,
-      width: this.paddleWidth * this.scaleX,
-      height: this.paddleHeight * this.scaleY,
-    });
+    // console.log("rightPaddleInCanvas:", {
+    //   x: this.rightPaddle.x * this.scaleX,
+    //   y: this.rightPaddle.y * this.scaleY,
+    //   width: this.paddleWidth * this.scaleX,
+    //   height: this.paddleHeight * this.scaleY,
+    // });
     this.context.fillStyle = "white";
     this.context.beginPath();
     this.context.arc(
@@ -488,16 +529,16 @@ export default class Pong {
       0,
       Math.PI * 2,
     );
-    console.log("BallInCanvas:", {
-      x: this.ball.x * this.scaleX,
-      y: this.ball.y * this.scaleY,
-      radius: this.ballRadius * this.scaleX,
-    });
+    // console.log("BallInCanvas:", {
+    //   x: this.ball.x * this.scaleX,
+    //   y: this.ball.y * this.scaleY,
+    //   radius: this.ballRadius * this.scaleX,
+    // });
     this.context.fill();
     this.context.closePath();
   }
   draw() {
-    console.log("DRAW");
+    // console.log("DRAW");
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawPaddles();
   }
