@@ -82,7 +82,9 @@ class MatchCreate(APIView):
         serializer = MatchSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             if serializer.validated_data['player2'].username == request.user.username:
-                return Response({'Error': 'You can not play agains yourself'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Error': 'You can not play against yourself'}, status=status.HTTP_400_BAD_REQUEST)
+            if Match.objects.filter(player1=serializer.validated_data['player2'], player2=request.user).exists():
+                return Response({'Error': 'You can not create a reverse invite'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save(player1=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
