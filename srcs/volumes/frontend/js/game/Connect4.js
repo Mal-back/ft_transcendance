@@ -177,7 +177,7 @@ export default class Connect4 {
         // console.log(line);
         // }
         for (let row = 0; row < 6; row++) {
-            const line = data.board[`line${row + 1}`].split(" ");
+            const line = data.board[`line_${row + 1}`].split(" ");
             for (let col = 0; col < 7; col++) {
                 let color = null;
                 if (line[col] == "X") {
