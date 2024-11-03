@@ -198,10 +198,20 @@ document.addEventListener("keydown", (ev) => {
 
 document
   .getElementById("buttonOnGoingGame")
-  .addEventListener("click", (ev) => {
+  .addEventListener("click", async (ev) => {
     ev.preventDefault();
     const url = ev.currentTarget.dataset.redirectUrl;
-    if (url) navigateTo(url);
+    if (url) {
+      if (ev.target.innerText == "CANCEL") {
+        const request = await view.makeRequest(url, "DELETE");
+        const response = await fetch(request);
+        const data = await view.getErrorLogfromServer(response);
+        console.log("cancel: ", response);
+        console.log("Cancel: ", data);
+        const divOnGoingGame = document.querySelector("#divOnGoingGame");
+        divOnGoingGame.style.display = "none";
+      } else navigateTo(url);
+    }
   });
 
 // const inviteList = document.getElementById("inviteList");

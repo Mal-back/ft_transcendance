@@ -21,7 +21,7 @@ env :
 update-hostname:
 	@# Get the hostname
 	@HOSTNAME_VALUE=$(shell hostname); \
-	ENV_FILE="env"; \
+	ENV_FILE="srcs/.env"; \
 	if sed -n '3p' $$ENV_FILE | grep -q "^HOSTNAME="; then \
 	    sed -i "3s|^HOSTNAME=.*|HOSTNAME=$$HOSTNAME_VALUE|" $$ENV_FILE; \
 	else \

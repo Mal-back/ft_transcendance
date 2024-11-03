@@ -108,34 +108,12 @@ export default class extends AbstractView {
       if (!response.ok) {
         showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
       } else {
-        AbstractView.AcceptInterval = setInterval(async () => {
-          try {
-            const requestInvite = await this.makeRequest(
-              `/api/matchmaking/match/get_accepted`,
-              "GET",
-            );
-            const responseInvite = await fetch(requestInvite);
-            const dataInvite = await this.getErrorLogfromServer(
-              responseInvite,
-              true,
-            );
-            console.log("Response sent invite:", dataInvite);
-            if (responseInvite.ok) {
-              clearInterval(AbstractView.AcceptInterval);
-              sessionStorage.setItem(
-                "transcendence_game_id",
-                dataInvite.matchId,
-              );
-              navigateTo("/pong?connection=remote");
-            }
-          } catch (error) {
-            clearInterval(AbstractView.AcceptInterval);
-            if (error instanceof CustomError) throw error;
-            else {
-              console.error("error in AcceptInterval", error);
-            }
-          }
-        }, 1000);
+        const modalInviteMatchId = document.getElementById("invitePongModal");
+        const  modalElemInvite = bootstrap.Modal.getInstance(modalInviteMatchId);
+        modalElemInvite.hide();
+        const buttonOnGoingGame = document.querySelector("#buttonOnGoingGame");
+        buttonOnGoingGame.innerText = "CANCEL";
+        buttonOnGoingGame.dataset.redirectUrl = `/api/matchmaking/match/${data.id}/delete/`;
       }
     } catch (error) {
       if (error instanceof CustomError) throw error;

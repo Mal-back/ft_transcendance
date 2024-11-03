@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { getIpPortAdress } from "../Utils/Utils.js";
+import { getIpPortAdress, showModal } from "../Utils/Utils.js";
 
 export default class Pong {
   constructor(setUsernameCallBack) {
@@ -49,6 +49,7 @@ export default class Pong {
     this.handleUnloadPage = this.handleUnloadPage.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleGiveUp = this.handleGiveUp.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
 
@@ -145,6 +146,7 @@ export default class Pong {
   }
 
   printMessage(message, color) {
+    this.draw();
     const fontSize = 50;
     this.context.font = `${fontSize}px Arial`;
     const textWidth = this.context.measureText(message).width;
@@ -155,6 +157,49 @@ export default class Pong {
     this.context.strokeText(message, x, y + fontSize * 0.5);
     this.context.fillStyle = color;
     this.context.fillText(message, x, y + fontSize * 0.5);
+  }
+
+  handleTournamentData(data) {
+    console.log("TOURNAMENT:", this.tournament);
+    const playerA = this.tournament.PlayerA[this.tournament.round.currentMatch];
+    const playerB = this.tournament.PlayerB[this.tournament.round.currentMatch];
+    if (data.winner == "player_1") {
+      playerA.win += 1;
+      playerA.winRate = (playerA.win / (playerA.win + playerA.loss)) * 100;
+      playerB.loss += 1;
+      playerB.winRate = (playerB.win / (playerB.win + playerB.loss)) * 100;
+    } else {
+      playerB.win += 1;
+      playerB.winRate = (playerB.win / (playerB.win + playerB.loss)) * 100;
+      playerA.loss += 1;
+      playerA.winRate = (playerA.win / (playerA.win + playerA.loss)) * 100;
+    }
+    this.tournament.round.currentMatch += 1;
+    console.log("CURRENT MATCH = ", this.tournament.round.currentMatch);
+    sessionStorage.setItem(
+      "tournament_transcendence_local",
+      JSON.stringify(this.tournament),
+    );
+  }
+
+  showResultModal(data) {
+    let modalTitle = "";
+    let modalMessage = "";
+    const username = sessionStorage.getItem("username_transcendence");
+    if (this.mode == "local") {
+      let winner = data.winner == "player_1" ? "BluePlayer" : "RedPlayer";
+      let score =
+        data.winner == "player_1"
+          ? `${data.score_1} - ${data.score_2}`
+          : `${data.score_2} ${data.score_1}`;
+      modalTitle = "Local Game Results";
+      modalMessage = `${winner} won ${score} ! Congratulations`;
+    } else {
+      let boolWin = username == data.winner;
+      modalTitle = `${boolWin ? "Won" : "Lost"}`;
+      modalMessage = `You ${modalTitle} vs ${boolWin ? data.looser : data.winner} ${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}<br> ${boolWin ? "Congratulations!" : "Better luck next time!"}`;
+    }
+    showModal(modalTitle, modalMessage);
   }
 
   handleWebSocketMessage(ev) {
@@ -189,38 +234,18 @@ export default class Pong {
         }
         break;
       }
+      case "wait": {
+        this.printMessage("Waiting for your opponent");
+        break;
+      }
       case "end_state": {
         console.log("END:", data);
         this.removePongEvent();
         this.printMessage(`${data.winner} won`, "white");
         if (this.tournament) {
-          console.log("TOURNAMENT:", this.tournament);
-          const playerA =
-            this.tournament.PlayerA[this.tournament.round.currentMatch];
-          const playerB =
-            this.tournament.PlayerB[this.tournament.round.currentMatch];
-          if (data.winner == "player_1") {
-            playerA.win += 1;
-            playerA.winRate =
-              (playerA.win / (playerA.win + playerA.loss)) * 100;
-            playerB.loss += 1;
-            playerB.winRate =
-              (playerB.win / (playerB.win + playerB.loss)) * 100;
-          } else {
-            playerB.win += 1;
-            playerB.winRate =
-              (playerB.win / (playerB.win + playerB.loss)) * 100;
-            playerA.loss += 1;
-            playerA.winRate =
-              (playerA.win / (playerA.win + playerA.loss)) * 100;
-          }
-          this.tournament.round.currentMatch += 1;
-          console.log("CURRENT MATCH = ", this.tournament.round.currentMatch);
-          sessionStorage.setItem(
-            "tournament_transcendence_local",
-            JSON.stringify(this.tournament),
-          );
+          this.handleTournamentData(data);
         }
+        this.showResultModal(data);
         navigateTo(this.redirectURL);
         return;
       }
@@ -361,6 +386,16 @@ export default class Pong {
     }
   }
 
+  handleGiveUp(ev) {
+    ev.preventDefault();
+    console.log("give up");
+    if (this.gamePause) {
+      this.webSocket.send(JSON.stringify({ type: "pause", action: "start" }));
+    }
+    console.log("sent ", JSON.stringify({ type: "surrend" }));
+    this.webSocket.send(JSON.stringify({ type: "surrend" }));
+  }
+
   addPongEvent() {
     this.webSocket.addEventListener("open", this.handleWebSocketOpen);
     this.webSocket.addEventListener("close", this.handleWebSocketClose);
@@ -369,6 +404,8 @@ export default class Pong {
     document.addEventListener("beforeunload", this.handleUnloadPage);
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("keyup", this.handleKeyUp);
+    const giveUpButton = document.querySelector("#giveUpButton");
+    giveUpButton.addEventListener("click", this.handleGiveUp);
   }
 
   removePongEvent() {
