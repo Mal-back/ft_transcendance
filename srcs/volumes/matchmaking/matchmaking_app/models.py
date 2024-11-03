@@ -17,6 +17,7 @@ class MatchUser(models.Model):
     @property
     def win_rate(self):
         total_matches = self.match_lost + self.match_won
+        print(f'{self.match_won}, {self.match_lost}')
         return self.match_won / total_matches if total_matches != 0 else 0
         
 class InQueueUser(models.Model):
@@ -37,7 +38,7 @@ class InQueueUser(models.Model):
 
     @property
     def maximal_wr(self):
-        maxi =  self.win_rate - self.range_to_search
+        maxi =  self.win_rate + self.range_to_search
         return maxi if maxi < 1 else 1
     
 class Tournament(models.Model):

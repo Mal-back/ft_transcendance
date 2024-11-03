@@ -63,6 +63,10 @@ class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.username == request.user.username 
 
+class IsInitiatingPlayer(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.player1.username == request.user.username 
+
 
 class IsInvitedPlayer(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):

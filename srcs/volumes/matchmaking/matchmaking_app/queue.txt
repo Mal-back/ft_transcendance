@@ -1,4 +1,0 @@
-A player join the queue
-Every time a request is made, first update range if needed then check if a opponenet is found.
-If an opponenet is found, check the match is available for the opponent as well 
-If yes, accept the match
