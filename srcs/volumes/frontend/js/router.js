@@ -211,6 +211,9 @@ document
         const divOnGoingGame = document.querySelector("#divOnGoingGame");
         divOnGoingGame.style.display = "none";
       } else navigateTo(url);
+      const friendModalDiv = document.querySelector("#inviteUserModal");
+      const modal = bootstrap.Modal.getInstance(friendModalDiv);
+      modal.hide();
     }
   });
 
