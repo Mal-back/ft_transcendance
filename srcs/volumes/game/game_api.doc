@@ -13,7 +13,7 @@ A - Local game:
 
 1 - Join a room :
 
-	Establish a websocket connection to "ws://application_host/api/game/pong-local/join/" where :
+	Establish a websocket connection to "wss://application_host/api/game/pong-local/join/" where :
 		- application_host is the combination host-port of the application (ex: localhost:8080).
 	
 	This will create a room in Django Channel to communicate with the game engine.
@@ -31,7 +31,6 @@ A - Local game:
 	You can not initialise the game more than one time.
 	If an error occurs initializing the game, you will receive an error message and the websocket will be close
 		
-
 3 - Get game configuration : 
 
 	Send via the websocket in JSON format :
@@ -131,10 +130,9 @@ A - Local game:
 	
 	If you send a surrender while the game is stopped with pause, you must unpause the game to end the game and receive the final state.
 
-
 8 - End state of the game :
 
-	When the game finished (a player obtains the maximum score or a player surrenders), the game sends you a last message :
+	When the game finished (a player obtains the maximum score or a player surrenders), the game sends you a last message  before closing the websocket:
 
 		{"type" : "end_state",
 			"winner" : value,
@@ -162,12 +160,11 @@ A - Local game:
 
 	If you close the websocket connection, your local game instance will be destroyed and you will not be able to recover it
 
-
 B - Remote game:
 
 1 - Join a room :
 
-	Establish a websocket connection to "ws://application_host/api/game/pong-remote/join/" where :
+	Establish a websocket connection to "wss://application_host/api/game/pong-remote/join/" where :
 		- application_host is the combination host-port of the application (ex: localhost:8080).
 	
 	This will create a room in Django Channel to communicate with the game engine. To join the game room, you need to first send a message in JSON format :
@@ -230,7 +227,6 @@ B - Remote game:
 	
 	IMPORTANT : In remote game, "get_config" will trigger a "pause" and "frame" send from the server, so you can know the current state of the game in case of reconection into a game.
 
-
 4 - Start the game :
 
 	Send via the websocket in JSON format :
@@ -288,7 +284,6 @@ IMPORTANT : Before the first frame, you will receive a "pause start" event, this
 	When a player send a pause "stop" action, the response is sent for both players. They will both be put in "stop" state for the game engine. Each player have to send a pause "start" action to continue the game.
 	After 30 seconds, even if a player is in "stop" state, the game is unpaused automatically.
 
-
 7 - Surrend :
 
 	Send via the websocket in JSON format the following message :
@@ -299,7 +294,7 @@ IMPORTANT : Before the first frame, you will receive a "pause start" event, this
 
 8 - End state of the game :
 
-	When the game finished (a player obtains the maximum score or a player surrenders), the game sends you a last message :
+	When the game finished (a player obtains the maximum score or a player surrenders), the game sends you a last message before closing the websocket :
 
 		{"type" : "end_state",
 			"winner" : username,
@@ -335,5 +330,126 @@ IMPORTANT : Before the first frame, you will receive a "pause start" event, this
 II - C4 :
 
 A - Local Game :
+
+1 - Join a room :
+
+	Establish a websocket connection to "wss://application_host/api/game/c4-local/join/" where :
+		- application_host is the combination host-port of the application (ex: localhost:8080).
+	
+	This will create a room in Django Channel to communicate with the game engine.
+
+2 - Initialise the game :
+
+	Send via the websocket in JSON format : 
+	
+		{type: "init_game"}
+		
+	This will :
+		- Create the game thread via the c4_local_engine worker
+		- The thread is ready to start or send configuration to the client
+
+	You can not initialise the game more than one time.
+	If an error occurs initializing the game, you will receive an error message and the websocket will be close
+
+
+3 - Get game configuration : 
+
+	Send via the websocket in JSON format :
+
+		{type: "get_config"}
+
+	This will send you configuration to draw the base game :
+
+		{"type" : "config",
+		"starting_player" : value,
+		"player_1_username" : value,
+		"player_2_username" : value,
+		"piece_1": value,
+		"piece_2": value,}
+
+		Where :
+			- starting_player is the username of the player who will put the first disk
+			- player_1_username and player_2_username are usernames of the players
+			- piece_1 and piece_2 are the characters representing player's disk in the board
+
+4 - Start the game :
+
+	Send via the websocket in JSON format :
+
+		{type: "start_game"}
+		
+	This will start the game and send you each frame periodically :
+
+		{"type" : "frame",
+			"board" : {
+				"line_1" : ". . . . . . .",
+				"line_2" : ". . . . . . .",
+				"line_3" : ". . . . . . .",
+				"line_4" : ". . . . . . .",
+				"line_5" : ". . . . . . .",
+				"line_6" : ". . . . . . .",
+			}
+			"player_1_username" : value,
+			"player_2_username" : value,
+			"current_player" : value,
+		}
+
+	Each point `.` in a line represents a column. This point could also be a player's disk character ("piece_1" or "piece_2" in the JSON config)
+	You will receive a frame after each valid disk put in the board with the 'put' call.
+
+5 - Put a disk :
+
+	Send via the websocket in JSON format the following message :
+
+		{"type" : "put",
+		"player" : value,
+		"column" value,
+		}
+
+	Where : 
+		- player is either "player_1" or "player_2".
+		- column is the column num in which the player want to put a disk in.
+
+6 - Surrend :
+
+	Send via the websocket in JSON format the following message :
+
+	{"type" : "surrend",
+	"surrender" : value,
+	}
+
+	Where :
+		value is either "player_1" or "player_2" (the surrender).
+	
+	If you send a surrender while the game is stopped with pause, you must unpause the game to end the game and receive the final state.
+
+7 - End state of the game :
+
+	When the game finished , the game sends you a last message before closing the websocket:
+
+		{"type" : "end_state",
+			"winner" : value,
+			"looser" : value,
+		}
+
+	Where : 
+		- winner is either "player_1" or "player_2"
+		- looser is either "player_1" or "player_2"
+
+8 - Error messages from server :
+
+	For debuging purpose, the game may send you error messages in some contexts (for example starting the game before its initialization). You can choose to catch these messages to understand what is wrong.
+	The format is :
+
+	{"type" : "error",
+	"error_msg" : value
+	}
+
+	Where value is the full error message.
+
+9 - Websocket disconnection:
+
+	If you close the websocket connection, your local game instance will be destroyed and you will not be able to recover it
+
 
 B - Remote Game :

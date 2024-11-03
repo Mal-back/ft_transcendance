@@ -71,11 +71,11 @@ class Board:
 
 	def getConfig(self) -> dict:
 		config = {
-			"startingPlayer" : self.player1,
-			"player1" : self.player1,
-			"player2" : self.player2,
-			"player1_piece":self.pieces[0],
-			"player2_piece":self.pieces[1],
+			"starting_player" : self.player1,
+			"player_1_username" : self.player1,
+			"player_2_username" : self.player2,
+			"piece_1":self.pieces[0],
+			"piece_2":self.pieces[1],
 		}
 		return config
 
@@ -83,17 +83,17 @@ class Board:
 		"""Returns the current state of the game as a JSON string."""
 		state = {
 			"board":{
-				"line1" : ' '.join(self.board[0]),
-				"line2" : ' '.join(self.board[1]), 
-				"line3" : ' '.join(self.board[2]), 
-				"line4" : ' '.join(self.board[3]), 
-				"line5" : ' '.join(self.board[4]), 
-				"line6" : ' '.join(self.board[5])
+				"line_1" : ' '.join(self.board[0]),
+				"line_2" : ' '.join(self.board[1]), 
+				"line_3" : ' '.join(self.board[2]), 
+				"line_4" : ' '.join(self.board[3]), 
+				"line_5" : ' '.join(self.board[4]), 
+				"line_6" : ' '.join(self.board[5])
 			}, 
-			"player1": self.player1,
-			"player2": self.player2,
+			"player_1_username": self.player1,
+			"player_2_username": self.player2,
 			"turn": self.turn,
-			"currentPlayer":self.currrentPlayer,
+			"current_player":self.currrentPlayer,
 			"tie": self.tie,
 		}
 		return state
@@ -386,10 +386,7 @@ class C4LocalEngine(threading.Thread):
 			})
 		except Exception:
 			print("Can not send end state to group channel " + self.game_id)
-		# async_to_sync(self.channel_layer.group_send)(self.game_id, {
-		# 	"type" : "send.end.state",
-		# 	"End_state" : data,
-		# })
+			
 
 	def send_frame(self):
 		try:
