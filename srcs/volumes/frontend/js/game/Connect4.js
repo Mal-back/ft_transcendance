@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { getIpPortAdress } from "../Utils/Utils.js";
+import { getIpPortAdress, showModal } from "../Utils/Utils.js";
 
 export default class Connect4 {
     constructor(setUsernameCallBack) {
@@ -44,7 +44,6 @@ export default class Connect4 {
         this.handleStartGame = this.handleStartGame.bind(this);
         this.handleHelp = this.handleHelp.bind(this);
         this.handleGiveUp = this.handleGiveUp.bind(this);
-        this.handleReturn = this.handleReturn.bind(this);
         this.setBackground = this.setBackground.bind(this);
         this.setUsernameCallBack = setUsernameCallBack;
     }
@@ -151,9 +150,6 @@ export default class Connect4 {
         //nothing yet
     }
 
-    handleReturn(ev) {
-        navigateTo(this.redirectURL);
-    }
 
     printMessage(data) {
         console.log(this.currentPlayer, this.player1, this.player2)
@@ -254,8 +250,9 @@ export default class Connect4 {
                         "tournament_transcendence_local",
                         JSON.stringify(this.tournament),
                     );
-                    navigateTo(this.redirectURL);
                 }
+                navigateTo(this.redirectURL);
+                showModal("coucou", "tu as gagnes");
                 return;
             }
             default: {
@@ -301,7 +298,6 @@ export default class Connect4 {
         this.webSocket.addEventListener("error", this.handleWebSocketError);
         this.webSocket.addEventListener("message", this.handleWebSocketMessage);
         document.querySelector("#startBtn").addEventListener("click", this.handleStartGame);
-        document.querySelector("#returnBtn").addEventListener("click", this.handleReturn);
         document.querySelector("#helpBtn").addEventListener("click", this.handleHelp);
         document.querySelector("#giveUpBtn").addEventListener("click", this.handleGiveUp);
         document.addEventListener("beforeunload", this.handleUnloadPage);
@@ -327,7 +323,6 @@ export default class Connect4 {
         }
         const local = document.querySelector("#startBtn");
         local.addEventListener("click", this.handleStartGame);
-        document.querySelector("#returnBtn").removeEventListener("click", this.handleReturn);
         document.querySelector("#helpBtn").removeEventListener("click", this.handleHelp);
         document.querySelector("#giveUpBtn").removeEventListener("click", this.handleGiveUp);
         document.removeEventListener("beforeunload", this.handleUnloadPage);
@@ -340,13 +335,13 @@ export default class Connect4 {
 
     configGame(data) {
         console.log(data);
-        this.player1.piece = data.player1_piece;
-        this.player2.piece = data.player2_piece;
-        this.player1.player = data.player1;
-        this.player2.player = data.player2;
+        this.player1.piece = data.player_1_piece;
+        this.player2.piece = data.player_2_piece;
+        this.player1.player = data.player_1_username;
+        this.player2.player = data.player_2_username;
         if (this.mode !== "local") {
-            this.player1.username = data.player1;
-            this.player2.username = data.player2;
+            this.player1.username = data.player_1_username;
+            this.player2.username = data.player_2_username;
         }
         // if (document.getElementById('User1') && document.getElementById('User2')) {
         document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
