@@ -60,7 +60,7 @@ export default class Connect4 {
         console.log("COUCOU");
         this.redirectURL = this.setRedirecturl();
         document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
-        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
+        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>`
         document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
         document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
         document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
@@ -96,7 +96,7 @@ export default class Connect4 {
         this.tournament = tournament;
         this.redirectURL = this.setRedirecturl();
         document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
-        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
+        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>`
         document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
     }
 
@@ -173,9 +173,12 @@ export default class Connect4 {
     }
 
     drawFrame(data) {
+        // for (let line of data.board) {
+        // console.log(line);
+        // }
         for (let row = 0; row < 6; row++) {
             const line = data.board[`line${row + 1}`].split(" ");
-            for (let col = 0; col < 6; col++) {
+            for (let col = 0; col < 7; col++) {
                 let color = null;
                 if (line[col] == "X") {
                     color = this.player1.color.toLowerCase();
@@ -209,6 +212,7 @@ export default class Connect4 {
             }
             case "pong": {
                 clearTimeout(this.pingInterval);
+                break;
             }
             case "config": {
                 this.configGame(data);
@@ -344,12 +348,13 @@ export default class Connect4 {
             this.player1.username = data.player1;
             this.player2.username = data.player2;
         }
-        if (document.getElementById('User1') && document.getElementById('User2')) {
-            document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
-            document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="rightPlayerAvatar"></div>`
-            document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
-            document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
-        }// document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
+        // if (document.getElementById('User1') && document.getElementById('User2')) {
+        document.getElementById('User1').innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`
+        document.getElementById('User2').innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>`
+        document.getElementById('User1').setAttribute('title', `${this.player1.username} is ${this.player1.color}`);
+        document.getElementById('User2').setAttribute('title', `${this.player2.username} is ${this.player2.color}`);
+        // }
+        document.getElementById("Turn").innerHTML = `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
     }
 
 
