@@ -40,16 +40,31 @@ class InQueueUser(models.Model):
     def maximal_wr(self):
         maxi =  self.win_rate + self.range_to_search
         return maxi if maxi < 1 else 1
+
+class TournamentUser(models.Model):
+    user = models.ForeignKey('MatchUser',
+                            related_name='tournament_user',
+                            on_delete=models.PROTECT,
+                            to_field='username')
+    matches_won = models.IntegerField(default=0)
+    matches_lost = models.IntegerField(default=0)
     
 class Tournament(models.Model):
-    name = models.CharField(max_length=255)
-    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', blank=True)
-    confirmed_players = models.ManyToManyField('MatchUser', related_name='confirmed_players', blank=True)
+    owner = models.ForeignKey('MatchUser',
+                                related_name='tournament_owner',
+                                on_delete=models.PROTECT,
+                                to_field='username')
+    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', null=True)
+    confirmed_players = models.ManyToManyField('TournamentUser', related_name='confirmed_players', null=True)
     current_round = models.IntegerField(default=1)
-    is_finished = models.BooleanField(default=False)
+    game_type = models.TextField(choices=[('pong', 'Pong'),
+                                           ('connect_four', 'Connect four')])
+    status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
+                                                                         ('in_progess', 'In progress'),])
     winner = models.ForeignKey('MatchUser',
                                 related_name='winner',
-                                on_delete=models.PROTECT)
+                                on_delete=models.PROTECT,
+                                null=True)
 
 class Match(models.Model):
     player1 = models.ForeignKey('MatchUser',
