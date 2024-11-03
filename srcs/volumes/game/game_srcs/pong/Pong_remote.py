@@ -69,9 +69,10 @@ class PongRemoteEngine(threading.Thread):
  
 	def run(self) -> None:
 		self.wait_start()
+		self.send_pause("start")
 		while True:
 			self.frame = self.get_next_frame()
-			self.send_frame("")
+			self.send_frame()
 			if self.frame.end == True or self.check_surrender() == True:
 				self.send_end_state(self.frame)
 				break
@@ -165,7 +166,7 @@ class PongRemoteEngine(threading.Thread):
 			else:
 				self.runing_player_1 = "stop"
 				self.runing_player_2 = "stop"
-				self.send_pause("stop", "")
+				self.send_pause("stop")
 		count = 0
 		while True:
 			with self.start_lock:
@@ -179,7 +180,7 @@ class PongRemoteEngine(threading.Thread):
 			# 		break
 			count += 1
 			time.sleep(self.frame_rate)
-		self.send_pause("start", "")
+		self.send_pause("start" )
 
 	   
 	def check_surrender(self) -> bool:
@@ -201,18 +202,27 @@ class PongRemoteEngine(threading.Thread):
 		new_frame = self.move_ball(new_frame)
 		return new_frame
  
-   
-	def send_frame(self, dest : str) -> None:
-		if dest == "":
-			dest = self.game_id
+
+	def send_frame_channel(self, channel : str):
 		try:
-			async_to_sync(self.channel_layer.group_send)(dest, {
+			async_to_sync(self.channel_layer.send)(channel, {
+				"type": "send.frame",
+				"Frame": self.frame.render(),
+			})
+		except Exception:
+			print("Can not send frame to  channel " + channel)
+
+
+	def send_frame(self) -> None:
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
 				"type": "send.frame",
 				"Frame": self.frame.render(),
 			})
 		except Exception:
 			print("Can not send frame to group channel " + self.game_id)
-		
+	
+ 	
 	def send_config(self, channel_name : str) -> None:
 		conf = self.config.render()
 		try:
@@ -220,21 +230,29 @@ class PongRemoteEngine(threading.Thread):
 				"type": "send.config",
 				"Config": conf,
 			})
-			self.send_frame(channel_name)
+			self.send_frame_channel(channel_name)
 			with self.start_lock:
 				if self.runing_player_1 == "stop" or self.runing_player_2 == "stop":
-					self.send_pause("stop", channel_name)
+					self.send_pause_channel("stop", channel_name)
 				else:
-					self.send_pause("start", channel_name)
+					self.send_pause_channel("start", channel_name)
 		except Exception:
-			print("Can not send config to group channel " + self.game_id)
+			print("Can not send config to channel " + channel_name)
   
-
-	def send_pause(self, action : str, dest : str) -> None:
-		if dest == "":
-			dest = self.game_id
+  
+	def send_pause_channel(self, action : str, channel : str) -> None:
 		try:
-			async_to_sync(self.channel_layer.group_send)(dest, {
+			async_to_sync(self.channel_layer.send)(channel, {
+				"type": "send.pause",
+				"Pause": action
+			})
+		except Exception:
+			print("Can not send pause to  channel " + channel)
+
+
+	def send_pause(self, action : str) -> None:
+		try:
+			async_to_sync(self.channel_layer.group_send)(self.game_id, {
 				"type": "send.pause",
 				"Pause": action
 			})
