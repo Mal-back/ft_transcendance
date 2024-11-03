@@ -135,7 +135,12 @@ const router = async () => {
   // console.log(document.documentElement.outerHTML);
 };
 
-window.addEventListener("popstate", router);
+window.addEventListener("popstate", () => {
+  if (view) {
+    view.destroy();
+  }
+  router();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.addEventListener("click", handleClick);
@@ -214,13 +219,11 @@ document.addEventListener("keydown", (ev) => {
   }
 });
 
-document
-  .getElementById("buttonOnGoingGame")
-  .addEventListener("click", (ev) => {
-    ev.preventDefault();
-    const url = ev.currentTarget.dataset.redirectUrl;
-    if (url) navigateTo(url);
-  });
+document.getElementById("buttonOnGoingGame").addEventListener("click", (ev) => {
+  ev.preventDefault();
+  const url = ev.currentTarget.dataset.redirectUrl;
+  if (url) navigateTo(url);
+});
 
 // const inviteList = document.getElementById("inviteList");
 //

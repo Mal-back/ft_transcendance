@@ -74,7 +74,7 @@ export default class AbstractViews {
         styleSheet.ownerNode &&
         styleSheet.ownerNode.classList.contains("page-css")
       ) {
-        console.log("remove .page-css");
+        console.log(`remove .page-css: ${styleSheet}`);
         styleSheet.ownerNode.remove();
         styleSheet = null;
       }
@@ -617,6 +617,7 @@ export default class AbstractViews {
   }
 
   destroy() {
+    console.log("Destroy");
     this.removeInviteEventListeners();
     this.removeEventListeners();
     this.cleanModal();
