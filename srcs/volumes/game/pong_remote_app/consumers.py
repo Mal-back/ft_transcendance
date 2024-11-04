@@ -55,12 +55,11 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = "None"
 		await self.accept()		
-		log.info("Pong Remote Player Consumer created")
-		log.info("channel_name = " + self.channel_name)
+		log.info("PongRemotePlayerConsumer : Remote player connected")
   
   
 	async def disconnect(self, code):
-		log.info("Remote Player Consumer disconnected")
+		log.info("PongRemotePlayerConsumer : Remote Player disconnected")
 		if self.player != "None":
 			await self.leave_game()
    
@@ -75,7 +74,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 				"sender" : self.channel_name
 			})
 		except:
-			log.info("Error sending init_game to PongRemoteEngine")
+			log.info("PongRemotePlayerConsumer : Error sending init_game to PongRemoteEngine")
 			await self.close()
 		
   
@@ -87,7 +86,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 				"sender": self.channel_name,
 			})
 		except:
-			log.info("Error sending get_config to PongRemoteEngine")
+			log.info("PongRemotePlayerConsumer : Error sending get_config to PongRemoteEngine")
 			await self.close()
 
 
@@ -100,7 +99,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 				"sender": self.channel_name,
 			})
 		except:
-			log.info("Error sending start_game to PongRemoteEngine")
+			log.info("PongRemotePlayerConsumer : Error sending start_game to PongRemoteEngine")
 			await self.close()   
 
 
@@ -108,7 +107,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			direction = content["direction"]
 		except KeyError:
-			log.error("Key error in RemotePlayerConsumer.move()")
+			log.error("PongRemotePlayerConsumer : Key error in move()")
 			return
 		try:
 			await self.channel_layer.send("pong_remote_engine", {
@@ -119,7 +118,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 				"sender": self.channel_name,
 			})
 		except:
-			log.info("Error sending move to PongRemoteEngine")
+			log.info("PongRemotePlayerConsumer : Error sending move to PongRemoteEngine")
 			await self.close()
 		
   
@@ -127,7 +126,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			action = content["action"]
 		except KeyError:
-			log.error("Key error in RemotePlayerConsumer.pause()")
+			log.error("PongRemotePlayerConsumer : Key error in pause()")
 			return
 		try:
 			await self.channel_layer.send("pong_remote_engine", {
@@ -138,7 +137,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 				"sender" : self.channel_name,
 			})
 		except:
-			log.info("Error sending pause to PongRemoteEngine")
+			log.info("PongRemotePlayerConsumer : Error sending pause to PongRemoteEngine")
 			await self.close()
   
   
@@ -151,7 +150,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 				"sender": self.channel_name,
 			})
 		except:
-			log.info("Error sending surrend to PongRemoteEngine")
+			log.info("PongRemotePlayerConsumer : Error sending surrend to PongRemoteEngine")
 			await self.close()
 
 
@@ -161,7 +160,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			await self.send(dumps(data))
 		except:
-			log.info("Can not send on closed websocket")
+			log.info("PongRemotePlayerConsumer : Can not send on closed websocket")
 
 
 	async def send_frame(self, event):
@@ -170,7 +169,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			await self.send(dumps(data))
 		except:
-			log.info("Can not send on closed websocket")
+			log.info("PongRemotePlayerConsumer : Can not send on closed websocket")
 
 
 	async def send_pause(self, event):
@@ -179,7 +178,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			await self.send(dumps(data))
 		except:
-			log.info("Can not send on closed websocket")
+			log.info("PongRemotePlayerConsumer : Can not send on closed websocket")
 
 
 	async def send_config(self, event):
@@ -188,7 +187,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			await self.send(dumps(data))
 		except:
-			log.info("Can not send on closed websocket")
+			log.info("PongRemotePlayerConsumer : Can not send on closed websocket")
 		
   
 	async def send_wait_opponent(self, event):
@@ -196,7 +195,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			await self.send(dumps(data))
 		except:
-			log.info("Can not send on closed websocket")
+			log.info("PongRemotePlayerConsumer : Can not send on closed websocket")
   
   
 	async def send_end_state(self, event):
@@ -205,7 +204,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			await self.send(dumps(data))
 		except:
-			log.info("Can not send on closed websocket")
+			log.info("PongRemotePlayerConsumer : Can not send on closed websocket")
 		self.game_ended = True
 		await self.close()
   
@@ -215,7 +214,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			await self.send(dumps(data))
 		except:
-			log.info("Can not send on closed websocket")
+			log.info("PongRemotePlayerConsumer : Can not send on closed websocket")
 
 
 	async def receive(self, text_data=None, bytes_data=None):
@@ -223,7 +222,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		try:
 			type = content["type"]
 		except KeyError:
-			log.error("Key error in PongRemotePlayerConsumer.receive()")
+			log.error("PongRemotePlayerConsumer : Key error in receive()")
 			return
 		if type == "join_game":
 			await self.join_game(content)
@@ -244,7 +243,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		elif type == "ping":
 			await self.send_pong()
 		else:
-			log.info("Wrong type receive in RemotePlayerConsumer : " + type)
+			log.info("PongRemotePlayerConsumer : Wrong type receive " + type)
  
  
 	async def leave_game(self):
