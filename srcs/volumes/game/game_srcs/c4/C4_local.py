@@ -50,7 +50,7 @@ class C4LocalEngine(threading.Thread):
 
 	def run(self):
 		self.wait_start()
-		while not self.board.over:
+		while True:
 			with self.end_lock:
 				if self.end == True:
 					break
