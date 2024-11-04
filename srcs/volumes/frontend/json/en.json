@@ -99,7 +99,8 @@
       "inviteMatch": "Invite to a Match",
       "inviteGames": "Games Invites",
       "invite": "Invites",
-      "auth": "Authentification"
+      "auth": "Authentification",
+      "accountCreation": "Account Creation"
     },
     "message": {
       "over": "is over",
@@ -110,7 +111,8 @@
       "failConnectServer": "Unable to connect to the server, please try again later",
       "authError": "Authentification error, please re-login",
       "successChange": "Changed successfully",
-      "alreadyLog": "You are already logged in"
+      "alreadyLog": "You are already logged in",
+      "accountCreation": "Your new account was successfully created!"
     }
   }
 }

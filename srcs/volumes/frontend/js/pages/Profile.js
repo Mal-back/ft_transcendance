@@ -1,7 +1,11 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
-import { removeSessionStorage, showModal } from "../Utils/Utils.js";
+import {
+  removeSessionStorage,
+  showModal,
+  formateDate,
+} from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -54,44 +58,93 @@ export default class extends AbstractView {
     }
   }
 
-  crateMatchElement(data) {
-    //PLAYER AVATAR ?
-    return `
+  async createMatchElement(data, userData) {
+    try {
+      const boolWin = userData.username == data.winner ? true : false;
+      const opponentName = boolWin ? data.looser : data.winner;
+      const opponentInfo = await this.getUserInfo(opponentName);
+      const color = boolWin ? "bg-dark" : "bg-gray";
+      return `
 <!-- match div -->
-  <div class="bg-dark text-white text-center px-3 py-1 mb-1 rounded">
+  <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
       <!-- Player 1 -->
       <div class="text-center player-container">
-        <div class="player-circle mx-auto mb-2"></div>
+        <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
         <div class="player-name">
-          <span>${data.player_1}</span>
+          <span>${userData.username}</span>
         </div>
       </div>
       <!-- Match Info -->
       <div class="text-center match-info">
-        <h5>WIN-LOSE</h5> 
-        <h4>${data.score_player_1} - ${data.score.player_2}</h4>
-        <p id="matchDate">${data.date}</p>
+        <h5>${boolWin ? "WON-LOST" : "LOST-WON"}</h5> 
+        <h4>${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}</h4>
+        <p id="matchDate">${formateDate(data.played_at)}</p>
       </div>
         <!-- Player 2 -->
         <div class="text-center player-container">
-          <div class="player-circle mx-auto mb-2"></div>
+          <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
           <div class="player-name">
-            <span>${data.player_2}</span>
+            <span>${opponentName}</span>
           </div>
         </div>
       </div>
     </div> 
           `;
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("MatchElement", error);
+        return "";
+      }
+    }
   }
-  async pongMatchHistory(username) {
+  async pongMatchHistory(userData) {
     const mainDiv = document.createElement("div");
     try {
-      const request = await this.makeRequest(`/api/match/${username}`);
-      const response = await fetch(request);
-      console.log("pongMatchHistory: response", response);
-      const data = await this.getErrorLogfromServer(response, true);
+      const mainRequest = await this.makeRequest(
+        `/api/history/match/?username=${userData.username}`,
+      );
+      const mainResponse = await fetch(mainRequest);
+      if (!mainResponse.ok) {
+        console.error("pongMatchHistory: ", mainResponse);
+        const dataError = await this.getErrorLogfromServer(mainResponse);
+        console.error("pongMatchHistory: ", dataError);
+        return;
+      }
+      console.log("pongMatchHistory: response", mainResponse);
+      const data = await this.getErrorLogfromServer(mainResponse, true);
       console.log("pongMatchHistory: data", data);
+
+      let matchesArray = data.results;
+      const matchesHTMLArray = await Promise.all(
+        matchesArray.map((matchData) =>
+          this.createMatchElement(matchData, userData),
+        ),
+      );
+      mainDiv.innerHTML = matchesHTMLArray.join("");
+      console.log("mainDiv first fill: ");
+      let nextPage = data.next;
+      while (nextPage) {
+        const request = await this.makeRequest(nextPage, "GET");
+        const response = await fetch(request);
+        if (response.ok) {
+          const pageData = await response.json();
+          matchesArray = pageData.results;
+          const newMatchHtmlArray = await Promise.all(
+            matchesArray.map((matchData) =>
+              this.createMatchElement(matchData, userData),
+            ),
+          );
+          mainDiv.innerHTML += newMatchHtmlArray.join("");
+          nextPage = pageData.next;
+        } else {
+          const log = await this.getErrorLogfromServer(response);
+          console.error(log);
+          break;
+        }
+      }
+      return mainDiv.innerHTML;
     } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
@@ -116,34 +169,13 @@ export default class extends AbstractView {
         "battleHistoryLabel",
       ]);
     }
-    const fillModal = await this.pongMatchHistory(userData.username);
-    const winRatePong = userData.single_games_win_rate
-      ? `${userData.single_games_win_rate} %`
+    const fillModal = await this.pongMatchHistory(userData);
+    const winRatePong = userData.total_games
+      ? `${userData.single_games_win_rate * 100} %`
       : `n/a`;
-    const winRateC4 = userData.single_games_win_rate
-      ? `${userData.single_games_win_rate} %`
+    const winRateC4 = userData.total_games
+      ? `${userData.single_games_win_rate * 100} %`
       : `n/a`;
-    // <div class="background">
-    //     //     <div class="Profile container">
-    //     //       <div class="d-flex justify-content-center w-100">
-    //     //         <!-- Top profile section (centered) -->
-    //     //         <div class="top-profile d-flex flex-column justify-content-center align-items-center">
-    //     //           <div class="rounded-circle Avatar status-playing" alt="Avatar" style="background-image: url(${userData.profilePic})"></div>
-    //     //           <a class="black-txt">${userData.username}</a>
-    //     //         </div>
-    //     //       </div>
-    //     //
-    //     //       <!-- Left-aligned profile info -->
-    //     //       <div class="align-items-left mt-3 w-100">
-    //     //         <p class="black-txt">${this.lang.getTranslation(["profile", "winRateLabel"])} ${winRatePong}</p>
-    //     //       </div>
-    //     //       <div class="align-items-left mt-3 w-100">
-    //     //         <p class="black-txt">${battleHistory}</p>
-    //     //       </div>
-    //     //       <div id="battleHistory"></div>
-    //     //       <div class="align-items-right mt-3 w-100">
-    //     //         <a id=settingsButton type="button" class="btn bg-lightgray" href="/settings">Settings</a>
-    //     //       </div>
     const htmlContent = `
 <div class="background">
   <div class="mt-4 text-white d-flex justify-content-center align-items-center">
@@ -229,60 +261,7 @@ export default class extends AbstractView {
             <h5 class="text-center mb-3">Remote Battles :</h5>
             <div class="box bg-light history">
               <!-- match div -->
-              <div
-                class="bg-dark text-white text-center px-3 py-1 mb-1 rounded"
-              >
-                <div class="d-flex justify-content-around align-items-center">
-                  <!-- Player 1 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>coucouuuuuuuuuuuuuuuu</span>
-                    </div>
-                  </div>
-                  <!-- Match Info -->
-                  <div class="text-center match-info">
-                    <h5>WIN-LOSE</h5>
-                    <h4>1 - 0</h4>
-                    <p id="matchDate">DATE</p>
-                  </div>
-                  <!-- Player 2 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>helloooooooooooo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- match div -->
-              <div
-                class="bg-gray text-white text-center px-3 py-1 mb-1 rounded"
-              >
-                <div class="d-flex justify-content-around align-items-center">
-                  <!-- Player 1 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>coucouuuuuuuuuuuuuuuu</span>
-                    </div>
-                  </div>
-                  <!-- Match Info -->
-                  <div class="text-center match-info">
-                    <h5>WIN-LOSE</h5>
-                    <h4>1 - 0</h4>
-                    <p id="matchDate">DATE</p>
-                  </div>
-                  <!-- Player 2 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>helloooooooooooo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ${fillModal}
             </div>
           </div>
           <div class="col-6">

@@ -25,25 +25,25 @@ export default class extends AbstractView {
                 <h1 class="mb-3 text-center create-user-title text-decoration-underline removeElem">${this.lang.getTranslation(["title", "createProfile"])}</h1>
                 <form id="createUser" class="removeElem">
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Username">${this.lang.getTranslation(["input", "label", "username"])}</label>
+                        <label class="removeElem" for="Username">${this.lang.getTranslation(["input", "label", "username"])}:</label>
                         <input class="form-control" name="Username removeElem" id="Username" type="text">
                         <div id="usernameError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "email"])}</label>
+                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "email"])}:</label>
                         <input class="form-control removeElem" name="Mail" id="Mail" type="text">
                         <div id="mailError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Password">${this.lang.getTranslation(["input", "label", "password"])}</label>
+                        <label class="removeElem" for="Password">${this.lang.getTranslation(["input", "label", "password"])}:</label>
                         <input class="form-control removeElem" name="Password" id="Password" type="password" autocomplete="off">
                         <div id="passwordError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirm"])} ${this.lang.getTranslation(["input", "label", "password"])}</label>
+                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirm"])} ${this.lang.getTranslation(["input", "label", "password"])}:</label>
                         <input class="form-control removeElem" name="Password-2" id="Password-2" type="password" autocomplete="off">
                         <div id="password2Error" class="removeElem"></div>
                     </div>
@@ -84,8 +84,8 @@ export default class extends AbstractView {
 
       if (response.ok) {
         showModal(
-          `${this.lang.getTranslation(["login", "accountCreatedTitle"])}`,
-          `${this.lang.getTranslation(["login", "accountCreatedMessage"])}`,
+          `${this.lang.getTranslation(["modal", "title","accountCreation"])}`,
+          `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
         );
         navigateTo("/login");
       } else {
