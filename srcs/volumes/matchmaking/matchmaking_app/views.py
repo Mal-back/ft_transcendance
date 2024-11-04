@@ -5,7 +5,7 @@ from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame, IsInitiatingPlayer, IsInvitedPlayerTournament
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
@@ -262,7 +262,6 @@ class MatchMakingRequestMatch(APIView):
     def post(self, request, *args, **kwargs):
         try :
             queueUser = InQueueUser.objects.get(user=request.user.username)
-            print('cc')
         except InQueueUser.DoesNotExist :
             return Response({'Error': 'You\'re not in the queue'}, status=status.HTTP_409_CONFLICT)
         try:
@@ -324,7 +323,7 @@ class CreateTournament(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AcceptTournamentInvite(generics.UpdateAPIView):
-    queryset = Match.objects.all()
+    queryset = Tournament.objects.all()
     lookup_field = 'pk'
     permission_classes = [IsInvitedPlayerTournament]
 
@@ -351,7 +350,7 @@ class AcceptTournamentInvite(generics.UpdateAPIView):
         return Response({'OK':'You accept the tournament'}, status=status.HTTP_200_OK)
 
 class DeclineTournamentInvite(generics.UpdateAPIView):
-    queryset = Match.objects.all()
+    queryset = Tournament.objects.all()
     lookup_field = 'pk'
     permission_classes = [IsInvitedPlayerTournament]
 
@@ -364,17 +363,108 @@ class DeclineTournamentInvite(generics.UpdateAPIView):
         tournament.invited_players.remove(user)
         return Response({'Ok':'You refuse invite'}, status=status.HTTP_200_OK)
 
-# class DeclineTournamentInvite(generics.UpdateAPIView):
-#     queryset = Match.objects.all()
-#     lookup_field = 'pk'
-#     permission_classes = [IsInvitedPlayerTournament]
-#
-#     def update(self, request, *args, **kwargs):
-#         user = self.request.user
-#         tournament = self.get_object()
-#         self.check_object_permissions(request, tournament)
-#         if tournament.status != 'pending':
-#             return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
-#         tournament.invited_players.remove(user)
-#         return Response({'Ok':'You refuse invite'}, status=status.HTTP_200_OK)
+class LeaveTournament(generics.UpdateAPIView):
+    queryset = Tournament.objects.all()
+    lookup_field = 'pk'
+    permission_classes = [IsInvitedPlayerTournament]
+
+    def update(self, request, *args, **kwargs):
+        tournament = self.get_object()
+        self.check_object_permissions(request, tournament)
+        try:
+            player = tournament.confirmed_players.get(user=request.user)
+        except TournamentUser.DoesNotExist:
+            return Response({'Error':'You\'re not in the tournament'}, status=status.HTTP_409_CONFLICT)
+        if tournament.status != 'pending':
+            return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
+        tournament.confirmed_players.remove(player)
+        player.delete()
+        return Response({'Ok':'You left tournament'}, status=status.HTTP_200_OK)
+
+class AddInvitedPlayers(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        try :
+            owner = TournamentUser.objects.get(user=user)
+            obj = Tournament.objects.get(owner=owner)
+        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
+            return None
+        return obj
+
+    def patch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = TournamentAddPlayersSerializer(data=request.data, instance=obj, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.error, status=status.HTTP_409_CONFLICT)
+
+class RemoveInvitedPlayers(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        try :
+            owner = TournamentUser.objects.get(user=user)
+            obj = Tournament.objects.get(owner=owner)
+        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
+            return None
+        return obj
+
+    def patch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = TournamentRemovePlayersSerializer(data=request.data, instance=obj, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.error, status=status.HTTP_409_CONFLICT)
+
+class DeleteTournament(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        try :
+            owner = TournamentUser.objects.get(user=user)
+            obj = Tournament.objects.get(owner=owner)
+        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
+            return None
+        return obj
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class LaunchTournament(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        try :
+            owner = TournamentUser.objects.get(user=user)
+            obj = Tournament.objects.get(owner=owner)
+        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
+            return None
+        return obj
+
+    def patch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        if obj.confirmed_players.count() < 3:
+            return Response({'Error': 'A tournament should have at least three players'}, status=status.HTTP_409_CONFLICT)
+        obj.status = 'in_progress'
+        obj.save()
+        # Add tournament logic
+        return Response({'OK':'Tournament started'}, status=status.HTTP_200_OK)
 

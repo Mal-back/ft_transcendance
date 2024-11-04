@@ -2,7 +2,7 @@ from django.core.serializers.base import SerializationError
 from django.forms import ValidationError
 from django.utils import choices
 from rest_framework import serializers
-from .models import MatchUser, Match, InQueueUser, Tournament
+from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
 
 class MatchUserSerializer(serializers.ModelSerializer):
     class Meta :
@@ -121,10 +121,10 @@ class TournamentSerializer(serializers.ModelField):
             raise SerializationError('Duplicates are not allowed')
         return value
 
-class TournamentAddPlayersSerializer(serializers.ModelField):
+class TournamentAddPlayersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
-        fields = ['invited_players', 'game_type']
+        fields = ['invited_players']
 
     def validate_invited_players(self, value):
         request = self.context['request']
@@ -144,3 +144,30 @@ class TournamentAddPlayersSerializer(serializers.ModelField):
 
         if new_players:
             instance.invited_players.add(*new_players)
+
+class TournamentRemovePlayersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tournament
+        fields = ['invited_players']
+
+    def validate_invited_players(self, value):
+        existing = set(self.instance.invited_players.values_list('username', flat=True))
+        new = set([user.username for user in value])
+
+        if not new.issubset(existing):
+            raise SerializationError('Some users are not parts of the tournament')
+
+
+    def validate(self, instance, validated_data):
+        players_to_remove = validated_data.get('invited_players', None)
+
+        if players_to_remove:
+            for player_to_remove in players_to_remove:
+                try :
+                    to_rm = instance.confirmed_players.get(user=player_to_remove)
+                    instance.confirmed_players.remove(to_rm)
+                    to_rm.delete()
+                except TournamentUser.DoesNotExists:
+                    pass
+
+            instance.invited_players.remove(*players_to_remove)
