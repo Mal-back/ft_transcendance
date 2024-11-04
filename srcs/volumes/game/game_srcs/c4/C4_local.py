@@ -28,7 +28,7 @@ class C4LocalEngine(threading.Thread):
 
 
 	def wait_start(self):
-		print("Waiting for C4 Local Game Instance " + self.game_id + " to start")
+		print("C4LocalEngine : Waiting for game instance " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
 				if self.running == True:
@@ -41,10 +41,8 @@ class C4LocalEngine(threading.Thread):
    
 	def start_game(self):
 		with self.start_lock:
-			if self.running == True:
-				print("C4 Local Game instance " + self.game_id + "is already running, this function returns without doing anything")
-			else:
-				print("Starting C4 Local Game instance " + self.game_id)
+			if self.running == False:
+				print("C4LocalEngine : starting game instance " + self.game_id)
 				self.running = True
 
 
@@ -61,7 +59,7 @@ class C4LocalEngine(threading.Thread):
 				break
 			time.sleep(self.sleep)
 		self.join_thread()
-		print("End of run function for thread " + self.game_id)
+		print("C4LocalEngine : End of run function for thread " + self.game_id)
 
 
 	def join_thread(self):
@@ -71,7 +69,7 @@ class C4LocalEngine(threading.Thread):
 				"game_id": self.game_id
 			})
 		except:
-			print("Can not send join thread to c4_local_engine from thread num " + self.game_id)	
+			print("C4LocalEngine : Can not send join thread to C4LocalGameConsumer from thread num " + self.game_id)	
 
 	
 	def check_winner(self):
@@ -102,7 +100,7 @@ class C4LocalEngine(threading.Thread):
 				"Config": self.conf,
 			})
 		except Exception:
-			print("Can not send config to group channel " + self.game_id)
+			print("C4LocalEngine : Can not send config to group channel " + self.game_id)
  
  
 	def send_end_state(self) -> None:
@@ -116,7 +114,7 @@ class C4LocalEngine(threading.Thread):
 				"End_state" : data,
 			})
 		except Exception:
-			print("Can not send end state to group channel " + self.game_id)
+			print("C4LocalEngine : Can not send end state to group channel " + self.game_id)
 			
 
 	def send_frame(self):
@@ -126,7 +124,7 @@ class C4LocalEngine(threading.Thread):
 				"Frame": self.board.returnBoardState(),
 			})
 		except Exception:
-			print("Can not send frame to group channel " + self.game_id)
+			print("C4LocalEngine : Can not send frame to group channel " + self.game_id)
 
 
 	def receive_input(self, player : str, column : str):

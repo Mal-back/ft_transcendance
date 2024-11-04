@@ -31,7 +31,7 @@ class C4RemoteEngine(threading.Thread):
 
 
     def wait_start(self):
-        print("Waiting for c4 remote game instance " + self.game_id + " to start | player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
+        print("C4RemoteEngine : Waiting for C4 remote game instance " + self.game_id + " to start")
         waiting_opponent = 0
         while True:
             with self.start_lock:
@@ -47,7 +47,6 @@ class C4RemoteEngine(threading.Thread):
                         self.surrender = "player_1" if self.runing_player_1 == "stop" else "player_2"
                 break
             time.sleep(self.sleep)
-        print("player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
 
 
     def send_wait_opponent(self):
@@ -56,7 +55,7 @@ class C4RemoteEngine(threading.Thread):
                 "type": "send.wait.opponent",
             })
         except Exception:
-            print("Can not send frame to group channel " + self.game_id)
+            print("C4RemoteEngine : Can not send frame to group channel " + self.game_id)
 
 
     def start_game(self, player : str):
@@ -77,27 +76,27 @@ class C4RemoteEngine(threading.Thread):
             time.sleep(self.sleep)
         self.clean_game()
         self.join_thread()
-        print("End of run function for thread " + self.game_id)
+        print("C4RemoteEngine : End of run function for thread " + self.game_id)
   
   
     def join_thread(self):
         try:
-            async_to_sync(self.channel_layer.send)("pong_remote_engine", {
+            async_to_sync(self.channel_layer.send)("c4_remote_engine", {
                 "type": "join.thread",
                 "game_id": self.game_id
             })
         except:
-            print("Can not send join thread to pong_remote_engine from thread num " + self.game_id)
+            print("C4RemoteEngine : Can not send join thread to channel c4_remote_engine from thread " + self.game_id)
    
    
     def clean_game(self):
         try:
-            async_to_sync(self.channel_layer.send)("pong_remote_engine", {
+            async_to_sync(self.channel_layer.send)("c4_remote_engine", {
                 "type": "clean.game",
                 "game_id": self.game_id
             })
         except:
-            print("Can not send clean game to pong_remote_engine from thread num " + self.game_id)
+            print("C4RemoteEngine : Can not send clean game to channel c4_remote_engine from thread " + self.game_id)
    
    
     def check_winner(self):
@@ -133,7 +132,7 @@ class C4RemoteEngine(threading.Thread):
             })
             self.send_frame_channel(channel_name)
         except Exception:
-            print("Can not send config to group channel " + self.game_id)
+            print("C4RemoteEngine : Can not send config to channel " + self.game_id)
  
  
     def send_end_state(self) -> None:
@@ -150,7 +149,7 @@ class C4RemoteEngine(threading.Thread):
                 "End_state" : data,
             })
         except Exception:
-            print("Can not send end state to group channel " + self.game_id)
+            print("C4RemoteEngine : Can not send end state to group channel " + self.game_id)
         try:
             async_to_sync(self.channel_layer.send)("c4_remote_engine", {
                 "type" : "send.result",
@@ -158,7 +157,7 @@ class C4RemoteEngine(threading.Thread):
                 "game_id" : self.game_id,
             })
         except Exception:
-            print("Can not send end state to group channel " + self.game_id)
+            print("C4RemoteEngine : Can not send result to channel c4_remote_engine " + self.game_id)
 
     def send_frame_channel(self, channel : str):
         try:
@@ -167,7 +166,7 @@ class C4RemoteEngine(threading.Thread):
                 "Frame": self.board.returnBoardState(),
             })
         except Exception:
-             print("Can not send result to C4RemoteGameConsumer for game " + self.game_id)
+             print("C4RemoteEngine : Can not send frame to channel  " + channel)
 
 
     def send_frame(self):
@@ -177,7 +176,7 @@ class C4RemoteEngine(threading.Thread):
                 "Frame": self.board.returnBoardState(),
             })
         except Exception:
-            print("Can not send frame to group channel " + self.game_id)
+            print("C4RemoteEngine : Can not send frame to group channel " + self.game_id)
 
 
     def receive_input(self, player : str, column : str):

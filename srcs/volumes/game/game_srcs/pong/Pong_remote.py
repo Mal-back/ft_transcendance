@@ -200,6 +200,8 @@ class PongRemoteEngine(threading.Thread):
             if self.surrender == "player_1" or self.surrender == "player_2":
                 self.winner = self.player_1_username if self.surrender == "player_2" else self.player_2_username
                 self.looser = self.player_1_username if self.surrender == "player_1" else self.player_2_username
+                self.frame.player_1.score = Const.MAX_SCORE.value if self.winner == self.player_1_username else 0
+                self.frame.player_2.score = Const.MAX_SCORE.value if self.winner == self.player_2_username else 0
                 return True
         return False
 

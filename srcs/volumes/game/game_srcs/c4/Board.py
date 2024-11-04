@@ -105,8 +105,8 @@ class Board:
 			self.board = [["." for _ in range(self.column)] for _ in range(self.row)]
 			self.turn = 0
 			self.tie +=1
-			print("Board flushed")
-		else : print("Board not flushed")
+			# print("Board flushed")
+		# else : print("Board not flushed")
 
 
 	def board_is_full(self) -> bool:
@@ -155,7 +155,7 @@ class Board:
 						win+=1
 						row_to_check+=1
 					if win == 4:
-						print(piece, self.pieces.index(piece))
+						# print(piece, self.pieces.index(piece))
 						return self.pieces.index(piece)
 		return -1
 
@@ -172,7 +172,7 @@ class Board:
 						win+=1
 						col_to_check+=1
 					if win == 4:
-						print(piece, self.pieces.index(piece))
+						# print(piece, self.pieces.index(piece))
 						return self.pieces.index(piece)
 		return -1
 
@@ -191,7 +191,7 @@ class Board:
 						row_to_check-=1
 						col_to_check+=1
 					if win == 4:
-						print(piece, self.pieces.index(piece))
+						# print(piece, self.pieces.index(piece))
 						return self.pieces.index(piece)
 		return -1
 
@@ -210,7 +210,7 @@ class Board:
 						row_to_check+=1
 						col_to_check+=1
 					if win == 4:
-						print(piece, self.pieces.index(piece))
+						# print(piece, self.pieces.index(piece))
 						return self.pieces.index(piece)
 		return -1
 
@@ -218,19 +218,19 @@ class Board:
 	def winning_board(self) -> Win :
 		"""Function that checks if there is a win, returns the player of won in case of a win, else it returns None"""
 		if (w :=self.check_column_win()) >= 0:
-			print(self)
+			# print(self)
 			player = self.player1 if w == 0 else self.player2
 			return player
 		elif (w :=self.check_row_win()) >= 0:
-			print(self)
+			# print(self)
 			player = self.player1 if w == 0 else self.player2
 			return player
 		elif (w :=self.check_upward_diag_win()) >= 0:
-			print(self)
+			# print(self)
 			player = self.player1 if w == 0 else self.player2
 			return player
 		elif (w :=self.check_downward_diag_win()) >= 0:
-			print(self)
+			# print(self)
 			player = self.player1 if w == 0 else self.player2
 			return player
 		if self.board_is_full():
