@@ -17,12 +17,12 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["login", "createProfileBtn"])}`);
+    this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
      return `
       <div class="background createUser removeElem">
         <div class="p-5 bg-* removeElem">
             <div class="black-txt bg-form create-user-form p-4 removeElem">
-                <h1 class="mb-3 text-center create-user-title text-decoration-underline removeElem">${this.lang.getTranslation(["login", "createUserTitle"])}</h1>
+                <h1 class="mb-3 text-center create-user-title text-decoration-underline removeElem">${this.lang.getTranslation(["title", "createProfile"])}</h1>
                 <form id="createUser" class="removeElem">
                     <div class="form-group removeElem">
                         <label class="removeElem" for="Username">${this.lang.getTranslation(["input", "label", "username"])}</label>
@@ -31,7 +31,7 @@ export default class extends AbstractView {
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "mail"])}</label>
+                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "email"])}</label>
                         <input class="form-control removeElem" name="Mail" id="Mail" type="text">
                         <div id="mailError" class="removeElem"></div>
                     </div>
@@ -43,18 +43,15 @@ export default class extends AbstractView {
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirmPass"])}</label>
+                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirm"])} ${this.lang.getTranslation(["input", "label", "password"])}</label>
                         <input class="form-control removeElem" name="Password-2" id="Password-2" type="password" autocomplete="off">
                         <div id="password2Error" class="removeElem"></div>
                     </div>
                     <br>
-                    <button id="createUserButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["login", "createProfileBtn"])}</button>
+                    <button id="createUserButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["title", "createProfile"])}</button>
                     <br>
                     <br>
                 </form>
-            </div>
-            <div class="d-flex justify-content-center mt-3 removeElem">
-                <button type="button" class="btn bg-blue login42-create white-txt removeElem">42 Connect</button>
             </div>
         </div>
       </div>
@@ -111,9 +108,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#usernameError");
     errorDiv.innerHTML = "";
     if (usernameInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(usernameInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -129,9 +126,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#passwordError");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (passwordInput.value.length < 2) {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "short"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "short"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -147,9 +144,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#mailError");
     errorDiv.innerHTML = "";
     if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -165,10 +162,10 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#password2Error");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     }
     if (password2Input.value !== passwordInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "match"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;

@@ -399,12 +399,12 @@ export default class AbstractViews {
     const inviteModalEl = document.getElementById("inviteUserModal");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["title", "logout"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/logout";
       logIcon.href = "";
       logIcon.href = "/logout";
-      logIcon.title = this.lang.getTranslation(["menu", "logout"]);
+      logIcon.title = this.lang.getTranslation(["title", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
       if (notifButton.style.display == "none") {
@@ -420,12 +420,12 @@ export default class AbstractViews {
         removeSessionStorage();
       }
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["menu", "login"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["title", "login"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/login";
       logIcon.href = "";
       logIcon.href = "/login";
-      logIcon.title = this.lang.getTranslation(["menu", "login"]);
+      logIcon.title = this.lang.getTranslation(["title", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
       const badge = document.getElementById("notificationbell");
