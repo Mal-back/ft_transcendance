@@ -281,7 +281,7 @@ class C4LocalGameConsumer(SyncConsumer):
 
 			
 	def surrend(self, event):
-		print("Surrend function in PongLocalGameConsumer")
+		print("Surrend function in C4LocalGameConsumer")
 		game_id = event["game_id"]
 		try:
 			self.game_instances[game_id].receive_surrend(event["surrender"])

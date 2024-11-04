@@ -41,12 +41,12 @@ class C4RemoteEngine(threading.Thread):
                     if waiting_opponent == 0:
                         self.send_wait_opponent()
                     waiting_opponent += 1
-            if waiting_opponent * self.frame_rate >= 30:
+            if waiting_opponent * self.sleep >= 30:
                 with self.start_lock:
                     with self.surrender_lock:
                         self.surrender = "player_1" if self.runing_player_1 == "stop" else "player_2"
                 break
-            time.sleep(self.frame_rate)
+            time.sleep(self.sleep)
         print("player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
 
 
@@ -138,8 +138,11 @@ class C4RemoteEngine(threading.Thread):
  
     def send_end_state(self) -> None:
         looser = self.player_1_username if self.winner == self.player_2_username else self.player_2_username
-        data = {"winner" : self.winner,
+        data = {"game" : "c4",
+            "winner" : self.winner,
           "looser" : looser,
+          "winner_points" : 1,
+          "looser_points" : 0,
         }
         try:
             async_to_sync(self.channel_layer.group_send)(self.game_id, {
@@ -178,11 +181,12 @@ class C4RemoteEngine(threading.Thread):
 
 
     def receive_input(self, player : str, column : str):
+        username = self.player_1_username if player == "player_1" else self.player_2_username
         with self.input_lock:
             try:
                 self.input_column = int(column)
                 self.input_receive = True
-                self.input_player = player
+                self.input_player = username
             except Exception:
                 return
 

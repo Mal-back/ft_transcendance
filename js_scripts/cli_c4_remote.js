@@ -11,23 +11,28 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+
 ws.on('open', () => {
   console.log('Connected to WebSocket server');
   promptInput();
 });
+
 
 ws.onmessage = function(event){
 	const msg = event.data;
 	console.log(`${msg}`)
 }
 
+
 ws.on('error', (error) => {
   console.error('WebSocket error:', error);
 });
 
+
 ws.on('close', () => {
   console.log('WebSocket connection closed');
 });
+
 
 function init_game() {
 	ws.send(JSON.stringify({
@@ -35,11 +40,13 @@ function init_game() {
 	}))
 }
 
+
 function get_config() {
 	ws.send(JSON.stringify({
 		type : "get_config",
 	}))
 }
+
 
 function start_game() {
 	ws.send(JSON.stringify({
@@ -47,60 +54,40 @@ function start_game() {
 	}))
 }
 
-function surrend_1() {
-	ws.send(JSON.stringify({
-		type : "surrend",
-		surrender : "player_1"
-	}))
-}
 
-function surrend_2() {
+function surrend() {
 	ws.send(JSON.stringify({
 		type : "surrend",
-		surrender : "player_2"
 	}))
 }
 
 
-function put_1() {
+function put() {
 	rl.question('Enter column number to move: ', (column) => {
 	  // Validate the input; you might want to add more checks based on your game's rules
 	  const columnNum = parseInt(column, 10);
 	ws.send(JSON.stringify({
 		type: "put",
-		player: "player_1",
 		column: columnNum
 	}));
 	promptInput();
 	});
   }
 
-function put_2() {
-rl.question('Enter column number to move: ', (column) => {
-	// Validate the input; you might want to add more checks based on your game's rules
-	const columnNum = parseInt(column, 10);
-ws.send(JSON.stringify({
-	type: "put",
-	player: "player_2",
-	column: columnNum
-}));
-promptInput();
-});
-}
-
-function join() {
+  function join() {
     rl.question('Enter auth key: ', (key) => {
         const authKey = key;
+
         rl.question('Enter game ID: ', (gameId) => {
-            // Validate the input; you might want to add more checks based on your game's rules
             const gameID = gameId;
-            
+
             ws.send(JSON.stringify({
                 type: "join_game",
-                game_id: gameID,
                 auth_key: authKey,
+                game_id: gameID
             }));
-            promptInput();
+
+            promptInput(); // Ensure this function exists and prompts correctly
         });
     });
 }
@@ -117,12 +104,11 @@ function showHelp() {
   - help           : Show this help message.
   - pause          : Pause the game.
   - unpause        : Unpause the game.
-  - surrend_1      : Player 1 surrend.
-  - surrend_2      : Player 2 surrend.
-  - put_1          : Put disk for player 1
-  - put_2          : Put disk for player 2
+  - surrend        : Surrend the game
+  - put            : Put a disk
   `);
   }
+
 
 function promptInput() {
   rl.question('Enter command (send help to list commands): ', (input) => {
@@ -131,12 +117,14 @@ function promptInput() {
   });
 }
 
+
 function handleInput(input) {
   const [command, ...args] = input.split(' ');
 
   switch (command) {
 	case 'join':
 		join();
+		break;
 	case 'start':
 		start_game();
 		break;
@@ -152,17 +140,11 @@ function handleInput(input) {
 	case 'unpause':
 		unpause();
 		break;
-	case 'surrend_1':
-		surrend_1();
+	case 'surrend':
+		surrend();
 		break;
-	case 'surrend_2':
-		surrend_2();
-		break;
-	case 'put_1':
-		put_1();
-		break;
-	case 'put_2':
-		put_2();
+	case 'put':
+		put();
 		break;
 	case 'help':
 		showHelp();
@@ -180,6 +162,7 @@ function handleInput(input) {
     	break;
   }
 }
+
 
 process.on('SIGINT', () => {
   console.log('Exiting...');
