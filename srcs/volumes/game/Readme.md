@@ -3,7 +3,7 @@ creer le profil du docker dans auth
 modifier authentication.py et permissions.py
 copier dossier ms_client pour pouvoir envoyer les requetes au docker mathmaking à la fin de la partie
 
-curl -X POST http://localhost:8080/api/game/pong-remote/create/ -H 'Content-Type: application/json' -d '{"player_1_name": "leo", "player_2_name": "xavier"}'
+curl --insecure  -X POST https://localhost:8080/api/game/c4-remote/create/ -H 'Content-Type: application/json' -d '{"player_1_name": "leo", "player_2_name": "xavier"}'
 
 Important : when a KeyValue Error is receive from your websocket, the game will ignore it and not send anything, please follow the correct JSON formats described bellow to have the best experience possible with our game.
 
