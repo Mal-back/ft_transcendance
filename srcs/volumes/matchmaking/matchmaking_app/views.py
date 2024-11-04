@@ -5,7 +5,7 @@ from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame, IsInitiatingPlayer, IsInvitedPlayerTournament
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
@@ -348,12 +348,9 @@ class AcceptTournamentInvite(generics.UpdateAPIView):
             return Response({'Error':'You are in a tournament'}, status=status.HTTP_409_CONFLICT)
         newUser = TournamentUser.objects.create(user=request.user)
         tournament.confirmed_players.add(newUser)
-        if tournament.confirmed_players.count() == tournament.invited_players.count() + 1:
-            # launch tournament
-            pass
         return Response({'OK':'You accept the tournament'}, status=status.HTTP_200_OK)
 
-class AcceptTournamentInvite(generics.UpdateAPIView):
+class DeclineTournamentInvite(generics.UpdateAPIView):
     queryset = Match.objects.all()
     lookup_field = 'pk'
     permission_classes = [IsInvitedPlayerTournament]
@@ -365,7 +362,19 @@ class AcceptTournamentInvite(generics.UpdateAPIView):
         if tournament.status != 'pending':
             return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
         tournament.invited_players.remove(user)
-        if tournament.invited_players.count() < 2:
-            tournament.delete()
         return Response({'Ok':'You refuse invite'}, status=status.HTTP_200_OK)
+
+# class DeclineTournamentInvite(generics.UpdateAPIView):
+#     queryset = Match.objects.all()
+#     lookup_field = 'pk'
+#     permission_classes = [IsInvitedPlayerTournament]
+#
+#     def update(self, request, *args, **kwargs):
+#         user = self.request.user
+#         tournament = self.get_object()
+#         self.check_object_permissions(request, tournament)
+#         if tournament.status != 'pending':
+#             return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
+#         tournament.invited_players.remove(user)
+#         return Response({'Ok':'You refuse invite'}, status=status.HTTP_200_OK)
 

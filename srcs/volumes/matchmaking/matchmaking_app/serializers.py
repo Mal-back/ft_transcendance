@@ -117,8 +117,30 @@ class TournamentSerializer(serializers.ModelField):
         fields = ['invited_players', 'game_type']
 
     def validate_invited_players(self, value):
-        if len(value < 2):
-            raise SerializationError('A tournament should have at least 3 participants')
         if len(value) != len(set(value)):
-            raise SerializationError('DUplicates are not allowed')
+            raise SerializationError('Duplicates are not allowed')
         return value
+
+class TournamentAddPlayersSerializer(serializers.ModelField):
+    class Meta:
+        model = Tournament
+        fields = ['invited_players', 'game_type']
+
+    def validate_invited_players(self, value):
+        request = self.context['request']
+        owner = request.user
+        existing = set(self.instance.invited_players.values_list('username', flat=True))
+        new = set([user.username for user in value])
+
+        cross = existing.intersection(new)
+        if cross:
+            raise SerializationError(f'Users {list(cross)} are already invited')
+        if owner in value:
+            raise SerializationError(f'You can\'t invite yourself')
+
+
+    def validate(self, instance, validated_data):
+        new_players = validated_data.get('invited_players', None)
+
+        if new_players:
+            instance.invited_players.add(*new_players)
