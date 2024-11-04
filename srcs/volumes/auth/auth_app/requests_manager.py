@@ -53,9 +53,9 @@ def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bo
         else:
             successefull_elements.append(url)
     if len(urls) != len(successefull_elements):
+        new_username = body['username']
+        body['username'] = old_username
         for url in successefull_elements:
-            new_username = body['username']
-            body['username'] = old_username
             print(body)
             rollback_url = url.replace(old_username, new_username) 
             send_request(url=rollback_url, method='patch', headers=headers, body=body)
