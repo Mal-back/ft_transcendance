@@ -17,44 +17,41 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["login", "createProfileBtn"])}`);
-     return `
+    this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
+    return `
       <div class="background createUser removeElem">
         <div class="p-5 bg-* removeElem">
             <div class="black-txt bg-form create-user-form p-4 removeElem">
-                <h1 class="mb-3 text-center create-user-title text-decoration-underline removeElem">${this.lang.getTranslation(["login", "createUserTitle"])}</h1>
+                <h1 class="mb-3 text-center create-user-title text-decoration-underline removeElem">${this.lang.getTranslation(["title", "createProfile"])}</h1>
                 <form id="createUser" class="removeElem">
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Username">${this.lang.getTranslation(["input", "label", "username"])}</label>
+                        <label class="removeElem" for="Username">${this.lang.getTranslation(["input", "label", "username"])}:</label>
                         <input class="form-control" name="Username removeElem" id="Username" type="text">
                         <div id="usernameError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "mail"])}</label>
+                        <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "email"])}:</label>
                         <input class="form-control removeElem" name="Mail" id="Mail" type="text">
                         <div id="mailError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Password">${this.lang.getTranslation(["input", "label", "password"])}</label>
+                        <label class="removeElem" for="Password">${this.lang.getTranslation(["input", "label", "password"])}:</label>
                         <input class="form-control removeElem" name="Password" id="Password" type="password" autocomplete="off">
                         <div id="passwordError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
-                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirmPass"])}</label>
+                        <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirm"])} ${this.lang.getTranslation(["input", "label", "password"])}:</label>
                         <input class="form-control removeElem" name="Password-2" id="Password-2" type="password" autocomplete="off">
                         <div id="password2Error" class="removeElem"></div>
                     </div>
                     <br>
-                    <button id="createUserButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["login", "createProfileBtn"])}</button>
+                    <button id="createUserButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["title", "createProfile"])}</button>
                     <br>
                     <br>
                 </form>
-            </div>
-            <div class="d-flex justify-content-center mt-3 removeElem">
-                <button type="button" class="btn bg-blue login42-create white-txt removeElem">42 Connect</button>
             </div>
         </div>
       </div>
@@ -66,10 +63,10 @@ export default class extends AbstractView {
     if (username) {
       navigateTo("/");
       throw new CustomError(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        "User is already logged in",
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "alreadyLog"])}`,
         "/",
-      )
+      );
     }
     return;
   }
@@ -87,20 +84,24 @@ export default class extends AbstractView {
 
       if (response.ok) {
         showModal(
-          `${this.lang.getTranslation(["login", "accountCreatedTitle"])}`,
-          `${this.lang.getTranslation(["login", "accountCreatedMessage"])}`,
+          `${this.lang.getTranslation(["modal", "title", "accountCreation"])}`,
+          `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
         );
         navigateTo("/login");
       } else {
         const log = await this.getErrorLogfromServer(response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, `${log}`);
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${log}`,
+        );
         console.debug("Server response:", log);
       }
     } catch (error) {
+      if (error instanceof CustomError) throw error;
       console.error("Error in Request:", error);
       showModal(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        `${this.lang.getTranslation(["error", "failConnectServer"])}`,
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "failConnectServer"])}`,
       );
       // throw new Error("Redirect to /home, server is dead, good luck");
     }
@@ -111,9 +112,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#usernameError");
     errorDiv.innerHTML = "";
     if (usernameInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(usernameInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -129,9 +130,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#passwordError");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (passwordInput.value.length < 2) {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "short"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "short"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -147,9 +148,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#mailError");
     errorDiv.innerHTML = "";
     if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -165,10 +166,10 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#password2Error");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     }
     if (password2Input.value !== passwordInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "match"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -205,6 +206,7 @@ export default class extends AbstractView {
         password2Input.value,
       );
     } catch (error) {
+      if (error instanceof CustomError) throw error;
       console.error("Caught in Event Listener:", error);
     }
   }
@@ -247,32 +249,35 @@ export default class extends AbstractView {
   removeEventListeners() {
     const button = document.querySelector("#createUserButton");
     if (button) {
-      console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.handleSubmitNewUser);
-      button.innerHTML = "";
-      button.parentNode.removeChild(button);
-      this.createUserButton = null;
     }
     const usernameInput = document.querySelector("#Username");
     const passwordInput = document.querySelector("#Password");
     const password2Input = document.querySelector("#Password-2");
     const mailInput = document.querySelector("#Mail");
-    usernameInput.removeEventListener("input", this.handleInputUsername);
-    passwordInput.removeEventListener("input", this.handleInputPassword);
-    password2Input.removeEventListener("input", this.handleInputPassword);
-    mailInput.removeEventListener("input", this.handleInputMail);
-    passwordInput.value = "";
-    password2Input.value = "";
-    mailInput.value = "";
-    usernameInput.value = "";
-    document.querySelector("#usernameError").innerHTML = "";
-    document.querySelector("#passwordError").innerHTML = "";
-    document.querySelector("#password2Error").innerHTML = "";
-    document.querySelector("#mailError").innerHTML = "";
-
-    // document.querySelectorAll('[data-link="view"]').forEach((button) => {
-    //   console.info("removing event click on button : " + button.innerText);
-    //   button.removeEventListener("click", this.handleClick);
-    // });
+    if (usernameInput) {
+      usernameInput.removeEventListener("input", this.handleInputUsername);
+      usernameInput.value = "";
+    }
+    if (passwordInput) {
+      passwordInput.value = "";
+      passwordInput.removeEventListener("input", this.handleInputPassword);
+    }
+    if (password2Input) {
+      password2Input.value = "";
+      password2Input.removeEventListener("input", this.handleInputPassword);
+    }
+    if (mailInput) {
+      mailInput.removeEventListener("input", this.handleInputMail);
+      mailInput.value = "";
+    }
+    const usernameError = document.querySelector("#usernameError");
+    if (usernameError) usernameError.innerHTML = "";
+    const passwordError = document.querySelector("#passwordError");
+    if (passwordError) passwordError.innerHTML = "";
+    const password2Error = document.querySelector("#password2Error");
+    if (password2Error) password2Error.innerHTML = "";
+    const mailError = document.querySelector("#mailError");
+    if (mailError) mailError.innerHTML = "";
   }
 }

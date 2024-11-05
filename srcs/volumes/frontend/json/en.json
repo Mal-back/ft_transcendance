@@ -1,203 +1,132 @@
 {
-  "menu": {
-    "label": "Menu",
+  "title": {
     "home": "Home",
     "pong": "Pong",
-    "connect4": "Connect 4",
+    "c4": "Connect 4",
     "profile": "Profile",
     "friends": "Friends",
+    "settings": "Settings",
+    "login": "Login",
     "logout": "Logout",
-    "login": "Login"
+    "local": "Local",
+    "lobby": "Lobby",
+    "remote": "Remote",
+    "tournament": "Tournament",
+    "ranking": "Ranking",
+    "notif": "Notifications",
+    "createUser": "Create User",
+    "createProfile": "Create new Profile",
+    "mode": "Mode"
   },
-  "modal": {
-    "error": "Error",
-    "submissionFailed": "Submission failed",
-    "success": "Success",
-    "close": "Close"
+  "button": {
+    "close": "Close",
+    "accept": "Accept",
+    "refuse": "Refuse",
+    "invite": "Invite",
+    "cancel": "Cancel",
+    "help": "Help",
+    "giveUp": "Give up",
+    "show": "Show",
+    "change": "Change",
+    "chooseFile": "Choose a File",
+    "upload": "Upload",
+    "save": "Save",
+    "handle": "Handle",
+    "data": "Data",
+    "send": "Send",
+    "delete": "Delete",
+    "all": "all",
+    "join": "Join",
+    "addFriend": "Add Friend",
+    "remove": "Remove"
   },
-  "error": {
-    "failConnectServer": "Unable to connect to the server, please wait",
-    "notAuthentified": "You're not authentified yet, please login to access this page",
-    "errorAuthentification": "Authentification error, re-login please",
-    "failRefresh": "Fail to refresh your credentials, re-login please, sorry for the inconvenience",
-    "invalidChar": "Invalid characters! Allowed: alphanumeric, +, -, ., _, @"
+  "user": {
+    "you": "You",
+    "avatar": "Avatar",
+    "maiden": "MaidenLess",
+    "pleaseFriend": "Please add Friends"
+  },
+  "game": {
+    "label": "Game",
+    "win": "Win",
+    "won": "Won",
+    "loss": "Loss",
+    "lost": "Lost",
+    "play": "Play",
+    "next": "Next",
+    "match": "Match",
+    "inviteMatch": "Invite to a Match",
+    "player": "Player",
+    "blue": "Blue",
+    "red": "Red",
+    "selectNbPlayer": "Select number of players",
+    "paused": "is paused",
+    "start": "Start",
+    "battle": "Battle",
+    "waiting": "waiting for",
+    "history": "History",
+    "winRate": "Win Rate",
+    "n/a": "n/a"
   },
   "homePage": {
-    "homeTitle": "Welcome to Our Pong!",
+    "title": "Welcome to Our Pong!",
     "descriptionHomeMessage": "Explore the depth of the Pong game, play with friends, and personalize your profile as you desire!",
     "descriptionHomeMessage2": "✨ Have fun! ✨"
   },
-  "login": {
-    "authTitle": "You're not connected yet",
-    "createProfileBtn": "Create New Profile",
-    "loginBtn": "Login",
-    "createUserTitle": "Create User",
-    "mailLabel": "Mail:",
-    "passwordLabel": "Password:",
-    "password2Label": "Confirm Password:",
-    "Connect42Btn": "42 Connect",
-    "accountCreatedTitle": "Account created",
-    "accountCreatedMessage": "New account Successfuly Created",
-    "goodbyeMessage": "Goodbye, "
-  },
   "input": {
-    "username": {
-      "empty": "Username is empty",
-      "short": "Username is too short",
-      "invalid": "Username contains invalid characters"
-    },
-    "mail": {
-      "empty": "E-mail is empty",
-      "invalid": "E-mail is not a valid adress mail",
-      "match": "Both e-mails doesn't match"
-    },
-    "password": {
-      "empty": "Password is empty",
-      "short": "Password is too short",
-      "weak": "Password is too weak",
-      "match": "Both password doesn't match"
-    },
     "label": {
-      "username": "Username:",
-      "password": "Password:",
-      "confirmPass": "Confirm Password:",
-      "mail": "E-mail:",
-      "oldMail": "Old E-mail:",
-      "newMail": "New E-mail:",
-      "confirmMail": "Confirm new E-mail:",
-      "oldPass": "Old Password:",
-      "newPass": "New Password:",
-      "confirmNewPass": "Confirm new Password:"
-    }
-  },
-  "profile": {
-    "winRateLabel": "Win Rate:",
-    "noGamePlayed": "No game played yet",
-    "battleHistoryLabel": "Battle History:",
-    "noHistory": "No history yet",
-    "matchDate": "DATE",
-    "WIN": "WIN",
-    "LOSE": "LOSE"
-  },
-  "Matchmaking": {
-    "Label": "Matchmaking",
-    "NormalMode": "NORMAL MODE",
-    "NormalModeTitle": "Normal Mode",
-    "EpicMode": "EPIC MODE",
-    "EpicModeTitle": "Epic Mode",
-    "Tournament": "Tournament",
-    "LocalMatch": "LOCAL MODE",
-    "RandomMatch": "RANDOM MATCH",
-    "FriendlyMatch": "FRIENDLY MATCH",
-    "CreateNew": "CREATE NEW",
-    "Join": "JOIN",
-    "PendingInvites": "PENDING INVITES"
-  },
-  "settings": {
-    "settingsLabel": "Settings",
-    "Username": {
-      "label": "Username",
-      "inputType": "text",
-      "currentValue": "CurrentUsername",
-      "saveButton": "Save Username",
-      "successMessage": "Successfuly, changed your username!"
+      "username": "Username",
+      "password": "Password",
+      "email": "E-mail",
+      "confirm": "Confirm",
+      "3to10": "3 to 10",
+      "language": "Language",
+      "old": "Old"
     },
-    "Background": {
-      "label": "Profile Background",
-      "changeButton": "Change Profile Background",
-      "current": "Current Profile Background:",
-      "choose": "Choose a Profile Background:",
-      "chooseFile": "Choose a file",
-      "noFile": "No File chosen",
-      "upload": "Or Upload your own:",
-      "select": "Select or Upload Profile Background",
-      "set": "Set Profile Background",
-      "uploadSuccess": "Image successfully uploaded, profile's picture set to newly uploaded Image",
-      "already": "this is already your profile Image",
-      "changeSuccess": "Image successfully uploaded, profile's picture set to newly uploaded Image"
-    },
-    "modalButtons": {
-      "Close": "Close",
-      "Confirm": "Confirm Changes",
-      "Cancel": "Cancel"
-    },
-    "Email": {
-      "buttonLabel": "Handle Email",
-      "changeButton": "Change Email",
-      "modalFields": {
-        "OldEmail": "old-email@google.com",
-        "NewEmail": "new-email@google.com",
-        "ConfirmNewEmail": "new-email@google.com",
-        "confirmationDifferent": "New e-mail and it's confirmation do not match",
-        "success": "E-mail changed successfuly",
-        "incorrectOld": "Incorrect old mail adress"
-      }
-    },
-    "Password": {
-      "buttonLabel": "Handle Password",
-      "changeButton": "Change Password",
-      "modalFields": {
-        "old": "Old Password",
-        "new": "New Password",
-        "confirm": "Confirm New Password",
-        "confirmationDifferent": "New password and it's confirmation do not match",
-        "success": "Password successfuly changed"
-      }
-    },
-    "Language": {
-      "label": "Language",
-      "options": [
-        "English",
-        "Spanish",
-        "French"
-      ],
-      "saveButton": "Save Language"
-    },
-    "DataHandler": {
-      "buttonLabel": "Handle Data",
-      "modalTitle": "Handle Data",
-      "modalFields": {
-        "send": "Send All Data",
-        "deleteAccount": "Delete Account",
-        "deleteData": "Delete All Data",
-        "confirmDeleteAccount": "Confirm Account Deletion",
-        "questionDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone.",
-        "successDeleteAccount": "Account successfuly deleted!, Goodbye"
-      }
-    },
-    "footerButtonSettings": {
-      "label": "Save All Changes"
-    }
-  },
-  "Friends": {
-    "label": "Friends",
-    "addButton": "Add Friend",
-    "enterUsername": "enter Username",
-    "removeButton": "Remove",
-    "showProfile": "Show profile",
-    "winRateLabel": "Win Rate:",
-    "warning": "Please add friends",
     "error": {
-      "yourself": "You can't add yourself as a friend",
-      "failList": "Sorry, we couldn't get your friends list"
+      "empty": "is empty",
+      "short": "is too short",
+      "weak": "is too weak",
+      "invalidChar": "contains invalid characters",
+      "match": "does not match",
+      "unique": "is already taken",
+      "valid": "is not a valid",
+      "incorrect": "Incorrect"
+    },
+    "preview": {
+      "opponent": "Enter opponent's username",
+      "noFile": "No File chosen",
+      "old": "old",
+      "new": "new",
+      "email": "-email@google.com"
     }
   },
-  "game": {
-    "pong": {
-      "title": "PONG"
+  "modal": {
+    "title": {
+      "error": "Error",
+      "success": "Success",
+      "congrats": "Congratulations",
+      "inviteMatch": "Invite to a Match",
+      "inviteGames": "Games Invites",
+      "invite": "Invites",
+      "auth": "Authentification",
+      "accountCreation": "Account Creation"
     },
-    "c4": {
-      "title": "CONNECT 4"
-    },
-    "Ranking": "RANKING",
-    "label": "Game",
-    "remote": "REMOTE",
-    "play": "PLAY",
-    "tournament": "TOURNAMENT",
-    "local": "LOCAL",
-    "numberPlayer": "Select number of players (3 to 10):",
-    "player": "Player",
-    "NextGame": "NEXT GAME",
-    "start": "Start Game"
+    "message": {
+      "over": "is over",
+      "clickNewTourn": "click here if you want to start another tournament",
+      "bye": "Goodbye",
+      "welcome": "Welcome",
+      "notLog": "You're not authentified, please login to access this page",
+      "failConnectServer": "Unable to connect to the server, please try again later",
+      "authError": "Authentification error, please re-login",
+      "successChange": "Changed successfully",
+      "alreadyLog": "You are already logged in",
+      "accountCreation": "Your new account was successfully created!",
+      "failTournament": "Failed to retrieve tournament information",
+      "wonTournament": "won the tournament",
+      "help": "Space to start the game.<br>Space to pause/unpause the game.<br>W to go up.<br>S to go down.<br>In local game for the Red Player:<br> -ArrowUp to go up.<br> -ArrowDown to go down.",
+      "lostGame": "Better luck next time"
+    }
   }
 }

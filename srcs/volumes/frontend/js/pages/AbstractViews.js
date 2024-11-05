@@ -239,7 +239,6 @@ export default class AbstractViews {
 
   async fetchInvites(boolGame) {
     AbstractViews.invitesArray = [];
-    console.log("fetchNotifications");
     try {
       const request = await this.makeRequest(
         "/api/matchmaking/match/pending_invites/",
@@ -248,10 +247,9 @@ export default class AbstractViews {
       //TODO loop on next if more than 10 invite
       const response = await fetch(request);
       const data = await this.getErrorLogfromServer(response, true);
-      console.log(response);
-      console.log(data);
+      console.info(response);
+      console.info(data);
       const count = data.count ? data.count : 0;
-      console.log("bell = ", count + boolGame);
       const badge = document.getElementById("notificationbell");
       if (count + boolGame == 0) {
         badge.innerHTML = "";
@@ -301,7 +299,6 @@ export default class AbstractViews {
   }
 
   async fetchOnGoingGame() {
-    console.log("ONGOING");
     const joinButton = document.querySelector("#buttonOnGoingGame");
     if (AbstractViews.AcceptInterval) return 0;
     try {
@@ -312,7 +309,7 @@ export default class AbstractViews {
       const response = await fetch(request);
       if (response.status == 200) {
         const data = await this.getErrorLogfromServer(response, true);
-        console.log("OngoingGame:", data);
+        console.info("OngoingGame:", data);
         await this.updateOnGoing(data);
         sessionStorage.setItem("transcendence_game_id", data.matchId);
         joinButton.classList.remove("btn-danger");
@@ -339,8 +336,8 @@ export default class AbstractViews {
     );
     const response = await fetch(request);
     const data = await this.getErrorLogfromServer(response, true);
-    console.log("SentInvite: ", data);
-    console.log("SentInvite:data.delete_invite:", data.delete_invite);
+    // console.log("SentInvite: ", data);
+    // console.log("SentInvite:data.delete_invite:", data.delete_invite);
     if (response.status == 200) {
       this.updateOnGoing(data);
       const onGoingGameButton = document.querySelector("#buttonOnGoingGame");
@@ -361,7 +358,6 @@ export default class AbstractViews {
       if (boolGame == 0) {
         onGoingGame.style.display = "none";
       } else onGoingGame.style.display = "block";
-      console.log("BoolGame = ", boolGame);
       await this.fetchInvites(boolGame);
     } catch (error) {
       if (error instanceof CustomError) throw error;
@@ -383,7 +379,7 @@ export default class AbstractViews {
           navigateTo("/");
           showModal("error", error.message);
         }
-      }, 10000);
+      }, 3000);
     }
   }
 
@@ -399,12 +395,12 @@ export default class AbstractViews {
     const inviteModalEl = document.getElementById("inviteUserModal");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["title", "logout"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/logout";
       logIcon.href = "";
       logIcon.href = "/logout";
-      logIcon.title = this.lang.getTranslation(["menu", "logout"]);
+      logIcon.title = this.lang.getTranslation(["title", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
       if (notifButton.style.display == "none") {
@@ -420,12 +416,12 @@ export default class AbstractViews {
         removeSessionStorage();
       }
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["menu", "login"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["title", "login"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/login";
       logIcon.href = "";
       logIcon.href = "/login";
-      logIcon.title = this.lang.getTranslation(["menu", "login"]);
+      logIcon.title = this.lang.getTranslation(["title", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
       const badge = document.getElementById("notificationbell");
@@ -548,7 +544,6 @@ export default class AbstractViews {
         throw error;
       }
     }
-    console.log("myMethod:", myMethod);
     const options = {
       method: myMethod.toString(),
       headers: this.makeHeaders(accessToken, myBody != null && !boolImage),

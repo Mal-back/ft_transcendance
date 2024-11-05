@@ -10,8 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.boolLogin = true;
-    this.setTitle("Pong Remote");
     this.handleRemoteTournamentRedirection =
       this.handleRemoteTournamentRedirection.bind(this);
     this.handleShowInviteModal = this.handleShowInviteModal.bind(this);
@@ -24,17 +22,18 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "remote"])}`);
     return `
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
           <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
-            ${this.lang.getTranslation(["pong", "maj", "title"])} - ${this.lang.getTranslation(["pong", "maj", "remote"])}</h1>
+            ${this.lang.getTranslation(["title", "pong"]).toUpperCase()} - ${this.lang.getTranslation(["title", "remote"]).toUpperCase()}</h1>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
-            id="PongRemotePlayButton">${this.lang.getTranslation(["pong", "maj", "play"])}</button>
+            id="PongRemotePlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-            id="PongRemoteTournamentButton">${this.lang.getTranslation(["pong", "maj", "tournament"])}</button>
+            id="PongRemoteTournamentButton">${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</button>
           <br>
         </div>
       </div>
@@ -42,15 +41,15 @@ export default class extends AbstractView {
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="inviteModalLabel">Invite to a Match</h5>
+              <h5 class="modal-title" id="inviteModalLabel">${this.lang.getTranslation(["game", "inviteMatch"])}:</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <input type="text" id="opponentUsername" class="form-control" placeholder="Enter opponent's username">
+              <input type="text" id="opponentUsername" class="form-control" placeholder="${this.lang.getTranslation(["input", "preview", "opponent"])}">
               <div id="opponentUsernameError"></div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" id="inviteButton">Invite</button>
+              <button type="button" class="btn btn-primary" id="inviteButton">${this.lang.getTranslation(["button", "invite"])}</button>
             </div>
           </div>
         </div>
@@ -77,9 +76,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#opponentUsernameError");
     errorDiv.innerHTML = "";
     if (opponentInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(opponentInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -103,16 +102,17 @@ export default class extends AbstractView {
       const response = await fetch(request);
       console.log("Request:", request);
       console.log("response:", response);
+      if (!response.ok) {
+        const dataError = await this.getErrorLogfromServer(response)
+        showModal(`${this.lang.getTranslation(["modal","title", "error"])}`, dataError);
+      } else {
       const data = await this.getErrorLogfromServer(response, true);
       console.log("data:", data);
-      if (!response.ok) {
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
-      } else {
         const modalInviteMatchId = document.getElementById("invitePongModal");
         const  modalElemInvite = bootstrap.Modal.getInstance(modalInviteMatchId);
         modalElemInvite.hide();
         const buttonOnGoingGame = document.querySelector("#buttonOnGoingGame");
-        buttonOnGoingGame.innerText = "CANCEL";
+        buttonOnGoingGame.innerText = `${this.lang.getTranslation(["button", "cancel"])}`;
         buttonOnGoingGame.dataset.redirectUrl = `/api/matchmaking/match/${data.id}/delete/`;
       }
     } catch (error) {
