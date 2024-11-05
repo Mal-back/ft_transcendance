@@ -28,6 +28,7 @@ class C4RemoteEngine(threading.Thread):
         self.input_receive = False
         self.input_player = "None"
         self.input_column = "None"
+        self.timer = 0
 
 
     def wait_start(self):
@@ -70,6 +71,7 @@ class C4RemoteEngine(threading.Thread):
         while True:
             self.check_input()
             self.check_winner()
+            self.check_timer()
             if self.board.over == 1 or self.check_surrender() == True:
                 self.send_end_state()
                 break
@@ -98,6 +100,13 @@ class C4RemoteEngine(threading.Thread):
         except:
             print("C4RemoteEngine : Can not send clean game to channel c4_remote_engine from thread " + self.game_id)
    
+
+    def check_timer(self):
+        self.timer += 1
+        if self.timer * self.sleep >= 60:
+            self.winner = self.player_1_username if self.board.currrentPlayer == self.player_2_username else self.player_2_username
+            self.board.over = 1
+
    
     def check_winner(self):
         if (winner:= self.board.winning_board()) != None:
@@ -122,6 +131,7 @@ class C4RemoteEngine(threading.Thread):
         if self.tick != self.board.tick:
             self.board.tick = 0
             self.send_frame()
+            self.timer = 0
    
    
     def send_config(self, channel_name : str) -> None:
