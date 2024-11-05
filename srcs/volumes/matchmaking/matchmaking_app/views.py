@@ -5,7 +5,7 @@ from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer, InviteSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame, IsInitiatingPlayer, IsInvitedPlayerTournament
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
@@ -120,6 +120,30 @@ class MatchGetSentInvite(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         serializer = SentInviteSerializer(match)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GetInvite(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        matchQuery = Match.objects.filter(Q(player1=user) | Q(player2=user), status='pending')
+        # tournamentQuery = Tournament.objects.filter(Q(owner=user) | Q(invites_player__in=user), status='pending') 
+
+        if matchQuery.exists():
+            match_serializer = InviteSerializer(matchQuery, context={'request':request}, many=True)
+            match_data = match_serializer.data
+
+        tournament_data = None
+
+        if not match_data and not tournament_data:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        combined_data = {
+            'match_pending': match_data if match_data else [],
+            'tournament_pending': tournament_data if tournament_data else []
+        }
+
+        return Response(combined_data, status=status.HTTP_200_OK)
 
 
 class MatchAcceptInvite(generics.UpdateAPIView):

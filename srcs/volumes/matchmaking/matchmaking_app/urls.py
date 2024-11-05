@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
         path('create/', views.MatchUserCreate.as_view(), name='user-create'),
         path('match/create/', views.MatchCreate.as_view(), name='match-create'),
+        path('invites/', views.GetInvite.as_view(), name='match-create'),
         path('match/pending_invites/', views.MatchGetPendingInvites.as_view(), name='match-pending-invites'),
         path('match/sent_invite/', views.MatchGetSentInvite.as_view(), name='match-sent-invites'),
         path('match/<int:pk>/accept/', views.MatchAcceptInvite.as_view(), name='match-accept-invite'),

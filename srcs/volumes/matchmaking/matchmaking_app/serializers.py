@@ -49,6 +49,54 @@ class PendingInviteSerializer(serializers.ModelSerializer):
         player2 = obj.player2.username
         return(f"/api/users/{player2}")
 
+class InviteSerializer(serializers.ModelSerializer):
+    accept_invite = serializers.SerializerMethodField()
+    decline_invite = serializers.SerializerMethodField()
+    delete_invite = serializers.SerializerMethodField()
+    player1_profile = serializers.SerializerMethodField()
+    player2_profile = serializers.SerializerMethodField()
+    class Meta :
+        model = Match
+        fields = ['id', 'player1', 'player2', 'matchId', 'status', 'game_type', 'created_at',
+                  'accept_invite', 'decline_invite', 'delete_invite','player1_profile', 'player2_profile']
+        extra_kwargs = {
+                    'matchId': {'read_only': True},
+                    'status': {'read_only': True},
+                    'created_at': {'read_only': True},
+                    'id': {'read_only': True},
+                }
+    def get_accept_invite(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.player2 == user:
+            match_id = obj.id
+            return(f"/api/matchmaking/match/{match_id}/accept/")
+        return None
+    
+    def get_decline_invite(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.player2 == user:
+            match_id = obj.id
+            return(f"/api/matchmaking/match/{match_id}/decline/")
+        return None
+
+    def get_delete_invite(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.player1 == user:
+            match_id = obj.id
+            return(f"/api/matchmaking/match/{match_id}/delete/")
+        return None
+
+    def get_player1_profile(self, obj):
+        player1 = obj.player1.username
+        return(f"/api/users/{player1}")
+
+    def get_player2_profile(self, obj):
+        player2 = obj.player2.username
+        return(f"/api/users/{player2}")
+
 
 class AcceptedMatchSerializer(serializers.ModelSerializer):
     player1_profile = serializers.SerializerMethodField()
