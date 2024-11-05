@@ -18,8 +18,6 @@ class C4RemoteEngine(threading.Thread):
         self.player_1_username = player_1_username
         self.player_2_username = player_2_username
         self.channel_layer = get_channel_layer()
-        self.end = False
-        self.end_lock = threading.Lock()
         self.start_lock= threading.Lock()
         self.runing_player_1 = "stop"
         self.runing_player_2 = "stop"
