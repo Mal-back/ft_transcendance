@@ -106,6 +106,8 @@ export default class extends AbstractView {
             const data = await this.getErrorLogfromServer(response, true);
             console.log("data:", data);
             if (!response.ok) {
+                console.log("Error invite: ", data);
+                console.log("Error invite: ", response);
                 showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
             } else {
                 AbstractView.AcceptInterval = setInterval(async () => {
