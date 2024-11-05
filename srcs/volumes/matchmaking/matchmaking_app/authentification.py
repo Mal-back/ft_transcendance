@@ -7,6 +7,7 @@ from django.conf import settings
 from .models import MatchUser
 import threading
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
+from django.db import connection
 
 class CustomAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -53,3 +54,4 @@ def update_online_status(username):
         print('Update last seen online field')
     except (RequestsFailed, InvalidCredentialsException):
         print('Failed to send request')
+    connection.close()

@@ -147,7 +147,7 @@ class MatchAcceptInvite(generics.UpdateAPIView):
         try:
             sender = MicroServiceClient()
             ret = sender.send_requests(
-                    urls = ['http://game:8443/api/game/pong-remote/create/'],
+                    urls = [f'http://game:8443/api/game/{match.game_type}-remote/create/'],
                     expected_status=[201],
                     method='post',
                     body={
@@ -316,8 +316,8 @@ class CreateTournament(APIView):
         if serializer.is_valid():
             if request.user in serializer.validated_data['invited_players']:
                 return Response({'Error': 'You can not play against yourself'}, status=status.HTTP_409_CONFLICT)
-            owner = TournamentUser.objects.create(user=request.user)
-            tournament = serializer.save(owner=owner)
+            tournament = serializer.save(owner=request.user)
+            owner = TournamentUser.objects.create(user=request.user, tournament=tournament)
             tournament.confirmed_players.add(owner)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -387,9 +387,8 @@ class AddInvitedPlayers(APIView):
     def get_object(self):
         user = self.request.user
         try :
-            owner = TournamentUser.objects.get(user=user)
-            obj = Tournament.objects.get(owner=owner)
-        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
+            obj = Tournament.objects.get(owner=user)
+        except Tournament.DoesNotExist:
             return None
         return obj
 
@@ -409,9 +408,8 @@ class RemoveInvitedPlayers(APIView):
     def get_object(self):
         user = self.request.user
         try :
-            owner = TournamentUser.objects.get(user=user)
-            obj = Tournament.objects.get(owner=owner)
-        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
+            obj = Tournament.objects.get(owner=user)
+        except Tournament.DoesNotExist:
             return None
         return obj
 
@@ -428,22 +426,22 @@ class RemoveInvitedPlayers(APIView):
 class DeleteTournament(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_object(self):
-        user = self.request.user
-        try :
-            owner = TournamentUser.objects.get(user=user)
-            obj = Tournament.objects.get(owner=owner)
-        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
-            return None
-        return obj
-
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
         if obj is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
+        if obj.status != 'pending':
+            return Response({'Error': 'Tournament already started'}, status=status.HTTP_409_CONFLICT)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def get_object(self):
+        user = self.request.user
+        try :
+            obj = Tournament.objects.get(owner=user)
+        except Tournament.DoesNotExist:
+            return None
+        return obj
 
 class LaunchTournament(APIView):
     permission_classes = [IsAuthenticated]
@@ -451,9 +449,8 @@ class LaunchTournament(APIView):
     def get_object(self):
         user = self.request.user
         try :
-            owner = TournamentUser.objects.get(user=user)
-            obj = Tournament.objects.get(owner=owner)
-        except (TournamentUser.DoesNotExist, Tournament.DoesNotExist):
+            obj = Tournament.objects.get(owner=user)
+        except Tournament.DoesNotExist:
             return None
         return obj
 

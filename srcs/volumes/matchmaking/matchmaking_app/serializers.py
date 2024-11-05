@@ -56,7 +56,7 @@ class AcceptedMatchSerializer(serializers.ModelSerializer):
     is_tournament_match = serializers.SerializerMethodField()
     class Meta :
         model = Match
-        fields = ['player1', 'player2', 'matchId', 'player1_profile', 'player2_profile', 'is_tournament_match']
+        fields = ['player1', 'player2', 'matchId', 'player1_profile', 'player2_profile', 'is_tournament_match', 'game_type']
 
     def get_player1_profile(self, obj):
         player1 = obj.player1.username
@@ -111,7 +111,12 @@ class MatchMakingQueueSerializer(serializers.ModelSerializer):
         model = InQueueUser
         fields = ['game_type']
 
-class TournamentSerializer(serializers.ModelField):
+class TournamentSerializer(serializers.ModelSerializer):
+    invited_players = serializers.ListField(
+            child=serializers.CharField(),
+            write_only=True
+        )
+
     class Meta:
         model = Tournament
         fields = ['invited_players', 'game_type']
@@ -119,9 +124,30 @@ class TournamentSerializer(serializers.ModelField):
     def validate_invited_players(self, value):
         if len(value) != len(set(value)):
             raise SerializationError('Duplicates are not allowed')
+
+        for user in value:
+            q = MatchUser.objects.filter(username=user)
+            if not q.exists():
+                raise serializers.ValidationError(f"Invalid username: {q}")
+        
         return value
 
+    def create(self, validated_data):
+        invited_usernames = validated_data.pop('invited_players', [])
+        
+        tournament = super().create(validated_data)
+        
+        invited_users = MatchUser.objects.filter(username__in=invited_usernames)
+        tournament.invited_players.set(invited_users)
+        
+        return tournament
+
 class TournamentAddPlayersSerializer(serializers.ModelSerializer):
+    invited_players = serializers.ListField(
+        child=serializers.CharField(),
+        write_only=True
+    )
+
     class Meta:
         model = Tournament
         fields = ['invited_players']
@@ -129,45 +155,62 @@ class TournamentAddPlayersSerializer(serializers.ModelSerializer):
     def validate_invited_players(self, value):
         request = self.context['request']
         owner = request.user
-        existing = set(self.instance.invited_players.values_list('username', flat=True))
-        new = set([user.username for user in value])
+        existing_usernames = set(self.instance.invited_players.values_list('username', flat=True))
 
-        cross = existing.intersection(new)
-        if cross:
-            raise SerializationError(f'Users {list(cross)} are already invited')
-        if owner in value:
-            raise SerializationError(f'You can\'t invite yourself')
+        new_users = []
+        for username in value:
+            if username == owner.username:
+                raise serializers.ValidationError("You can't invite yourself.")
+            try:
+                user = MatchUser.objects.get(username=username)
+                if username in existing_usernames:
+                    raise serializers.ValidationError(f'User {username} is already invited')
+                new_users.append(user)
+            except MatchUser.DoesNotExist:
+                raise serializers.ValidationError(f'User {username} does not exist')
 
+        return new_users
 
-    def validate(self, instance, validated_data):
-        new_players = validated_data.get('invited_players', None)
-
-        if new_players:
-            instance.invited_players.add(*new_players)
+    def update(self, instance, validated_data):
+        new_players = validated_data.get('invited_players', [])
+        instance.invited_players.add(*new_players)
+        return instance
 
 class TournamentRemovePlayersSerializer(serializers.ModelSerializer):
+    invited_players = serializers.ListField(
+        child=serializers.CharField(),
+        write_only=True
+    )
+
     class Meta:
         model = Tournament
         fields = ['invited_players']
 
     def validate_invited_players(self, value):
-        existing = set(self.instance.invited_players.values_list('username', flat=True))
-        new = set([user.username for user in value])
+        existing_usernames = set(self.instance.invited_players.values_list('username', flat=True))
+        users_to_remove = []
 
-        if not new.issubset(existing):
-            raise SerializationError('Some users are not parts of the tournament')
+        for username in value:
+            if username not in existing_usernames:
+                raise serializers.ValidationError(f'User {username} is not part of the tournament.')
+            try:
+                user = MatchUser.objects.get(username=username)
+                users_to_remove.append(user)
+            except MatchUser.DoesNotExist:
+                raise serializers.ValidationError(f'User {username} does not exist')
 
+        return users_to_remove
 
-    def validate(self, instance, validated_data):
-        players_to_remove = validated_data.get('invited_players', None)
+    def update(self, instance, validated_data):
+        players_to_remove = validated_data.get('invited_players', [])
+        
+        for player in players_to_remove:
+            try:
+                confirmed_player = instance.confirmed_players.get(user=player)
+                instance.confirmed_players.remove(confirmed_player)
+                confirmed_player.delete()
+            except TournamentUser.DoesNotExist:
+                pass
 
-        if players_to_remove:
-            for player_to_remove in players_to_remove:
-                try :
-                    to_rm = instance.confirmed_players.get(user=player_to_remove)
-                    instance.confirmed_players.remove(to_rm)
-                    to_rm.delete()
-                except TournamentUser.DoesNotExists:
-                    pass
-
-            instance.invited_players.remove(*players_to_remove)
+        instance.invited_players.remove(*players_to_remove)
+        return instance

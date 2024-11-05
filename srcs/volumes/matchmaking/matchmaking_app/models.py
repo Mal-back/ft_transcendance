@@ -47,21 +47,20 @@ class TournamentUser(models.Model):
                             on_delete=models.PROTECT,
                             to_field='username')
     tournament = models.ForeignKey('Tournament',
-                                related_name='tournament_owner',
-                                on_delete=models.CASCADE,
-                                to_field='username')
+                                related_name='confirmed_players',
+                                on_delete=models.CASCADE,)
     matches_won = models.IntegerField(default=0)
     matches_lost = models.IntegerField(default=0)
     
 class Tournament(models.Model):
-    owner = models.ForeignKey('TournamentUser',
-                                related_name='invited_players',
+    owner = models.ForeignKey('MatchUser',
+                                related_name='tournament_owner',
                                 on_delete=models.PROTECT,
                                 to_field='username')
-    confirmed_players = models.ManyToManyField('TournamentUser', related_name='confirmed_players', null=True)
+    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players',)
     current_round = models.IntegerField(default=1)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('in_progess', 'In progress'),])
     winner = models.ForeignKey('MatchUser',
