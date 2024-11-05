@@ -155,20 +155,19 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["menu", "profile"])}`);
+    this.setTitle(`${this.lang.getTranslation(["title", "profile"])}`);
     let userData = null;
     try {
       userData = await this.loadUserData();
     } catch (error) {
       throw error;
     }
-    let battleHistory = this.lang.getTranslation(["profile", "noHistory"]);
-    if (userData.single_games_win_rate != undefined) {
-      battleHistory = this.lang.getTranslation([
-        "profile",
-        "battleHistoryLabel",
-      ]);
-    }
+    const battleHistory =
+      this.lang.getTranslation(["title", "pong"]) +
+      " " +
+      this.lang.getTranslation(["game", "battle"]) +
+      " " +
+      this.lang.getTranslation(["game", "history"]);
     const fillModal = await this.pongMatchHistory(userData);
     const winRatePong = userData.total_games
       ? `${userData.single_games_win_rate * 100} %`
@@ -179,7 +178,7 @@ export default class extends AbstractView {
     const htmlContent = `
 <div class="background">
   <div class="mt-4 text-white d-flex justify-content-center align-items-center">
-    <h3>PROFILE</h3>
+    <h3>${this.lang.getTranslation(["title", "profile"]).toUpperCase()}</h3>
   </div>
   <div class="Profile container box-gold">
     <div class="d-flex justify-content-center w-100">
@@ -196,7 +195,7 @@ export default class extends AbstractView {
     <div class="align-items-left mt-3 w-100">
       <div class="d-flex row justify-content-center align-items-center box">
         <p class="black-txt">
-          Win Rate Pong: <span id="winRatePong">${winRatePong}</span>
+          ${this.lang} Pong: <span id="winRatePong">${winRatePong}</span>
         </p>
         <p class="black-txt">
           Pong Battle History:
