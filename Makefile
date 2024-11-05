@@ -1,6 +1,5 @@
 FILE='./srcs/docker-compose.yml'
 
-<<<<<<< HEAD
 
 all : compose env update-hostname
 	docker compose -f ./srcs/docker-compose.yml up -d --build
