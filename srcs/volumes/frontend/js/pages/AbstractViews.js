@@ -309,7 +309,7 @@ export default class AbstractViews {
       const response = await fetch(request);
       if (response.status == 200) {
         const data = await this.getErrorLogfromServer(response, true);
-        console.info("OngoingGame:", data);
+        // console.info("OngoingGame:", data);
         await this.updateOnGoing(data);
         sessionStorage.setItem("transcendence_game_id", data.matchId);
         joinButton.classList.remove("btn-danger");
