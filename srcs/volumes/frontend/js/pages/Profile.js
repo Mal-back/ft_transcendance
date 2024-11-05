@@ -64,24 +64,27 @@ export default class extends AbstractView {
       const opponentName = boolWin ? data.looser : data.winner;
       const opponentInfo = await this.getUserInfo(opponentName);
       const color = boolWin ? "bg-dark" : "bg-gray";
+      let lostWin = boolWin
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
+      lostWin += "-";
+      lostWin = boolWin
+        ? this.lang.getTranslation(["game", "lost"]).toUpperCase()
+        : this.lang.getTranslation(["game", "won"]).toUpperCase();
       return `
-<!-- match div -->
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
-      <!-- Player 1 -->
       <div class="text-center player-container">
         <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
         <div class="player-name">
           <span>${userData.username}</span>
         </div>
       </div>
-      <!-- Match Info -->
       <div class="text-center match-info">
-        <h5>${boolWin ? "WON-LOST" : "LOST-WON"}</h5> 
+        <h5>${lostWin}</h5> 
         <h4>${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}</h4>
         <p id="matchDate">${formateDate(data.played_at)}</p>
       </div>
-        <!-- Player 2 -->
         <div class="text-center player-container">
           <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
           <div class="player-name">
@@ -123,7 +126,6 @@ export default class extends AbstractView {
         ),
       );
       mainDiv.innerHTML = matchesHTMLArray.join("");
-      console.log("mainDiv first fill: ");
       let nextPage = data.next;
       while (nextPage) {
         const request = await this.makeRequest(nextPage, "GET");
@@ -163,18 +165,18 @@ export default class extends AbstractView {
       throw error;
     }
     const battleHistory =
-      this.lang.getTranslation(["title", "pong"]) +
-      " " +
       this.lang.getTranslation(["game", "battle"]) +
       " " +
       this.lang.getTranslation(["game", "history"]);
-    const fillModal = await this.pongMatchHistory(userData);
+    let fillModal = await this.pongMatchHistory(userData);
+    if (!fillModal)
+      fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
     const winRatePong = userData.total_games
       ? `${userData.single_games_win_rate * 100} %`
-      : `n/a`;
+      : `${this.lang.getTranslation(["game", "n/a"])}`;
     const winRateC4 = userData.total_games
       ? `${userData.single_games_win_rate * 100} %`
-      : `n/a`;
+      : `${this.lang.getTranslation(["game", "n/a"])}`;
     const htmlContent = `
 <div class="background">
   <div class="mt-4 text-white d-flex justify-content-center align-items-center">
@@ -195,41 +197,41 @@ export default class extends AbstractView {
     <div class="align-items-left mt-3 w-100">
       <div class="d-flex row justify-content-center align-items-center box">
         <p class="black-txt">
-          ${this.lang} Pong: <span id="winRatePong">${winRatePong}</span>
+          ${this.lang.getTranslation(["game", "winRate"])} ${this.lang.getTranslation(["title", "pong"])}:<span id="winRatePong"> ${winRatePong}</span>
         </p>
         <p class="black-txt">
-          Pong Battle History:
+          ${this.lang.getTranslation(["title", "pong"])} ${battleHistory}:
           <span
             ><button
               class="text-decoration-none text-primary color"
               data-bs-toggle="modal"
               data-bs-target="#pongBattleHistoryModal"
             >
-              SHOW
+              ${this.lang.getTranslation(["button", "show"]).toUpperCase()}
             </button></span
           >
         </p>
       </div>
       <div class="d-flex row justify-content-center align-items-center box">
         <p class="black-txt">
-          Win Rate Connect4: <span id="winRateConnect4">${winRateC4}</span>
+          ${this.lang.getTranslation(["game", "winRate"])} ${this.lang.getTranslation(["title", "c4"])}: <span id="winRateConnect4">${winRateC4}</span>
         </p>
         <p class="black-txt">
-          Connect4 Battle History:
+          ${this.lang.getTranslation(["title", "c4"])} ${battleHistory}:
           <span
             ><button
               class="text-decoration-none text-primary color"
               data-bs-toggle="modal"
               data-bs-target="#connect4BattleHistoryModal"
             >
-              SHOW
+              ${this.lang.getTranslation(["button", "show"]).toUpperCase()}
             </button></span
           >
         </p>
       </div>
     </div>
     <div class="align-items-right mt-3 w-100">
-      <a type="button" class="btn bg-lightgray" id="settingsButton">Settings</a>
+      <a type="button" class="btn bg-lightgray" id="settingsButton">${this.lang.getTranslation(["title", "settings"])}</a>
     </div>
   </div>
 </div>
@@ -245,7 +247,7 @@ export default class extends AbstractView {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="pongBattleHistoryModal">
-          Pong Battle History
+          ${this.lang.getTranslation(["title", "pong"])} ${battleHistory}
         </h5>
         <button
           type="button"
@@ -257,14 +259,13 @@ export default class extends AbstractView {
       <div class="modal-body overflow-auto" style="max-height: 70vh">
         <div class="row justify-content-center align-items-start">
           <div class="col-6">
-            <h5 class="text-center mb-3">Remote Battles :</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
             <div class="box bg-light history">
-              <!-- match div -->
               ${fillModal}
             </div>
           </div>
           <div class="col-6">
-            <h5 class="text-center mb-3">Remote Tournaments :</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
             <div class="box bg-light">
               <p class="text-center">n/a</p>
             </div>
@@ -273,7 +274,7 @@ export default class extends AbstractView {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
+          ${this.lang.getTranslation(["button", "close"])}
         </button>
       </div>
     </div>
@@ -290,7 +291,7 @@ export default class extends AbstractView {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="connect4BattleHistoryModal">
-          Connect4 Battle History
+          ${this.lang.getTranslation(["title", "c4"])} ${battleHistory}
         </h5>
         <button
           type="button"
@@ -302,20 +303,18 @@ export default class extends AbstractView {
       <div class="modal-body overflow-auto" style="max-height: 70vh">
         <div class="row justify-content-center align-items-start">
           <div class="col-6">
-            <h5 class="text-center mb-3">Remote Battles :</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
             <div class="box bg-light history">
               <p class="text-center">n/a</p>
             </div>
           </div>
           <div class="col-6">
-            <h5 class="text-center mb-3">Remote Tournaments :</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
             <div class="box bg-light">
-              <!-- match div -->
               <div
                 class="bg-dark text-white text-center px-3 py-1 mb-1 rounded"
               >
                 <div class="d-flex justify-content-around align-items-center">
-                  <!-- Player 1 -->
                   <div class="text-center player-container">
                     <div class="player-circle mx-auto mb-2"></div>
                     <div class="player-name">
@@ -371,7 +370,7 @@ export default class extends AbstractView {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
+          ${this.lang.getTranslation(["button", "close"])}
         </button>
       </div>
     </div>

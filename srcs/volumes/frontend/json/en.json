@@ -9,6 +9,7 @@
     "login": "Login",
     "logout": "Logout",
     "local": "Local",
+    "friends": "Friends",
     "lobby": "Lobby",
     "remote": "Remote",
     "tournament": "Tournament",
@@ -95,6 +96,7 @@
     },
     "preview": {
       "opponent": "Enter opponent's username",
+      "username": "Enter Username",
       "noFile": "No File chosen",
       "old": "old",
       "new": "new",

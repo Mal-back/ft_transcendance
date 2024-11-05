@@ -78,7 +78,9 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "tournament"])}`);
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "tournament"])}`,
+    );
     let listPlayer = null;
     try {
       this.actualizeTournament();
@@ -129,7 +131,7 @@ export default class extends AbstractView {
     listPlayer.sort((a, b) => b.winRate - a.winRate);
     for (let index = 0; index < listPlayer.length; index++) {
       const current = listPlayer[index];
-      current.rank = index + 1; 
+      current.rank = index + 1;
 
       const playerIndexInA = this.tournament.PlayerA.findIndex(
         (player) => player && player.name === current.name,
@@ -222,13 +224,24 @@ export default class extends AbstractView {
   }
   getNextRankDivPlayer(count) {
     const nextPlayerRank = this.getPlayerByRank(count);
+    let color;
+    switch (count) {
+      case 1:
+        if (!color) color = "gold";
+      case 2:
+        if (!color) color = "silver";
+      case 3:
+        if (!color) color = "bronze";
+      default:
+        if (!color) color = "black";
+    }
     if (nextPlayerRank == null) return "";
     console.log("nextPlayer:", nextPlayerRank.name);
     return `
         <div>
           <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
             <div class="d-flex align-items-center">
-              <div class="ranking-number silver">${nextPlayerRank.rank}</div>
+              <div class="ranking-number ${color}">${nextPlayerRank.rank}</div>
               <div class="Avatar status-online me-3"></div>
               <div class="flex-fill">
                 <h5 class="mb-0">${nextPlayerRank.name}</h5>
@@ -279,7 +292,9 @@ export default class extends AbstractView {
       if (this.tournament.round.currentMatch >= this.tournament.PlayerA.length)
         this.getNextRound();
       if (this.tournament.round.current >= this.tournament.round.max) break;
-    console.log(`current ROUND: ${this.tournament.round.current}; maxRound: ${this.tournament.round.max}`);
+      console.log(
+        `current ROUND: ${this.tournament.round.current}; maxRound: ${this.tournament.round.max}`,
+      );
     }
     console.log(
       `next match is : ${playerA[this.tournament.round.currentMatch].name} vs ${playerB[this.tournament.round.currentMatch].name}`,
