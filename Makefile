@@ -20,10 +20,30 @@ down :
 
 re : down all
 
-clean :
+
+clean_migration:
+	rm -f srcs/volumes/matchmaking/matchmaking_app/migrations/000*
+	rm -f srcs/volumes/auth/auth_app/migrations/000*
+	rm -f srcs/volumes/game/pong_local_app/migrations/000*
+	rm -f srcs/volumes/game/pong_remote_app/migrations/000*
+	rm -f srcs/volumes/game/c4_local_app/migrations/000*
+	rm -f srcs/volumes/game/c4_remote_app/migrations/000*
+	rm -f srcs/volumes/avatar_management/avatar_management_app/migrations/000*
+	rm -f srcs/volumes/uses/avatar_management_app/migrations/000*
+	rm -f srcs/volumes/users/users_app/migrations/000*
+
+clean_docker:
 	docker stop $$(docker ps -qa);\
 	docker rm $$(docker ps -qa);\
 	docker rmi -f $$(docker images -qa);\
 	docker volume rm $$(docker volume ls -q);\
+
+clean : clean_migration clean_docker
+
+# clean :
+# 	docker stop $$(docker ps -qa);\
+# 	docker rm $$(docker ps -qa);\
+# 	docker rmi -f $$(docker images -qa);\
+# 	docker volume rm $$(docker volume ls -q);\
 
 .Phony : all down clean env compose
