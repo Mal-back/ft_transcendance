@@ -9,18 +9,23 @@
     "login": "Login",
     "logout": "Logout",
     "local": "Local",
+    "lobby": "Lobby",
     "remote": "Remote",
     "tournament": "Tournament",
     "ranking": "Ranking",
     "notif": "Notifications",
     "createUser": "Create User",
-    "createProfile": "Create new Profile"
+    "createProfile": "Create new Profile",
+    "mode": "Mode"
   },
   "button": {
     "close": "Close",
     "accept": "Accept",
     "refuse": "Refuse",
+    "invite": "Invite",
     "cancel": "Cancel",
+    "help": "Help",
+    "giveUp": "Give up",
     "show": "Show",
     "change": "Change",
     "chooseFile": "Choose a File",
@@ -36,6 +41,7 @@
     "remove": "Remove"
   },
   "user": {
+    "you": "You",
     "avatar": "Avatar",
     "maiden": "MaidenLess",
     "pleaseFriend": "Please add Friends"
@@ -43,13 +49,19 @@
   "game": {
     "label": "Game",
     "win": "Win",
+    "won": "Won",
     "loss": "Loss",
+    "lost": "Lost",
     "play": "Play",
     "next": "Next",
-    "start": "Start",
-    "help": "Help",
-    "giveUp": "Give up",
+    "match": "Match",
+    "inviteMatch": "Invite to a Match",
+    "player": "Player",
+    "blue": "Blue",
+    "red": "Red",
+    "selectNbPlayer": "Select number of players",
     "paused": "is paused",
+    "start": "Start",
     "battle": "Battle",
     "waiting": "waiting for",
     "history": "History",
@@ -67,8 +79,6 @@
       "password": "Password",
       "email": "E-mail",
       "confirm": "Confirm",
-      "player": "Player",
-      "selectNbPlayer": "Select number of players",
       "3to10": "3 to 10",
       "language": "Language",
       "old": "Old"
@@ -79,7 +89,7 @@
       "weak": "is too weak",
       "invalidChar": "contains invalid characters",
       "match": "does not match",
-      "unique": "Username is already taken",
+      "unique": "is already taken",
       "valid": "is not a valid",
       "incorrect": "Incorrect"
     },
@@ -95,7 +105,7 @@
     "title": {
       "error": "Error",
       "success": "Success",
-      "congratulation": "Congratulations",
+      "congrats": "Congratulations",
       "inviteMatch": "Invite to a Match",
       "inviteGames": "Games Invites",
       "invite": "Invites",
@@ -112,7 +122,11 @@
       "authError": "Authentification error, please re-login",
       "successChange": "Changed successfully",
       "alreadyLog": "You are already logged in",
-      "accountCreation": "Your new account was successfully created!"
+      "accountCreation": "Your new account was successfully created!",
+      "failTournament": "Failed to retrieve tournament information",
+      "wonTournament": "won the tournament",
+      "help": "Space to start the game.<br>Space to pause/unpause the game.<br>W to go up.<br>S to go down.<br>In local game for the Red Player:<br> -ArrowUp to go up.<br> -ArrowDown to go down.",
+      "lostGame": "Better luck next time"
     }
   }
 }

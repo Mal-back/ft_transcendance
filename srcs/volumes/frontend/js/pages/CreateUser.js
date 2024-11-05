@@ -18,7 +18,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
-     return `
+    return `
       <div class="background createUser removeElem">
         <div class="p-5 bg-* removeElem">
             <div class="black-txt bg-form create-user-form p-4 removeElem">
@@ -63,10 +63,10 @@ export default class extends AbstractView {
     if (username) {
       navigateTo("/");
       throw new CustomError(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        "User is already logged in",
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "alreadyLog"])}`,
         "/",
-      )
+      );
     }
     return;
   }
@@ -84,20 +84,24 @@ export default class extends AbstractView {
 
       if (response.ok) {
         showModal(
-          `${this.lang.getTranslation(["modal", "title","accountCreation"])}`,
+          `${this.lang.getTranslation(["modal", "title", "accountCreation"])}`,
           `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
         );
         navigateTo("/login");
       } else {
         const log = await this.getErrorLogfromServer(response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, `${log}`);
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${log}`,
+        );
         console.debug("Server response:", log);
       }
     } catch (error) {
+      if (error instanceof CustomError) throw error;
       console.error("Error in Request:", error);
       showModal(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        `${this.lang.getTranslation(["error", "failConnectServer"])}`,
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "failConnectServer"])}`,
       );
       // throw new Error("Redirect to /home, server is dead, good luck");
     }
@@ -202,6 +206,7 @@ export default class extends AbstractView {
         password2Input.value,
       );
     } catch (error) {
+      if (error instanceof CustomError) throw error;
       console.error("Caught in Event Listener:", error);
     }
   }
@@ -244,32 +249,35 @@ export default class extends AbstractView {
   removeEventListeners() {
     const button = document.querySelector("#createUserButton");
     if (button) {
-      console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.handleSubmitNewUser);
-      button.innerHTML = "";
-      button.parentNode.removeChild(button);
-      this.createUserButton = null;
     }
     const usernameInput = document.querySelector("#Username");
     const passwordInput = document.querySelector("#Password");
     const password2Input = document.querySelector("#Password-2");
     const mailInput = document.querySelector("#Mail");
-    usernameInput.removeEventListener("input", this.handleInputUsername);
-    passwordInput.removeEventListener("input", this.handleInputPassword);
-    password2Input.removeEventListener("input", this.handleInputPassword);
-    mailInput.removeEventListener("input", this.handleInputMail);
-    passwordInput.value = "";
-    password2Input.value = "";
-    mailInput.value = "";
-    usernameInput.value = "";
-    document.querySelector("#usernameError").innerHTML = "";
-    document.querySelector("#passwordError").innerHTML = "";
-    document.querySelector("#password2Error").innerHTML = "";
-    document.querySelector("#mailError").innerHTML = "";
-
-    // document.querySelectorAll('[data-link="view"]').forEach((button) => {
-    //   console.info("removing event click on button : " + button.innerText);
-    //   button.removeEventListener("click", this.handleClick);
-    // });
+    if (usernameInput) {
+      usernameInput.removeEventListener("input", this.handleInputUsername);
+      usernameInput.value = "";
+    }
+    if (passwordInput) {
+      passwordInput.value = "";
+      passwordInput.removeEventListener("input", this.handleInputPassword);
+    }
+    if (password2Input) {
+      password2Input.value = "";
+      password2Input.removeEventListener("input", this.handleInputPassword);
+    }
+    if (mailInput) {
+      mailInput.removeEventListener("input", this.handleInputMail);
+      mailInput.value = "";
+    }
+    const usernameError = document.querySelector("#usernameError");
+    if (usernameError) usernameError.innerHTML = "";
+    const passwordError = document.querySelector("#passwordError");
+    if (passwordError) passwordError.innerHTML = "";
+    const password2Error = document.querySelector("#password2Error");
+    if (password2Error) password2Error.innerHTML = "";
+    const mailError = document.querySelector("#mailError");
+    if (mailError) mailError.innerHTML = "";
   }
 }

@@ -9,6 +9,7 @@ export default class extends AbstractView {
     super();
     this.setTitle("Pong");
     this.pong = new Pong(this.handleGetUsername.bind(this));
+    this.handleHelpButton = this.handleHelpButton.bind(this);
   }
 
   async loadCss() {
@@ -37,8 +38,8 @@ export default class extends AbstractView {
                       <canvas id="ongoing-game"></canvas>
                     </div>
                     <div class="mt-3">
-                        <button id="helpButton" type="button" class="btn btn-secondary" style="margin-right: 5vw;">HELP</button>
-                        <button id="giveUpButton" type="button" class="btn btn-danger">GIVE UP</button>
+                        <button id="helpButton" type="button" class="btn btn-secondary" style="margin-right: 5vw;">${this.lang.getTranslation(["button", "help"]).toUpperCase()}</button>
+                        <button id="giveUpButton" type="button" class="btn btn-danger">${this.lang.getTranslation(["button", "giveUp"]).toUpperCase()}</button>
                     </div>
                 </div>
             </div>`;
@@ -55,11 +56,17 @@ export default class extends AbstractView {
       let auth_token = null;
       let mode = params.get("mode");
       let connection = params.get("connection");
-      if (!connection) connection = "local";
+      if (!connection) {
+        connection = "local";
+      }
       let webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-local/join/`;
       if (connection != "local") {
         webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-remote/join/`;
         auth_token = await this.getToken();
+      } else {
+        console.log("HIDE");
+        const giveUpButton = document.querySelector("#giveUpButton");
+        if (giveUpButton) giveUpButton.style.display = "none";
       }
       this.pong.initPong(
         "ongoing-game",
@@ -76,8 +83,8 @@ export default class extends AbstractView {
         if (!tournament) {
           navigateTo("/pong-local-lobby");
           showModal(
-            "Error",
-            "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
           );
           return;
         }
@@ -90,8 +97,8 @@ export default class extends AbstractView {
           {
             navigateTo("/pong-local-lobby");
             showModal(
-              "Error",
-              "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
             );
             return;
           }
@@ -112,6 +119,7 @@ export default class extends AbstractView {
   }
 
   async requestAvatars(player_1Username, player_2Username) {
+    console.log("test");
     let ret = [];
     try {
       const requestUser1 = await this.makeRequest(
@@ -169,11 +177,24 @@ export default class extends AbstractView {
     }
   }
 
+  handleHelpButton(ev) {
+    ev.preventDefault();
+    showModal(
+      `${this.lang.getTranslation(["button", "help"])}`,
+      `${this.lang.getTranslation(["modal", "message", "help"])}`
+    );
+  }
+
   async addEventListeners() {
     this.pong.addPongEvent();
+    const helpButton = document.querySelector("#helpButton");
+    if (helpButton) helpButton.addEventListener("click", this.handleHelpButton);
   }
 
   removeEventListeners() {
     this.pong.removePongEvent();
+    const helpButton = document.querySelector("#helpButton");
+    if (helpButton)
+      helpButton.removeEventListener("click", this.handleHelpButton);
   }
 }
