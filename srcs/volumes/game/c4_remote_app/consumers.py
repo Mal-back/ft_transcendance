@@ -14,43 +14,43 @@ from django.conf import settings
 
 log = logging.getLogger(__name__)
 
-######### WARNING #####
-# CODE COPIE COLLE POUR DEBUG UTILISATION
-from functools import wraps
-from inspect import iscoroutinefunction
-from logging import getLogger
+# ######### WARNING #####
+# # CODE COPIE COLLE POUR DEBUG UTILISATION
+# from functools import wraps
+# from inspect import iscoroutinefunction
+# from logging import getLogger
 
-from channels.exceptions import AcceptConnection, DenyConnection, StopConsumer, ChannelFull
+# from channels.exceptions import AcceptConnection, DenyConnection, StopConsumer, ChannelFull
 
-logger = getLogger()
+# logger = getLogger()
 
-def apply_wrappers(consumer_class):
-	for method_name, method in list(consumer_class.__dict__.items()):
-		if iscoroutinefunction(method):  # an async method
-			# wrap the method with a decorator that propagate exceptions
-			setattr(consumer_class, method_name, propagate_exceptions(method))
-	return consumer_class
+# def apply_wrappers(consumer_class):
+# 	for method_name, method in list(consumer_class.__dict__.items()):
+# 		if iscoroutinefunction(method):  # an async method
+# 			# wrap the method with a decorator that propagate exceptions
+# 			setattr(consumer_class, method_name, propagate_exceptions(method))
+# 	return consumer_class
 
 
-def propagate_exceptions(func):
-	async def wrapper(*args, **kwargs):  # we're wrapping an async function
-		try:
-			return await func(*args, **kwargs)
-		except (AcceptConnection, DenyConnection, StopConsumer, ChannelFull):  # these are handled by channels
-			raise
-		except Exception as exception:  # any other exception
-			# avoid logging the same exception multiple times
-			if not getattr(exception, "caught", False):
-				setattr(exception, "caught", True)
-				logger.error(
-					"Exception occurred in {}:".format(func.__qualname__),
-					exc_info=exception,
-				)
-			raise  # propagate the exception
-	return wraps(func)(wrapper)
-####### WARNING #####
+# def propagate_exceptions(func):
+# 	async def wrapper(*args, **kwargs):  # we're wrapping an async function
+# 		try:
+# 			return await func(*args, **kwargs)
+# 		except (AcceptConnection, DenyConnection, StopConsumer, ChannelFull):  # these are handled by channels
+# 			raise
+# 		except Exception as exception:  # any other exception
+# 			# avoid logging the same exception multiple times
+# 			if not getattr(exception, "caught", False):
+# 				setattr(exception, "caught", True)
+# 				logger.error(
+# 					"Exception occurred in {}:".format(func.__qualname__),
+# 					exc_info=exception,
+# 				)
+# 			raise  # propagate the exception
+# 	return wraps(func)(wrapper)
+# ####### WARNING #####
 
-@apply_wrappers
+# @apply_wrappers
 class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = "None"
@@ -233,21 +233,21 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
     
 	async def auth(self, game_instance : C4RemoteGame) -> bool:
 		# Uncomment bellow to activate user authentication
-		try :
-			clear_token = jwt.decode(self.auth_key,
-                            settings.SIMPLE_JWT['VERIFYING_KEY'],
-                            settings.SIMPLE_JWT['ALGORITHM'] 
-			)
-		except jwt.ExpiredSignatureError:
-			log.info("C4RemotePlayerConsumer : ExpiredSignatureError from authenticate user")
-			return False
-		except jwt.InvalidTokenError:
-			log.info("C4RemotePlayerConsumer : InvalidTokenError from authenticate user")
-			return False
-		self.username = clear_token.get('username')
+		# try :
+		# 	clear_token = jwt.decode(self.auth_key,
+        #                     settings.SIMPLE_JWT['VERIFYING_KEY'],
+        #                     settings.SIMPLE_JWT['ALGORITHM'] 
+		# 	)
+		# except jwt.ExpiredSignatureError:
+		# 	log.info("C4RemotePlayerConsumer : ExpiredSignatureError from authenticate user")
+		# 	return False
+		# except jwt.InvalidTokenError:
+		# 	log.info("C4RemotePlayerConsumer : InvalidTokenError from authenticate user")
+		# 	return False
+		# self.username = clear_token.get('username')
   
   		# For testing, send only username in auth_key
-		# self.username = self.auth_key
+		self.username = self.auth_key
   
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
@@ -284,7 +284,7 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 			await self.close()
 			return
 		if await self.auth(game) == False:
-			log.info("C4RemotePlayerConsumer : Can not auth player " + self.username + " to game " + self.group_name)
+			log.info("C4RemotePlayerConsumer : Can not auth player to game " + self.group_name)
 			await self.close()    
     
     
