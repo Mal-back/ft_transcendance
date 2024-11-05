@@ -48,6 +48,20 @@ function get_config() {
 }
 
 
+function pause() {
+	ws.send(JSON.stringify({
+		type : "pause",
+		action : "stop"
+	}))
+}
+
+function unpause() {
+	ws.send(JSON.stringify({
+		type : "pause",
+		action : "start"
+	}))
+}
+
 function start_game() {
 	ws.send(JSON.stringify({
 		type : "start_game",

@@ -66,6 +66,7 @@ class C4RemoteEngine(threading.Thread):
     
     def run(self):
         self.wait_start()
+        print("C4RemoteEngine : Starting game instance " + self.game_id)
         while True:
             self.check_input()
             self.check_winner()

@@ -71,6 +71,7 @@ class PongRemoteEngine(threading.Thread):
  
     def run(self) -> None:
         self.wait_start()
+        print("PongRemoteEngine : Starting game instance " + self.game_id)
         self.send_pause("start")
         while True:
             self.frame = self.get_next_frame()
@@ -185,8 +186,6 @@ class PongRemoteEngine(threading.Thread):
                 if count * self.frame_rate >= 30:
                     self.runing_player_1 = "start"
                     self.runing_player_2 = "start"
-            with self.end_lock:
-                if self.end == True:
                     break
             count += 1
             time.sleep(self.frame_rate)

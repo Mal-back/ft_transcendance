@@ -45,7 +45,7 @@ class PongLocalEngine(threading.Thread):
 	def start_game(self):
 		with self.start_lock:
 			if self.running == False:
-				print("PongLocalEngine : Starting Pong Local Game instance " + self.game_id)
+				print("PongLocalEngine : Starting game instance " + self.game_id)
 				self.running = True
  
 	def run(self) -> None:
