@@ -13,5 +13,5 @@ if ["$DUMP_DATA" == "True" ] ; then
 	exec python3 gunicornWrapper.py
 else
 	python3 manage.py flush --noinput
-	exec daphne -b '0.0.0.0' -p '8443' game.asgi:application
+	exec daphne -b '0.0.0.0' -p '8443' --ping-timeout 15 game.asgi:application
 fi

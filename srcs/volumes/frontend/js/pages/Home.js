@@ -11,13 +11,12 @@ export default class extends AbstractView {
     this.createPageCss("../css/home.css");
   }
   async getHtml() {
-    console.log("URL:", getIpPortAdress());
-    this.setTitle("Home");
+    this.setTitle(this.lang.getTranslation(["title", "home"]));
     return `
         <div class="background Home removeElem">
           <div class="container removeElem">
               <section class="home text-center p-5 removeElem">
-                  <h1 class="welcome removeElem">${this.lang.getTranslation(["homePage", "homeTitle"])}</h1>
+                  <h1 class="welcome removeElem">${this.lang.getTranslation(["title", "home"]).toUpperCase()}</h1>
                   <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage"])}</p>
                   <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage2"])}</p>
               </section>

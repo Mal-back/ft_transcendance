@@ -1,8 +1,10 @@
 import { navigateTo } from "../router.js";
 import { getIpPortAdress, showModal } from "../Utils/Utils.js";
+import Language from "../Utils/Language.js";
 
 export default class Pong {
   constructor(setUsernameCallBack) {
+    this.lang = new Language();
     this.canvas = null;
     this.context = null;
     this.webSocket = null;
@@ -68,6 +70,8 @@ export default class Pong {
       width: this.canvas.width,
       height: this.canvas.height,
     });
+    this.player1.username = this.lang.getTranslation(["game", "blue"]);
+    this.player2.username = this.lang.getTranslation(["game", "red"]);
     this.mode = mode;
     this.token = token;
     this.redirectURL = this.setRedirecturl();
@@ -93,7 +97,6 @@ export default class Pong {
 
   setToken(authToken) {
     this.token = authToken;
-    console.log("TOKEN IN PONG:", authToken);
   }
 
   setUsername(player1Name, player2Name, tournament) {
@@ -104,7 +107,6 @@ export default class Pong {
   }
 
   getUsername() {
-    console.log("Pong:getUsername");
     this.setUsernameCallBack(
       this.mode,
       this.player1.username,
@@ -115,7 +117,6 @@ export default class Pong {
   async handleWebSocketOpen(ev) {
     console.log("WEBSOCKET IS OPEN: mode = ", this.mode);
     if (this.mode == "remote") {
-      console.log("CouCOU");
       let uuid = sessionStorage.getItem("transcendence_game_id");
 
       const body = {
@@ -123,7 +124,6 @@ export default class Pong {
         game_id: uuid,
         auth_key: this.token,
       };
-      console.log("BODY JOIN:", body);
       this.webSocket.send(JSON.stringify(body));
     }
     this.webSocket.send(JSON.stringify({ type: "init_game" }));
@@ -187,17 +187,18 @@ export default class Pong {
     let modalMessage = "";
     const username = sessionStorage.getItem("username_transcendence");
     if (this.mode == "local") {
-      let winner = data.winner == "player_1" ? "BluePlayer" : "RedPlayer";
+      let winner = data.winner == "player_1" ? this.lang.getTranslation(["game", "blue"]) : this.lang.getTranslation(["game", "red"]);
+      winner += " Player";
       let score =
         data.winner == "player_1"
           ? `${data.score_1} - ${data.score_2}`
           : `${data.score_2} ${data.score_1}`;
-      modalTitle = "Local Game Results";
-      modalMessage = `${winner} won ${score} ! Congratulations`;
+      modalTitle = `${this.lang.getTranslation(["modal", "title", "congrats"])}`;
+      modalMessage = `${winner} ${this.lang.getTranslation(["game", "won"]).toLowerCase()} ${score} !`;
     } else {
       let boolWin = username == data.winner;
-      modalTitle = `${boolWin ? "Won" : "Lost"}`;
-      modalMessage = `You ${modalTitle} vs ${boolWin ? data.looser : data.winner} ${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}<br> ${boolWin ? "Congratulations!" : "Better luck next time!"}`;
+      modalTitle = `${boolWin ? this.lang.getTranslation(["game", "won"]) : this.lang.getTranslation(["game", "lost"])}`;
+      modalMessage = `${this.lang.getTranslation(["user", "you"])} ${modalTitle} vs ${boolWin ? data.looser : data.winner} ${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}<br> ${boolWin ? this.lang.getTranslation("modal", "title", "congrats") : this.lang.getTranslation(["modal", "message", "lostGame"])}!`;
     }
     showModal(modalTitle, modalMessage);
   }

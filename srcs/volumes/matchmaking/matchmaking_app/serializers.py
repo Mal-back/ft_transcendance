@@ -1,7 +1,8 @@
+from django.core.serializers.base import SerializationError
 from django.forms import ValidationError
 from django.utils import choices
 from rest_framework import serializers
-from .models import MatchUser, Match, InQueueUser
+from .models import MatchUser, Match, InQueueUser, Tournament
 
 class MatchUserSerializer(serializers.ModelSerializer):
     class Meta :
@@ -11,13 +12,7 @@ class MatchUserSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta :
         model = Match
-        fields = ['id', 'player2', 'matchId', 'status', 'game_type', 'created_at']
-        extra_kwargs = {
-                    'matchId': {'read_only': True},
-                    'status': {'read_only': True},
-                    'created_at': {'read_only': True},
-                    'id': {'read_only': True},
-                }
+        fields = ['player2', 'game_type',]
         def validate_player2(self, value):            
             if not MatchUser.objects.filter(username=value).exists():
                 raise ValidationError('Invited Player does not exists')
@@ -58,9 +53,10 @@ class PendingInviteSerializer(serializers.ModelSerializer):
 class AcceptedMatchSerializer(serializers.ModelSerializer):
     player1_profile = serializers.SerializerMethodField()
     player2_profile = serializers.SerializerMethodField()
+    is_tournament_match = serializers.SerializerMethodField()
     class Meta :
         model = Match
-        fields = ['player1', 'player2', 'matchId', 'player1_profile', 'player2_profile']
+        fields = ['player1', 'player2', 'matchId', 'player1_profile', 'player2_profile', 'is_tournament_match']
 
     def get_player1_profile(self, obj):
         player1 = obj.player1.username
@@ -69,6 +65,9 @@ class AcceptedMatchSerializer(serializers.ModelSerializer):
     def get_player2_profile(self, obj):
         player2 = obj.player2.username
         return(f"/api/users/{player2}")
+
+    def get_is_tournament_match(self, obj):
+        return obj.tournament is not None
 
 class SentInviteSerializer(serializers.ModelSerializer):
     delete_invite = serializers.SerializerMethodField()
@@ -111,3 +110,37 @@ class MatchMakingQueueSerializer(serializers.ModelSerializer):
     class Meta:
         model = InQueueUser
         fields = ['game_type']
+
+class TournamentSerializer(serializers.ModelField):
+    class Meta:
+        model = Tournament
+        fields = ['invited_players', 'game_type']
+
+    def validate_invited_players(self, value):
+        if len(value) != len(set(value)):
+            raise SerializationError('Duplicates are not allowed')
+        return value
+
+class TournamentAddPlayersSerializer(serializers.ModelField):
+    class Meta:
+        model = Tournament
+        fields = ['invited_players', 'game_type']
+
+    def validate_invited_players(self, value):
+        request = self.context['request']
+        owner = request.user
+        existing = set(self.instance.invited_players.values_list('username', flat=True))
+        new = set([user.username for user in value])
+
+        cross = existing.intersection(new)
+        if cross:
+            raise SerializationError(f'Users {list(cross)} are already invited')
+        if owner in value:
+            raise SerializationError(f'You can\'t invite yourself')
+
+
+    def validate(self, instance, validated_data):
+        new_players = validated_data.get('invited_players', None)
+
+        if new_players:
+            instance.invited_players.add(*new_players)

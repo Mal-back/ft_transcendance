@@ -130,15 +130,13 @@ const router = async () => {
   // Call the function to print all CSS links
 
   // print all html
-  //   printAllCssLinks();
+  // printAllCssLinks();
   //   console.log("PRINT HTML")
   // console.log(document.documentElement.outerHTML);
 };
 
 window.addEventListener("popstate", () => {
-  if (view) {
-    view.destroy();
-  }
+  if (view) view.destroy();
   router();
 });
 

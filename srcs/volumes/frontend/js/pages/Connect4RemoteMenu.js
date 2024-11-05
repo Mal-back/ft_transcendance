@@ -28,10 +28,10 @@ export default class extends AbstractView {
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
           <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
-            ${this.lang.getTranslation(["game", "c4", "title"])} - ${this.lang.getTranslation(["game", "remote"])}</h1>
+            ${this.lang.getTranslation(["title", "c4"]).toUpperCase()} - ${this.lang.getTranslation(["title", "remote"]).toUpperCase()}</h1>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
-            id="Connect4RemotePlayButton">${this.lang.getTranslation(["game", "play"])}</button>
+            id="Connect4RemotePlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
             id="Connect4RemoteTournamentButton">${this.lang.getTranslation(["game", "tournament"])}</button>
@@ -98,7 +98,7 @@ export default class extends AbstractView {
             const request = await this.makeRequest(
                 "/api/matchmaking/match/create/",
                 "POST",
-                { player2: opponent.value, game_type: "connect_4" },
+                { player2: opponent.value, game_type: "connect_four" },
             );
             const response = await fetch(request);
             console.log("Request:", request);

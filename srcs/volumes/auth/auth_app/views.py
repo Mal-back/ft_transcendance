@@ -26,7 +26,7 @@ class UserDeleteView(generics.DestroyAPIView) :
     def perform_destroy(self, instance):
         req_url = [f'http://matchmaking:8443/api/matchmaking/{instance.username}/delete/',
                     f'http://users:8443/api/users/delete/{instance.username}/',
-                    f'http://history:8443/api/history/users/delete/{instance.username}/',
+                    f'http://history:8443/api/history/user/delete/{instance.username}/',
                    ]
         if send_delete_requests(urls=req_url) != True:
             return Response({'Error': 'Unable to update username. Please wait not to be in a game'}, status=status.HTTP_400_BAD_REQUEST)
@@ -66,7 +66,7 @@ class UserUpdateView(generics.UpdateAPIView):
             if old_username != new_username:
                 req_urls = [f'http://matchmaking:8443/api/matchmaking/{old_username}/update/',
                             f'http://users:8443/api/users/{old_username}/update/',
-                            f'http://history:8443/api/history/users/update/{old_username}/',
+                            f'http://history:8443/api/history/user/update/{old_username}/',
                             ]
                 if send_update_requests(old_username, req_urls, body={'username':new_username}) == False:
                     return Response({'Error': 'Unable to update username. Please wait not to be in a game'}, status=status.HTTP_400_BAD_REQUEST)

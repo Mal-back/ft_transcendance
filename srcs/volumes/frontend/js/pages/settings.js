@@ -67,52 +67,7 @@ export default class extends AbstractView {
                         ${this.lang.getTranslation(["settings", "Email", "buttonLabel"])}
                     </button>
                 </div>
-                <div class="modal fade removeElem" id="handleEmail" tabindex="-1" aria-labelledby="handleEmailLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog removeElem">
-                        <div class="modal-content removeElem">
-                            <div class="modal-header removeElem">
-                                <h5 class="modal-title removeElem" id="handleEmailLabel">
-                                    ${this.lang.getTranslation(["settings", "Email", "changeButton"])}
-                                </h5>
-                                <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body removeElem">
-                                <form class="removeElem">
-
-                                    <div class="mb-3 removeElem">
-                                        <label for="email-old" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "oldMail"])}</label>
-                                        <input type="email" class="form-control removeElem" id="email-old" name="oldMail" value="">
-                                        <div id="oldMailError" class="removeElem"></div>
-                                    </div>
-
-                                    <div class="mb-3 removeElem">
-                                        <label for="email-new" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "newMail"])}</label>
-                                        <input type="email" class="form-control removeElem" id="email-new" name="mailChange" value="">
-                                        <div id="newMailError" class="removeElem"></div>
-                                    </div>
-
-                                    <div class="mb-3 removeElem">
-                                        <label for="email-confirm" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "confirmMail"])}</label>
-                                        <input type="email" class="form-control removeElem" id="email-confirm" name="checkMail" value="">
-                                        <div id="confirmMailError" class="removeElem"></div>
-                                    </div>
-
-                                </form>
-                            </div>
-                            <div class="modal-footer removeElem">
-                                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
-                                    ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
-                                </button>
-                                <button type="button" class="btn btn-success removeElem" id="confirmChangesMail">
-                                    ${this.lang.getTranslation(["settings", "modalButtons", "Confirm"])}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                
                 <!-- PASSWORD -->
                 <div class="mb-3 removeElem">
                     <label for="password-label" class="form-label removeElem">Password</label>
@@ -122,49 +77,7 @@ export default class extends AbstractView {
                         ${this.lang.getTranslation(["settings", "Password", "buttonLabel"])}
                     </button>
                 </div>
-                <div class="modal fade removeElem" id="handlePassword" tabindex="-1" aria-labelledby="handlePasswordLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog removeElem">
-                        <div class="modal-content removeElem">
-                            <div class="modal-header removeElem">
-                                <h5 class="modal-title removeElem" id="handlePasswordLabel">
-                                    ${this.lang.getTranslation(["settings", "Password", "changeButton"])}
-                                </h5>
-                                <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body removeElem">
-                                <form class="removeElem">
-                                    <div class="mb-3 removeElem">
-                                        <label for="old-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "oldPass"])}</label>
-                                        <input type="password" class="form-control removeElem" name="oldPassword" id="old-password-settings" autocomplete="off" />
-                                        <div id="oldPassError" class="removeElem"></div>
-                                    </div>
-                                    <div class="mb-3 removeElem">
-                                        <label for="new-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "newPass"])}</label>
-                                        <input type="password" class="form-control removeElem" name="newPassword" id="new-password-settings" autocomplete="off"/>
-                                        <div id="newPassError" class="removeElem"></div>
-                                    </div>
-                                    <div class="mb-3 removeElem">
-                                        <label for="confirm-new-password-settings" class="form-label removeElem">
-                                            ${this.lang.getTranslation(["input", "label", "confirmNewPass"])}</label>
-                                        <input type="password" class="form-control removeElem" name="confirmPassword" id="confirm-new-password-settings" autocomplete="off" />
-                                        <div id="confirmPassError" class="removeElem"></div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer removeElem">
-                                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
-                                    ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
-                                </button>
-                                <button type="button" class="btn btn-success removeElem" id="confirm-changes-password-btn">
-                                    ${this.lang.getTranslation(["settings", "modalButtons", "Confirm"])}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                
                 <!-- LANGUAGE -->
                 <div class="mb-3 removeElem">
                     <label for="language" class="form-label removeElem">${this.lang.getTranslation(["settings", "Language", "label"])}</label>
@@ -184,40 +97,6 @@ export default class extends AbstractView {
                         data-bs-target="#handleData">
                         ${this.lang.getTranslation(["settings", "DataHandler", "buttonLabel"])}
                     </button>
-                </div>
-                <div class="modal fade removeElem" id="handleData" tabindex="-1" aria-labelledby="handleDataLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog removeElem">
-                        <div class="modal-content removeElem">
-                            <div class="modal-header removeElem">
-                                <h5 class="modal-title removeElem" id="handleDataLabel">
-                                    ${this.lang.getTranslation(["settings", "DataHandler", "buttonLabel"])}
-                                </h5>
-                                <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body removeElem">
-                                <form class="removeElem">
-                                    <div class="mb-3 removeElem">
-                                        <button type="button" class="btn btn-success removeElem">
-                                            ${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "send"])}
-                                        </button>
-                                    </div>
-                                    <div class="mb-3 removeElem">
-                                        <button type="button" class="btn btn-warning removeElem" data-bs-toggle="modal"
-                                            data-bs-target="#confirmDeleteAccountModal">
-                                            ${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "delete"])}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer removeElem">
-                                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
-                                    ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </form>
         </div>
@@ -264,6 +143,123 @@ export default class extends AbstractView {
                     ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}</button>
                 <button type="button" class="btn btn-success removeElem" id="confirm-profile-background-btn">
                     ${this.lang.getTranslation(["settings", "Background", "set"])}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade removeElem" id="handleData" tabindex="-1" aria-labelledby="handleDataLabel"
+    aria-hidden="true">
+    <div class="modal-dialog removeElem">
+        <div class="modal-content removeElem">
+            <div class="modal-header removeElem">
+                <h5 class="modal-title removeElem" id="handleDataLabel">
+                    ${this.lang.getTranslation(["settings", "DataHandler", "buttonLabel"])}
+                </h5>
+                <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body removeElem">
+                <form class="removeElem">
+                    <div class="mb-3 removeElem">
+                        <button type="button" class="btn btn-success removeElem">
+                            ${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "send"])}
+                        </button>
+                    </div>
+                    <div class="mb-3 removeElem">
+                        <button type="button" class="btn btn-warning removeElem" data-bs-toggle="modal"
+                            data-bs-target="#confirmDeleteAccountModal">
+                            ${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "delete"])}
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer removeElem">
+                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
+                     ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade removeElem" id="handlePassword" tabindex="-1" aria-labelledby="handlePasswordLabel"
+    aria-hidden="true">
+    <div class="modal-dialog removeElem">
+        <div class="modal-content removeElem">
+            <div class="modal-header removeElem">
+                <h5 class="modal-title removeElem" id="handlePasswordLabel">
+                    ${this.lang.getTranslation(["settings", "Password", "changeButton"])}
+                </h5>
+                <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body removeElem">
+                <form class="removeElem">
+                    <div class="mb-3 removeElem">
+                        <label for="old-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "oldPass"])}</label>
+                        <input type="password" class="form-control removeElem" name="oldPassword" id="old-password-settings" autocomplete="off" />
+                        <div id="oldPassError" class="removeElem"></div>
+                    </div>
+                    <div class="mb-3 removeElem">
+                        <label for="new-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "newPass"])}</label>
+                        <input type="password" class="form-control removeElem" name="newPassword" id="new-password-settings" autocomplete="off"/>
+                        <div id="newPassError" class="removeElem"></div>
+                    </div>
+                    <div class="mb-3 removeElem">
+                        <label for="confirm-new-password-settings" class="form-label removeElem">
+                            ${this.lang.getTranslation(["input", "label", "confirmNewPass"])}</label>
+                        <input type="password" class="form-control removeElem" name="confirmPassword" id="confirm-new-password-settings" autocomplete="off" />
+                        <div id="confirmPassError" class="removeElem"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer removeElem">
+                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
+                    ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
+                </button>
+                <button type="button" class="btn btn-success removeElem" id="confirm-changes-password-btn">
+                    ${this.lang.getTranslation(["settings", "modalButtons", "Confirm"])}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade removeElem" id="handleEmail" tabindex="-1" aria-labelledby="handleEmailLabel"
+    aria-hidden="true">
+    <div class="modal-dialog removeElem">
+        <div class="modal-content removeElem">
+            <div class="modal-header removeElem">
+                <h5 class="modal-title removeElem" id="handleEmailLabel">
+                    ${this.lang.getTranslation(["settings", "Email", "changeButton"])}
+                </h5>
+                <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body removeElem">
+                <form class="removeElem">
+                    <div class="mb-3 removeElem">
+                        <label for="email-old" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "oldMail"])}</label>
+                        <input type="email" class="form-control removeElem" id="email-old" name="oldMail" value="">
+                        <div id="oldMailError" class="removeElem"></div>
+                    </div>
+                    <div class="mb-3 removeElem">
+                        <label for="email-new" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "newMail"])}</label>
+                        <input type="email" class="form-control removeElem" id="email-new" name="mailChange" value="">
+                        <div id="newMailError" class="removeElem"></div>
+                    </div>
+                    <div class="mb-3 removeElem">
+                        <label for="email-confirm" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "confirmMail"])}</label>
+                        <input type="email" class="form-control removeElem" id="email-confirm" name="checkMail" value="">
+                        <div id="confirmMailError" class="removeElem"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer removeElem">
+                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
+                    ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
+                </button>
+                <button type="button" class="btn btn-success removeElem" id="confirmChangesMail">
+                    ${this.lang.getTranslation(["settings", "modalButtons", "Confirm"])}
+                </button>
             </div>
         </div>
     </div>

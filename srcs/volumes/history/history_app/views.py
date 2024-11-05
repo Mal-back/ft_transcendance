@@ -27,8 +27,8 @@ class MatchUserUpdate(generics.UpdateAPIView):
         with transaction.atomic():
             user.username = new_username
             user.save()
-            Match.objects.filter(player1=old_username).update(player1=new_username)
-            Match.objects.filter(player2=old_username).update(player2=new_username)
+            Match.objects.filter(winner=old_username).update(winner=new_username)
+            Match.objects.filter(looser=old_username).update(looser=new_username)
 
         return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)
 
