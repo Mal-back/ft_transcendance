@@ -235,7 +235,7 @@ export default class AbstractViews {
       const url =
         action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
       console.log(`URL: ${url}; action: ${action}`);
-      const game = inv.gameType == "pong" ? "pong" : "c4";
+      const game = invite.gameType == "pong" ? "pong" : "c4";
       await this.inviteRequest(url, game);
     }
   }
@@ -312,13 +312,13 @@ export default class AbstractViews {
       const response = await fetch(request);
       if (response.status == 200) {
         const data = await this.getErrorLogfromServer(response, true);
-        // console.info("OngoingGame:", data);
+        console.info("OngoingGame:", data);
         await this.updateOnGoing(data);
         sessionStorage.setItem("transcendence_game_id", data.matchId);
         joinButton.classList.remove("btn-danger");
         joinButton.classList.add("btn-success");
         joinButton.innerText = "JOIN";
-        joinButton.dataset.redirectUrl = "/pong?connection=remote";
+        joinButton.dataset.redirectUrl = "/c4?connection=remote";
         return 1;
       } else {
         return 0;
