@@ -550,14 +550,26 @@ B - Remote Game :
 
 	Warning : If the current player does not send a valid "put" before a certain amount of time, he will automatically loose the game.
 
-6 - Surrend :
+6 - Timer :
+
+	The current player has a certain amount of time to put a disk.
+	The server will send you each second the following message to indicate the time left for the current turn:
+		
+		{"type" : "timer",
+			"time_left" : value,
+		}
+
+	Where :
+		- value is an integer representing the remaining time in seconds for the current turn.
+
+7 - Surrend :
 
 	Send via the websocket in JSON format the following message :
 
 	{"type" : "surrend",
 	}
 
-7 - End state of the game :
+8 - End state of the game :
 
 	When the game finished , the game sends you a last message before closing the websocket:
 
@@ -572,7 +584,7 @@ B - Remote Game :
 		- winner is either "player_1" or "player_2"
 		- looser is either "player_1" or "player_2"
 
-8 - Error messages from server :
+9 - Error messages from server :
 
 	For debuging purpose, the game may send you error messages in some contexts (for example starting the game before its initialization). You can choose to catch these messages to understand what is wrong.
 	The format is :

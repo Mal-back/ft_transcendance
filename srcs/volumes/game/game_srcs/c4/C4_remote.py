@@ -27,6 +27,7 @@ class C4RemoteEngine(threading.Thread):
         self.input_player = "None"
         self.input_column = "None"
         self.timer = 0
+        self.timer_max = 60
 
 
     def wait_start(self):
@@ -102,9 +103,11 @@ class C4RemoteEngine(threading.Thread):
 
     def check_timer(self):
         self.timer += 1
-        if self.timer * self.sleep >= 60:
+        if self.timer * self.sleep >= self.timer_max:
             self.winner = self.player_1_username if self.board.currrentPlayer == self.player_2_username else self.player_2_username
             self.board.over = 1
+        if (self.timer * self.sleep).is_integer():
+            self.send_timer(int(self.timer_max - self.timer * self.sleep)) 
 
    
     def check_winner(self):
@@ -142,7 +145,16 @@ class C4RemoteEngine(threading.Thread):
             self.send_frame_channel(channel_name)
         except Exception:
             print("C4RemoteEngine : Can not send config to channel " + self.game_id)
- 
+            
+    def send_timer(self, time_left : int) -> None:
+        data = {"time_left" : str(time_left)}
+        try:
+            async_to_sync(self.channel_layer.group_send)(self.game_id, {
+                "type" : "send.timer",
+                "Timer" : data,
+            })
+        except Exception:
+            print("C4RemoteEngine : Can not send timer to group channel " + self.game_id)
  
     def send_end_state(self) -> None:
         looser = self.player_1_username if self.winner == self.player_2_username else self.player_2_username
