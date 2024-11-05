@@ -27,5 +27,5 @@ class Match(models.Model):
     winner_points = models.IntegerField(default=0)
     looser_points = models.IntegerField(default=0)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
     played_at = models.DateTimeField(auto_now_add=True)
