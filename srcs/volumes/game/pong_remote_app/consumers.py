@@ -256,7 +256,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			await game_instance.asave()
 			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except Exception:
-			log.info("Problem leaving game " + self.group_name + " for player " + self.username)
+			log.info("PongRemotePlayerConsumer : Problem leaving game " + self.group_name + " for player " + self.username)
 		await self.pause({"action" : "stop"})
  
  
@@ -275,10 +275,9 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		# 	return False
 		# self.username = clear_token.get('username')
   
+		# For testing, send only username in auth_key, comment line below if you uncomment block above
 		self.username = self.auth_key
-		log.info("player_1_name expected:" + game_instance.player_1_name)
-		log.info("player_2_name expected:" + game_instance.player_2_name)
-		log.info("username trying to connect: " + self.username);
+  
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
 			game_instance.player_1_connected = True
@@ -293,9 +292,9 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			await game_instance.asave(force_update=True)
 			await self.channel_layer.group_add(self.group_name, self.channel_name)
 		except Exception:
-			log.info("Problem in auth() PongRemotePlayerConsumer " + self.username + " for game " + self.group_name)
+			log.info("PongRemotePlayerConsumer : Problem model save or add to group channel for " + self.username + " in game " + self.group_name)
 			await self.close()
-		log.info("Player " + self.username + " connected to game " + str(game_instance.game_id) + " as " + self.player)  
+		log.info("PongRemotePlayerConsumer : Player " + self.username + " connected to game " + str(game_instance.game_id) + " as " + self.player)  
 		return True
 	
  
@@ -304,16 +303,16 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			self.group_name = content["game_id"]
 			self.auth_key = content["auth_key"]
 		except:
-			log.error("Key error in PongRemotePlayerConsumer.join_game()")
+			log.error("PongRemotePlayerConsumer : Key error in join_game()")
 			return
 		try:
 			game = await sync_to_async(PongRemoteGame.objects.get)(game_id=self.group_name)
 		except Exception:
-			log.info("Game instance " + self.group_name + " does not exist")
+			log.info("PongRemotePlayerConsumer : Game instance " + self.group_name + " does not exist")
 			await self.close()
 			return
 		if await self.auth(game) == False:
-			log.info("Can not auth player " + self.username + " to game " + self.group_name)
+			log.info("PongRemotePlayerConsumer : Can not auth player " + self.username + " to game " + self.group_name)
 			await self.close()
 
 class PongRemoteGameConsumer(SyncConsumer):
@@ -327,13 +326,13 @@ class PongRemoteGameConsumer(SyncConsumer):
 			async_to_sync(self.channel_layer.group_send)(game_id,
 				{"type": "send.error", "Error" : error_msg,  "close" : close})
 		except Exception:
-			log.info("Can not send error to group channel")
+			log.info("PongRemoteGameConsumer : Can not send error to group channel")
 		
   
 	def init_game(self, event):
 		game_id = event["game_id"]		
 		if game_id in self.game_instances:
-			print("Game thread for room " + str(game_id) + " is already initialized")
+			print("PongRemoteGameConsumer : Game thread for room " + str(game_id) + " is already initialized")
 			return
 		try:
 			self.game_instances[game_id] = PongRemoteEngine(game_id=game_id, player_1_username=event["player_1_username"], player_2_username=event["player_2_username"])
@@ -347,7 +346,7 @@ class PongRemoteGameConsumer(SyncConsumer):
 		try:
 			self.game_instances[game_id].start_game(event["player"])
 		except Exception:
-			print("Game thread for room " + str(game_id) + " can not start because not initialized")
+			print("PongRemoteGameConsumer : Game thread for room " + str(game_id) + " can not start because not initialized")
   
   
 	def pause(self, event):
@@ -355,7 +354,7 @@ class PongRemoteGameConsumer(SyncConsumer):
 		try:
 			self.game_instances[game_id].receive_pause(event["player"], event["action"])
 		except Exception:
-			print("Game thread for room " + str(game_id) + " can not pause because not initialized")
+			print("PongRemoteGameConsumer : Game thread for room " + str(game_id) + " can not pause because not initialized")
 		
   
 	def get_config(self, event):
@@ -363,7 +362,7 @@ class PongRemoteGameConsumer(SyncConsumer):
 		try:
 			self.game_instances[game_id].send_config(event["sender"])
 		except Exception:
-			print("Game thread " + str(game_id) + " can not send config because not initialized")
+			print("PongRemoteGameConsumer : Game thread " + str(game_id) + " can not send config because not initialized")
   
   
 	def move(self, event):
@@ -371,27 +370,26 @@ class PongRemoteGameConsumer(SyncConsumer):
 		try:
 			self.game_instances[game_id].receive_movement(event["player"], event["direction"])
 		except Exception:
-			print("Game thread " + str(game_id) + " can not move because not initialized")
+			print("PongRemoteGameConsumer : Game thread " + str(game_id) + " can not move because not initialized")
 		
   	
 	def surrend(self, event):
-		print("Surrend function in PongRemoteGameConsumer")
 		game_id = event["game_id"]
 		try:
 			self.game_instances[game_id].receive_surrend(event["surrender"])
 		except Exception:
-			print("Game thread " + str(game_id) + " can not surrend because not initialized")
+			print("PongRemoteGameConsumer : Game thread " + str(game_id) + " can not surrend because not initialized")
    
    
 	def join_thread(self, event):
 		game_id = event["game_id"]
 		try:
-			print("Joining thread " + game_id)
+			print("PongRemoteGameConsumer : Joining thread " + game_id)
 			self.game_instances[game_id].join()
 			self.game_instances.pop(game_id)
-			print("Thread waited !")
+			print("PongRemoteGameConsumer : Thread waited !")
 		except Exception:
-			print("Error: Can not join thread " + str(game_id))
+			print("PongRemoteGameConsumer : Error: Can not join thread " + str(game_id))
   
    
 	def clean_game(self, event):
@@ -399,15 +397,15 @@ class PongRemoteGameConsumer(SyncConsumer):
 		try:
 			game_instance = PongRemoteGame.objects.get(game_id=game_id)
 			game_instance.delete()
-			print("Cleaning game " + str(game_id))
+			print("PongRemoteGameConsumer : Cleaning game " + str(game_id))
 		except:
-			print("Can not delete game " + str(game_id))
+			print("PongRemoteGameConsumer : Can not delete game " + str(game_id))
 
 
 	def send_result(self, event):
 		url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
-		print("Sending result to url : " + url)
-		print("End state = " + str(event["End_state"]))
+		print("PongRemoteGameConsumer : Sending result to url : " + url)
+		print("PongRemoteGameConsumer : End state = " + str(event["End_state"]))
 		try: 
 			sender = MicroServiceClient()
 			sender.send_requests(
@@ -417,4 +415,4 @@ class PongRemoteGameConsumer(SyncConsumer):
 				body=event["End_state"],
 			)
 		except RequestsFailed:
-	   	 print("Error sending result to matchmaking application for game " + event["game_id"])
+	   	 print("PongRemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])

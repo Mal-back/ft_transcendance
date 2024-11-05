@@ -34,7 +34,7 @@ class PongRemoteEngine(threading.Thread):
         self.winner = "None"
         
     def wait_start(self):
-        print("Waiting for pong remote game instance " + self.game_id + " to start | player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
+        print("PongRemoteEngine : Waiting for game instance " + self.game_id + " to start")
         waiting_opponent = 0
         while True:
             with self.start_lock:
@@ -50,7 +50,6 @@ class PongRemoteEngine(threading.Thread):
                         self.surrender = "player_1" if self.runing_player_1 == "stop" else "player_2"
                 break
             time.sleep(self.frame_rate)
-        print("player_1_start = " + self.runing_player_1 + " | player_2_start = " + self.runing_player_2)
 
 
     def send_wait_opponent(self):
@@ -59,7 +58,7 @@ class PongRemoteEngine(threading.Thread):
                 "type": "send.wait.opponent",
             })
         except Exception:
-            print("Can not send frame to group channel " + self.game_id)
+            print("PongRemoteEngine : Can not send wait to group channel " + self.game_id)
 
 
     def start_game(self, player : str):
@@ -83,7 +82,7 @@ class PongRemoteEngine(threading.Thread):
             self.check_pause()
         self.clean_game()
         self.join_thread()
-        print("End of run function for thread " + self.game_id)
+        print("PongRemoteEngine : End of run function for thread " + self.game_id)
             
                    
     def join_thread(self):
@@ -93,7 +92,7 @@ class PongRemoteEngine(threading.Thread):
                 "game_id": self.game_id
             })
         except:
-            print("Can not send join thread to pong_remote_engine from thread num " + self.game_id)
+            print("PongRemoteEngine : Can not send join thread to pong_remote_engine from thread num " + self.game_id)
    
    
     def clean_game(self):
@@ -103,7 +102,7 @@ class PongRemoteEngine(threading.Thread):
                 "game_id": self.game_id
             })
         except:
-            print("Can not send clean game to pong_remote_engine from thread num " + self.game_id)     
+            print("PongRemoteEngine : Can not send clean game to pong_remote_engine from thread num " + self.game_id)     
             
           
     def receive_movement(self, player : str, direction : str):
@@ -128,7 +127,6 @@ class PongRemoteEngine(threading.Thread):
                 self.runing_player_1 = action
             else:
                 self.runing_player_2 = action
-            print("Received pause in remote engine from " + player + " action = " + action)
     
  
     def receive_surrend(self, surrender : str) -> None:
@@ -225,7 +223,7 @@ class PongRemoteEngine(threading.Thread):
                 "Frame": self.frame.render(),
             })
         except Exception:
-            print("Can not send frame to  channel " + channel)
+            print("PongRemoteEngine : Can not send frame to  channel " + channel)
 
 
     def send_frame(self) -> None:
@@ -235,7 +233,7 @@ class PongRemoteEngine(threading.Thread):
                 "Frame": self.frame.render(),
             })
         except Exception:
-            print("Can not send frame to group channel " + self.game_id)
+            print("PongRemoteEngine : Can not send frame to group channel " + self.game_id)
     
      
     def send_config(self, channel_name : str) -> None:
@@ -252,7 +250,7 @@ class PongRemoteEngine(threading.Thread):
                 else:
                     self.send_pause_channel("start", channel_name)
         except Exception:
-            print("Can not send config to channel " + channel_name)
+            print("PongRemoteEngine : Can not send config to channel " + channel_name)
   
   
     def send_pause_channel(self, action : str, channel : str) -> None:
@@ -262,7 +260,7 @@ class PongRemoteEngine(threading.Thread):
                 "Pause": action
             })
         except Exception:
-            print("Can not send pause to  channel " + channel)
+            print("PongRemoteEngine : Can not send pause to channel " + channel)
 
 
     def send_pause(self, action : str) -> None:
@@ -272,7 +270,7 @@ class PongRemoteEngine(threading.Thread):
                 "Pause": action
             })
         except Exception:
-            print("Can not send pause to group channel " + self.game_id)
+            print("PongRemoteEngine : Can not send pause to group channel " + self.game_id)
 
         
     def send_end_state(self, last_frame) -> None:
@@ -290,7 +288,7 @@ class PongRemoteEngine(threading.Thread):
                 "End_state" : data,
             })
         except Exception:
-            print("Can not send end state to group channel " + self.game_id)
+            print("PongRemoteEngine : Can not send end state to group channel " + self.game_id)
         try:
             async_to_sync(self.channel_layer.send)("pong_remote_engine", {
                 "type" : "send.result",
@@ -298,5 +296,5 @@ class PongRemoteEngine(threading.Thread):
                 "game_id" : self.game_id,
             })
         except Exception:
-            print("Can not send result to PongRemoteGameConsumer for game " + self.game_id)
+            print("PongRemoteEngine : Can not send result to PongRemoteGameConsumer for game " + self.game_id)
             
