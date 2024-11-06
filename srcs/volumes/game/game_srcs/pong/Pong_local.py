@@ -32,7 +32,7 @@ class PongLocalEngine(threading.Thread):
 		self.winner = "None"
   
   
-	def wait_start(self):
+	def wait_start(self) -> None:
 		print("PongLocalEngine : Waiting game  " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
@@ -43,12 +43,14 @@ class PongLocalEngine(threading.Thread):
 					break
 			time.sleep(self.frame_rate)
 
-	def start_game(self):
+
+	def start_game(self) -> None:
 		with self.start_lock:
 			if self.running == False:
 				print("PongLocalEngine : Starting game instance " + self.game_id)
 				self.running = True
- 
+
+
 	def run(self) -> None:
 		self.wait_start()
 		while True:
@@ -65,7 +67,8 @@ class PongLocalEngine(threading.Thread):
 		self.join_thread()
 		print("PongLocalEngine : End of run function for thread " + self.game_id)
 
-	def join_thread(self):
+
+	def join_thread(self) -> None:
 		try:
 			async_to_sync(self.channel_layer.send)("pong_local_engine", {
 				"type": "join.thread",
@@ -73,8 +76,9 @@ class PongLocalEngine(threading.Thread):
 			})
 		except:
 			print("PongLocalEngine : Can not send join thread to pong_local_engine from game " + self.game_id)					
-		
-	def receive_movement(self, player : str, direction : str):
+
+
+	def receive_movement(self, player : str, direction : str) -> None:
 		with self.start_lock:
 			if self.running == False:
 				return
@@ -86,8 +90,9 @@ class PongLocalEngine(threading.Thread):
 					self.frame.player_2.movement = direction
 		except ValueError:
 			return
-   
-	def receive_pause(self, action : str):
+
+
+	def receive_pause(self, action : str) -> None:
 		with self.start_lock:
 			if action == "start" and self.running == False:
 				self.running = True
@@ -95,16 +100,19 @@ class PongLocalEngine(threading.Thread):
 			elif action == "stop" and self.running == True:
 				self.running = False
 				self.send_pause("stop")
-	
+
+
 	def receive_surrend(self, surrender : str) -> None:
 		with self.surrender_lock:
 			if (surrender == "player_1" or surrender == "player_2") and self.surrender == "None":
 				self.surrender = surrender
-					 
+
+
 	def move_players(self, frame : Frame) -> Frame:
 		frame.player_1.move()
 		frame.player_2.move()
 		return frame
+
 
 	def move_ball(self, frame : Frame) -> Frame:
 		if frame.board.ball.direction.dx < 0:
@@ -112,7 +120,8 @@ class PongLocalEngine(threading.Thread):
 		else:
 			frame.board.ball.move(frame.player_2)
 		return frame
- 
+
+
 	def check_goal(self, frame : Frame) -> Frame:
 		if frame.board.ball.position.x <= 0:
 			frame.player_2.score += 1
@@ -130,6 +139,7 @@ class PongLocalEngine(threading.Thread):
 			self.winner = "player_2"
 		return frame
 
+
 	def check_pause(self) -> None :
 		while True:
 			with self.start_lock:
@@ -139,13 +149,15 @@ class PongLocalEngine(threading.Thread):
 				if self.end == True:
 					break
 			time.sleep(self.frame_rate)
-	   
+
+
 	def check_surrender(self) -> bool:
 		with self.surrender_lock:
 			if self.surrender == "player_1" or self.surrender == "player_2":
 				self.winner = "player_1" if self.surrender == "player_2" else "player_2"
 				return True
 		return False
+
 
 	def get_next_frame(self) -> Frame:
 		new_frame = self.frame
@@ -157,11 +169,13 @@ class PongLocalEngine(threading.Thread):
 			new_frame = self.move_players(new_frame)
 		new_frame = self.move_ball(new_frame)
 		return new_frame
- 
+
+
 	def end_thread(self) -> None:
 		with self.end_lock:
 			self.end = True
-   
+
+
 	def send_frame(self) -> None:
 		try:
 			async_to_sync(self.channel_layer.group_send)(self.game_id, {
@@ -170,7 +184,8 @@ class PongLocalEngine(threading.Thread):
 			})
 		except Exception:
 			print("PongLocalEngine : Can not send frame to group channel " + self.game_id)
-		
+
+
 	def send_config(self) -> None:
 		conf = self.config.render()
 		try:
@@ -190,7 +205,8 @@ class PongLocalEngine(threading.Thread):
 			})
 		except Exception:
 			print("PongLocalEngine : Can not send pause to group channel " + self.game_id)
-		
+
+	
 	def send_end_state(self, last_frame) -> None:
 		data = {"winner" : self.winner,
 		  "score_1" : last_frame.player_1.score,
