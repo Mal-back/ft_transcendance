@@ -29,7 +29,7 @@ class InQueueUser(models.Model):
     range_to_search = models.FloatField(default=0.05)
     last_range_update = models.DateTimeField(default=now)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
 
     @property
     def minimal_wr(self):
@@ -80,7 +80,7 @@ class Match(models.Model):
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
     matchId = models.UUIDField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('accepted', 'Accepted'),

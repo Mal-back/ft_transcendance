@@ -29,5 +29,6 @@ urlpatterns = [
         path('matchmaking/<str:username>/win/', views.DebugIncrementVictory.as_view(), name='debug1'),
         path('matchmaking/<str:username>/lost/', views.DebugIncrementLoose.as_view(), name='debug2'),
         path('match/<int:pk>/debug_force_finished/', views.DebugSetGameAsFinished.as_view(), name='force-finished-game',),
+        path('tournament/<int:pk>/debug_force_finished/', views.DebugSetTournamentAsFinished.as_view(), name='force-finished-game',),
 ]
 

@@ -41,6 +41,8 @@ class CustomAuthentication(BaseAuthentication):
             thread = threading.Thread(target=update_online_status, args=(user_obj.username,))
             thread.daemon = True
             thread.start()
+            user_obj.last_online_update = now()
+            user_obj.save()
         return(user_obj, token)
 
 def update_online_status(username):
