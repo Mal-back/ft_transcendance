@@ -68,7 +68,10 @@
         "NewEmail": "nouveau-email@google.com",
         "ConfirmNewEmail": "nouveau-email@google.com"
       },
-      "modalButtons": ["Fermer", "Confirmer les Modifications"]
+      "modalButtons": [
+        "Fermer",
+        "Confirmer les Modifications"
+      ]
     },
     "Password": {
       "buttonLabel": "Gérer le Mot de Passe",
@@ -78,11 +81,18 @@
         "Nouveau Mot de Passe",
         "Confirmer le Nouveau Mot de Passe"
       ],
-      "modalButtons": ["Fermer", "Confirmer les Modifications"]
+      "modalButtons": [
+        "Fermer",
+        "Confirmer les Modifications"
+      ]
     },
     "Language": {
       "label": "Langue",
-      "options": ["Anglais", "Espagnol", "Français"],
+      "options": [
+        "Anglais",
+        "Espagnol",
+        "Français"
+      ],
       "saveButton": "Sauvegarder la Langue"
     },
     "DataHandler": {
@@ -93,7 +103,9 @@
         "Supprimer le Compte",
         "Supprimer Toutes les Données"
       ],
-      "modalButtons": ["Fermer"]
+      "modalButtons": [
+        "Fermer"
+      ]
     },
     "footerButtonSettings": {
       "label": "Sauvegarder Tous les Changements"
@@ -106,5 +118,28 @@
     "showProfile": "Afficher le Profil",
     "winRateLabel": "Taux de Victoire :",
     "warning": "Veuillez ajouter des amis"
+  },
+  "game": {
+    "pong": {
+      "maj": {
+        "title": "PONG",
+        "local": "LOCAL",
+        "remote": "REMOTE",
+        "play": "PLAY",
+        "tournament": "TOURNAMENT"
+      }
+    },
+    "c4": {
+      "maj": {
+        "title": "PONG",
+        "local": "LOCAL",
+        "remote": "REMOTE",
+        "play": "PLAY",
+        "tournament": "TOURNAMENT"
+      }
+    },
+    "numberPlayer": "Select number of players (3 to 10):",
+    "player": "Player",
+    "start": "Start Game"
   }
 }

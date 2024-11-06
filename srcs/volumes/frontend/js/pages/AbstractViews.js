@@ -74,7 +74,7 @@ export default class AbstractViews {
         styleSheet.ownerNode &&
         styleSheet.ownerNode.classList.contains("page-css")
       ) {
-        console.log("remove .page-css");
+        console.log(`remove .page-css: ${styleSheet}`);
         styleSheet.ownerNode.remove();
         styleSheet = null;
       }
@@ -138,12 +138,14 @@ export default class AbstractViews {
       <div class="d-flex justify-content-end mt-2">
         <button class="btn btn-success btn-sm me-2 accept-button" 
                 data-invite-id="${invite.id}" 
-                data-action="accept">
+                data-action="accept"
+                data-game="${invite.gameType}">
           <i class="bi bi-check-circle"></i> Accept
         </button>
         <button class="btn btn-danger btn-sm refuse-button" 
                 data-invite-id="${invite.id}" 
-                data-action="refuse">
+                data-action="refuse"
+                data-game="${invite.gameType}">
           <i class="bi bi-x-circle"></i> Refuse
         </button>
       </div>
@@ -194,7 +196,7 @@ export default class AbstractViews {
     }
   }
 
-  async inviteRequest(url, action) {
+  async inviteRequest(url, game) {
     try {
       const request = await this.makeRequest(url, "PATCH");
       const response = await fetch(request);
@@ -206,7 +208,7 @@ export default class AbstractViews {
         const modalInvitesDiv = document.getElementById("inviteUserModal");
         const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
         modalInvitesElem.hide();
-        navigateTo(`/pong?connection=remote`);
+        navigateTo(`/${game}?connection=remote`);
       } else {
         const dataError = await this.getErrorLogfromServer(response);
         console.log("inviteRequest: fail response:data:", dataError);
@@ -233,7 +235,8 @@ export default class AbstractViews {
       const url =
         action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
       console.log(`URL: ${url}; action: ${action}`);
-      await this.inviteRequest(url, action);
+      const game = invite.gameType == "pong" ? "pong" : "c4";
+      await this.inviteRequest(url, game);
     }
   }
 
@@ -315,7 +318,7 @@ export default class AbstractViews {
         joinButton.classList.remove("btn-danger");
         joinButton.classList.add("btn-success");
         joinButton.innerText = "JOIN";
-        joinButton.dataset.redirectUrl = "/pong?connection=remote";
+        joinButton.dataset.redirectUrl = "/c4?connection=remote";
         return 1;
       } else {
         return 0;
@@ -481,9 +484,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -643,6 +646,7 @@ export default class AbstractViews {
   }
 
   destroy() {
+    console.log("Destroy");
     this.removeInviteEventListeners();
     this.removeEventListeners();
     this.cleanModal();

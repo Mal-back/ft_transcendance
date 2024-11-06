@@ -315,4 +315,3 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send result to PongRemoteGameConsumer for game " + self.game_id)
-            

@@ -31,7 +31,6 @@ down :
 
 re : down all
 
-
 clean_migration:
 	rm -f srcs/volumes/matchmaking/matchmaking_app/migrations/000*
 	rm -f srcs/volumes/auth/auth_app/migrations/000*
