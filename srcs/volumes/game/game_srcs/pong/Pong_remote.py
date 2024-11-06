@@ -153,7 +153,7 @@ class PongRemoteEngine(threading.Thread):
     def check_goal(self, frame : Frame) -> Frame:
         if frame.board.ball.position.x <= 0:
             frame.player_2.score += 1
-            frame.board.ball.reset()
+            frame.board.ball.reset("left")
             frame.reset = True
         elif frame.board.ball.position.x >= Const["BOARD_LEN"].value:
             frame.player_1.score += 1

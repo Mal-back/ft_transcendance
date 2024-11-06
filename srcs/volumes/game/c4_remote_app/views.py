@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 class C4RemoteGameCreate(APIView):
     # Uncomment bellow to activate matchmaking application authentication
-    permission_classes = [MatchmakingAuthenticated]
+    # permission_classes = [MatchmakingAuthenticated]
     
     def post(self, request, *args, **kwargs):
         serializer = C4RemoteGameSerializer(data=request.data)

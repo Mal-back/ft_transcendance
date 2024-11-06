@@ -66,9 +66,12 @@ class Ball:
         else:
             self.position = self.position.move(self.direction)
     
-    def reset(self) -> None:
+    def reset(self, dir : str = "right") -> None:
+        dy = Const["BALL_DIR"].value.dy
+        dx = Const["BALL_DIR"].value.dx if dir == "right" else (- Const["BALL_DIR"].value.dx)
         self.position = Const["CENTER"].value
-        self.direction = Const["BALL_DIR"].value
+        self.direction = Direction(dx, dy)
+
     
     def render(self) -> dict:
         return { "position": self.position.render(),

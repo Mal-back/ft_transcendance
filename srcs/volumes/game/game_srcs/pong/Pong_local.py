@@ -30,7 +30,8 @@ class PongLocalEngine(threading.Thread):
 		self.surrender = "None"
 		self.surrender_lock = threading.Lock()
 		self.winner = "None"
-		
+  
+  
 	def wait_start(self):
 		print("PongLocalEngine : Waiting game  " + self.game_id + " to start")
 		while True:
@@ -115,7 +116,7 @@ class PongLocalEngine(threading.Thread):
 	def check_goal(self, frame : Frame) -> Frame:
 		if frame.board.ball.position.x <= 0:
 			frame.player_2.score += 1
-			frame.board.ball.reset()
+			frame.board.ball.reset("left")
 			frame.reset = True
 		elif frame.board.ball.position.x >= Const["BOARD_LEN"].value:
 			frame.player_1.score += 1
