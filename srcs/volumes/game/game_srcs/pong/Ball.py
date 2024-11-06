@@ -10,11 +10,14 @@ class Ball:
     direction: Direction = field(validator=validators.instance_of(Direction), default=Const["BALL_DIR"].value)
     size: int = field(validator=validators.instance_of(int), default=Const["BALL_SIZE"].value)
 
+
     def top(self) -> int:
         return self.position.y - self.size
 
+
     def bot(self) -> int:
         return self.position.y + self.size
+
 
     def front(self) -> int:
         if self.direction.dx < 0:
@@ -22,11 +25,13 @@ class Ball:
         else:
             return self.position.x + self.size
 
+
     def back(self) -> int:
         if self.direction.dx < 0:
             return self.position.x + self.size
         else:
             return self.position.x - self.size
+
 
     def check_player_collision(self, player : Player) -> bool:
         new_pos = Coordinates(self.position.x + self.direction.dx, self.position.y + self.direction.dy)
@@ -35,12 +40,14 @@ class Ball:
         else:
             return False
 
+
     def handle_player_collision(self, player : Player) -> None:
         impact = ImpactProjection(Coordinates(player.front(), player.top()), Coordinates(player.front(), player.bot()), self.position)
         sign_dx = 1 if self.direction.dx > 0 else -1
         new_pos = Coordinates(-sign_dx * self.size + impact.x , impact.y)
         self.position = new_pos
         self.direction = GetBounceDir(self.direction, GetNormal(Coordinates(player.front(), player.top()), Coordinates(player.front(), player.bot()), self.position))
+  
   
     def check_wall_collision(self) -> bool:
         y_wall = 0 if self.direction.dy < 0 else Const["BOARD_HEIGHT"].value
@@ -50,6 +57,7 @@ class Ball:
         else:
             return False
 
+
     def handle_wall_collision(self) -> None:
         y_wall = 0 if self.direction.dy < 0 else Const["BOARD_HEIGHT"].value
         impact = ImpactProjection(Coordinates(0, y_wall), Coordinates(Const["BOARD_LEN"].value, y_wall), self.position)
@@ -58,6 +66,7 @@ class Ball:
         self.position = new_pos
         self.direction = GetBounceDir(self.direction, GetNormal(Coordinates(0, y_wall), Coordinates(Const["BOARD_LEN"].value, y_wall), self.position))		
 
+
     def move(self, player : Player) -> None:
         if self.check_player_collision(player) == True:
             self.handle_player_collision(player)
@@ -65,6 +74,7 @@ class Ball:
             self.handle_wall_collision()
         else:
             self.position = self.position.move(self.direction)
+    
     
     def reset(self, dir : str = "right") -> None:
         dy = Const["BALL_DIR"].value.dy

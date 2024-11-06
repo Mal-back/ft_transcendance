@@ -1,4 +1,3 @@
-from django.urls import path, include
 import pong_local_app.routing
 import pong_remote_app.routing
 import c4_local_app.routing

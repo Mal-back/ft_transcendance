@@ -15,7 +15,8 @@ class Config:
     pad_len : int = field(validator=validators.instance_of(int), default=Const["PAD_LEN"].value)
     pad_height : int = field(validator=validators.instance_of(int), default=Const["PAD_HEIGHT"].value)
     pad_offset : int = field(validator=validators.instance_of(int), default=Const["PAD_OFFSET"].value)
-    
+
+
     def render(self) -> dict:
         return { "board_len" : self.board_len,
                 "board_height" : self.board_height,
