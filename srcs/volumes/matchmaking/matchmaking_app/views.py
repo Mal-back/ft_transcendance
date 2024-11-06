@@ -127,18 +127,29 @@ class GetInvite(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         matchQuery = Match.objects.filter(Q(player1=user) | Q(player2=user), status='pending')
-        # tournamentQuery = Tournament.objects.filter(Q(owner=user) | Q(invites_player__in=user), status='pending') 
+        tournamentQuery = Tournament.objects.filter(Q(owner=user) | Q(invites_player__in=user), status='pending') 
+        try :
+            on_going_match = Match.objects.get(Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress'])
+        except Match.DoesNotExist:
+            on_going_match = None
 
         if matchQuery.exists():
             match_serializer = InviteSerializer(matchQuery, context={'request':request}, many=True)
             match_data = match_serializer.data
+        else:
+            match_data = None
+
+        if on_going_match:
+            on_going_match_serializer = AcceptedMatchSerializer(on_going_match)
+            on_going_data = on_going_match_serializer.data
 
         tournament_data = None
 
-        if not match_data and not tournament_data:
+        if not match_data and not tournament_data and not on_going_match:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         combined_data = {
+            'on_going_match': on_going_data if on_going_match else {},  
             'match_pending': match_data if match_data else [],
             'tournament_pending': tournament_data if tournament_data else []
         }
@@ -338,7 +349,7 @@ class CreateTournament(APIView):
             return Response({'Error':'You are in a tournament'}, status=status.HTTP_409_CONFLICT)
         serializer = TournamentSerializer(data=request.data)
         if serializer.is_valid():
-            if request.user in serializer.validated_data['invited_players']:
+            if request.user.username in serializer.validated_data['invited_players']:
                 return Response({'Error': 'You can not play against yourself'}, status=status.HTTP_409_CONFLICT)
             tournament = serializer.save(owner=request.user)
             owner = TournamentUser.objects.create(user=request.user, tournament=tournament)
