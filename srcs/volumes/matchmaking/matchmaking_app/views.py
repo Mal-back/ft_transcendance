@@ -509,3 +509,9 @@ class LaunchTournament(APIView):
         # Add tournament logic
         return Response({'OK':'Tournament started'}, status=status.HTTP_200_OK)
 
+class DebugSetTournamentAsFinished(APIView):
+    def get(self, request, *args, **kwargs):
+        id = self.kwargs.get('pk')
+        tournament = Tournament.objects.get(id=id)
+        tournament.delete()
+        return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
