@@ -144,7 +144,7 @@ export default class extends AbstractView {
       if (!isValid) return;
       await this.login();
     } catch (error) {
-      this.handleCatch(error);
+      if (error instanceof CustomError) showModal(error.title, error.message);
     }
   }
 

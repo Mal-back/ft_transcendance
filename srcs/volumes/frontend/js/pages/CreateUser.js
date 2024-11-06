@@ -82,11 +82,12 @@ export default class extends AbstractView {
       });
       const response = await fetch(request);
 
-      if (this.handleStatus(response)) {
+      if (await this.handleStatus(response)) {
         showModal(
           `${this.lang.getTranslation(["modal", "title", "accountCreation"])}`,
           `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
         );
+        console.log("");
         navigateTo("/login");
       }
     } catch (error) {
@@ -193,7 +194,7 @@ export default class extends AbstractView {
         password2Input.value,
       );
     } catch (error) {
-      this.handleCatch(error);
+      if (error instanceof CustomError) showModal(error.title, error.message);
     }
   }
 

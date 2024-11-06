@@ -44,7 +44,10 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        showModal(this.lang.getTranslation(["modal", "success"]), data);
+        showModal(
+          this.lang.getTranslation(["modal", "title", "success"]),
+          data.OK,
+        );
         navigateTo("/friends");
       }
     } catch (error) {
@@ -228,7 +231,6 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
-        console.log("Removed friend:", friendUsername);
         console.log("response:", response);
         navigateTo("/friends");
       }
@@ -248,7 +250,9 @@ export default class extends AbstractView {
     try {
       await this.removeFriends(friendUsername);
     } catch (error) {
-      this.handleCatch(error);
+      if (error instanceof CustomError) {
+        navigateTo(error.redirect);
+      }
     }
   }
 
@@ -260,7 +264,9 @@ export default class extends AbstractView {
     try {
       await this.addFriendRequest(addFriendUsername);
     } catch (error) {
-      this.handleCatch(error);
+      if (error instanceof CustomError) {
+        navigateTo(error.redirect);
+      }
     }
   }
 

@@ -377,7 +377,9 @@ export default class AbstractViews {
           clearInterval(AbstractViews.pollingInterval);
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
-          this.handleCatch(error);
+          if (error instanceof CustomError)
+            showModal(error.title, error.message);
+          navigateTo("/");
         }
       }, 3000);
     }
@@ -461,7 +463,7 @@ export default class AbstractViews {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -481,9 +483,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -501,39 +503,45 @@ export default class AbstractViews {
   }
 
   async handleStatus(response) {
-    if (response.status == 401) {
-      console.error("401 error:response:", response);
-      removeSessionStorage();
-      throw new CustomError(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        `${this.lang.getTranslation(["modal", "message", "notLog"])}`,
-        "/login",
-      );
+    try {
+      if (response.status == 401) {
+        console.error("401 error:response:", response);
+        removeSessionStorage();
+        throw new CustomError(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${this.lang.getTranslation(["modal", "message", "notLog"])}`,
+          "/login",
+        );
+      }
+      if (response.status == 502) {
+        console.error("502 error:response:", response);
+        removeSessionStorage();
+        throw new CustomError(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${this.lang.getTranslation(["modal", "message", "serverLoading"])}`,
+          "/",
+        );
+      }
+      if (!response.ok) {
+        if (response.status == 404) return false;
+        console.error(`${response.status} error:response:`, response);
+        const data = await this.getDatafromRequest(response);
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          this.JSONtoModal(data),
+        );
+        return false;
+      }
+      return true;
+    } catch (error) {
+      this.handleCatch(error);
     }
-    if (response.status == 502) {
-      console.error("502 error:response:", response);
-      removeSessionStorage();
-      throw new CustomError(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        `${this.lang.getTranslation(["modal", "message", "serverLoading"])}`,
-        "/",
-      );
-    }
-    if (!response.ok) {
-      if (response.status == 404) return false;
-      console.error(`${response.status} error:response:`, response);
-      const data = await this.getDatafromServer(response);
-      showModal(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        this.JSONtoModal(data),
-      );
-      return false;
-    }
-    return true;
   }
 
   handleCatch(error) {
-    if (error instanceof CustomError) throw error;
+    if (error instanceof CustomError) {
+      throw error;
+    }
     if (error instanceof TypeError && error.message === "Failed to fetch") {
       console.error("Network error detected:", error);
       removeSessionStorage();

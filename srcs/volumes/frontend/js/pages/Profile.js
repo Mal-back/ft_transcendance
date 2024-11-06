@@ -10,6 +10,7 @@ import {
 export default class extends AbstractView {
   constructor() {
     super();
+    this.handleSettingButton = this.handleSettingButton.bind(this);
   }
 
   async loadCss() {
@@ -363,13 +364,15 @@ export default class extends AbstractView {
     }
   }
 
+  handleSettingButton(ev) {
+    ev.preventDefault();
+    navigateTo("/settings");
+  }
+
   async addEventListeners() {
     const button = document.querySelector("#settingsButton");
     if (button) {
-      button.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        navigateTo("/settings");
-      });
+      button.addEventListener("click", this.handleSettingButton);
     }
   }
 

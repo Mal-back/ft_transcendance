@@ -132,7 +132,7 @@ const router = async () => {
   // print all html
   // printAllCssLinks();
   //   console.log("PRINT HTML")
-  console.log(document.documentElement.outerHTML);
+  // console.log(document.documentElement.outerHTML);
 };
 
 window.addEventListener("popstate", () => {
@@ -170,7 +170,7 @@ function closeSidebar(sidebar) {
 
     sidebar.addEventListener(
       "hidden.bs.offcanvas",
-      function() {
+      function () {
         const backdrop = document.querySelector(".offcanvas-backdrop");
         if (backdrop) {
           backdrop.remove();
