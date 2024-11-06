@@ -42,19 +42,14 @@ export default class extends AbstractView {
     try {
       const request = await this.makeRequest(`/api/users/${username}`, "GET");
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         const userData = await response.json();
         console.log("userData", userData);
         return userData;
-      } else {
-        const log = await this.getErrorLogfromServer(response);
-        console.debug(log);
-        return null;
       }
+      return null;
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      console.debug("Error: ", error);
-      throw error;
+      this.handleCatch(error);
     }
   }
 
@@ -95,11 +90,8 @@ export default class extends AbstractView {
     </div> 
           `;
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("MatchElement", error);
-        return "";
-      }
+      this.handleCatch(error);
+      return "";
     }
   }
   async pongMatchHistory(userData) {
@@ -109,50 +101,41 @@ export default class extends AbstractView {
         `/api/history/match/?username=${userData.username}`,
       );
       const mainResponse = await fetch(mainRequest);
-      if (!mainResponse.ok) {
-        console.error("pongMatchHistory: ", mainResponse);
-        const dataError = await this.getErrorLogfromServer(mainResponse);
-        console.error("pongMatchHistory: ", dataError);
-        return;
-      }
-      console.log("pongMatchHistory: response", mainResponse);
-      const data = await this.getErrorLogfromServer(mainResponse, true);
-      console.log("pongMatchHistory: data", data);
+      if (await this.handleStatus(mainResponse)) {
+        console.log("pongMatchHistory: response", mainResponse);
+        const data = await this.getDatafromRequest(mainResponse);
+        console.log("pongMatchHistory: data", data);
 
-      let matchesArray = data.results;
-      const matchesHTMLArray = await Promise.all(
-        matchesArray.map((matchData) =>
-          this.createMatchElement(matchData, userData),
-        ),
-      );
-      mainDiv.innerHTML = matchesHTMLArray.join("");
-      let nextPage = data.next;
-      while (nextPage) {
-        const request = await this.makeRequest(nextPage, "GET");
-        const response = await fetch(request);
-        if (response.ok) {
-          const pageData = await response.json();
-          matchesArray = pageData.results;
-          const newMatchHtmlArray = await Promise.all(
-            matchesArray.map((matchData) =>
-              this.createMatchElement(matchData, userData),
-            ),
-          );
-          mainDiv.innerHTML += newMatchHtmlArray.join("");
-          nextPage = pageData.next;
-        } else {
-          const log = await this.getErrorLogfromServer(response);
-          console.error(log);
-          break;
+        let matchesArray = data.results;
+        const matchesHTMLArray = await Promise.all(
+          matchesArray.map((matchData) =>
+            this.createMatchElement(matchData, userData),
+          ),
+        );
+        mainDiv.innerHTML = matchesHTMLArray.join("");
+        let nextPage = data.next;
+        while (nextPage) {
+          const request = await this.makeRequest(nextPage, "GET");
+          const response = await fetch(request);
+          if (await this.handleStatus(response)) {
+            const pageData = await response.json();
+            matchesArray = pageData.results;
+            const newMatchHtmlArray = await Promise.all(
+              matchesArray.map((matchData) =>
+                this.createMatchElement(matchData, userData),
+              ),
+            );
+            mainDiv.innerHTML += newMatchHtmlArray.join("");
+            nextPage = pageData.next;
+          } else {
+            break;
+          }
         }
+        return mainDiv.innerHTML;
       }
-      return mainDiv.innerHTML;
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("pongMatchHistory:", error);
-        return "";
-      }
+      this.handleCatch(error);
+      return "";
     }
   }
 
@@ -161,23 +144,20 @@ export default class extends AbstractView {
     let userData = null;
     try {
       userData = await this.loadUserData();
-    } catch (error) {
-      throw error;
-    }
-    const battleHistory =
-      this.lang.getTranslation(["game", "battle"]) +
-      " " +
-      this.lang.getTranslation(["game", "history"]);
-    let fillModal = await this.pongMatchHistory(userData);
-    if (!fillModal)
-      fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
-    const winRatePong = userData.total_games
-      ? `${userData.single_games_win_rate * 100} %`
-      : `${this.lang.getTranslation(["game", "n/a"])}`;
-    const winRateC4 = userData.total_games
-      ? `${userData.single_games_win_rate * 100} %`
-      : `${this.lang.getTranslation(["game", "n/a"])}`;
-    const htmlContent = `
+      const battleHistory =
+        this.lang.getTranslation(["game", "battle"]) +
+        " " +
+        this.lang.getTranslation(["game", "history"]);
+      let fillModal = await this.pongMatchHistory(userData);
+      if (!fillModal)
+        fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+      const winRatePong = userData.total_games
+        ? `${userData.single_games_win_rate * 100} %`
+        : `${this.lang.getTranslation(["game", "n/a"])}`;
+      const winRateC4 = userData.total_games
+        ? `${userData.single_games_win_rate * 100} %`
+        : `${this.lang.getTranslation(["game", "n/a"])}`;
+      const htmlContent = `
 <div class="background">
   <div class="mt-4 text-white d-flex justify-content-center align-items-center">
     <h3>${this.lang.getTranslation(["title", "profile"]).toUpperCase()}</h3>
@@ -377,7 +357,10 @@ export default class extends AbstractView {
   </div>
 </div>
 `;
-    return htmlContent;
+      return htmlContent;
+    } catch (error) {
+      this.handleCatch(error);
+    }
   }
 
   async addEventListeners() {
@@ -396,9 +379,9 @@ export default class extends AbstractView {
       console.info("removing event click on button : " + button.innerText);
       button.removeEventListener("click", this.loginEvent);
     }
-    document.querySelectorAll('[data-link="view"]').forEach((button) => {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.handleClick);
-    });
+    // document.querySelectorAll('[data-link="view"]').forEach((button) => {
+    //   console.info("removing event click on button : " + button.innerText);
+    //   button.removeEventListener("click", this.handleClick);
+    // });
   }
 }

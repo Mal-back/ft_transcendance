@@ -37,7 +37,7 @@ export default class extends AbstractView {
 <div class="background removeElem">
     <div class="Profile container removeElem">
         <div class="container mt-4 removeElem">
-            <h1 class="removeElem">${this.lang.getTranslation(["settings", "settingsLabel"])}</h1>
+            <h1 class="removeElem">${this.lang.getTranslation(["title", "settings"])}</h1>
             <form class="removeElem">
 
                 <!-- USERNAME -->

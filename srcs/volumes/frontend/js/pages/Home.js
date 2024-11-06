@@ -31,10 +31,7 @@ export default class extends AbstractView {
       try {
         await this.fetchNotifications();
       } catch (error) {
-        if (error instanceof CustomError) throw error;
-        else {
-          console.error("Home:checkLogin:", error);
-        }
+        this.handleCatch(error);
       }
       return;
     }

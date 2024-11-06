@@ -67,6 +67,7 @@ export default class AbstractViews {
       } else console.log("Elem not removed", elem);
     });
   }
+
   removeCss() {
     for (let i = document.styleSheets.length - 1; i >= 0; i--) {
       let styleSheet = document.styleSheets[i];
@@ -96,8 +97,8 @@ export default class AbstractViews {
     ) {
       removeSessionStorage();
       throw new CustomError(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        "You're not logged, please login to access this page",
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "notLog"])}`,
         "/",
       );
     }
@@ -116,7 +117,7 @@ export default class AbstractViews {
     inviteList.innerHTML = "";
 
     if (!AbstractViews.invitesArray.length) {
-      inviteList.innerHTML = "No Invites";
+      inviteList.innerHTML = `${this.lang.getTranslation(["modal", "game", "noInvite"])}`;
       return;
     }
 
@@ -140,17 +141,16 @@ export default class AbstractViews {
                 data-invite-id="${invite.id}" 
                 data-action="accept"
                 data-game="${invite.gameType}">
-          <i class="bi bi-check-circle"></i> Accept
+          <i class="bi bi-check-circle"></i> ${this.lang.getTranslation(["button", "accept"])}
         </button>
         <button class="btn btn-danger btn-sm refuse-button" 
                 data-invite-id="${invite.id}" 
                 data-action="refuse"
                 data-game="${invite.gameType}">
-          <i class="bi bi-x-circle"></i> Refuse
+          <i class="bi bi-x-circle"></i> ${this.lang.getTranslation(["button", "accept"])}
         </button>
       </div>
     `;
-
       inviteList.appendChild(inviteItem);
     });
   }
@@ -159,40 +159,38 @@ export default class AbstractViews {
     try {
       const request = await this.makeRequest(`/api/users/${user}/`, "GET");
       const response = await fetch(request);
-      const data = await this.getErrorLogfromServer(response, true);
-      if (!response.ok) {
-        console.error(`Notifications:getAvatar on ${user}: ${data}`, response);
-        return;
-      }
+      const data = await this.getDatafromRequest(response);
+      await this.handleStatus(response);
       return data;
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error(`Notifications:getAvatar on ${user}`, response);
-      }
+      this.handleCatch(error);
     }
   }
 
   async createInvites(data, username) {
     console.log(data);
-    for (const item of data.results) {
-      if (item.status === "finished") continue;
-      const opponentName =
-        item.player2 != username ? item.player2 : item.player1;
-      const opponent = await this.getUserInfo(opponentName);
-      const invite = {
-        id: `item.id?${opponentName}`,
-        player: opponentName,
-        gameType: item.game_type,
-        createdAt: item.created_at,
-        acceptInviteUrl: item.accept_invite,
-        declineInviteUrl: item.decline_invite,
-        opponentAvatar: opponent.profilePic,
-        opponentStatus: opponent.is_online,
-        message: `${opponentName} invites you to a game of ${item.game_type}`,
-      };
-      console.log("invite", invite);
-      AbstractViews.invitesArray.push(invite);
+    try {
+      for (const item of data.results) {
+        if (item.status === "finished") continue;
+        const opponentName =
+          item.player2 != username ? item.player2 : item.player1;
+        const opponent = await this.getUserInfo(opponentName);
+        const invite = {
+          id: `item.id?${opponentName}`,
+          player: opponentName,
+          gameType: item.game_type,
+          createdAt: item.created_at,
+          acceptInviteUrl: item.accept_invite,
+          declineInviteUrl: item.decline_invite,
+          opponentAvatar: opponent.profilePic,
+          opponentStatus: opponent.is_online,
+          message: `${opponentName} invites you to a game of ${item.game_type}`,
+        };
+        console.log("invite", invite);
+        AbstractViews.invitesArray.push(invite);
+      }
+    } catch (error) {
+      this.handleCatch(error);
     }
   }
 
@@ -201,17 +199,14 @@ export default class AbstractViews {
       const request = await this.makeRequest(url, "PATCH");
       const response = await fetch(request);
       console.log("inviteRequest: response", response);
-      if (response.ok) {
-        const data = await this.getErrorLogfromServer(response, true);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
         console.log("inviteRequest: response:ok:data", data);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
         const modalInvitesDiv = document.getElementById("inviteUserModal");
         const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
         modalInvitesElem.hide();
         navigateTo(`/${game}?connection=remote`);
-      } else {
-        const dataError = await this.getErrorLogfromServer(response);
-        console.log("inviteRequest: fail response:data:", dataError);
       }
     } catch (error) {
       if (error instanceof CustomError) throw error;
@@ -222,21 +217,27 @@ export default class AbstractViews {
   }
 
   async handleInvites(ev) {
-    console.log("event handleInvite");
-    const button = ev.target.closest(".accept-button, .refuse-button");
-    if (!button) return;
-    const inviteId = button.dataset.inviteId;
-    const action = button.dataset.action;
+    try {
+      console.log("event handleInvite");
+      const button = ev.target.closest(".accept-button, .refuse-button");
+      if (!button) return;
+      const inviteId = button.dataset.inviteId;
+      const action = button.dataset.action;
 
-    const invite = AbstractViews.invitesArray.find(
-      (inv) => inv.id === inviteId,
-    );
-    if (invite) {
-      const url =
-        action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
-      console.log(`URL: ${url}; action: ${action}`);
-      const game = invite.gameType == "pong" ? "pong" : "c4";
-      await this.inviteRequest(url, game);
+      const invite = AbstractViews.invitesArray.find(
+        (inv) => inv.id === inviteId,
+      );
+      if (invite) {
+        const url =
+          action === "accept"
+            ? invite.acceptInviteUrl
+            : invite.declineInviteUrl;
+        console.log(`URL: ${url}; action: ${action}`);
+        const game = invite.gameType == "pong" ? "pong" : "c4";
+        await this.inviteRequest(url, game);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) this.handleCatch(error);
     }
   }
 
@@ -249,28 +250,23 @@ export default class AbstractViews {
       );
       //TODO loop on next if more than 10 invite
       const response = await fetch(request);
-      const data = await this.getErrorLogfromServer(response, true);
-      console.info(response);
-      console.info(data);
-      const count = data.count ? data.count : 0;
-      const badge = document.getElementById("notificationbell");
-      if (count + boolGame == 0) {
-        badge.innerHTML = "";
-        return;
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        console.info(response);
+        console.info(data);
+        const count = data.count ? data.count : 0;
+        const badge = document.getElementById("notificationbell");
+        if (count + boolGame == 0) {
+          badge.innerHTML = "";
+          return;
+        }
+        badge.innerHTML = `<div class="notification-badge">${boolGame} </div>`;
+        const username = sessionStorage.getItem("username_transcendence");
+        await this.createInvites(data, username);
+        badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length + boolGame} </div>`;
       }
-      badge.innerHTML = `<div class="notification-badge">${boolGame} </div>`;
-      const username = sessionStorage.getItem("username_transcendence");
-      if (response.status != 200) {
-        return;
-      }
-      await this.createInvites(data, username);
-      badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length + boolGame} </div>`;
     } catch (error) {
-      console.log("caught error");
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("fetchNotifications:", error);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -289,15 +285,12 @@ export default class AbstractViews {
     try {
       const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
       const response = await fetch(request);
-      if (response.ok) {
-        const data = await this.getErrorLogfromServer(response, true);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
         opponentInviteAvatar.style = `background-image: url(${data.profilePic})`;
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("updateOnGoing", error);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -310,47 +303,54 @@ export default class AbstractViews {
         "GET",
       );
       const response = await fetch(request);
-      if (response.status == 200) {
-        const data = await this.getErrorLogfromServer(response, true);
-        console.info("OngoingGame:", data);
-        await this.updateOnGoing(data);
-        sessionStorage.setItem("transcendence_game_id", data.matchId);
-        joinButton.classList.remove("btn-danger");
-        joinButton.classList.add("btn-success");
-        joinButton.innerText = "JOIN";
-        joinButton.dataset.redirectUrl = "/c4?connection=remote";
-        return 1;
-      } else {
-        return 0;
+      if (await this.handleStatus(response)) {
+        if (response.status == 200) {
+          const data = await this.getDatafromRequest(response);
+          console.info("OngoingGame:", data);
+          await this.updateOnGoing(data);
+          sessionStorage.setItem("transcendence_game_id", data.matchId);
+          joinButton.classList.remove("btn-danger");
+          joinButton.classList.add("btn-success");
+          joinButton.innerText = "JOIN";
+          joinButton.dataset.redirectUrl = "/c4?connection=remote";
+          return 1;
+        } else {
+          return 0;
+        }
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("FetchOnGoingGame:", error);
-        return 0;
-      }
+      this.handleCatch(error);
     }
   }
 
   async fetchSentInvite() {
-    const request = await this.makeRequest(
-      "api/matchmaking/match/sent_invite/",
-      "GET",
-    );
-    const response = await fetch(request);
-    const data = await this.getErrorLogfromServer(response, true);
-    // console.log("SentInvite: ", data);
-    // console.log("SentInvite:data.delete_invite:", data.delete_invite);
-    if (response.status == 200) {
-      this.updateOnGoing(data);
-      const onGoingGameButton = document.querySelector("#buttonOnGoingGame");
-      onGoingGameButton.innerText = "CANCEL";
-      onGoingGameButton.dataset.redirectUrl = data.delete_invite;
-      onGoingGameButton.classList.remove("btn-success");
-      onGoingGameButton.classList.add("btn-danger");
-      return 1;
+    try {
+      const request = await this.makeRequest(
+        "api/matchmaking/match/sent_invite/",
+        "GET",
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        // console.log("SentInvite: ", data);
+        // console.log("SentInvite:data.delete_invite:", data.delete_invite);
+        if (response.status == 200) {
+          this.updateOnGoing(data);
+          const onGoingGameButton =
+            document.querySelector("#buttonOnGoingGame");
+          onGoingGameButton.innerText = this.lang
+            .getTranslation(["button", "cancel"])
+            .toUpperCase();
+          onGoingGameButton.dataset.redirectUrl = data.delete_invite;
+          onGoingGameButton.classList.remove("btn-success");
+          onGoingGameButton.classList.add("btn-danger");
+          return 1;
+        }
+        return 0;
+      }
+    } catch (error) {
+      this.handleCatch(error);
     }
-    return 0;
   }
 
   async fetchNotifications() {
@@ -363,10 +363,7 @@ export default class AbstractViews {
       } else onGoingGame.style.display = "block";
       await this.fetchInvites(boolGame);
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("fetchNotifications:", error);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -376,11 +373,10 @@ export default class AbstractViews {
         try {
           await this.fetchNotifications();
         } catch (error) {
+          clearInterval(AbstractViews.pollingInterval);
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
-          console.error("startNotificationPolling: ", error);
-          navigateTo("/");
-          showModal("error", error.message);
+          this.handleCatch(error);
         }
       }, 3000);
     }
@@ -484,9 +480,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -503,30 +499,78 @@ export default class AbstractViews {
     return myHeaders;
   }
 
-  async getErrorLogfromServer(response, boolJSON = false) {
+  async handleStatus(response) {
+    if (response.status == 401) {
+      console.error("401 error:response:", response);
+      removeSessionStorage();
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "notLog"])}`,
+        "/login",
+      );
+    }
+    if (response.status == 502) {
+      console.error("502 error:response:", response);
+      removeSessionStorage();
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "serverLoading"])}`,
+        "/",
+      );
+    }
+    if (!response.ok) {
+      console.error(`${response.status} error:response:`, response);
+      const data = await this.getDatafromServer(response);
+      showModal(
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        this.JSONtoModal(data),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  handleCatch(error) {
+    if (error instanceof CustomError) throw error;
+    if (error instanceof TypeError && error.message === "Failed to fetch") {
+      console.error("Network error detected:", error);
+      removeSessionStorage();
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "failConnectServer"])}`,
+        "/",
+      );
+    } else {
+      console.error(error);
+    }
+  }
+
+  JSONtoModal(data) {
+    const messagesJoin = Object.entries(data)
+      .map(([field, message]) => {
+        if (Array.isArray(message)) {
+          return message.join(", ");
+        } else {
+          return message;
+        }
+      })
+      .join("<br>");
+    return messagesJoin;
+  }
+
+  async getDatafromRequest(response) {
     const contentType = response.headers.get("Content-Type");
     if (contentType && contentType.includes("application/json")) {
       try {
         const responseText = await response.text();
         if (!responseText) {
-          console.log("RESPONSE IS EMPTY");
+          console.log("JSON IS EMPTY");
           return "Empty response";
         }
-        const errorJSON = JSON.parse(responseText);
-        if (boolJSON) return errorJSON;
-        const errorMessages = Object.entries(errorJSON)
-          .map(([field, errorMessage]) => {
-            // Ensure errorMessage is an array; if not, make it an array
-            if (Array.isArray(errorMessage)) {
-              return errorMessage.join(", ");
-            } else {
-              return errorMessage; // Just use the string directly if not an array
-            }
-          })
-          .join("<br>");
-        return errorMessages;
+        const dataJSON = JSON.parse(responseText);
+        return dataJSON;
       } catch (error) {
-        console.error("getErrorLogfromServer:", error.message);
+        console.error("getDatafromRequest:", error.message);
         return error;
       }
     } else {
@@ -541,10 +585,7 @@ export default class AbstractViews {
       try {
         accessToken = await this.getToken();
       } catch (error) {
-        if (!(error instanceof CustomError)) {
-          console.error("Error in getToken:", error);
-        }
-        throw error;
+        this.handleCatch(makeRequest);
       }
     }
     const options = {
@@ -582,13 +623,10 @@ export default class AbstractViews {
         }),
       });
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         const data = await response.json();
         setSessionStorage(data);
       } else {
-        const log = this.getErrorLogfromServer(response);
-        console.log("ERROR REFRESH:", response);
-        console.log("log: ", log);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation("modal", "error")}`,
@@ -597,9 +635,7 @@ export default class AbstractViews {
         );
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      console.debug("Error refreshing token:", error.message);
-      removeSessionStorage();
+      this.handleCatch(error);
       throw new CustomError(
         `${this.lang.getTranslation("modal", "error")}`,
         `${this.lang.getTranslation(["error", "failRefresh"])}`,
@@ -617,7 +653,6 @@ export default class AbstractViews {
         !refreshToken ||
         !sessionStorage.getItem("username_transcendence")
       ) {
-        console.log("User is not authentified", authToken);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation(["modal", "error"])}`,
@@ -631,11 +666,8 @@ export default class AbstractViews {
         await this.refreshToken(authToken);
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("getToken", error);
-        throw error;
-      }
+      this.handleCatch(error);
+      throw error;
     }
     authToken = sessionStorage.getItem("accessJWT_transcendence");
     return authToken;

@@ -67,7 +67,20 @@ export default class Language {
       ]);
     }
     const alertLabel = document.getElementById("alertLabel");
-    alertLabel.innerText = this.getTranslation(["modal", "title","error"]);
+    alertLabel.innerText = this.getTranslation(["modal", "title", "error"]);
+  }
+
+  objectToMap(jsonDict) {
+    const map = new Map();
+    for (const [key, value] of Object.entries(jsonDict)) {
+      map.set(
+        key,
+        value instanceof Object && !Array.isArray(value)
+          ? this.objectToMap(value)
+          : value,
+      );
+    }
+    return map;
   }
 
   async fetchJSONLanguage() {
@@ -79,34 +92,33 @@ export default class Language {
         method: "GET",
         headers: myHeaders,
       });
-      this.JSONLanguage = await response.json();
+      this.JSONLanguage = this.objectToMap(await response.json());
+      console.log("JSON:", this.JSONLanguage);
       this.currentLanguage = lang;
       console.debug("Get JSON Language:", this.JSONLanguage);
       this.translateIndex();
     } catch (error) {
       console.error(`Error in Language: /json/${lang}.json`, error);
+      throw error;
     }
   }
 
-  findKey(JSONtoSearch, arrayKey) {
-    let objectToSearch = JSONtoSearch;
-    let lastKey = [];
-    for (let key of arrayKey) {
+  findKey(mapOrObj, keys) {
+    let current = mapOrObj;
+
+    for (const key of keys) {
+      // Check if current is a Map and has the key, or if it's an object and has the property
       if (
-        objectToSearch != null &&
-        typeof objectToSearch === "object" &&
-        key in objectToSearch
+        (current instanceof Map && current.has(key)) ||
+        (current && typeof current === "object" && key in current)
       ) {
-        lastKey.push(key);
-        objectToSearch = objectToSearch[key];
+        current = current instanceof Map ? current.get(key) : current[key];
       } else {
-        console.warn(
-          `Warning: Key: ${key} not found in ${lastKey.join(" -> ")}`,
-        );
-        return null;
+        // If a key is missing, return the last key in the array as the default
+        return undefined;
       }
     }
-    return objectToSearch;
+    return current;
   }
 
   getCurrentLanguage() {
@@ -119,6 +131,7 @@ export default class Language {
     if (this.JSONLanguage) {
       translation = this.findKey(this.JSONLanguage, arrayKey);
       if (!translation) {
+        console.warn("key not found: ", arrayKey);
         translation = arrayKey.at(-1);
       }
     } else {
