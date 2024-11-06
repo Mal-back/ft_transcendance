@@ -127,7 +127,7 @@ class GetInvite(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         matchQuery = Match.objects.filter(Q(player1=user) | Q(player2=user), status='pending')
-        tournamentQuery = Tournament.objects.filter(Q(owner=user) | Q(invites_player__in=user), status='pending') 
+        # tournamentQuery = Tournament.objects.filter(Q(owner=user) | Q(invited_players__in=user), status='pending') 
         try :
             on_going_match = Match.objects.get(Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress'])
         except Match.DoesNotExist:
@@ -190,7 +190,9 @@ class MatchAcceptInvite(generics.UpdateAPIView):
                         'player_2_name':f'{match.player2.username}',
                         }
                     )
-            response = ret['http://game:8443/api/game/pong-remote/create/'] 
+            response = ret[f'http://game:8443/api/game/{match.game_type}-remote/create/'] 
+            print(response.status_code)
+            print(response.text)
             matchId = response.text.strip('"')
             match.status = 'in_progress'
             match.matchId = matchId

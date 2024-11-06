@@ -144,7 +144,7 @@ class SentInviteSerializer(serializers.ModelSerializer):
         return(f"/api/users/{player2}")
 
 GAME_TYPE = [('pong', 'Pong'),
-             ('connect_four', 'Connect Four'),
+             ('c4', 'Connect Four'),
              ]
 
 class MatchResultSerializer(serializers.Serializer):
