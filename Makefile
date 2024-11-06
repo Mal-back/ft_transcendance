@@ -41,6 +41,7 @@ clean_migration:
 	rm -f srcs/volumes/avatar_management/avatar_management_app/migrations/000*
 	rm -f srcs/volumes/uses/avatar_management_app/migrations/000*
 	rm -f srcs/volumes/users/users_app/migrations/000*
+	rm -f srcs/volumes/history/history_app/migrations/000*
 
 clean_docker:
 	docker stop $$(docker ps -qa);\
