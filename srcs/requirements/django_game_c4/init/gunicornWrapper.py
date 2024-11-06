@@ -9,9 +9,9 @@ def sig_handler(sig, frame):
     stopme = True
 
 signal.signal(signal.SIGTERM, sig_handler)
-proc = subprocess.Popen(['gunicorn', '--bind', '0.0.0.0:8443', '--reload','game.wsgi'])
+proc = subprocess.Popen(['gunicorn', '--bind', '0.0.0.0:8443', '--reload','auth.wsgi'])
 while (stopme == False) :
-    pass
+    time.sleep(1)
 proc.terminate()
 proc.wait()
 proc = subprocess.Popen(['python3', 'manage.py', 'dumpdata', '-o', 'data/fixture.json'])

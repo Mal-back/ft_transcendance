@@ -1,5 +1,6 @@
 djangoEnv
 .env
+env
 docker-compose.yml
 *.crt
 *.key

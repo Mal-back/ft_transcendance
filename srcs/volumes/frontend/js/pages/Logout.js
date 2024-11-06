@@ -34,12 +34,14 @@ export default class extends AbstractView {
       } catch (error) {
         console.error("Fail to delete token: ", error.message);
       }
+      removeSessionStorage();
+      throw new CustomError(
+        `${this.lang.getTranslation(["title", "logout"])}`,
+        `${this.lang.getTranslation(["modal", "message", "bye"])} ${username}`,
+        "/",
+      );
+    } else {
+      navigateTo("/");
     }
-    removeSessionStorage();
-    throw new CustomError(
-      `${this.lang.getTranslation(["menu", "logout"])}`,
-      `${this.lang.getTranslation(["login", "goodbyeMessage"])}` + username,
-      "/",
-    );
   }
 }

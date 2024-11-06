@@ -74,7 +74,7 @@ export default class AbstractViews {
         styleSheet.ownerNode &&
         styleSheet.ownerNode.classList.contains("page-css")
       ) {
-        console.log("remove .page-css");
+        console.log(`remove .page-css: ${styleSheet}`);
         styleSheet.ownerNode.remove();
         styleSheet = null;
       }
@@ -138,12 +138,14 @@ export default class AbstractViews {
       <div class="d-flex justify-content-end mt-2">
         <button class="btn btn-success btn-sm me-2 accept-button" 
                 data-invite-id="${invite.id}" 
-                data-action="accept">
+                data-action="accept"
+                data-game="${invite.gameType}">
           <i class="bi bi-check-circle"></i> Accept
         </button>
         <button class="btn btn-danger btn-sm refuse-button" 
                 data-invite-id="${invite.id}" 
-                data-action="refuse">
+                data-action="refuse"
+                data-game="${invite.gameType}">
           <i class="bi bi-x-circle"></i> Refuse
         </button>
       </div>
@@ -194,7 +196,7 @@ export default class AbstractViews {
     }
   }
 
-  async inviteRequest(url, action) {
+  async inviteRequest(url, game) {
     try {
       const request = await this.makeRequest(url, "PATCH");
       const response = await fetch(request);
@@ -203,7 +205,10 @@ export default class AbstractViews {
         const data = await this.getErrorLogfromServer(response, true);
         console.log("inviteRequest: response:ok:data", data);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
-        navigateTo(`/pong-local?mode=remote`);
+        const modalInvitesDiv = document.getElementById("inviteUserModal");
+        const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        modalInvitesElem.hide();
+        navigateTo(`/${game}?connection=remote`);
       } else {
         const dataError = await this.getErrorLogfromServer(response);
         console.log("inviteRequest: fail response:data:", dataError);
@@ -230,13 +235,13 @@ export default class AbstractViews {
       const url =
         action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
       console.log(`URL: ${url}; action: ${action}`);
-      await this.inviteRequest(url, action);
+      const game = invite.gameType == "pong" ? "pong" : "c4";
+      await this.inviteRequest(url, game);
     }
   }
 
-  async fetchNotifications() {
+  async fetchInvites(boolGame) {
     AbstractViews.invitesArray = [];
-    console.log("fetchNotifications");
     try {
       const request = await this.makeRequest(
         "/api/matchmaking/match/pending_invites/",
@@ -245,21 +250,119 @@ export default class AbstractViews {
       //TODO loop on next if more than 10 invite
       const response = await fetch(request);
       const data = await this.getErrorLogfromServer(response, true);
-      console.log(response);
-      console.log(data);
+      console.info(response);
+      console.info(data);
+      const count = data.count ? data.count : 0;
       const badge = document.getElementById("notificationbell");
-      if (data.count == 0) {
+      if (count + boolGame == 0) {
         badge.innerHTML = "";
         return;
       }
+      badge.innerHTML = `<div class="notification-badge">${boolGame} </div>`;
       const username = sessionStorage.getItem("username_transcendence");
       if (response.status != 200) {
         return;
       }
       await this.createInvites(data, username);
-      badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length}</div>`;
+      badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length + boolGame} </div>`;
     } catch (error) {
       console.log("caught error");
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("fetchNotifications:", error);
+      }
+    }
+  }
+
+  async updateOnGoing(data) {
+    const opponentInviteId = document.querySelector("#opponentInviteId");
+    const opponentInviteAvatar = document.querySelector(
+      "#opponentInviteAvatar",
+    );
+    let opponent = data.player1;
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username != data.player1) {
+      opponent = data.player2;
+    }
+    opponentInviteId.innerText = "";
+    opponentInviteId.innerText = opponent;
+    try {
+      const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
+      const response = await fetch(request);
+      if (response.ok) {
+        const data = await this.getErrorLogfromServer(response, true);
+        opponentInviteAvatar.style = `background-image: url(${data.profilePic})`;
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("updateOnGoing", error);
+      }
+    }
+  }
+
+  async fetchOnGoingGame() {
+    const joinButton = document.querySelector("#buttonOnGoingGame");
+    if (AbstractViews.AcceptInterval) return 0;
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/match/get_accepted",
+        "GET",
+      );
+      const response = await fetch(request);
+      if (response.status == 200) {
+        const data = await this.getErrorLogfromServer(response, true);
+        console.info("OngoingGame:", data);
+        await this.updateOnGoing(data);
+        sessionStorage.setItem("transcendence_game_id", data.matchId);
+        joinButton.classList.remove("btn-danger");
+        joinButton.classList.add("btn-success");
+        joinButton.innerText = "JOIN";
+        joinButton.dataset.redirectUrl = "/c4?connection=remote";
+        return 1;
+      } else {
+        return 0;
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("FetchOnGoingGame:", error);
+        return 0;
+      }
+    }
+  }
+
+  async fetchSentInvite() {
+    const request = await this.makeRequest(
+      "api/matchmaking/match/sent_invite/",
+      "GET",
+    );
+    const response = await fetch(request);
+    const data = await this.getErrorLogfromServer(response, true);
+    // console.log("SentInvite: ", data);
+    // console.log("SentInvite:data.delete_invite:", data.delete_invite);
+    if (response.status == 200) {
+      this.updateOnGoing(data);
+      const onGoingGameButton = document.querySelector("#buttonOnGoingGame");
+      onGoingGameButton.innerText = "CANCEL";
+      onGoingGameButton.dataset.redirectUrl = data.delete_invite;
+      onGoingGameButton.classList.remove("btn-success");
+      onGoingGameButton.classList.add("btn-danger");
+      return 1;
+    }
+    return 0;
+  }
+
+  async fetchNotifications() {
+    try {
+      let boolGame = await this.fetchOnGoingGame();
+      boolGame += await this.fetchSentInvite();
+      const onGoingGame = document.querySelector("#divOnGoingGame");
+      if (boolGame == 0) {
+        onGoingGame.style.display = "none";
+      } else onGoingGame.style.display = "block";
+      await this.fetchInvites(boolGame);
+    } catch (error) {
       if (error instanceof CustomError) throw error;
       else {
         console.error("fetchNotifications:", error);
@@ -279,7 +382,7 @@ export default class AbstractViews {
           navigateTo("/");
           showModal("error", error.message);
         }
-      }, 10000);
+      }, 3000);
     }
   }
 
@@ -295,12 +398,12 @@ export default class AbstractViews {
     const inviteModalEl = document.getElementById("inviteUserModal");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["title", "logout"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/logout";
       logIcon.href = "";
       logIcon.href = "/logout";
-      logIcon.title = this.lang.getTranslation(["menu", "logout"]);
+      logIcon.title = this.lang.getTranslation(["title", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
       if (notifButton.style.display == "none") {
@@ -316,14 +419,16 @@ export default class AbstractViews {
         removeSessionStorage();
       }
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["menu", "login"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["title", "login"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/login";
       logIcon.href = "";
       logIcon.href = "/login";
-      logIcon.title = this.lang.getTranslation(["menu", "login"]);
+      logIcon.title = this.lang.getTranslation(["title", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
+      const badge = document.getElementById("notificationbell");
+      badge.innerHTML = "";
       if (notifButton.style.display == "block") {
         notifButton.style.display = "none";
         inviteModalEl.removeEventListener(
@@ -379,9 +484,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -442,7 +547,6 @@ export default class AbstractViews {
         throw error;
       }
     }
-    console.log("myMethod:", myMethod);
     const options = {
       method: myMethod.toString(),
       headers: this.makeHeaders(accessToken, myBody != null && !boolImage),
@@ -542,6 +646,7 @@ export default class AbstractViews {
   }
 
   destroy() {
+    console.log("Destroy");
     this.removeInviteEventListeners();
     this.removeEventListeners();
     this.cleanModal();

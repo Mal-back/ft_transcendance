@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Pong mode");
     this.handleLocalRedirection = this.handleLocalRedirection.bind(this);
     this.handleRemoteRedirection = this.handleRemoteRedirection.bind(this);
   }
@@ -20,17 +19,20 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "mode"])}`,
+    );
     return `
     <div class="background removeElem">
       <div class="custom-container d-flex flex-column justify-content-center align-items-center removeElem">
         <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
-          ${this.lang.getTranslation(["pong", "maj", "title"])}</h1>
+          ${this.lang.getTranslation(["title", "pong"]).toUpperCase()}</h1>
         <br>
         <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
-         id="pongLocalButton">${this.lang.getTranslation(["pong", "maj", "local"])}</button>
+         id="pongLocalButton">${this.lang.getTranslation(["title", "local"]).toUpperCase()}</button>
         <br>
         <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-          id="pongRemoteButton">${this.lang.getTranslation(["pong", "maj", "remote"])}</button>
+          id="pongRemoteButton">${this.lang.getTranslation(["title", "remote"]).toUpperCase()}</button>
         <br>
       </div>
     </div> 

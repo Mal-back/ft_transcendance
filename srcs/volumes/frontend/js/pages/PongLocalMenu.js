@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Pong Local");
     this.handleLocalGameRedirection =
       this.handleLocalGameRedirection.bind(this);
     this.handleLocalTournamentRedirection =
@@ -22,17 +21,20 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])}`,
+    );
     return `
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
           <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
-            ${this.lang.getTranslation(["pong", "maj", "title"])} - ${this.lang.getTranslation(["pong", "maj", "local"])}</h1>
+            ${this.lang.getTranslation(["title", "pong"]).toUpperCase()} - ${this.lang.getTranslation(["title", "local"]).toUpperCase()}</h1>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
-            id="PongLocalPlayButton">${this.lang.getTranslation(["pong", "maj", "play"])}</button>
+            id="PongLocalPlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-            id="PongLocalTournamentButton">${this.lang.getTranslation(["pong", "maj", "tournament"])}</button>
+            id="PongLocalTournamentButton">${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</button>
           <br>
         </div>
       </div>
@@ -41,7 +43,7 @@ export default class extends AbstractView {
 
   handleLocalGameRedirection(ev) {
     ev.preventDefault();
-    navigateTo("/ponglocal");
+    navigateTo("/pong?connection=local");
   }
 
   handleLocalTournamentRedirection(ev) {

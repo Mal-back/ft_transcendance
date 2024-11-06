@@ -24,7 +24,7 @@ class PongLocalEngine(threading.Thread):
 		self.frame_rate = 1 / 60
 		self.movement_lock = threading.Lock()
 		self.start_lock = threading.Lock()
-		self.runing = False
+		self.running = False
 		self.end_lock = threading.Lock()
 		self.end = False
 		self.surrender = "None"
@@ -32,10 +32,10 @@ class PongLocalEngine(threading.Thread):
 		self.winner = "None"
 		
 	def wait_start(self):
-		print("Waiting for Pong Local Game instance " + self.game_id + " to start")
+		print("PongLocalEngine : Waiting game  " + self.game_id + " to start")
 		while True:
 			with self.start_lock:
-				if self.runing == True:
+				if self.running == True:
 					break
 			with self.end_lock:
 				if self.end == True:
@@ -44,11 +44,9 @@ class PongLocalEngine(threading.Thread):
 
 	def start_game(self):
 		with self.start_lock:
-			if self.runing == True:
-				print("pong Local Game instance " + self.game_id + "is already runing, this function returns without doing anything")
-			else:
-				print("Starting Pong Local Game instance " + self.game_id)
-				self.runing = True
+			if self.running == False:
+				print("PongLocalEngine : Starting game instance " + self.game_id)
+				self.running = True
  
 	def run(self) -> None:
 		self.wait_start()
@@ -64,7 +62,7 @@ class PongLocalEngine(threading.Thread):
 			time.sleep(self.frame_rate)
 			self.check_pause()
 		self.join_thread()
-		print("End of run function for thread " + self.game_id)
+		print("PongLocalEngine : End of run function for thread " + self.game_id)
 
 	def join_thread(self):
 		try:
@@ -73,11 +71,11 @@ class PongLocalEngine(threading.Thread):
 				"game_id": self.game_id
 			})
 		except:
-			print("Can not send join thread to pong_remote_engine from thread num " + self.game_id)					
+			print("PongLocalEngine : Can not send join thread to pong_local_engine from game " + self.game_id)					
 		
 	def receive_movement(self, player : str, direction : str):
 		with self.start_lock:
-			if self.runing == False:
+			if self.running == False:
 				return
 		try:
 			with self.movement_lock:
@@ -90,11 +88,11 @@ class PongLocalEngine(threading.Thread):
    
 	def receive_pause(self, action : str):
 		with self.start_lock:
-			if action == "start" and self.runing == False:
-				self.runing = True
+			if action == "start" and self.running == False:
+				self.running = True
 				self.send_pause("start")
-			elif action == "stop" and self.runing == True:
-				self.runing = False
+			elif action == "stop" and self.running == True:
+				self.running = False
 				self.send_pause("stop")
 	
 	def receive_surrend(self, surrender : str) -> None:
@@ -134,7 +132,7 @@ class PongLocalEngine(threading.Thread):
 	def check_pause(self) -> None :
 		while True:
 			with self.start_lock:
-				if self.runing == True:
+				if self.running == True:
 					break
 			with self.end_lock:
 				if self.end == True:
@@ -170,7 +168,7 @@ class PongLocalEngine(threading.Thread):
 				"Frame": self.frame.render(),
 			})
 		except Exception:
-			print("Can not send frame to group channel " + self.game_id)
+			print("PongLocalEngine : Can not send frame to group channel " + self.game_id)
 		
 	def send_config(self) -> None:
 		conf = self.config.render()
@@ -180,7 +178,7 @@ class PongLocalEngine(threading.Thread):
 				"Config": conf,
 			})
 		except Exception:
-			print("Can not send config to group channel " + self.game_id)
+			print("PongLocalEngine : Can not send config to group channel " + self.game_id)
   
 
 	def send_pause(self, action : str) -> None:
@@ -190,7 +188,7 @@ class PongLocalEngine(threading.Thread):
 				"Pause": action
 			})
 		except Exception:
-			print("Can not send pause to group channel " + self.game_id)
+			print("PongLocalEngine : Can not send pause to group channel " + self.game_id)
 		
 	def send_end_state(self, last_frame) -> None:
 		data = {"winner" : self.winner,
@@ -203,4 +201,4 @@ class PongLocalEngine(threading.Thread):
 				"End_state" : data,
 			})
 		except Exception:
-			print("Can not send end state to group channel " + self.game_id)
+			print("PongLocalEngine : Can not send end state to group channel " + self.game_id)

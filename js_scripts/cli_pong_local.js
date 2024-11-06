@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 const readline = require('readline');
 
-const wsUrl = 'ws://localhost:8080/api/game/pong-local/join/';
+const wsUrl = 'wss://localhost:8080/api/game/pong-local/join/';
 const ws = new WebSocket(wsUrl);
 
 const rl = readline.createInterface({
