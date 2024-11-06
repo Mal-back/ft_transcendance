@@ -204,7 +204,7 @@ class TournamentAddPlayersSerializer(serializers.ModelSerializer):
         request = self.context['request']
         owner = request.user
         existing_invites = set(self.instance.invited_players.values_list('username', flat=True))
-        confirmed = set(self.instance.confirmed_players.values_list('user__username'), flat=True)
+        confirmed = set(self.instance.confirmed_players.values_list('user__username', flat=True))
         existing_usernames = existing_invites | confirmed
 
         new_users = []
@@ -259,15 +259,14 @@ class TournamentRemovePlayersSerializer(serializers.ModelSerializer):
         for player in players_to_remove:
             try:
                 confirmed_player = instance.confirmed_players.get(user=player)
-                instance.confirmed_players.remove(confirmed_player)
                 confirmed_player.delete()
             except TournamentUser.DoesNotExist:
                 pass
 
-        instance.invited_players.remove(*players_to_remove)
         return instance
 
-class TournamentInviteSerializer(serializers.ModelSerializer):
+class TournamentDetailSerializer(serializers.ModelSerializer):
+    player_type = serializers.SerializerMethodField()
     accept_invite = serializers.SerializerMethodField()
     decline_invite = serializers.SerializerMethodField()
     leave_tournament = serializers.SerializerMethodField()
@@ -282,28 +281,96 @@ class TournamentInviteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tournament
-        fields = ['game_type', 'confirmed_players', 'status', 'accept_invite', 'decline_invite',
+        fields = ['game_type', 'status', 'player_type', 'accept_invite', 'decline_invite',
                   'leave_tournament', 'delete_tournament', 'round_number', 'invited_players_profiles',
                   'confirmed_players_profiles', 'owner_profile', 'invite_players', 'remove_players',
                   'launch_tournament',]
 
-        def get_accept_invite(self, obj):
-            request = self.context.get('request')
-            user = request.user
-            if user in obj.invited_players: 
-                return(f'api/matchmaking/tournament/{obj.id}/accept/')
-            return None
+    def get_player_type(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if user in obj.invited_players.all(): 
+            return('Invited Player')
+        elif user in obj.confirmed_players.values_list('user', flat=True): 
+            return ('Confirmed Player')
+        elif user == obj.owner:
+            return('Owner')
+        return None
 
-        def get_decline_invite(self, obj):
-            request = self.context.get('request')
-            user = request.user
-            if user in obj.invited_players: 
-                return(f'api/matchmaking/tournament/{obj.id}/decline/')
-            return None
+    def get_accept_invite(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if user in obj.invited_players.all() and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/{obj.id}/accept/')
+        return None
 
-        def get_leave_tournament(self, obj):
-            request = self.context.get('request')
-            user = request.user
-            if user in obj.confirmed_players.values_list('user', flat=True): 
-                return(f'api/matchmaking/tournament/{obj.id}/leave/')
-            return None
+    def get_decline_invite(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if user in obj.invited_players.all() and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/{obj.id}/decline/')
+        return None
+
+    def get_leave_tournament(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if user.username in obj.confirmed_players.values_list('user', flat=True) and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/{obj.id}/leave/')
+        return None
+
+    def get_delete_tournament(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.owner == user and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/delete/')
+        return None
+
+    def get_round_number(self, obj):
+        if obj.status == 'in_progress': 
+            return obj.current_round
+        return None
+
+    def get_round_number(self, obj):
+        if obj.status == 'in_progress': 
+            return obj.current_round
+        return None
+
+    def get_invited_players_profiles(self, obj):
+        if obj.status == 'pending':
+            links = []
+            for user in  obj.invited_players.all():
+                profile_url = f'/api/users/{user.username}/'
+                links.append({'username': user.username, 'profile':profile_url})
+            return links
+        return None
+
+    def get_confirmed_players_profiles(self, obj):
+        links = []
+        for username in  obj.confirmed_players.values_list('user__username', flat=True):
+            profile_url = f'/api/users/{username}/'
+            links.append({'username': username, 'profile':profile_url})
+        return links
+
+    def get_owner_profile(self, obj):
+        return f'/api/users/{obj.owner.username}/'
+
+    def get_invite_players(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.owner == user:
+            return '/api/matchmaking/tournament/add_players/'
+        return None
+
+    def get_remove_players(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.owner == user:
+            return '/api/matchmaking/tournament/remove_players/'
+        return None
+
+    def get_launch_tournament(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.owner == user and obj.confirmed_players.count() > 2:
+            return '/api/matchmaking/tournament/launch/'
+        return None
