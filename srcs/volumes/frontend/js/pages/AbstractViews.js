@@ -251,6 +251,7 @@ export default class AbstractViews {
       //TODO loop on next if more than 10 invite
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
+        if (response.status == 204) return;
         const data = await this.getDatafromRequest(response);
         console.info(response);
         console.info(data);
@@ -460,7 +461,7 @@ export default class AbstractViews {
       window
         .atob(base64)
         .split("")
-        .map(function (c) {
+        .map(function(c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -480,9 +481,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -519,6 +520,7 @@ export default class AbstractViews {
       );
     }
     if (!response.ok) {
+      if (response.status == 404) return false;
       console.error(`${response.status} error:response:`, response);
       const data = await this.getDatafromServer(response);
       showModal(

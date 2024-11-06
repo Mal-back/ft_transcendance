@@ -92,12 +92,18 @@ export default class Language {
         method: "GET",
         headers: myHeaders,
       });
-      this.JSONLanguage = this.objectToMap(await response.json());
-      console.log("JSON:", this.JSONLanguage);
-      this.currentLanguage = lang;
-      console.debug("Get JSON Language:", this.JSONLanguage);
-      this.translateIndex();
+      if (response.ok) {
+        this.JSONLanguage = this.objectToMap(await response.json());
+        console.log("JSON:", this.JSONLanguage);
+        this.currentLanguage = lang;
+        console.debug("Get JSON Language:", this.JSONLanguage);
+        this.translateIndex();
+      } else {
+        console.error("fail to fetch languageJSON");
+        sessionStorage.removeItem("transcendence_language");
+      }
     } catch (error) {
+      sessionStorage.removeItem("transcendence_language");
       console.error(`Error in Language: /json/${lang}.json`, error);
       throw error;
     }

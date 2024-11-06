@@ -24,6 +24,7 @@
     "accept": "Accept",
     "refuse": "Refuse",
     "invite": "Invite",
+    "save": "Save",
     "cancel": "Cancel",
     "help": "Help",
     "giveUp": "Give up",
@@ -31,6 +32,7 @@
     "change": "Change",
     "chooseFile": "Choose a File",
     "upload": "Upload",
+    "set": "Set",
     "save": "Save",
     "handle": "Handle",
     "data": "Data",
@@ -45,7 +47,11 @@
     "you": "You",
     "avatar": "Avatar",
     "maiden": "MaidenLess",
-    "pleaseFriend": "Please add Friends"
+    "current": "Current",
+    "pleaseFriend": "Please add Friends",
+    "choose": "Choose your Avatar",
+    "orUpload": "Or Upload your own",
+    "selectAvatar": "Select or Upload your profile Avatar"
   },
   "game": {
     "label": "Game",
