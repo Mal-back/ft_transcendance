@@ -190,6 +190,15 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 			log.info("C4RemotePlayerConsumer : Can not send on closed websocket")
    
    
+	async def send_timer(self, event):
+		data = {"type" : "timer"}
+		data.update(event["Timer"])
+		try:
+			await self.send(dumps(data))
+		except:
+			log.info("C4RemotePlayerConsumer : Can not send on closed websocket")
+
+   
 	async def receive(self, text_data=None, bytes_data=None):
 		content = loads(text_data)
 		try:
@@ -215,7 +224,7 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 			await self.send_pong()
 		else:
 			log.info("C4RemotePlayerConsumer : Wrong type receive : " + type)
-    
+	
 
 	async def leave_game(self):
 		try:
@@ -230,7 +239,7 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 			log.info("C4RemotePlayerConsumer : Problem leaving game " + self.group_name + " for player " + self.username)
 		# await self.pause({"action" : "stop"})
 
-    
+	
 	async def auth(self, game_instance : C4RemoteGame) -> bool:
 		# Uncomment bellow to activate user authentication
 		try :
@@ -286,8 +295,8 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 		if await self.auth(game) == False:
 			log.info("C4RemotePlayerConsumer : Can not auth player to game " + self.group_name)
 			await self.close()    
-    
-    
+	
+	
 class C4RemoteGameConsumer(SyncConsumer):
 	def __init__(self, *args, **kwargs):
 		self.game_instances = {}
@@ -336,7 +345,7 @@ class C4RemoteGameConsumer(SyncConsumer):
 		except Exception:
 			print("C4RemoteGameConsumer : Game thread " + str(game_id) + " can not put because not initialized")
 		
-  	
+	  
 	def surrend(self, event):
 		print("Surrend function in PongLocalGameConsumer")
 		game_id = event["game_id"]
@@ -380,7 +389,7 @@ class C4RemoteGameConsumer(SyncConsumer):
 				body=event["End_state"],
 			)
 		except RequestsFailed:
-	   	 print("C4RemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])
+			print("C4RemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])
 
 
 

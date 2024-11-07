@@ -9,6 +9,7 @@
     "login": "Login",
     "logout": "Logout",
     "local": "Local",
+    "friends": "Friends",
     "lobby": "Lobby",
     "remote": "Remote",
     "tournament": "Tournament",
@@ -23,6 +24,7 @@
     "accept": "Accept",
     "refuse": "Refuse",
     "invite": "Invite",
+    "save": "Save",
     "cancel": "Cancel",
     "help": "Help",
     "giveUp": "Give up",
@@ -30,6 +32,7 @@
     "change": "Change",
     "chooseFile": "Choose a File",
     "upload": "Upload",
+    "set": "Set",
     "save": "Save",
     "handle": "Handle",
     "data": "Data",
@@ -42,9 +45,15 @@
   },
   "user": {
     "you": "You",
+    "your": "Your",
+    "account": "Account",
     "avatar": "Avatar",
     "maiden": "MaidenLess",
-    "pleaseFriend": "Please add Friends"
+    "current": "Current",
+    "pleaseFriend": "Please add Friends",
+    "choose": "Choose your Avatar",
+    "orUpload": "Or Upload your own",
+    "selectAvatar": "Select or Upload your profile Avatar"
   },
   "game": {
     "label": "Game",
@@ -56,6 +65,7 @@
     "next": "Next",
     "match": "Match",
     "inviteMatch": "Invite to a Match",
+    "noInvite": "No Invites",
     "player": "Player",
     "blue": "Blue",
     "red": "Red",
@@ -81,7 +91,8 @@
       "confirm": "Confirm",
       "3to10": "3 to 10",
       "language": "Language",
-      "old": "Old"
+      "old": "Old",
+      "new": "New"
     },
     "error": {
       "empty": "is empty",
@@ -95,6 +106,7 @@
     },
     "preview": {
       "opponent": "Enter opponent's username",
+      "username": "Enter Username",
       "noFile": "No File chosen",
       "old": "old",
       "new": "new",
@@ -119,8 +131,10 @@
       "welcome": "Welcome",
       "notLog": "You're not authentified, please login to access this page",
       "failConnectServer": "Unable to connect to the server, please try again later",
+      "serverLoading": "The server has restarted and need some time to finish initialization, please wait a little and retry",
       "authError": "Authentification error, please re-login",
-      "successChange": "Changed successfully",
+      "successChange": "was changed successfully",
+      "successDeleteAccount": "Your account was successfully deleted, all associated data is being anonymized",
       "alreadyLog": "You are already logged in",
       "accountCreation": "Your new account was successfully created!",
       "failTournament": "Failed to retrieve tournament information",

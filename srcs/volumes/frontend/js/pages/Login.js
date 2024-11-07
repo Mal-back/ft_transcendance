@@ -72,7 +72,6 @@ export default class extends AbstractView {
 
   async loadCss() {
     this.createPageCss("../css/login.css");
-    console.log("adding login.css");
   }
 
   async checkLogin() {
@@ -145,7 +144,7 @@ export default class extends AbstractView {
       if (!isValid) return;
       await this.login();
     } catch (error) {
-      console.debug("Error in login:", error);
+      if (error instanceof CustomError) showModal(error.title, error.message);
     }
   }
 
@@ -173,7 +172,7 @@ export default class extends AbstractView {
       });
       const response = await fetch(request);
       console.log("Response: ", response);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         const data = await response.json();
         setSessionStorage(data, nameForm);
         navigateTo("/");
@@ -181,25 +180,13 @@ export default class extends AbstractView {
           `${this.lang.getTranslation(["modal", "title", "auth"])}`,
           `${this.lang.getTranslation(["modal", "message", "welcome"])}, ${nameForm}`,
         );
-      } else {
-        const log = await this.getErrorLogfromServer(response);
-        showModal(
-          `${this.lang.getTranslation(["modal", "title", "error"])}`,
-          log,
-        );
-        console.log(log);
       }
-    } catch (Error) {
-      console.error("Error fetching login:", Error);
-      showModal(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        Error.message,
-      );
+    } catch (error) {
+      this.handleCatch(error);
     }
   }
 
   async addEventListeners() {
-    console.log("adding event addEventListeners");
     const button = document.querySelector("#loginButton");
     const usernameInput = document.querySelector("#usernameInput");
     const passwordInput = document.querySelector("#passwordInput");

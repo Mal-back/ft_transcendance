@@ -225,7 +225,7 @@ B - Remote game:
 	Info : coordinates [0, 0] is at top-left of the board.
 	Warning : If you get configuration while game runing, you can not access to current player's and ball's positions with the configuration. It will always send you initial coordinates.
 	
-	IMPORTANT : In remote game, "get_config" will trigger a "pause" and "frame" send from the server, so you can know the current state of the game in case of reconection into a game.
+	IMPORTANT : In remote game, "get_config" will trigger a "pause" and "frame" send from the server, so you can know the current state of the game in case of reconnection into a game.
 
 4 - Start the game :
 
@@ -245,6 +245,8 @@ Player's coordinates are the top-left coordinates of the pad.
 Ball's coordinates are the center of the ball.
 
 IMPORTANT : Before the first frame, you will receive a "pause start" event, this means both players a ready and the game is about to start.
+After a player sent "start" to the game, the other player has a limited time to connect to the game and start it.
+
 
 5 - Move the player :
 
@@ -422,8 +424,6 @@ A - Local Game :
 
 	Where :
 		value is either "player_1" or "player_2" (the surrender).
-	
-	If you send a surrender while the game is stopped with pause, you must unpause the game to end the game and receive the final state.
 
 7 - End state of the game :
 
@@ -455,3 +455,149 @@ A - Local Game :
 
 
 B - Remote Game :
+
+1 - Join a room :
+
+	Establish a websocket connection to "wss://application_host/api/game/c4-remote/join/" where :
+		- application_host is the combination host-port of the application (ex: localhost:8080).
+	
+	This will create a room in Django Channel to communicate with the game engine. To join the game room, you need to first send a message in JSON format :
+
+		{"type" : "join_game",
+			"game_id" : value,
+			"auth_key" : value,
+		}
+
+	Where : 
+		- game_id is the uuid4 given by the django matchamking application
+		- auth_key is the JWT of the player sending the message
+
+	Be carefull : - if the first message send after establishing the websocket connection is not of type "join_room", the websocket will be closed directly.
+		- if the django application can not authentify the user (ex: wrong game_id, user not belong to the game_id, wrong auth_key...) the websocket will be closed directly.
+
+2 - Initialise the game :
+
+	Send via the websocket in JSON format : 
+	
+		{type: "init_game"}
+		
+	This will :
+		- Create the game thread via the pong_local_engine worker
+		- The thread is ready to start or send configuration to the client
+
+	You can not initialise the game more than one time.
+	If an error occurs initializing the game, you will receive an error message and the websocket will be close
+
+3 - Get game configuration : 
+
+	Send via the websocket in JSON format :
+
+		{type: "get_config"}
+
+	This will send you configuration to draw the base game :
+
+		{"type" : "config",
+		"starting_player" : value,
+		"player_1_username" : value,
+		"player_2_username" : value,
+		"piece_1": value,
+		"piece_2": value,}
+
+		Where :
+			- starting_player is the username of the player who will put the first disk
+			- player_1_username and player_2_username are usernames of the players
+			- piece_1 and piece_2 are the characters representing player's disk in the board
+
+	IMPORTANT : In remote game, "get_config" will trigger a "frame" send from the server, so you can know the current state of the game in case of reconnection into a game.
+
+4 - Start the game :
+
+	Send via the websocket in JSON format :
+
+		{type: "start_game"}
+		
+	This will start the game and send you each frame periodically :
+
+		{"type" : "frame",
+			"board" : {
+				"line_1" : ". . . . . . .",
+				"line_2" : ". . . . . . .",
+				"line_3" : ". . . . . . .",
+				"line_4" : ". . . . . . .",
+				"line_5" : ". . . . . . .",
+				"line_6" : ". . . . . . .",
+			}
+			"player_1_username" : value,
+			"player_2_username" : value,
+			"current_player" : value,
+		}
+
+	Each point `.` in a line represents a column. This point could also be a player's disk character ("piece_1" or "piece_2" in the JSON config)
+	You will receive a frame after each valid disk put in the board with the 'put' call.
+
+	After a player sent "start" to the game, the other player has a limited time to connect to the game and start it.
+
+5 - Put a disk :
+
+	Send via the websocket in JSON format the following message :
+
+		{"type" : "put",
+		"column" value,
+		}
+
+	Where : 
+		- column is the column num in which the player want to put a disk in.
+
+	Warning : If the current player does not send a valid "put" before a certain amount of time, he will automatically loose the game.
+
+6 - Timer :
+
+	The current player has a certain amount of time to put a disk.
+	The server will send you each second the following message to indicate the time left for the current turn:
+		
+		{"type" : "timer",
+			"time_left" : value,
+		}
+
+	Where :
+		- value is an integer representing the remaining time in seconds for the current turn.
+
+7 - Surrend :
+
+	Send via the websocket in JSON format the following message :
+
+	{"type" : "surrend",
+	}
+
+8 - End state of the game :
+
+	When the game finished , the game sends you a last message before closing the websocket:
+
+		{"type" : "end_state",
+			"game" : "c4",
+			"winner" : value,
+			"looser" : value,
+		}
+
+	Where : 
+		- game specifies the type of game played
+		- winner is either "player_1" or "player_2"
+		- looser is either "player_1" or "player_2"
+
+9 - Error messages from server :
+
+	For debuging purpose, the game may send you error messages in some contexts (for example starting the game before its initialization). You can choose to catch these messages to understand what is wrong.
+	The format is :
+
+	{"type" : "error",
+	"error_msg" : value
+	}
+
+	Where value is the full error message.
+
+10 - Websocket disconnection:
+
+	If you close the websocket connection :
+		- You can reconnect to the game at any moment.
+		- You have to send again the join_room message to authenticate the user (see I-B-1), it means you need game_id and JWT of the user.
+		- The timer of the current player does not stop, this means you have to reconnect quickly to not loose the game.

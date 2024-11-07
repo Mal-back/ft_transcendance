@@ -25,14 +25,11 @@ export default class extends AbstractView {
           refresh: refreshToken,
         });
         const response = await fetch(request);
-        if (response.ok) {
+        if (await this.handleStatus(response)) {
           console.log(`token deleted: ${response.status}`);
-        } else {
-          const log = await this.getErrorLogfromServer(response);
-          console.log(log);
         }
       } catch (error) {
-        console.error("Fail to delete token: ", error.message);
+        this.handleCatch(error);
       }
       removeSessionStorage();
       throw new CustomError(

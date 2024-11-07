@@ -71,6 +71,7 @@ class PongRemoteEngine(threading.Thread):
  
     def run(self) -> None:
         self.wait_start()
+        print("PongRemoteEngine : Starting game instance " + self.game_id)
         self.send_pause("start")
         while True:
             self.frame = self.get_next_frame()
@@ -93,7 +94,6 @@ class PongRemoteEngine(threading.Thread):
             })
         except:
             print("PongRemoteEngine : Can not send join thread to pong_remote_engine from thread num " + self.game_id)
-   
    
     def clean_game(self):
         try:
@@ -140,6 +140,26 @@ class PongRemoteEngine(threading.Thread):
         frame.player_2.move()
         return frame
 
+    def check_pause(self) -> None :
+        with self.start_lock:
+            if self.runing_player_1 == "start" and self.runing_player_2 == "start":
+                return
+            else:
+                self.runing_player_1 = "stop"
+                self.runing_player_2 = "stop"
+                self.send_pause("stop")
+        count = 0
+        while True:
+            with self.start_lock:
+                if self.runing_player_1 == "start" and self.runing_player_2 == "start":
+                    break
+                if count * self.frame_rate >= 30:
+                    self.runing_player_1 = "start"
+                    self.runing_player_2 = "start"
+                    break
+            count += 1
+            time.sleep(self.frame_rate)
+        self.send_pause("start" )
 
     def move_ball(self, frame : Frame) -> Frame:
         if frame.board.ball.direction.dx < 0:
@@ -185,8 +205,6 @@ class PongRemoteEngine(threading.Thread):
                 if count * self.frame_rate >= 30:
                     self.runing_player_1 = "start"
                     self.runing_player_2 = "start"
-            with self.end_lock:
-                if self.end == True:
                     break
             count += 1
             time.sleep(self.frame_rate)
@@ -297,4 +315,3 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send result to PongRemoteGameConsumer for game " + self.game_id)
-            

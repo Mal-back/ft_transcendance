@@ -226,7 +226,12 @@ export default class extends AbstractView {
         }
     }
 
-    async handleGetUsername(mode, player_1Username, player_2Username, currentPlayer) {
+    async handleGetUsername(
+        mode,
+        player_1Username,
+        player_2Username,
+        currentPlayer,
+    ) {
         try {
             console.log("View:handleGetUsername");
             if (mode == "remote") {
@@ -258,6 +263,6 @@ export default class extends AbstractView {
     }
 
     removeEventListeners() {
-        this.connect4.removeC4Event();
+        if (this.connect4) this.connect4.removeC4Event();
     }
 }

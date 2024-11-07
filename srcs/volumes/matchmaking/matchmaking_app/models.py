@@ -29,7 +29,7 @@ class InQueueUser(models.Model):
     range_to_search = models.FloatField(default=0.05)
     last_range_update = models.DateTimeField(default=now)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
 
     @property
     def minimal_wr(self):
@@ -46,6 +46,9 @@ class TournamentUser(models.Model):
                             related_name='tournament_user',
                             on_delete=models.PROTECT,
                             to_field='username')
+    tournament = models.ForeignKey('Tournament',
+                                related_name='confirmed_players',
+                                on_delete=models.CASCADE,)
     matches_won = models.IntegerField(default=0)
     matches_lost = models.IntegerField(default=0)
     
@@ -54,11 +57,10 @@ class Tournament(models.Model):
                                 related_name='tournament_owner',
                                 on_delete=models.PROTECT,
                                 to_field='username')
-    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', null=True)
-    confirmed_players = models.ManyToManyField('TournamentUser', related_name='confirmed_players', null=True)
+    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players',)
     current_round = models.IntegerField(default=1)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('in_progess', 'In progress'),])
     winner = models.ForeignKey('MatchUser',
@@ -78,7 +80,7 @@ class Match(models.Model):
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
     matchId = models.UUIDField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('accepted', 'Accepted'),

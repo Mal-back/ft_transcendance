@@ -16,7 +16,7 @@ export default class extends AbstractView {
   }
 
   async loadCss() {
-    // this.createPageCss("../css/friend-list.css");
+    this.createPageCss("../css/friend-list.css");
     this.createPageCss("../css/battle-history.css");
     this.createPageCss("../css/background-profile.css");
   }
@@ -31,7 +31,6 @@ export default class extends AbstractView {
     try {
       const username = sessionStorage.getItem("username_transcendence");
       if (username == friendname) {
-        this.cleanModal();
         showModal(
           this.lang.getTranslation(["modal", "error"]),
           this.lang.getTranslation(["Friends", "error", "yourself"]),
@@ -43,21 +42,16 @@ export default class extends AbstractView {
         "PATCH",
       );
       const response = await fetch(request);
-      if (response.ok) {
-        const data = await this.getErrorLogfromServer(response);
-        showModal(this.lang.getTranslation(["modal", "success"]), data);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        showModal(
+          this.lang.getTranslation(["modal", "title", "success"]),
+          data.OK,
+        );
         navigateTo("/friends");
-      } else {
-        console.info("RESPONSE: ", response);
-        const dataError = await this.getErrorLogfromServer(response);
-        showModal(this.lang.getTranslation(["modal", "error"]), dataError);
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("error makefriends:", error);
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -66,12 +60,8 @@ export default class extends AbstractView {
     try {
       friendList = await this.getFriendList();
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-        console.error("GetMainDiv", error);
-        friendList = `<div class="removeElem">${this.lang.getTranslation(["Friends", "error", "failList"])}</div>`;
-      }
+      this.handleCatch(error);
+      friendList = `<div class="removeElem">${this.lang.getTranslation(["Friends", "error", "failList"])}</div>`;
     }
 
     return `
@@ -79,9 +69,9 @@ export default class extends AbstractView {
   <div class="container mt-4 removeElem">
 	  <div class="bg-* text-white text-center p-3 rounded removeElem">
 		  <div class="d-flex justify-content-between align-items-center removeElem">
-			  <h3 class="mb-0 removeElem">${this.lang.getTranslation(["Friends", "label"])}</h3>
+			  <h3 class="mb-0 removeElem">${this.lang.getTranslation(["title", "friends"])}</h3>
 			  <button class="btn btn-primary removeElem" data-bs-toggle="modal" data-bs-target="#addFriendModal"><i class="bi bi-person-plus"></i>
-				  ${this.lang.getTranslation(["Friends", "addButton"])}</button>
+				  ${this.lang.getTranslation(["button", "addFriend"])}</button>
 		  </div>
 	  </div>
     ${friendList}
@@ -91,14 +81,14 @@ export default class extends AbstractView {
 		  <div class="modal-dialog removeElem">
 			  <div class="modal-content removeElem">
 				  <div class="modal-header removeElem">
-					  <h5 class="modal-title removeElem" id="addFriendModalLabel">${this.lang.getTranslation(["Friends", "addButton"])}</h5>
+					  <h5 class="modal-title removeElem" id="addFriendModalLabel">${this.lang.getTranslation(["button", "addFriend"])}</h5>
 					  <button type="button" class="btn-close removeElem" data-bs-dismiss="modal" aria-label="Close"></button>
 				  </div>
 				  <div class="modal-body removeElem">
 					  <form id="addFriendForm" class="removeElem">
 						  <div class="mb-3 removeElem">
 							  <label for="friendUsername" class="form-label removeElem">${this.lang.getTranslation(
-                  ["Friends", "enterUsername"],
+                  ["input", "preview", "username"],
                 )}</label>
 							  <input type="text" class="form-control removeElem" name="friendRequest" id="friendUsername" required>
 						  </div>
@@ -106,10 +96,10 @@ export default class extends AbstractView {
 				  </div>
 				  <div class="modal-footer removeElem">
 					  <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">${this.lang.getTranslation(
-              ["modal", "close"],
+              ["button", "close"],
             )}</button>
 					  <button type="submit" class="btn btn-primary removeElem" form="addFriendForm"
-						  id="addFriendRequest">${this.lang.getTranslation(["Friends", "addButton"])}</button>
+						  id="addFriendRequest">${this.lang.getTranslation(["button", "addFriend"])}</button>
 				  </div>
 			  </div>
 		  </div>
@@ -126,24 +116,15 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      if (!response.ok) {
-        showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          await this.getErrorLogfromServer(response),
-        );
-        return;
-      }
-      data = await response.json();
-      if (data.count === 0) {
-        return this.noFriendDiv();
+      if (await this.handleStatus(response)) {
+        data = await response.json();
+        if (data.count === 0) {
+          return this.noFriendDiv();
+        }
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-        console.error("error", error);
-        return;
-      }
+      this.handleCatch(error);
+      return;
     }
     const friendList = document.createElement("div");
 
@@ -154,11 +135,11 @@ export default class extends AbstractView {
     friendList.innerHTML = friendsHtml;
 
     let nextPage = data.next;
-    while (nextPage) {
-      try {
-        const request = await this.makeRequest(nextPage, "GET", null);
+    try {
+      while (nextPage) {
+        const request = await this.makeRequest(nextPage, "GET");
         const response = await fetch(request);
-        if (response.ok) {
+        if (await this.handleStatus(response)) {
           const pageData = await response.json();
           friendsArray = pageData.results;
           const newFriendsHtml = friendsArray
@@ -167,24 +148,16 @@ export default class extends AbstractView {
           friendList.innerHTML += newFriendsHtml;
           nextPage = pageData.next;
         } else {
-          const log = await this.getErrorLogfromServer(response);
-          console.log(log);
-          showModal(this.lang.getTranslation(["modal", "error"]), log);
-          break;
-        }
-      } catch (error) {
-        if (error instanceof CustomError) throw error;
-        else {
-          console.error("Error fetching next page:", error);
           break;
         }
       }
+    } catch (error) {
+      this.handleCatch(error);
     }
     return `<div class="list-group removeElem" id="friendList">${friendList.innerHTML}</div>`;
   }
 
   createFriendElement(friendJson) {
-    console.log("FRIENDJSON:", friendJson);
     const friendStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";
@@ -201,11 +174,11 @@ export default class extends AbstractView {
             data-bs-toggle="modal"
             data-bs-target="#modal${friendJson.username}"
           >
-            ${this.lang.getTranslation(["Friends", "showProfile"])}
+            ${this.lang.getTranslation(["button", "show"])}${this.lang.getTranslation(["title", "profile"])}
           </button>
         </div>
         <button class="btn btn-sm btn-danger ms-auto removefriend removeElem">
-          <i class="bi bi-x-circle removeElem"></i> ${this.lang.getTranslation(["Friends", "removeButton"])}
+          <i class="bi bi-x-circle removeElem"></i> ${this.lang.getTranslation(["button", "remove"])}
         </button>
       </div>
       ${this.createFriendModal(friendJson)}
@@ -213,6 +186,7 @@ export default class extends AbstractView {
   }
 
   createFriendModal(friendJson) {
+    console.log(friendJson);
     const modalId = `modal${friendJson.username}`;
     const modalStatus = friendJson.is_online
       ? "status-online"
@@ -230,7 +204,7 @@ export default class extends AbstractView {
               <div class="d-flex flex-column justify-content-center align-items-center removeElem">
                 <div class="removeElem rounded-circle Avatar ${modalStatus} mb-3" style="background-image: url('${friendJson.profilePic}');"></div>
                 <h3 class="removeElem">${friendJson.username}</h3>
-                <p class="black-txt removeElem">Win Rate: ${friendJson.single_games_win_rate}</p>
+                <p class="black-txt removeElem">${this.lang.getTranslation(["game", "winRate"])}: ${friendJson.single_games_win_rate}</p>
               </div>
             </div>
           </div>
@@ -242,36 +216,26 @@ export default class extends AbstractView {
   noFriendDiv() {
     return `<div class="list-group removeElem" id="friendsList">
               <div class="removeElem list-group-item d-flex flex-column align-items-center justify-content-center mb-3 rounded">
-                <p class="h4 removeElem">✨ <i class="removeElem">Maidenless</i> ✨</p>
-                <p class="h4 removeElem">Please, add friends</p>
+                <p class="h4 removeElem">✨ <i class="removeElem">${this.lang.getTranslation(["user", "maiden"])}</i> ✨</p>
+                <p class="h4 removeElem">${this.lang.getTranslation(["user", "pleaseFriend"])}</p>
               </div>
             </div>`;
   }
 
   async removeFriends(friendUsername) {
-    console.log("Removing:", friendUsername);
     const username = sessionStorage.getItem("username_transcendence");
     try {
       const request = await this.makeRequest(
         `/api/users/${username}/friend/delete/${friendUsername}/`,
         "DELETE",
-        null,
       );
       const response = await fetch(request);
-      if (response.ok) {
-        console.log("Removed friend:", friendUsername);
+      if (await this.handleStatus(response)) {
         console.log("response:", response);
         navigateTo("/friends");
-      } else {
-        console.log("response:", response);
-        showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          await this.getErrorLogfromServer(response),
-        );
       }
     } catch (error) {
-      console.error("Error in removeFriends: ", error.message);
-      showModal(this.lang.getTranslation(["modal", "error"]), error.message);
+      this.handleCatch(error);
     }
   }
 
@@ -286,7 +250,9 @@ export default class extends AbstractView {
     try {
       await this.removeFriends(friendUsername);
     } catch (error) {
-      console.error("Error in remove button:", error.message);
+      if (error instanceof CustomError) {
+        navigateTo(error.redirect);
+      }
     }
   }
 
@@ -298,7 +264,9 @@ export default class extends AbstractView {
     try {
       await this.addFriendRequest(addFriendUsername);
     } catch (error) {
-      console.error("Error in Request Friend", error.message);
+      if (error instanceof CustomError) {
+        navigateTo(error.redirect);
+      }
     }
   }
 
