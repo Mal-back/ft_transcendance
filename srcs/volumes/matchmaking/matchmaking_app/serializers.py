@@ -265,10 +265,34 @@ class TournamentRemovePlayersSerializer(serializers.ModelSerializer):
 
         return instance
 
-class TournamentDetailSerializer(serializers.ModelSerializer):
-    player_type = serializers.SerializerMethodField()
+class TournamentConciseSerializer(serializers.ModelSerializer):
     accept_invite = serializers.SerializerMethodField()
     decline_invite = serializers.SerializerMethodField()
+    owner_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tournament
+        fields = ['game_type', 'status', 'accept_invite', 'decline_invite', 'owner_name',]
+
+    def get_accept_invite(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if user in obj.invited_players.all() and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/{obj.id}/accept/')
+        return None
+
+    def get_decline_invite(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if user in obj.invited_players.all() and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/{obj.id}/decline/')
+        return None
+
+    def get_owner_name(self, obj):
+        return obj.owner.username
+
+class TournamentDetailSerializer(serializers.ModelSerializer):
+    player_type = serializers.SerializerMethodField()
     leave_tournament = serializers.SerializerMethodField()
     delete_tournament = serializers.SerializerMethodField()
     round_number = serializers.SerializerMethodField()
@@ -295,20 +319,6 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
             return ('Confirmed Player')
         elif user == obj.owner:
             return('Owner')
-        return None
-
-    def get_accept_invite(self, obj):
-        request = self.context.get('request')
-        user = request.user
-        if user in obj.invited_players.all() and obj.status == 'pending': 
-            return(f'/api/matchmaking/tournament/{obj.id}/accept/')
-        return None
-
-    def get_decline_invite(self, obj):
-        request = self.context.get('request')
-        user = request.user
-        if user in obj.invited_players.all() and obj.status == 'pending': 
-            return(f'/api/matchmaking/tournament/{obj.id}/decline/')
         return None
 
     def get_leave_tournament(self, obj):
