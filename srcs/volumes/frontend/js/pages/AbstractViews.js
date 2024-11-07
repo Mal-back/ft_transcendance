@@ -10,7 +10,7 @@ import CustomError from "../Utils/CustomError.js";
 export default class AbstractViews {
   static invitesArray = [];
   static pollingInterval = null;
-  static AcceptInterval = null;
+  // static AcceptInterval = null;
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
@@ -271,19 +271,19 @@ export default class AbstractViews {
     }
   }
 
-  async updateOnGoing(data) {
-    const opponentInviteId = document.querySelector("#opponentInviteId");
-    const opponentInviteAvatar = document.querySelector(
-      "#opponentInviteAvatar",
-    );
-    let opponent = data.player1;
-    const username = sessionStorage.getItem("username_transcendence");
-    if (username != data.player1) {
-      opponent = data.player2;
-    }
-    opponentInviteId.innerText = "";
-    opponentInviteId.innerText = opponent;
+  async updateOnGoingInfo(data) {
     try {
+      const opponentInviteId = document.querySelector("#opponentInviteId");
+      const opponentInviteAvatar = document.querySelector(
+        "#opponentInviteAvatar",
+      );
+      let opponent = data.player1;
+      const username = sessionStorage.getItem("username_transcendence");
+      if (username != data.player1) {
+        opponent = data.player2;
+      }
+      opponentInviteId.innerText = "";
+      opponentInviteId.innerText = opponent;
       const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
@@ -295,74 +295,121 @@ export default class AbstractViews {
     }
   }
 
-  async fetchOnGoingGame() {
-    const joinButton = document.querySelector("#buttonOnGoingGame");
-    if (AbstractViews.AcceptInterval) return 0;
+  async updateOnGoingMatch(data) {
     try {
-      const request = await this.makeRequest(
-        "/api/matchmaking/match/get_accepted",
-        "GET",
-      );
-      const response = await fetch(request);
-      if (await this.handleStatus(response)) {
-        if (response.status == 200) {
-          const data = await this.getDatafromRequest(response);
-          console.info("OngoingGame:", data);
-          await this.updateOnGoing(data);
-          sessionStorage.setItem("transcendence_game_id", data.matchId);
-          joinButton.classList.remove("btn-danger");
-          joinButton.classList.add("btn-success");
-          joinButton.innerText = "JOIN";
-          joinButton.dataset.redirectUrl = "/c4?connection=remote";
-          return 1;
-        } else {
-          return 0;
-        }
-      }
+      if (!data || data.length === 0) return 0;
+      await this.updateOnGoingInfo(data);
+      const joinButton = document.querySelector("#buttonOnGoingGame");
+      sessionStorage.setItem("transcendence_game_id", data.matchId);
+      joinButton.classList.remove("btn-danger");
+      joinButton.classList.add("btn-success");
+      joinButton.innerText = `${this.lang.getTranslation(["button", "join"]).toUpperCase()}`;
+      joinButton.dataset.redirectUrl = `/${data.game_type}?connection=remote`;
     } catch (error) {
       this.handleCatch(error);
     }
   }
 
-  async fetchSentInvite() {
+  async fetchMainInvites() {
     try {
-      const request = await this.makeRequest(
-        "api/matchmaking/match/sent_invite/",
-        "GET",
-      );
+      const request = await this.makeRequest("api/matchmaking/invites", "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        // console.log("SentInvite: ", data);
-        // console.log("SentInvite:data.delete_invite:", data.delete_invite);
-        if (response.status == 200) {
-          this.updateOnGoing(data);
-          const onGoingGameButton =
-            document.querySelector("#buttonOnGoingGame");
-          onGoingGameButton.innerText = this.lang
-            .getTranslation(["button", "cancel"])
-            .toUpperCase();
-          onGoingGameButton.dataset.redirectUrl = data.delete_invite;
-          onGoingGameButton.classList.remove("btn-success");
-          onGoingGameButton.classList.add("btn-danger");
-          return 1;
-        }
-        return 0;
+        console.log("fetchMainInvites:data:", data);
+        console.log("data: on going:", data.on_going_match);
+        if (response.status == 204) return 0;
+        let count = 0;
+        count += await this.updateOnGoingMatch(data.on_going_match);
+        const onGoingGame = document.querySelector("#divOnGoingGame");
+        if (count == 0) onGoingGame.style.display = "none";
+        else onGoingGame.style.display = "block";
+        count += await this.updatePendingInvites(data);
+        //count += await fillPendingTournament(data);
+        return count;
       }
     } catch (error) {
       this.handleCatch(error);
     }
   }
 
+  // async fetchSentInvite() {
+  //   try {
+  //     const request = await this.makeRequest(
+  //       "api/matchmaking/match/sent_invite/",
+  //       "GET",
+  //     );
+  //     const response = await fetch(request);
+  //     if (await this.handleStatus(response)) {
+  //       const data = await this.getDatafromRequest(response);
+  //       // console.log("SentInvite: ", data);
+  //       // console.log("SentInvite:data.delete_invite:", data.delete_invite);
+  //       if (response.status == 200) {
+  //         this.updateOnGoing(data);
+  //         const onGoingGameButton =
+  //           document.querySelector("#buttonOnGoingGame");
+  //         onGoingGameButton.innerText = this.lang
+  //           .getTranslation(["button", "cancel"])
+  //           .toUpperCase();
+  //         onGoingGameButton.dataset.redirectUrl = data.delete_invite;
+  //         onGoingGameButton.classList.remove("btn-success");
+  //         onGoingGameButton.classList.add("btn-danger");
+  //         return 1;
+  //       }
+  //       return 0;
+  //     }
+  //   } catch (error) {
+  //     this.handleCatch(error);
+  //   }
+  // }
+
+  // async fetchOnGoingGame() {
+  //   const joinButton = document.querySelector("#buttonOnGoingGame");
+  //   if (AbstractViews.AcceptInterval) return 0;
+  //   try {
+  //     const request = await this.makeRequest(
+  //       "/api/matchmaking/match/get_accepted",
+  //       "GET",
+  //     );
+  //     const response = await fetch(request);
+  //     if (await this.handleStatus(response)) {
+  //       if (response.status == 200) {
+  //         const data = await this.getDatafromRequest(response);
+  //         console.info("OngoingGame:", data);
+  //         await this.updateOnGoing(data);
+  //         sessionStorage.setItem("transcendence_game_id", data.matchId);
+  //         joinButton.classList.remove("btn-danger");
+  //         joinButton.classList.add("btn-success");
+  //         joinButton.innerText = "JOIN";
+  //         joinButton.dataset.redirectUrl = "/c4?connection=remote";
+  //         return 1;
+  //       } else {
+  //         return 0;
+  //       }
+  //     }
+  //   } catch (error) {
+  //     this.handleCatch(error);
+  //   }
+  // }
+
   async fetchNotifications() {
+    // try {
+    //   let boolGame = await this.fetchOnGoingGame();
+    //   boolGame += await this.fetchSentInvite();
+    //   const onGoingGame = document.querySelector("#divOnGoingGame");
+    //   if (boolGame == 0) {
+    //     onGoingGame.style.display = "none";
+    //   } else onGoingGame.style.display = "block";
+    //   await this.fetchInvites(boolGame);
+    // } catch (error) {
+    //   this.handleCatch(error);
+    // }
+    //
     try {
-      let boolGame = await this.fetchOnGoingGame();
-      boolGame += await this.fetchSentInvite();
+      const boolBell = await this.fetchMainInvites();
       const onGoingGame = document.querySelector("#divOnGoingGame");
-      if (boolGame == 0) {
-        onGoingGame.style.display = "none";
-      } else onGoingGame.style.display = "block";
-      await this.fetchInvites(boolGame);
+      if (boolBell == 0) onGoingGame.style.display = "none";
+      else onGoingGame.style.display = "block";
     } catch (error) {
       this.handleCatch(error);
     }
@@ -463,7 +510,7 @@ export default class AbstractViews {
       window
         .atob(base64)
         .split("")
-        .map(function (c) {
+        .map(function(c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -483,9 +530,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();

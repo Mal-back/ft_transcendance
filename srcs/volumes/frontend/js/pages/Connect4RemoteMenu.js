@@ -98,12 +98,12 @@ export default class extends AbstractView {
       const request = await this.makeRequest(
         "/api/matchmaking/match/create/",
         "POST",
-        { player2: opponent.value, game_type: "connect_four" },
+        { player2: opponent.value, game_type: "c4" },
       );
       const response = await fetch(request);
       console.log("Request:", request);
       console.log("response:", response);
-      const data = await this.getErrorLogfromServer(response);
+      const data = await this.getDatafromRequest(response);
       console.log("data:", data);
       if (!response.ok) {
         console.log("Error invite: ", data);
