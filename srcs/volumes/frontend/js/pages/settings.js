@@ -19,6 +19,7 @@ export default class extends AbstractView {
     this.handleInputMail = this.handleInputMail.bind(this);
     this.handleChangeMail = this.handleChangeMail.bind(this);
     this.handleUploadAvatar = this.handleUploadAvatar.bind(this);
+    this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
     this.changeProfilePic = this.changeProfilePic.bind(this);
     this.showFileUpload = this.showFileUpload.bind(this);
     this.handleSaveLanguage = this.handleSaveLanguage.bind(this);
@@ -153,7 +154,7 @@ export default class extends AbstractView {
         <div class="modal-content removeElem">
             <div class="modal-header removeElem">
                 <h5 class="modal-title removeElem" id="handleDataLabel">
-                    ${this.lang.getTranslation(["settings", "DataHandler", "buttonLabel"])}
+                    ${this.lang.getTranslation(["button", "handle"])} ${this.lang.getTranslation(["button", "data"])}
                 </h5>
                 <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
                     aria-label="Close"></button>
@@ -162,20 +163,20 @@ export default class extends AbstractView {
                 <form class="removeElem">
                     <div class="mb-3 removeElem">
                         <button type="button" class="btn btn-success removeElem">
-                            ${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "send"])}
+                            ${this.lang.getTranslation(["button", "send"])} ${this.lang.getTranslation(["button", "data"])}
                         </button>
                     </div>
                     <div class="mb-3 removeElem">
                         <button type="button" class="btn btn-warning removeElem" data-bs-toggle="modal"
                             data-bs-target="#confirmDeleteAccountModal">
-                            ${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "delete"])}
+                            ${this.lang.getTranslation(["button", "delete"])} ${this.lang.getTranslation(["user", "account"])}
                         </button>
                     </div>
                 </form>
             </div>
             <div class="modal-footer removeElem">
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
-                     ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
+                     ${this.lang.getTranslation(["button", "close"])}
                 </button>
             </div>
         </div>
@@ -187,7 +188,7 @@ export default class extends AbstractView {
         <div class="modal-content removeElem">
             <div class="modal-header removeElem">
                 <h5 class="modal-title removeElem" id="handlePasswordLabel">
-                    ${this.lang.getTranslation(["settings", "Password", "changeButton"])}
+                    ${this.lang.getTranslation(["button", "change"])} ${this.lang.getTranslation(["input", "label", "password"])}
                 </h5>
                 <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
                     aria-label="Close"></button>
@@ -195,18 +196,18 @@ export default class extends AbstractView {
             <div class="modal-body removeElem">
                 <form class="removeElem">
                     <div class="mb-3 removeElem">
-                        <label for="old-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "oldPass"])}</label>
+                        <label for="old-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "old"])} ${this.lang.getTranslation(["input", "label", "password"])}:</label>
                         <input type="password" class="form-control removeElem" name="oldPassword" id="old-password-settings" autocomplete="off" />
                         <div id="oldPassError" class="removeElem"></div>
                     </div>
                     <div class="mb-3 removeElem">
-                        <label for="new-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "newPass"])}</label>
+                        <label for="new-password-settings" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "new"])} ${this.lang.getTranslation(["input", "label", "password"])}:</label>
                         <input type="password" class="form-control removeElem" name="newPassword" id="new-password-settings" autocomplete="off"/>
                         <div id="newPassError" class="removeElem"></div>
                     </div>
                     <div class="mb-3 removeElem">
                         <label for="confirm-new-password-settings" class="form-label removeElem">
-                            ${this.lang.getTranslation(["input", "label", "confirmNewPass"])}</label>
+                            ${this.lang.getTranslation(["input", "label", "confirm"])} ${this.lang.getTranslation(["input", "label", "new"])} ${this.lang.getTranslation(["input", "label", "password"])}:</label>
                         <input type="password" class="form-control removeElem" name="confirmPassword" id="confirm-new-password-settings" autocomplete="off" />
                         <div id="confirmPassError" class="removeElem"></div>
                     </div>
@@ -214,10 +215,10 @@ export default class extends AbstractView {
             </div>
             <div class="modal-footer removeElem">
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
-                    ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
+                    ${this.lang.getTranslation(["button", "close"])}
                 </button>
                 <button type="button" class="btn btn-success removeElem" id="confirm-changes-password-btn">
-                    ${this.lang.getTranslation(["settings", "modalButtons", "Confirm"])}
+                    ${this.lang.getTranslation(["input", "label", "confirm"])}
                 </button>
             </div>
         </div>
@@ -228,26 +229,24 @@ export default class extends AbstractView {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="handleEmailLabel">
-          ${this.lang.getTranslation(["settings", "Email", "changeButton"])}
+          ${this.lang.getTranslation(["button", "change"])} ${this.lang.getTranslation(["input", "label", "email"])}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form>
           <div class="mb-3">
-            <label for="email-old" class="form-label">${this.lang.getTranslation(["input", "label", "oldMail"])}</label>
+            <label for="email-old" class="form-label">${this.lang.getTranslation(["input", "label", "old"])} ${this.lang.getTranslation(["input", "label", "email"])}:</label>
             <input type="email" class="form-control" id="email-old" name="oldMail" value="" />
             <div id="oldMailError"></div>
           </div>
           <div class="mb-3">
-            <label for="email-new" class="form-label">${this.lang.getTranslation(["input", "label", "newMail"])}</label>
+            <label for="email-new" class="form-label">${this.lang.getTranslation(["input", "label", "new"])} ${this.lang.getTranslation(["input", "label", "email"])}:</label>
             <input type="email" class="form-control" id="email-new" name="mailChange" value="" />
             <div id="newMailError"></div>
           </div>
           <div class="mb-3">
-            <label for="email-confirm" class="form-label">${this.lang.getTranslation(
-              ["input", "label", "confirmMail"],
-            )}</label>
+            <label for="email-confirm" class="form-label">${this.lang.getTranslation(["input", "label", "confirm"])} ${this.lang.getTranslation(["input", "label", "email"])}:</label>
             <input type="email" class="form-control" id="email-confirm" name="checkMail" value="" />
             <div id="confirmMailError"></div>
           </div>
@@ -255,10 +254,10 @@ export default class extends AbstractView {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          ${this.lang.getTranslation(["settings", "modalButtons", "Close"])}
+          ${this.lang.getTranslation(["button", "close"])}
         </button>
         <button type="button" class="btn btn-success" id="confirmChangesMail">
-          ${this.lang.getTranslation(["settings", "modalButtons", "Confirm"])}
+          ${this.lang.getTranslation(["input", "label", "confirm"])}
         </button>
       </div>
     </div>
@@ -267,6 +266,7 @@ export default class extends AbstractView {
     // const previous = `<input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">`;
     return htmlContent;
   }
+
   appendAvatar(mainDiv, imageUrl) {
     const avatar = document.createElement("div");
     avatar.innerHTML = `<div class="col-4 removeElem">
@@ -281,17 +281,14 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       const request = await this.makeRequest(`api/users/${username}`, "GET");
       const response = await fetch(request);
-      if (!response.ok) {
-        const dataError = this.getErrorLogfromServer(response);
-        console.log("Request", request);
-        console.log("Response", response);
-        console.log("dataError", dataError);
-        showModal("error", dataError);
+      if (await this.handleStatus(response)) {
+        const data = await response.json();
+        return data.profilePic;
       }
-      const data = await response.json();
-      console.log(data);
-      return data.profilePic;
-    } catch (error) {}
+      return "";
+    } catch (error) {
+      this.handleCatch(error);
+    }
   }
 
   async getDefaultAvatar(currentAvatar) {
@@ -300,22 +297,19 @@ export default class extends AbstractView {
       defaultAvatarMainDiv.classList.add("removeElem", "row");
       const request = await this.makeRequest("api/avatars", "GET", null);
       const response = await fetch(request);
-      if (!response.ok) {
-        showModal("Error", "Fail to get Default Avatar");
+      if (await this.handleStatus(response)) {
+        const data = await response.json();
+        let length = data.length;
+        for (let count = 0; count < length; count++) {
+          this.appendAvatar(defaultAvatarMainDiv, data[count]);
+        }
+        if (!currentAvatar.includes("/media/default_avatars/"))
+          this.appendAvatar(defaultAvatarMainDiv, currentAvatar);
+        return defaultAvatarMainDiv;
       }
-      const data = await response.json();
-      console.log("data:", data);
-      let length = data.length;
-      for (let count = 0; count < length; count++) {
-        this.appendAvatar(defaultAvatarMainDiv, data[count]);
-      }
-      console.log("CURRENT AVATAR", currentAvatar);
-      if (!currentAvatar.includes("/media/default_avatars/"))
-        this.appendAvatar(defaultAvatarMainDiv, currentAvatar);
-      return defaultAvatarMainDiv;
+      return "";
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      console.error("Error:", error);
+      this.handleCatch(error);
     }
   }
 
@@ -336,23 +330,18 @@ export default class extends AbstractView {
         },
       );
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         showModal(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "Username", "successMessage"])}`,
+          `${this.lang.getTranslation(["modal", "title", "success"])}`,
+          `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["modal", "message", "successChange"])}`,
         );
         sessionStorage.setItem("username_transcendence", newUsername);
         console.log("response", response);
         const data = await response.json();
         setSessionStorage(data, newUsername);
-      } else {
-        const log = await this.getErrorLogfromServer(response);
-        console.log(log);
-        showModal(this.lang.getTranslation(["modal", "error"]), log);
       }
     } catch (error) {
-      console.debug("Error in changeUsername Request", error);
-      showModal(this.lang.getTranslation(["modal", "error"]), error.message);
+      this.handleCatch(error);
     }
   }
 
@@ -361,7 +350,7 @@ export default class extends AbstractView {
     try {
       const request = await this.makeRequest("/api/auth/" + username, "GET");
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         const data = await response.json();
         console.log(
           "old mail = " + data.email + "oldMail == data.mail :",
@@ -371,20 +360,13 @@ export default class extends AbstractView {
       } else {
         removeSessionStorage();
         throw new CustomError(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          `${this.lang.getTranslation(["error", "errorAuthentification"])}`,
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${this.lang.getTranslation(["modal", "message", "authError"])}`,
           "/login",
         );
       }
     } catch (error) {
-      if (!(error instanceof CustomError)) {
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-        console.debug("Error in checkoldMail:", error);
-      }
-      throw error;
+      this.handleCatch(error);
     }
   }
 
@@ -401,48 +383,23 @@ export default class extends AbstractView {
         },
       );
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         showModal(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "Password", "modalFields", "success"])}`,
+          `${this.lang.getTranslation(["modal", "title", "success"])}`,
+          `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["modal", "message", "successChange"])}`,
         );
-        console.log("response", response);
         // const data = await response.json();
         // console.log("data after change =", data);
-      } else {
-        const logError = await this.getErrorLogfromServer(response);
-        console.log("ERROR", response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, logError);
       }
     } catch (error) {
-      if (!(error instanceof CustomError)) {
-        console.debug("Error", error);
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-      }
-      throw error;
+      this.handleCatch(error);
     }
   }
 
   async changeMail(oldMail, newMail) {
     const username = sessionStorage.getItem("username_transcendence");
     try {
-      if ((await this.checkoldMail(oldMail)) == false) {
-        showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          this.lang.getTranslation(
-            ["modal", "error"],
-            ["settings", "Email", "modalFields", "incorrectOld"],
-          ),
-        );
-        return;
-      }
-    } catch (error) {
-      throw error;
-    }
-    try {
+      await this.checkoldMail(oldMail);
       const request = await this.makeRequest(
         "/api/auth/update/" + username,
         "PATCH",
@@ -451,26 +408,14 @@ export default class extends AbstractView {
         },
       );
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         showModal(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "Email", "modalFields", "success"])}`,
+          `${this.lang.getTranslation(["modal", "title", "success"])}`,
+          `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["modal", "message", "successChange"])}`,
         );
-        const data = await response.json();
-        console.log("data after change =", data);
-      } else {
-        const dataError = await this.getErrorLogfromServer(response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, dataError);
       }
     } catch (error) {
-      if (!(error instanceof CustomError)) {
-        console.debug("Error in changeMail Request", error);
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-      }
-      throw error;
+      this.handleCatch(error);
     }
   }
 
@@ -482,28 +427,17 @@ export default class extends AbstractView {
         "DELETE",
       );
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         removeSessionStorage();
         this.cleanModal();
         throw new CustomError(
-          `${this.lang.getTranslation(["modal", "success"])}`,
-          `${this.lang.getTranslation(["settings", "DataHandler", "modalFields", "successDeleteAccount"])}`,
+          `${this.lang.getTranslation(["modal", "title", "success"])}`,
+          `${this.lang.getTranslation(["modal", "message", "successDeleteAccount"])}`,
           "/",
         );
-      } else {
-        const dataError = await response.json();
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, dataError);
       }
     } catch (error) {
-      if (!(error instanceof CustomError)) {
-        console.error("Error during account deletion request:", error);
-        showModal(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          error.message,
-        );
-      } else {
-        throw CustomError;
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -523,9 +457,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#settingsUsernameError");
     errorDiv.innerHTML = "";
     if (usernameInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(usernameInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -549,7 +483,10 @@ export default class extends AbstractView {
       if (this.validateUsername(usernameInput)) return;
       await this.changeUsername();
     } catch (error) {
-      console.error("handleChangeUsername: ", error);
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      }
     }
   }
 
@@ -558,7 +495,7 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#newPassError");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -574,10 +511,10 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#confirmPassError");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     }
     if (password2Input.value !== passwordInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "match"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "password"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -593,9 +530,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#newMailError");
     errorDiv.innerHTML = "";
     if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -611,11 +548,11 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#confirmMailError");
     errorDiv.innerHTML = "";
     if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     } else if (mailInput.value != confirmMailInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "mail", "match"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -655,9 +592,9 @@ export default class extends AbstractView {
         confirmPass.value,
       );
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("HandleChangePassword:", error);
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
       }
     }
   }
@@ -673,7 +610,12 @@ export default class extends AbstractView {
       if (this.validateConfirmMail(newMail, confirmMail)) isValid = false;
       if (!isValid) return;
       await this.changeMail(oldMail.value, newMail.value, confirmMail.value);
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      }
+    }
   }
 
   handleInputMail(ev) {
@@ -722,8 +664,8 @@ export default class extends AbstractView {
         const data = await response.json();
         console.log("DATA: ", data);
         showModal(
-          this.lang.getTranslation(["modal", "success"]),
-          this.lang.getTranslation(["settings", "Background", "uploadSuccess"]),
+          this.lang.getTranslation(["modal", "title", "success"]),
+          `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["user", "avatar"])} ${this.lang.getTranslation(["modal", "message", "changeSuccess"])} `,
         );
         navigateTo("/settings");
       } else {
@@ -829,84 +771,92 @@ export default class extends AbstractView {
     }
   }
 
-  async addEventListeners() {
+  async handleDeleteAccount(ev) {
+    ev.preventDefault();
     try {
-      const usernameInput = document.querySelector("#username-settings");
+      await this.deleteAccount();
+    } catch (error) {
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      }
+    }
+  }
+
+  async addEventListeners() {
+    const usernameInput = document.querySelector("#username-settings");
+    if (usernameInput)
       usernameInput.addEventListener("input", this.handleInputUsername);
 
-      const button = document.querySelector("#changeUsername");
-      button.addEventListener("click", this.handleChangeUsername);
+    const button = document.querySelector("#changeUsername");
+    if (button) button.addEventListener("click", this.handleChangeUsername);
 
-      const buttonPass = document.querySelector(
-        "#confirm-changes-password-btn",
-      );
+    const buttonPass = document.querySelector("#confirm-changes-password-btn");
+    if (buttonPass)
       buttonPass.addEventListener("click", this.handleChangePassword);
 
-      const passwordInput = document.querySelector("#new-password-settings");
+    const passwordInput = document.querySelector("#new-password-settings");
+    if (passwordInput)
       passwordInput.addEventListener("input", this.handleInputNewPassword);
 
-      const confirmPasswordInput = document.querySelector(
-        "#confirm-new-password-settings",
-      );
+    const confirmPasswordInput = document.querySelector(
+      "#confirm-new-password-settings",
+    );
+    if (confirmPasswordInput)
       confirmPasswordInput.addEventListener(
         "input",
         this.handleInputNewPassword,
       );
 
-      const newMailInput = document.querySelector("#email-new");
+    const newMailInput = document.querySelector("#email-new");
+    if (newMailInput)
       newMailInput.addEventListener("input", this.handleInputMail);
 
-      const confirmMailInput = document.querySelector("#email-confirm");
+    const confirmMailInput = document.querySelector("#email-confirm");
+    if (confirmMailInput)
       confirmMailInput.addEventListener("input", this.handleInputMail);
-      const buttonMail = document.querySelector("#confirmChangesMail");
-      buttonMail.addEventListener("click", this.handleChangeMail);
-      const changeProfilePic = document.querySelector(
-        "#confirm-profile-background-btn",
-      );
+
+    const buttonMail = document.querySelector("#confirmChangesMail");
+    if (buttonMail) buttonMail.addEventListener("click", this.handleChangeMail);
+
+    const changeProfilePic = document.querySelector(
+      "#confirm-profile-background-btn",
+    );
+    if (changeProfilePic)
       changeProfilePic.addEventListener("click", this.changeProfilePic);
-    } catch (error) {
-      console.error("error: ", error.message);
-      // throw error;
-    }
 
     const uploadFile = document.querySelector("#uploadButton");
-    uploadFile.addEventListener("click", this.handleUploadAvatar);
+    if (uploadFile)
+      uploadFile.addEventListener("click", this.handleUploadAvatar);
 
     const fileInput = document.getElementById("uploadProfileBackground");
-    fileInput.addEventListener("change", this.showFileUpload);
+    if (fileInput) fileInput.addEventListener("change", this.showFileUpload);
 
     const saveLanguage = document.querySelector("#saveLanguageButton");
-    saveLanguage.addEventListener("click", this.handleSaveLanguage);
+    if (saveLanguage)
+      saveLanguage.addEventListener("click", this.handleSaveLanguage);
 
     const deleteAccountButton = document.querySelector(
       "#confirmDeleteAccountBtn",
     );
-    if (deleteAccountButton) {
-      deleteAccountButton.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        console.debug("Delete Account confirmed!");
-        try {
-          await this.deleteAccount();
-        } catch (error) {
-          console.error("Error while deleting account:", error.message);
-        }
-      });
-    }
+    if (deleteAccountButton)
+      deleteAccountButton.addEventListener("click", this.handleDeleteAccount);
 
-    const openDeleteAccountModalButton = document.querySelector(".btn-warning"); // Assuming the "Delete Account" button is the warning button
+    const openDeleteAccountModalButton = document.querySelector(".btn-warning");
     if (openDeleteAccountModalButton) {
       openDeleteAccountModalButton.addEventListener("click", (ev) => {
         ev.preventDefault();
         console.debug("Delete Account button pressed!");
       });
     }
-    // Handle the profile background confirmation
     const images = document.querySelectorAll(".img-fluid");
-    images.forEach((img) => {
-      img.addEventListener("click", (event) => {
-        this.selectProfileBackground(img.src, img); // Call the method using 'this'
+    if (images) {
+      images.forEach((img) => {
+        img.addEventListener("click", (event) => {
+          this.selectProfileBackground(img.src, img); // Call the method using 'this'
+        });
       });
-    });
+    }
 
     const emailModalButton = document.getElementById("emailModalButton");
     if (emailModalButton)
@@ -917,7 +867,6 @@ export default class extends AbstractView {
   }
 
   handleShowEmailModal(ev) {
-    console.log("HERE");
     ev.preventDefault();
     const modalId = document.getElementById("handleEmail");
     console.log(modalId);

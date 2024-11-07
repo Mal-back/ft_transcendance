@@ -45,6 +45,8 @@
   },
   "user": {
     "you": "You",
+    "your": "Your",
+    "account": "Account",
     "avatar": "Avatar",
     "maiden": "MaidenLess",
     "current": "Current",
@@ -89,7 +91,8 @@
       "confirm": "Confirm",
       "3to10": "3 to 10",
       "language": "Language",
-      "old": "Old"
+      "old": "Old",
+      "new": "New"
     },
     "error": {
       "empty": "is empty",
@@ -130,7 +133,8 @@
       "failConnectServer": "Unable to connect to the server, please try again later",
       "serverLoading": "The server has restarted and need some time to finish initialization, please wait a little and retry",
       "authError": "Authentification error, please re-login",
-      "successChange": "Changed successfully",
+      "successChange": "was changed successfully",
+      "successDeleteAccount": "Your account was successfully deleted, all associated data is being anonymized",
       "alreadyLog": "You are already logged in",
       "accountCreation": "Your new account was successfully created!",
       "failTournament": "Failed to retrieve tournament information",
