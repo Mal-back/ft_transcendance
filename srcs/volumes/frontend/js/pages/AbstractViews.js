@@ -278,6 +278,7 @@ export default class AbstractViews {
         "#opponentInviteAvatar",
       );
       let opponent = data.player1;
+      console.log("OPPONENT DATA =>", data);
       const username = sessionStorage.getItem("username_transcendence");
       if (username != data.player1) {
         opponent = data.player2;
@@ -285,6 +286,7 @@ export default class AbstractViews {
       opponentInviteId.innerText = "";
       opponentInviteId.innerText = opponent;
       const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
+      console.log("REQUEST =>", request);
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
@@ -298,6 +300,7 @@ export default class AbstractViews {
   async updateOnGoingMatch(data) {
     try {
       if (!data || data.length === 0) return 0;
+      console.log("BEFORE =>", data);
       await this.updateOnGoingInfo(data);
       const joinButton = document.querySelector("#buttonOnGoingGame");
       sessionStorage.setItem("transcendence_game_id", data.matchId);
@@ -324,6 +327,7 @@ export default class AbstractViews {
         const onGoingGame = document.querySelector("#divOnGoingGame");
         if (count == 0) onGoingGame.style.display = "none";
         else onGoingGame.style.display = "block";
+        console.log("HERE =>", data)
         count += await this.updatePendingInvites(data);
         //count += await fillPendingTournament(data);
         return count;
@@ -333,6 +337,48 @@ export default class AbstractViews {
     }
   }
 
+  async updatePendingInvites(data) {
+    console.log("PENDING INVITES =>", data);
+    try {
+      for (let invite of data.match_pending) {
+        console.log(invite);
+        const t =
+          document.querySelector("#buttonOnGoingGame");
+        console.log(t)
+        if (invite.delete_invite) {
+          console.log("INV DEL =>", invite.delete_invite)
+          const onGoingGameButton =
+            document.querySelector("#buttonOnGoingGame");
+          onGoingGameButton.innerText = this.lang
+            .getTranslation(["button", "cancel"])
+            .toUpperCase();
+          console.log("REDIR URL", onGoingGameButton.dataset.redirectUrl)
+          onGoingGameButton.dataset.redirectUrl = invite.delete_invite;
+          onGoingGameButton.classList.remove("btn-success");
+          onGoingGameButton.classList.add("btn-danger");
+          console.log("ICI", onGoingGameButton)
+        }
+      }
+      // const request = await this.makeRequest(
+      // data.accept_invite,
+      // "GET",
+      // );
+      // console.log("REQ", request);
+      // const response = await fetch(request);
+      // if (await this.handleStatus(response)) {
+      // const data = await this.getDatafromRequest(response);
+      // console.log("SentInvite: ", data);
+      // console.log("SentInvite:data.delete_invite:", data.delete_invite);
+      // if (response.status == 200) {
+
+      // return 1;
+      // }
+      return 0;
+      // }
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
   // async fetchSentInvite() {
   //   try {
   //     const request = await this.makeRequest(
@@ -510,7 +556,7 @@ export default class AbstractViews {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
