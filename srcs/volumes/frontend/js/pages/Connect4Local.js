@@ -18,6 +18,18 @@ export default class extends AbstractView {
         this.createPageCss("../../css/connect4/hover-red.css");
     }
 
+    async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        await this.fetchNotifications();
+      } catch (error) {
+        this.handleCatch(error);
+      }
+      return;
+    }
+  }
+
     async getHtml() {
         const htmlContent = `
         <div class="col d-flex flex-column align-items-center justify-content-center">

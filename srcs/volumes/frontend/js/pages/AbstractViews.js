@@ -117,7 +117,7 @@ export default class AbstractViews {
     inviteList.innerHTML = "";
 
     if (!AbstractViews.invitesArray.length) {
-      inviteList.innerHTML = `${this.lang.getTranslation(["modal", "game", "noInvite"])}`;
+      inviteList.innerHTML = ``;
       return;
     }
 
@@ -169,9 +169,15 @@ export default class AbstractViews {
 
   async createInvites(data, username) {
     console.log(data);
+    if (!data || data.length == 0) return 0;
     try {
-      for (const item of data.results) {
+      let count = 0;
+      for (const item of data) {
         if (item.status === "finished") continue;
+        if (item.delete_invite != null) {
+          count += await this.cancelOnGoingMatch(item);
+          continue;
+        }
         const opponentName =
           item.player2 != username ? item.player2 : item.player1;
         const opponent = await this.getUserInfo(opponentName);
@@ -189,8 +195,10 @@ export default class AbstractViews {
         console.log("invite", invite);
         AbstractViews.invitesArray.push(invite);
       }
+      return count;
     } catch (error) {
       this.handleCatch(error);
+      return 0;
     }
   }
 
@@ -241,33 +249,50 @@ export default class AbstractViews {
     }
   }
 
-  async fetchInvites(boolGame) {
-    AbstractViews.invitesArray = [];
+  // async fetchInvites(boolGame) {
+  //   AbstractViews.invitesArray = [];
+  //   try {
+  //     const request = await this.makeRequest(
+  //       "/api/matchmaking/match/pending_invites/",
+  //       "GET",
+  //     );
+  //     //TODO loop on next if more than 10 invite
+  //     const response = await fetch(request);
+  //     if (await this.handleStatus(response)) {
+  //       if (response.status == 204) return;
+  //       const data = await this.getDatafromRequest(response);
+  //       console.info(response);
+  //       console.info(data);
+  //       const count = data.count ? data.count : 0;
+  //       const badge = document.getElementById("notificationbell");
+  //       if (count + boolGame == 0) {
+  //         badge.innerHTML = "";
+  //         return;
+  //       }
+  //       badge.innerHTML = `<div class="notification-badge">${boolGame} </div>`;
+  //       const username = sessionStorage.getItem("username_transcendence");
+  //       await this.createInvites(data, username);
+  //       badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length + boolGame} </div>`;
+  //     }
+  //   } catch (error) {
+  //     this.handleCatch(error);
+  //   }
+  // }
+
+  async updatePendingInvites(data, boolGame) {
     try {
-      const request = await this.makeRequest(
-        "/api/matchmaking/match/pending_invites/",
-        "GET",
-      );
-      //TODO loop on next if more than 10 invite
-      const response = await fetch(request);
-      if (await this.handleStatus(response)) {
-        if (response.status == 204) return;
-        const data = await this.getDatafromRequest(response);
-        console.info(response);
-        console.info(data);
-        const count = data.count ? data.count : 0;
-        const badge = document.getElementById("notificationbell");
-        if (count + boolGame == 0) {
-          badge.innerHTML = "";
-          return;
-        }
-        badge.innerHTML = `<div class="notification-badge">${boolGame} </div>`;
-        const username = sessionStorage.getItem("username_transcendence");
-        await this.createInvites(data, username);
-        badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length + boolGame} </div>`;
-      }
+      AbstractViews.invitesArray = [];
+      const username = sessionStorage.getItem("username_transcendence");
+      boolGame += await this.createInvites(data, username);
+      const onGoingGame = document.querySelector("#divOnGoingGame");
+      console.log("BOOLGAME = ", boolGame);
+      if (boolGame == 0) onGoingGame.style.display = "none";
+      else onGoingGame.style.display = "block";
+
+      return data.length + boolGame;
     } catch (error) {
       this.handleCatch(error);
+      return 0;
     }
   }
 
@@ -295,9 +320,29 @@ export default class AbstractViews {
     }
   }
 
-  async updateOnGoingMatch(data) {
+  async cancelOnGoingMatch(data) {
     try {
-      if (!data || data.length === 0) return 0;
+      if (!data) return 0;
+      console.log("cancelOnGoingMatch:", data);
+      await this.updateOnGoingInfo(data);
+      const joinButton = document.querySelector("#buttonOnGoingGame");
+      sessionStorage.setItem("transcendence_game_id", data.matchId);
+      joinButton.classList.remove("btn-success");
+      joinButton.classList.add("btn-danger");
+      joinButton.innerText = `${this.lang.getTranslation(["button", "cancel"]).toUpperCase()}`;
+      joinButton.dataset.redirectUrl = `${data.delete_invite}`;
+      return 1;
+    } catch (error) {
+      this.handleCatch(error);
+      return 0;
+    }
+  }
+
+  async updateOnGoingMatch(data) {
+    console.log(`updateOnGoingMatch: data.length:${data.length}`, data);
+    try {
+      if (!data || !data.game_type) return 0;
+      console.log(`updateOnGoingMatch: after return`);
       await this.updateOnGoingInfo(data);
       const joinButton = document.querySelector("#buttonOnGoingGame");
       sessionStorage.setItem("transcendence_game_id", data.matchId);
@@ -305,8 +350,10 @@ export default class AbstractViews {
       joinButton.classList.add("btn-success");
       joinButton.innerText = `${this.lang.getTranslation(["button", "join"]).toUpperCase()}`;
       joinButton.dataset.redirectUrl = `/${data.game_type}?connection=remote`;
+      return 1;
     } catch (error) {
       this.handleCatch(error);
+      return 0;
     }
   }
 
@@ -319,12 +366,13 @@ export default class AbstractViews {
         console.log("fetchMainInvites:data:", data);
         console.log("data: on going:", data.on_going_match);
         if (response.status == 204) return 0;
-        let count = 0;
-        count += await this.updateOnGoingMatch(data.on_going_match);
-        const onGoingGame = document.querySelector("#divOnGoingGame");
-        if (count == 0) onGoingGame.style.display = "none";
-        else onGoingGame.style.display = "block";
-        count += await this.updatePendingInvites(data);
+        let boolGame = 0;
+        boolGame += await this.updateOnGoingMatch(data.on_going_match);
+        console.log("fetchMainInvites:BoolGame:", boolGame);
+        const count = await this.updatePendingInvites(
+          data.match_pending,
+          boolGame,
+        );
         //count += await fillPendingTournament(data);
         return count;
       }
@@ -407,9 +455,6 @@ export default class AbstractViews {
     //
     try {
       const boolBell = await this.fetchMainInvites();
-      const onGoingGame = document.querySelector("#divOnGoingGame");
-      if (boolBell == 0) onGoingGame.style.display = "none";
-      else onGoingGame.style.display = "block";
     } catch (error) {
       this.handleCatch(error);
     }
@@ -444,7 +489,7 @@ export default class AbstractViews {
     const inviteModalEl = document.getElementById("inviteUserModal");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["title", "logout"])}`;
+      loginOverlay.innerHTML = `< i class= "bi bi-box-arrow-right" ></i > ${this.lang.getTranslation(["title", "logout"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/logout";
       logIcon.href = "";
@@ -465,7 +510,7 @@ export default class AbstractViews {
         removeSessionStorage();
       }
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["title", "login"])}`;
+      loginOverlay.innerHTML = `< i class= "bi bi-box-arrow-left" ></i > ${this.lang.getTranslation(["title", "login"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/login";
       logIcon.href = "";
@@ -571,7 +616,7 @@ export default class AbstractViews {
       }
       if (!response.ok) {
         if (response.status == 404) return false;
-        console.error(`${response.status} error:response:`, response);
+        console.error(`${response.status} error: response: `, response);
         const data = await this.getDatafromRequest(response);
         showModal(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
@@ -642,7 +687,7 @@ export default class AbstractViews {
       try {
         accessToken = await this.getToken();
       } catch (error) {
-        this.handleCatch(makeRequest);
+        this.handleCatch(error);
       }
     }
     const options = {

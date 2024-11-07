@@ -28,6 +28,7 @@ import Connect4LocalLobby from "./pages/Connect4LocalLobby.js";
 import Connect4RemoteLobby from "./pages/Connect4RemoteLobby.js";
 import Connect4LocalTournament from "./pages/Connect4LocalTournament.js";
 import AbstractViews from "./pages/AbstractViews.js";
+import { showModal } from "./Utils/Utils.js";
 
 export const navigateTo = (url) => {
   console.info("navigateTo : " + url);
@@ -220,21 +221,27 @@ document.addEventListener("keydown", (ev) => {
 document
   .getElementById("buttonOnGoingGame")
   .addEventListener("click", async (ev) => {
+    try {
     ev.preventDefault();
     const url = ev.currentTarget.dataset.redirectUrl;
     if (url) {
       if (ev.target.innerText == "CANCEL") {
         const request = await view.makeRequest(url, "DELETE");
         const response = await fetch(request);
-        const data = await view.getErrorLogfromServer(response);
-        console.log("cancel: ", response);
-        console.log("Cancel: ", data);
+        if (view.handleStatus(response)){ 
         const divOnGoingGame = document.querySelector("#divOnGoingGame");
         divOnGoingGame.style.display = "none";
+        }
       } else navigateTo(url);
       const friendModalDiv = document.querySelector("#inviteUserModal");
       const modal = bootstrap.Modal.getInstance(friendModalDiv);
       modal.hide();
+    }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      }
     }
   });
 

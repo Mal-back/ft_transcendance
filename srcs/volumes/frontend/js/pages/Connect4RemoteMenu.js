@@ -110,34 +110,34 @@ export default class extends AbstractView {
         console.log("Error invite: ", response);
         showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
       } else {
-        AbstractView.AcceptInterval = setInterval(async () => {
-          try {
-            const requestInvite = await this.makeRequest(
-              `/api/matchmaking/match/get_accepted`,
-              "GET",
-            );
-            const responseInvite = await fetch(requestInvite);
-            const dataInvite = await this.getErrorLogfromServer(
-              responseInvite,
-              true,
-            );
-            console.log("Response sent invite:", dataInvite);
-            if (responseInvite.ok) {
-              clearInterval(AbstractView.AcceptInterval);
-              sessionStorage.setItem(
-                "transcendence_game_id",
-                dataInvite.matchId,
-              );
-              navigateTo("/c4?connection=remote");
-            }
-          } catch (error) {
-            clearInterval(AbstractView.AcceptInterval);
-            if (error instanceof CustomError) throw error;
-            else {
-              console.error("error in AcceptInterval", error);
-            }
-          }
-        }, 1000);
+        // AbstractView.AcceptInterval = setInterval(async () => {
+        //   try {
+        //     const requestInvite = await this.makeRequest(
+        //       `/api/matchmaking/match/get_accepted`,
+        //       "GET",
+        //     );
+        //     const responseInvite = await fetch(requestInvite);
+        //     const dataInvite = await this.getErrorLogfromServer(
+        //       responseInvite,
+        //       true,
+        //     );
+        //     console.log("Response sent invite:", dataInvite);
+        //     if (responseInvite.ok) {
+        //       clearInterval(AbstractView.AcceptInterval);
+        //       sessionStorage.setItem(
+        //         "transcendence_game_id",
+        //         dataInvite.matchId,
+        //       );
+        //       navigateTo("/c4?connection=remote");
+        //     }
+        //   } catch (error) {
+        //     clearInterval(AbstractView.AcceptInterval);
+        //     if (error instanceof CustomError) throw error;
+        //     else {
+        //       console.error("error in AcceptInterval", error);
+        //     }
+        //   }
+        // }, 1000);
       }
     } catch (error) {
       if (error instanceof CustomError) throw error;

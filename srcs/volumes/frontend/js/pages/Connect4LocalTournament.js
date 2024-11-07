@@ -74,8 +74,16 @@ export default class extends AbstractView {
         this.createPageCss("../css/ranking-tournament.css");
     }
 
-    checkLogin() {
-        return;
+    async checkLogin() {
+        const username = sessionStorage.getItem("username_transcendence");
+        if (username) {
+            try {
+                await this.fetchNotifications();
+            } catch (error) {
+                this.handleCatch(error);
+            }
+            return;
+        }
     }
 
     async getHtml() {
@@ -300,7 +308,9 @@ export default class extends AbstractView {
             if (this.tournament.round.currentMatch >= this.tournament.PlayerA.length)
                 this.getNextRound();
             if (this.tournament.round.current >= this.tournament.round.max) break;
-            console.log(`current ROUND: ${this.tournament.round.current}; maxRound: ${this.tournament.round.max}`);
+            console.log(
+                `current ROUND: ${this.tournament.round.current}; maxRound: ${this.tournament.round.max}`,
+            );
         }
         console.log(
             `next match is : ${playerA[this.tournament.round.currentMatch].name} vs ${playerB[this.tournament.round.currentMatch].name}`,

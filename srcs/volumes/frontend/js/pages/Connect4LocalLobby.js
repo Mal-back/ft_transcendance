@@ -68,8 +68,16 @@ export default class extends AbstractView {
             `;
     }
 
-    checkLogin() {
-        return;
+    async checkLogin() {
+        const username = sessionStorage.getItem("username_transcendence");
+        if (username) {
+            try {
+                await this.fetchNotifications();
+            } catch (error) {
+                this.handleCatch(error);
+            }
+            return;
+        }
     }
 
     checkUnique(playerName) {
@@ -163,9 +171,9 @@ export default class extends AbstractView {
                 };
                 return acc;
             }, {});
-            console.log(players)
-            return players
-        };
+            console.log(players);
+            return players;
+        }
 
         function teams() {
             const playerList = Object.values(players()); // Convert the players object to an array of player objects
@@ -182,7 +190,7 @@ export default class extends AbstractView {
             }
 
             return [firstHalf, secondHalf];
-        };
+        }
 
         const playersTemp = teams();
         const tournament = {
@@ -191,7 +199,7 @@ export default class extends AbstractView {
             round: {
                 current: 0,
                 max: maxRound,
-                currentMatch: 0
+                currentMatch: 0,
             },
         };
         console.log("tournament", tournament);
