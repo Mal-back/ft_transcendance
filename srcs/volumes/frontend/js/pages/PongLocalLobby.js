@@ -70,8 +70,16 @@ export default class extends AbstractView {
             `;
   }
 
-  checkLogin() {
-    return;
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        await this.fetchNotifications();
+      } catch (error) {
+        this.handleCatch(error);
+      }
+      return;
+    }
   }
 
   checkUnique(playerName) {

@@ -158,7 +158,7 @@ class C4RemoteEngine(threading.Thread):
  
     def send_end_state(self) -> None:
         looser = self.player_1_username if self.winner == self.player_2_username else self.player_2_username
-        data = {"game" : "c4",
+        data = {"game_type" : "c4",
             "winner" : self.winner,
           "looser" : looser,
           "winner_points" : 1,

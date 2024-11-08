@@ -73,8 +73,16 @@ export default class extends AbstractView {
     this.createPageCss("../css/ranking-tournament.css");
   }
 
-  checkLogin() {
-    return;
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        await this.fetchNotifications();
+      } catch (error) {
+        this.handleCatch(error);
+      }
+      return;
+    }
   }
 
   async getHtml() {
@@ -156,29 +164,6 @@ export default class extends AbstractView {
               <h5><strong>${this.lang.getTranslation(["modal", "message", "clickNewTourn"])}</strong></h5>
              `;
     }
-    //
-    // if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
-    //   console.log(
-    //     "PlayerA ",
-    //     this.tournament.PlayerA[this.tournament.round.currentMatch],
-    //   );
-    //   console.log(
-    //     "PlayerB ",
-    //     this.tournament.PlayerB[this.tournament.round.currentMatch],
-    //   );
-    //   return `
-    // <strong role="text">${this.tournament.PlayerB[this.tournament.round.currentMatch].name}</strong>
-    // <br>
-    // <strong role="text">You got a bye round! Congrats! ;)</strong>
-    //         `;
-    // }
-    // if (!this.tournament.PlayerB[this.tournament.round.currentMatch]) {
-    //   return `
-    // <strong role="text">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
-    // <br>
-    // <strong role="text">You got a bye round! Congrats! ;)</strong>
-    //         `;
-    // }
     return `
   <strong role="text">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
   <br>

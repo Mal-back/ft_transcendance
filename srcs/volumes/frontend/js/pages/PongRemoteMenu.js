@@ -22,7 +22,9 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "remote"])}`);
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "remote"])}`,
+    );
     return `
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
@@ -102,22 +104,21 @@ export default class extends AbstractView {
       const response = await fetch(request);
       console.log("Request:", request);
       console.log("response:", response);
-      if (!response.ok) {
-        const dataError = await this.getErrorLogfromServer(response)
-        showModal(`${this.lang.getTranslation(["modal","title", "error"])}`, dataError);
-      } else {
-      const data = await this.getErrorLogfromServer(response, true);
-      console.log("data:", data);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        console.log("data:", data);
         const modalInviteMatchId = document.getElementById("invitePongModal");
-        const  modalElemInvite = bootstrap.Modal.getInstance(modalInviteMatchId);
+        const modalElemInvite = bootstrap.Modal.getInstance(modalInviteMatchId);
         modalElemInvite.hide();
         const buttonOnGoingGame = document.querySelector("#buttonOnGoingGame");
         buttonOnGoingGame.innerText = `${this.lang.getTranslation(["button", "cancel"])}`;
         buttonOnGoingGame.dataset.redirectUrl = `/api/matchmaking/match/${data.id}/delete/`;
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      } else {
         console.error("PongRemoteMenu:handleMatchRemote:", error);
       }
     }

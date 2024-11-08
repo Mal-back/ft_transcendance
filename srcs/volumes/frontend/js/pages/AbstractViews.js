@@ -10,7 +10,7 @@ import CustomError from "../Utils/CustomError.js";
 export default class AbstractViews {
   static invitesArray = [];
   static pollingInterval = null;
-  // static AcceptInterval = null;
+  static MatchmakingInterval = null;
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
@@ -217,16 +217,12 @@ export default class AbstractViews {
         navigateTo(`/${game}?connection=remote`);
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("inviteRequest:", error);
-      }
+      this.handleCatch(error);
     }
   }
 
   async handleInvites(ev) {
     try {
-      console.log("event handleInvite");
       const button = ev.target.closest(".accept-button, .refuse-button");
       if (!button) return;
       const inviteId = button.dataset.inviteId;
@@ -245,7 +241,10 @@ export default class AbstractViews {
         await this.inviteRequest(url, game);
       }
     } catch (error) {
-      if (error instanceof CustomError) this.handleCatch(error);
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      } else console.error("handleInvites:", error);
     }
   }
 
@@ -286,7 +285,6 @@ export default class AbstractViews {
       const totalCount = data.length + boolGame;
       boolGame += await this.createInvites(data, username);
       const onGoingGame = document.querySelector("#divOnGoingGame");
-      console.log("BOOLGAME = ", boolGame);
       if (boolGame == 0) onGoingGame.style.display = "none";
       else onGoingGame.style.display = "block";
 
@@ -324,7 +322,6 @@ export default class AbstractViews {
   async cancelOnGoingMatch(data) {
     try {
       if (!data) return 0;
-      console.log("cancelOnGoingMatch:", data);
       await this.updateOnGoingInfo(data);
       const joinButton = document.querySelector("#buttonOnGoingGame");
       sessionStorage.setItem("transcendence_game_id", data.matchId);
@@ -340,10 +337,8 @@ export default class AbstractViews {
   }
 
   async updateOnGoingMatch(data) {
-    console.log(`updateOnGoingMatch: data.length:${data.length}`, data);
     try {
       if (!data || !data.game_type) return 0;
-      console.log(`updateOnGoingMatch: after return`);
       await this.updateOnGoingInfo(data);
       const joinButton = document.querySelector("#buttonOnGoingGame");
       sessionStorage.setItem("transcendence_game_id", data.matchId);
@@ -456,7 +451,6 @@ export default class AbstractViews {
     //
     try {
       const numberBell = await this.fetchMainInvites();
-      console.log("numberBell = ", numberBell);
       const badge = document.getElementById("notificationbell");
       if (numberBell == 0) badge.innerHTML = "";
       else
@@ -573,7 +567,6 @@ export default class AbstractViews {
     const whitelist = /^[a-zA-Z0-9_@.+-]*$/;
     for (let i = 0; i < inputList.length; i++) {
       const input = inputList[i];
-      // console.log("input = ", input);
       if (!whitelist.test(input)) {
         return false;
       }
@@ -716,8 +709,8 @@ export default class AbstractViews {
     if (!refreshJWT) {
       removeSessionStorage();
       throw new CustomError(
-        `${this.lang.getTranslation("modal", "error")}`,
-        `${this.lang.getTranslation(["error", "failRefresh"])}`,
+        `${this.lang.getTranslation("modal", "title", "error")}`,
+        `${this.lang.getTranslation(["modal", "message", ""])}`,
         "/login",
       );
     }

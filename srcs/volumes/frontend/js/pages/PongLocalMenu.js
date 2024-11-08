@@ -41,6 +41,18 @@ export default class extends AbstractView {
               `;
   }
 
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        await this.fetchNotifications();
+      } catch (error) {
+        this.handleCatch(error);
+      }
+      return;
+    }
+  }
+
   handleLocalGameRedirection(ev) {
     ev.preventDefault();
     navigateTo("/pong?connection=local");
