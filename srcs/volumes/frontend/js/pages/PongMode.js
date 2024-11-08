@@ -43,11 +43,16 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     if (username) {
       try {
-        await this.fetchNotifications();
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
+        }
       } catch (error) {
+        removeSessionStorage();
         this.handleCatch(error);
       }
-      return;
     }
   }
 

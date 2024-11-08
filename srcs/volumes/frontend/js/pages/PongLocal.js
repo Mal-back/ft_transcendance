@@ -2,7 +2,11 @@ import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import Pong from "../game/Pong.js";
 import CustomError from "../Utils/CustomError.js";
-import { getIpPortAdress, showModal } from "../Utils/Utils.js";
+import {
+  getIpPortAdress,
+  showModal,
+  removeSessionStorage,
+} from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -51,11 +55,16 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     if (username) {
       try {
-        await this.fetchNotifications();
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
+        }
       } catch (error) {
+        removeSessionStorage();
         this.handleCatch(error);
       }
-      return;
     }
   }
 

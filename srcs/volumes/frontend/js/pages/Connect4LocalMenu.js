@@ -1,28 +1,28 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import {
-    removeSessionStorage,
-    setSessionStorage,
-    showModal,
+  removeSessionStorage,
+  setSessionStorage,
+  showModal,
 } from "../Utils/Utils.js";
 import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
-    constructor() {
-        super();
-        this.setTitle("Connect4 Local");
-        this.handleLocalGameRedirection =
-            this.handleLocalGameRedirection.bind(this);
-        this.handleLocalTournamentRedirection =
-            this.handleLocalTournamentRedirection.bind(this);
-    }
+  constructor() {
+    super();
+    this.setTitle("Connect4 Local");
+    this.handleLocalGameRedirection =
+      this.handleLocalGameRedirection.bind(this);
+    this.handleLocalTournamentRedirection =
+      this.handleLocalTournamentRedirection.bind(this);
+  }
 
-    async loadCss() {
-        this.createPageCss("../css/game-menu-buttons.css");
-    }
+  async loadCss() {
+    this.createPageCss("../css/game-menu-buttons.css");
+  }
 
-    async getHtml() {
-        return `
+  async getHtml() {
+    return `
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
           <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -37,46 +37,51 @@ export default class extends AbstractView {
         </div>
       </div>
               `;
-    }
+  }
 
-    async checkLogin() {
-        const username = sessionStorage.getItem("username_transcendence");
-        if (username) {
-            try {
-                await this.fetchNotifications();
-            } catch (error) {
-                this.handleCatch(error);
-            }
-            return;
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
         }
+      } catch (error) {
+        removeSessionStorage();
+        this.handleCatch(error);
+      }
     }
+  }
 
-    handleLocalGameRedirection(ev) {
-        ev.preventDefault();
-        navigateTo("/c4?connection=local");
-    }
+  handleLocalGameRedirection(ev) {
+    ev.preventDefault();
+    navigateTo("/c4?connection=local");
+  }
 
-    handleLocalTournamentRedirection(ev) {
-        ev.preventDefault();
-        navigateTo("/c4-local-lobby");
-    }
+  handleLocalTournamentRedirection(ev) {
+    ev.preventDefault();
+    navigateTo("/c4-local-lobby");
+  }
 
-    async addEventListeners() {
-        const local = document.querySelector("#c4LocalPlayButton");
-        local.addEventListener("click", this.handleLocalGameRedirection);
+  async addEventListeners() {
+    const local = document.querySelector("#c4LocalPlayButton");
+    local.addEventListener("click", this.handleLocalGameRedirection);
 
-        const tournament = document.querySelector("#c4LocalTournamentButton");
-        tournament.addEventListener("click", this.handleLocalTournamentRedirection);
-    }
+    const tournament = document.querySelector("#c4LocalTournamentButton");
+    tournament.addEventListener("click", this.handleLocalTournamentRedirection);
+  }
 
-    removeEventListeners() {
-        const local = document.querySelector("#c4LocalPlayButton");
-        local.removeEventListener("click", this.handleLocalGameRedirection);
+  removeEventListeners() {
+    const local = document.querySelector("#c4LocalPlayButton");
+    local.removeEventListener("click", this.handleLocalGameRedirection);
 
-        const tournament = document.querySelector("#c4LocalTournamentButton");
-        tournament.removeEventListener(
-            "click",
-            this.handleLocalTournamentRedirection,
-        );
-    }
+    const tournament = document.querySelector("#c4LocalTournamentButton");
+    tournament.removeEventListener(
+      "click",
+      this.handleLocalTournamentRedirection,
+    );
+  }
 }

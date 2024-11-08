@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { showModal } from "../Utils/Utils.js";
+import { showModal, removeSessionStorage } from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
 
@@ -77,11 +77,16 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     if (username) {
       try {
-        await this.fetchNotifications();
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
+        }
       } catch (error) {
+        removeSessionStorage();
         this.handleCatch(error);
       }
-      return;
     }
   }
 

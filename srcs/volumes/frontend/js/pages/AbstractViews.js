@@ -103,12 +103,15 @@ export default class AbstractViews {
       );
     }
     try {
-      await this.fetchNotifications();
-    } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("checkLogin: ", error);
+      if ((await this.fetchNotifications()) === undefined) {
+        throw new CustomError(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+        );
       }
+    } catch (error) {
+      removeSessionStorage();
+      this.handleCatch(error);
     }
   }
 
@@ -126,7 +129,7 @@ export default class AbstractViews {
       inviteItem.className = "list-group-item";
 
       inviteItem.innerHTML = `
-      <div class="d-flex align-items-center">
+          <div class= "d-flex align-items-center">
         <div class="removeElem rounded-circle Avatar ${invite.opponentStatus} me-3" 
              style="background-image: url('${invite.opponentAvatar}')" 
              alt="Avatar">
@@ -135,21 +138,21 @@ export default class AbstractViews {
           <h5><strong>${invite.player}</strong></h5>
           <p>${invite.message}</p>
         </div>
-      </div>
-      <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-success btn-sm me-2 accept-button" 
-                data-invite-id="${invite.id}" 
-                data-action="accept"
-                data-game="${invite.gameType}">
-          <i class="bi bi-check-circle"></i> ${this.lang.getTranslation(["button", "accept"])}
-        </button>
-        <button class="btn btn-danger btn-sm refuse-button" 
-                data-invite-id="${invite.id}" 
-                data-action="refuse"
-                data-game="${invite.gameType}">
-          <i class="bi bi-x-circle"></i> ${this.lang.getTranslation(["button", "accept"])}
-        </button>
-      </div>
+      </div >
+          <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-success btn-sm me-2 accept-button"
+              data-invite-id="${invite.id}"
+              data-action="accept"
+              data-game="${invite.gameType}">
+              <i class="bi bi-check-circle"></i> ${this.lang.getTranslation(["button", "accept"])}
+            </button>
+            <button class="btn btn-danger btn-sm refuse-button"
+              data-invite-id="${invite.id}"
+              data-action="refuse"
+              data-game="${invite.gameType}">
+              <i class="bi bi-x-circle"></i> ${this.lang.getTranslation(["button", "accept"])}
+            </button>
+          </div>
     `;
       inviteList.appendChild(inviteItem);
     });
@@ -236,7 +239,7 @@ export default class AbstractViews {
           action === "accept"
             ? invite.acceptInviteUrl
             : invite.declineInviteUrl;
-        console.log(`URL: ${url}; action: ${action}`);
+        console.log(`URL: ${url}; action: ${action} `);
         const game = invite.gameType == "pong" ? "pong" : "c4";
         await this.inviteRequest(url, game);
       }
@@ -268,10 +271,10 @@ export default class AbstractViews {
   //         badge.innerHTML = "";
   //         return;
   //       }
-  //       badge.innerHTML = `<div class="notification-badge">${boolGame} </div>`;
+  //       badge.innerHTML = `< div class="notification-badge" > ${ boolGame } </div > `;
   //       const username = sessionStorage.getItem("username_transcendence");
   //       await this.createInvites(data, username);
-  //       badge.innerHTML = `<div class="notification-badge">${AbstractViews.invitesArray.length + boolGame} </div>`;
+  //       badge.innerHTML = `< div class="notification-badge" > ${ AbstractViews.invitesArray.length + boolGame } </div > `;
   //     }
   //   } catch (error) {
   //     this.handleCatch(error);
@@ -284,10 +287,6 @@ export default class AbstractViews {
       const username = sessionStorage.getItem("username_transcendence");
       const totalCount = data.length + boolGame;
       boolGame += await this.createInvites(data, username);
-      const onGoingGame = document.querySelector("#divOnGoingGame");
-      if (boolGame == 0) onGoingGame.style.display = "none";
-      else onGoingGame.style.display = "block";
-
       return totalCount;
     } catch (error) {
       this.handleCatch(error);
@@ -327,7 +326,7 @@ export default class AbstractViews {
       sessionStorage.setItem("transcendence_game_id", data.matchId);
       joinButton.classList.remove("btn-success");
       joinButton.classList.add("btn-danger");
-      joinButton.innerText = `${this.lang.getTranslation(["button", "cancel"]).toUpperCase()}`;
+      joinButton.innerText = `${this.lang.getTranslation(["button", "cancel"]).toUpperCase()} `;
       joinButton.dataset.redirectUrl = `${data.delete_invite}`;
       return 1;
     } catch (error) {
@@ -355,23 +354,27 @@ export default class AbstractViews {
 
   async fetchMainInvites() {
     try {
+      const onGoingGame = document.querySelector("#divOnGoingGame");
+      let boolGame = 0;
       const request = await this.makeRequest("api/matchmaking/invites", "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        console.log("fetchMainInvites:data:", data);
-        console.log("data: on going:", data.on_going_match);
-        if (response.status == 204) return 0;
-        let boolGame = 0;
+        if (response.status == 204) {
+          onGoingGame.style.display = "none";
+          return 0;
+        }
         boolGame += await this.updateOnGoingMatch(data.on_going_match);
-        console.log("fetchMainInvites:BoolGame:", boolGame);
         const count = await this.updatePendingInvites(
           data.match_pending,
           boolGame,
         );
+        if (boolGame == 0) onGoingGame.style.display = "none";
+        else onGoingGame.style.display = "block";
         //count += await fillPendingTournament(data);
         return count;
       }
+      onGoingGame.style.display = "none";
     } catch (error) {
       this.handleCatch(error);
     }
@@ -450,13 +453,19 @@ export default class AbstractViews {
     // }
     //
     try {
-      const numberBell = await this.fetchMainInvites();
       const badge = document.getElementById("notificationbell");
+      const numberBell = await this.fetchMainInvites();
+      if (numberBell === undefined) {
+        badge.innerHTML = "";
+        return undefined;
+      }
       if (numberBell == 0) badge.innerHTML = "";
       else
-        badge.innerHTML = `<div class="notification-badge">${numberBell} </div>`;
+        badge.innerHTML = `<div class="notification-badge">${numberBell}</div>`;
+      return 0;
     } catch (error) {
       this.handleCatch(error);
+      return 0;
     }
   }
 
@@ -489,7 +498,7 @@ export default class AbstractViews {
     const inviteModalEl = document.getElementById("inviteUserModal");
     if (username && accessToken && refreshToken) {
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `< i class= "bi bi-box-arrow-right" ></i > ${this.lang.getTranslation(["title", "logout"])}`;
+      loginOverlay.innerHTML = `<i class= "bi bi-box-arrow-right" ></i>${this.lang.getTranslation(["title", "logout"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/logout";
       logIcon.href = "";
@@ -510,7 +519,7 @@ export default class AbstractViews {
         removeSessionStorage();
       }
       loginOverlay.innerHTML = "";
-      loginOverlay.innerHTML = `< i class= "bi bi-box-arrow-left" ></i > ${this.lang.getTranslation(["title", "login"])}`;
+      loginOverlay.innerHTML = `<i class= "bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["title", "login"])}`;
       loginOverlay.href = "";
       loginOverlay.href = "/login";
       logIcon.href = "";
@@ -637,7 +646,7 @@ export default class AbstractViews {
       console.error("Network error detected:", error);
       removeSessionStorage();
       throw new CustomError(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "title", "error"])} `,
         `${this.lang.getTranslation(["modal", "message", "failConnectServer"])}`,
         "/",
       );
