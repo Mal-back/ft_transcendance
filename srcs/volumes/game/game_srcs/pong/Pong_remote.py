@@ -275,7 +275,7 @@ class PongRemoteEngine(threading.Thread):
     def send_end_state(self, last_frame) -> None:
         winner_points = last_frame.player_1.score if self.winner == self.player_1_username else last_frame.player_2.score
         looser_points = last_frame.player_1.score if self.winner == self.player_2_username else last_frame.player_2.score
-        data = {"game" : "pong",
+        data = {"game_type" : "pong",
             "winner" : self.winner,
             "looser" : self.looser,
           "winner_points" : winner_points,

@@ -529,5 +529,5 @@ function testWss() {
 // testSurrend();
 // testChannelFUll();
 // testWss();
-testMultipleInstances(5)
+testMultipleInstances(15)
 // testRemote();
