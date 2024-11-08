@@ -249,6 +249,10 @@ class HandleMatchResult(APIView):
                  return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, *args, **kwargs):
+        match = self.get_object(kwargs['matchId'])
+        match.delete()
+
 class DebugSetGameAsFinished(APIView):
     def get(self, request, *args, **kwargs):
         id = self.kwargs.get('pk')
