@@ -269,10 +269,11 @@ class TournamentConciseSerializer(serializers.ModelSerializer):
     accept_invite = serializers.SerializerMethodField()
     decline_invite = serializers.SerializerMethodField()
     owner_name = serializers.SerializerMethodField()
+    delete_tournament = serializers.SerializerMethodField()
 
     class Meta:
         model = Tournament
-        fields = ['game_type', 'status', 'accept_invite', 'decline_invite', 'owner_name',]
+        fields = ['game_type', 'status', 'accept_invite', 'decline_invite', 'owner_name', 'delete_tournament']
 
     def get_accept_invite(self, obj):
         request = self.context.get('request')
@@ -286,6 +287,13 @@ class TournamentConciseSerializer(serializers.ModelSerializer):
         user = request.user
         if user in obj.invited_players.all() and obj.status == 'pending': 
             return(f'/api/matchmaking/tournament/{obj.id}/decline/')
+        return None
+
+    def get_delete_tournament(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.owner == user and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/delete/')
         return None
 
     def get_owner_name(self, obj):

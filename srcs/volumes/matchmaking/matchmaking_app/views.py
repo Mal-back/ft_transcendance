@@ -11,7 +11,7 @@ from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCrede
 from .single_match_to_history import end_single_match
 from .matchmaking_queue import get_opponent, YouHaveNoOpps
 from .match_utils import check_user_restrictions
-from .tournament import schedule_rounds
+from .tournament import schedule_rounds, handle_finished_matches, TournamentInternalError
 
 # Create your views here.
 
@@ -112,7 +112,7 @@ class GetInvite(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         matchQuery = Match.objects.filter(Q(player1=user) | Q(player2=user), status='pending')
-        tournamentQuery = Tournament.objects.filter(Q(owner=user) | Q(invited_players=user) | Q(confirmed_players__user=user), status='pending') 
+        tournamentQuery = Tournament.objects.filter(Q(invited_players=user) | Q(confirmed_players__user=user), status='pending').distinct() 
         try :
             on_going_match = Match.objects.get(Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress'])
         except Match.DoesNotExist:
@@ -245,8 +245,8 @@ class HandleMatchResult(APIView):
                 end_single_match(match, serializer.validated_data)
                 return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
             else :
-                # tournament logic here
-                pass
+                 response = handle_finished_matches(match, serializer.validated_data)
+                 return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DebugSetGameAsFinished(APIView):
@@ -460,7 +460,11 @@ class LaunchTournament(APIView):
             return Response({'Error': 'A tournament should have at least three players'}, status=status.HTTP_409_CONFLICT)
         obj.status = 'in_progress'
         obj.save()
-        schedule_rounds(obj)
+        try :
+            schedule_rounds(obj)
+        except TournamentInternalError:
+            obj.delete()
+            return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         return Response({'OK':'Tournament started'}, status=status.HTTP_200_OK)
 
 class DebugSetTournamentAsFinished(APIView):

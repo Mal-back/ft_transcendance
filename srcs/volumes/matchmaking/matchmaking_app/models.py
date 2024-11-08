@@ -65,6 +65,7 @@ class Tournament(models.Model):
     round_schedule = models.JSONField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('in_progress', 'In progress'),
+                                                                         ('finished', 'Finished')
                                                                         ])
     winner = models.ForeignKey('MatchUser',
                                 related_name='winner',
