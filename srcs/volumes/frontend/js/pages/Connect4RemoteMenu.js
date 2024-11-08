@@ -108,12 +108,15 @@ export default class extends AbstractView {
       if (!response.ok) {
         console.log("Error invite: ", data);
         console.log("Error invite: ", response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          data.Error,
+        );
       } else {
         // AbstractView.AcceptInterval = setInterval(async () => {
         //   try {
         //     const requestInvite = await this.makeRequest(
-        //       `/api/matchmaking/match/get_accepted`,
+        //       `/ api / matchmaking / match / get_accepted`,
         //       "GET",
         //     );
         //     const responseInvite = await fetch(requestInvite);

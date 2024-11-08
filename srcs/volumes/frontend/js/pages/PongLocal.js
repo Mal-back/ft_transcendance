@@ -47,8 +47,16 @@ export default class extends AbstractView {
     return htmlContent;
   }
 
-  checkLogin() {
-    return;
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        await this.fetchNotifications();
+      } catch (error) {
+        this.handleCatch(error);
+      }
+      return;
+    }
   }
 
   async game() {
@@ -65,7 +73,6 @@ export default class extends AbstractView {
         webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-remote/join/`;
         auth_token = await this.getToken();
       } else {
-        console.log("HIDE");
         const giveUpButton = document.querySelector("#giveUpButton");
         if (giveUpButton) giveUpButton.style.display = "none";
       }
@@ -98,8 +105,8 @@ export default class extends AbstractView {
           {
             navigateTo("/pong-local-lobby");
             showModal(
-            `${this.lang.getTranslation(["modal", "title", "error"])}`,
-            `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
+              `${this.lang.getTranslation(["modal", "title", "error"])}`,
+              `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
             );
             return;
           }
@@ -120,7 +127,6 @@ export default class extends AbstractView {
   }
 
   async requestAvatars(player_1Username, player_2Username) {
-    console.log("test");
     let ret = [];
     try {
       const requestUser1 = await this.makeRequest(
@@ -128,34 +134,27 @@ export default class extends AbstractView {
         "GET",
       );
       const responseUser1 = await fetch(requestUser1);
-      if (responseUser1.ok) {
-        const data = await this.getErrorLogfromServer(responseUser1, true);
+      if (await this.handleStatus(responseUser1)) {
+        const data = await this.getDatafromRequest(responseUser1);
         ret.push(data.profilePic);
-      } else {
-        const data = await this.getErrorLogfromServer(responseUser1);
-        console.error(`RequestAvatars: fail for ${player_1Username}`, data);
       }
       const requestUser2 = await this.makeRequest(
         `api/users/${player_2Username}`,
         "GET",
       );
       const responseUser2 = await fetch(requestUser2);
-      if (responseUser2.ok) {
-        const data = await this.getErrorLogfromServer(responseUser2, true);
+      if (await this.handleStatus(responseUser2)) {
+        const data = await this.getDatafromRequest(responseUser2);
         ret.push(data.profilePic);
-      } else {
-        const data = await this.getErrorLogfromServer(responseUser2);
-        console.error(`RequestAvatars: fail for ${player_2Username}`, data);
       }
       return ret;
     } catch (error) {
-      console.error("requestAvatars:", error);
+      this.handleCatch(error);
     }
   }
 
   async handleGetUsername(mode, player_1Username, player_2Username) {
     try {
-      console.log("View:handleGetUsername");
       if (mode == "remote") {
         const avatars = await this.requestAvatars(
           player_1Username,
@@ -174,7 +173,12 @@ export default class extends AbstractView {
       leftPlayerText.innerText = player_1Username;
       rightPlayerText.innerText = player_2Username;
     } catch (error) {
-      console.error("handleSetUsername:", error);
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleGetUsername:", error);
+      }
     }
   }
 
@@ -182,7 +186,7 @@ export default class extends AbstractView {
     ev.preventDefault();
     showModal(
       `${this.lang.getTranslation(["button", "help"])}`,
-      `${this.lang.getTranslation(["modal", "message", "help"])}`
+      `${this.lang.getTranslation(["modal", "message", "help"])}`,
     );
   }
 

@@ -283,13 +283,14 @@ export default class AbstractViews {
     try {
       AbstractViews.invitesArray = [];
       const username = sessionStorage.getItem("username_transcendence");
+      const totalCount = data.length + boolGame;
       boolGame += await this.createInvites(data, username);
       const onGoingGame = document.querySelector("#divOnGoingGame");
       console.log("BOOLGAME = ", boolGame);
       if (boolGame == 0) onGoingGame.style.display = "none";
       else onGoingGame.style.display = "block";
 
-      return data.length + boolGame;
+      return totalCount;
     } catch (error) {
       this.handleCatch(error);
       return 0;
@@ -454,7 +455,12 @@ export default class AbstractViews {
     // }
     //
     try {
-      const boolBell = await this.fetchMainInvites();
+      const numberBell = await this.fetchMainInvites();
+      console.log("numberBell = ", numberBell);
+      const badge = document.getElementById("notificationbell");
+      if (numberBell == 0) badge.innerHTML = "";
+      else
+        badge.innerHTML = `<div class="notification-badge">${numberBell} </div>`;
     } catch (error) {
       this.handleCatch(error);
     }
@@ -555,7 +561,7 @@ export default class AbstractViews {
       window
         .atob(base64)
         .split("")
-        .map(function(c) {
+        .map(function (c) {
           return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
         })
         .join(""),
@@ -575,9 +581,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
