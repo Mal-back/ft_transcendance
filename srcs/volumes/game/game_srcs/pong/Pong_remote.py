@@ -7,6 +7,8 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from .Frame import Frame
 from .Config import Config
+from pong_remote_app.models import PongRemoteGame
+from ms_client.ms_client import MicroServiceClient, RequestsFailed
 
 allowed_movement = ["UP", "DOWN", "NONE"]
     
@@ -81,7 +83,7 @@ class PongRemoteEngine(threading.Thread):
                 break
             time.sleep(self.frame_rate)
             self.check_pause()
-        self.clean_game()
+        # self.clean_game()
         self.join_thread()
         print("PongRemoteEngine : End of run function for thread " + self.game_id)
             
@@ -94,7 +96,6 @@ class PongRemoteEngine(threading.Thread):
             })
         except:
             print("PongRemoteEngine : Can not send join thread to pong_remote_engine from thread num " + self.game_id)
-   
    
     def clean_game(self):
         try:
@@ -141,6 +142,26 @@ class PongRemoteEngine(threading.Thread):
         frame.player_2.move()
         return frame
 
+    def check_pause(self) -> None :
+        with self.start_lock:
+            if self.runing_player_1 == "start" and self.runing_player_2 == "start":
+                return
+            else:
+                self.runing_player_1 = "stop"
+                self.runing_player_2 = "stop"
+                self.send_pause("stop")
+        count = 0
+        while True:
+            with self.start_lock:
+                if self.runing_player_1 == "start" and self.runing_player_2 == "start":
+                    break
+                if count * self.frame_rate >= 30:
+                    self.runing_player_1 = "start"
+                    self.runing_player_2 = "start"
+                    break
+            count += 1
+            time.sleep(self.frame_rate)
+        self.send_pause("start" )
 
     def move_ball(self, frame : Frame) -> Frame:
         if frame.board.ball.direction.dx < 0:
@@ -288,12 +309,37 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send end state to group channel " + self.game_id)
+        # try:
+        #     async_to_sync(self.channel_layer.send)("pong_remote_engine", {
+        #         "type" : "send.result",
+        #         "End_state" : data,
+        #         "game_id" : self.game_id,
+        #     })
+        # except Exception:
+        #     print("PongRemoteEngine : Can not send result to PongRemoteGameConsumer for game " + self.game_id)
+        self.clean_game()
+        self.send_result(data)
+
+    def clean_game(self):
         try:
-            async_to_sync(self.channel_layer.send)("pong_remote_engine", {
-                "type" : "send.result",
-                "End_state" : data,
-                "game_id" : self.game_id,
-            })
-        except Exception:
-            print("PongRemoteEngine : Can not send result to PongRemoteGameConsumer for game " + self.game_id)
-            
+            game_instance = PongRemoteGame.objects.get(game_id=self.game_id)
+            game_instance.delete()
+            print("PongRemoteEngine : Cleaning game " + str(self.game_id))
+        except:
+            print("PongRemoteEngine : Can not delete game " + str(self.game_id))
+
+
+    def send_result(self, data):
+        url = f'http://matchmaking:8443/api/matchmaking/match/' + self.game_id + '/finished/'
+        print("PongRemoteEngine : Sending result to url : " + url)
+        print("PongRemoteEngine : End state = " + str(data))
+        try: 
+            sender = MicroServiceClient()
+            sender.send_requests(
+                urls=[url,],
+                method='post',
+                expected_status=[200],
+                body=data,
+            )
+        except RequestsFailed:
+            print("PongRemoteEngine : Error sending result to matchmaking application for game " + event["game_id"])

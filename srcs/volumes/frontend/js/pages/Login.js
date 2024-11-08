@@ -17,38 +17,35 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["menu", "login"])}`);
+    this.setTitle(`${this.lang.getTranslation(["title", "login"])}`);
     return `
                 <div class="background login removeElem">
                     <div class="p-5 bg-* removeElem">
                         <div class="black-txt bg-form login-form p-4 removeElem">
                             <h1 class="mb-3 text-center login-title text-decoration-underline removeElem">
-                              ${this.lang.getTranslation(["login", "loginBtn"])}
+                              ${this.lang.getTranslation(["title", "login"])}
                             </h1>
                             <form id="loginForm" class="removeElem">
                                 <div class="form-group removeElem">
-                                    <label class="removeElem" for="Username" id="UsernameTitle">${this.lang.getTranslation(["input", "label", "username"])}</label>
+                                    <label class="removeElem" for="usernameInput" id="UsernameTitle">${this.lang.getTranslation(["input", "label", "username"])}</label>
                                     <input class="form-control removeElem" name="Username" type="text" id="usernameInput"/>
                                     <div id="loginUsernameError" class="removeElem"></div>
                                 </div>
                                 <br />
                                 <div class="form-group removeElem">
-                                    <label class="removeElem" for="Password" id="PasswordTitle">${this.lang.getTranslation(["input", "label", "password"])}</label>
+                                    <label class="removeElem" for="passwordInput" id="PasswordTitle">${this.lang.getTranslation(["input", "label", "password"])}</label>
                                     <input class="form-control removeElem" name="Password" type="password" id="passwordInput" autocomplete="off"/>
                                     <div id="loginPasswordError" class="removeElem"></div>
                                 </div>
                                 <br />
-                                <button id="loginButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["login", "loginBtn"])}</button>
+                                <button id="loginButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["title", "login"])}</button>
                                 <br />
                                 <br />
                             </form>
                         </div>
                         <div class="d-flex justify-content-center mt-3 removeElem">
-                            <button id="createUser" type="button" class="btn bg-blue login42 white-txt me-2 removeElem" href="/createUser">${this.lang.getTranslation(["login", "createUserTitle"])}
+                            <button id="createUser" type="button" class="btn bg-blue login42 white-txt me-2 removeElem" href="/createUser">${this.lang.getTranslation(["title", "createUser"])}
                             </button>
-                            <a type="button" class="btn bg-blue login42 white-txt removeElem">
-                                42 Connect
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -60,13 +57,17 @@ export default class extends AbstractView {
     const usernameInput = document.querySelector("#usernameInput");
     console.log("usernameInput:", usernameInput);
     const passwordInput = document.querySelector("#passwordInput");
-    passwordInput.value = "";
+    if (passwordInput) passwordInput.value = "";
     const usernameInputError = document.querySelector("#loginUsernameError");
-    usernameInputError.innerHTML = "";
-    usernameInputError.classList.add("removeElem");
+    if (usernameInputError) {
+      usernameInputError.innerHTML = "";
+      usernameInputError.classList.add("removeElem");
+    }
     const loginPasswordError = document.querySelector("#loginPasswordError");
-    loginPasswordError.innerHTML = "";
-    loginPasswordError.classList.add("removeElem");
+    if (loginPasswordError) {
+      loginPasswordError.innerHTML = "";
+      loginPasswordError.classList.add("removeElem");
+    }
   }
 
   async loadCss() {
@@ -79,8 +80,8 @@ export default class extends AbstractView {
     if (username) {
       navigateTo("/");
       throw new CustomError(
-        `${this.lang.getTranslation(["modal", "error"])}`,
-        "User is already logged in",
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "alreadyLog"])}`,
         "/",
       );
     }
@@ -92,9 +93,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#loginUsernameError");
     errorDiv.innerHTML = "";
     if (usernameInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(usernameInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -110,7 +111,7 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#loginPasswordError");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "password", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -149,6 +150,7 @@ export default class extends AbstractView {
   }
 
   handleCreateUserRedir(ev) {
+    ev.preventDefault();
     navigateTo("/createUser");
   }
 
@@ -163,27 +165,34 @@ export default class extends AbstractView {
       return;
     }
     try {
-      const usernameURIencoded = encodeURIComponent(nameForm);
+      // const usernameURIencoded = encodeURIComponent(nameForm);
       console.log("login before make request");
       const request = await this.makeRequest("/api/auth/login", "POST", {
-        username: usernameURIencoded,
+        username: nameForm,
         password: paswordForm,
       });
       const response = await fetch(request);
       console.log("Response: ", response);
       if (response.ok) {
         const data = await response.json();
-        setSessionStorage(data, usernameURIencoded);
+        setSessionStorage(data, nameForm);
         navigateTo("/");
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "auth"])}`,
+          `${this.lang.getTranslation(["modal", "message", "welcome"])}, ${nameForm}`,
+        );
       } else {
         const log = await this.getErrorLogfromServer(response);
-        showModal(`${this.lang.getTranslation(["modal", "error"])}`, log);
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          log,
+        );
         console.log(log);
       }
     } catch (Error) {
       console.error("Error fetching login:", Error);
       showModal(
-        `${this.lang.getTranslation(["modal", "error"])}`,
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
         Error.message,
       );
     }
@@ -216,11 +225,13 @@ export default class extends AbstractView {
     }
     const usernameInput = document.querySelector("#usernameInput");
     const passwordInput = document.querySelector("#passwordInput");
-    usernameInput.removeEventListener("input", this.handleInputUsername);
-    usernameInput.value = "";
+    if (usernameInput) {
+      usernameInput.removeEventListener("input", this.handleInputUsername);
+      usernameInput.value = "";
+    }
     if (passwordInput) {
       passwordInput.removeEventListener("input", this.handleInputPassword);
-      passwordInput.removeEventListener("input", null); // Example: if you have 'input' event listeners
+      passwordInput.removeEventListener("input", null);
       passwordInput.value = "";
     }
     const createUser = document.querySelector("#createUser");

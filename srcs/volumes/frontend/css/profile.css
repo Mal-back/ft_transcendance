@@ -1,8 +1,8 @@
 /* Default border style for Avatar */
 .Avatar {
     background-image: url(../img/red_panda.jpg);
-    width: 11vw;
-    height: 11vh;
+    width: min(11vw, 11vh);
+    height: min(11vw, 11vh);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -30,9 +30,9 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 65%;
+    /* width: 65%; */
     box-sizing: border-box;
-    margin: 20px auto;
+    margin: 0 auto;
 }
 
 /* Ensure the top profile section is centered */

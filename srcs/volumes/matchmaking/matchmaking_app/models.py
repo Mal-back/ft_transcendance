@@ -13,6 +13,12 @@ class MatchUser(models.Model):
     @property
     def is_authenticated(self):
         return True
+
+    @property
+    def win_rate(self):
+        total_matches = self.match_lost + self.match_won
+        print(f'{self.match_won}, {self.match_lost}')
+        return self.match_won / total_matches if total_matches != 0 else 0
         
 class InQueueUser(models.Model):
     user = models.ForeignKey('MatchUser',
@@ -22,6 +28,8 @@ class InQueueUser(models.Model):
     win_rate = models.FloatField()
     range_to_search = models.FloatField(default=0.05)
     last_range_update = models.DateTimeField(default=now)
+    game_type = models.TextField(choices=[('pong', 'Pong'),
+                                           ('c4', 'Connect four')])
 
     @property
     def minimal_wr(self):
@@ -30,18 +38,39 @@ class InQueueUser(models.Model):
 
     @property
     def maximal_wr(self):
-        maxi =  self.win_rate - self.range_to_search
+        maxi =  self.win_rate + self.range_to_search
         return maxi if maxi < 1 else 1
+
+class TournamentUser(models.Model):
+    user = models.ForeignKey('MatchUser',
+                            related_name='tournament_user',
+                            on_delete=models.PROTECT,
+                            to_field='username')
+    tournament = models.ForeignKey('Tournament',
+                                related_name='confirmed_players',
+                                on_delete=models.CASCADE,)
+    matches_won = models.IntegerField(default=0)
+    matches_lost = models.IntegerField(default=0)
     
 class Tournament(models.Model):
-    name = models.CharField(max_length=255)
-    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', blank=True)
-    confirmed_players = models.ManyToManyField('MatchUser', related_name='confirmed_players', blank=True)
+    owner = models.ForeignKey('MatchUser',
+                                related_name='tournament_owner',
+                                on_delete=models.PROTECT,
+                                to_field='username')
+    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players',)
     current_round = models.IntegerField(default=1)
-    is_finished = models.BooleanField(default=False)
+    game_type = models.TextField(choices=[('pong', 'Pong'),
+                                           ('c4', 'Connect four')])
+
+    round_schedule = models.JSONField(null=True)
+    status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
+                                                                         ('in_progress', 'In progress'),
+                                                                         ('finished', 'Finished')
+                                                                        ])
     winner = models.ForeignKey('MatchUser',
                                 related_name='winner',
-                                on_delete=models.PROTECT)
+                                on_delete=models.PROTECT,
+                                null=True)
 
 class Match(models.Model):
     player1 = models.ForeignKey('MatchUser',
@@ -55,7 +84,7 @@ class Match(models.Model):
     player1_points = models.IntegerField(default=0)
     player2_points = models.IntegerField(default=0)
     game_type = models.TextField(choices=[('pong', 'Pong'),
-                                           ('connect_four', 'Connect four')])
+                                           ('c4', 'Connect four')])
     matchId = models.UUIDField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
                                                                          ('accepted', 'Accepted'),

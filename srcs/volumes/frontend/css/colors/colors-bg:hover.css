@@ -1,6 +1,6 @@
 /* Hover effects for background colors */
 .bg-red:hover {
-    background-color: rgb(255, 51, 51);
+    background-color: rgb(228, 0, 0);
 }
 
 .bg-blue:hover {
@@ -28,7 +28,7 @@
 }
 
 .bg-gray:hover {
-    background-color: rgb(153, 153, 153);
+    /* background-color: rgb(153, 153, 153); */
 }
 
 .bg-brown:hover {

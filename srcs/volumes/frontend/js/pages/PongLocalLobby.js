@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Pong Lobby");
     this.playerInputs = [];
     this.handleGeneratePlayers = this.handleGeneratePlayers.bind(this);
     this.handleValidatePlayerInput = this.handleValidatePlayerInput.bind(this);
@@ -24,15 +23,16 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}`);
     return `
       <div class="background removeElem">
         <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-          ${this.lang.getTranslation(["game", "maj", "pong"])} - ${this.lang.getTranslation(["game", "maj", "local"])} - ${this.lang.getTranslation(["pong", "maj", "tournament"])}</h1>
+          ${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}</h1>
         <br>
         <div class="tournament-creation removeElem">
         <div class="text-white text-center mv-80 removeElem">
           <div class="removeElem">
-            <h5 class="form-label removeElem" id="SelectPlayersTitle">${this.lang.getTranslation(["game", "numberPlayer"])}</h5>
+            <h5 class="form-label removeElem" id="SelectPlayersTitle">${this.lang.getTranslation(["game", "selectNbPlayer"])}:</h5>
             <input class="removeElem" type="number" id="usernameCount" class="form-control" min="3" max="10" value="3">
           </div>
         </div>
@@ -88,11 +88,11 @@ export default class extends AbstractView {
     let errorMessage = "";
     errorDiv.innerHTML = "";
     if (target.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(target.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     } else if (!this.checkUnique(target.value)) {
-      errorMessage = "Not a unique Username";
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "unique"])}`;
     }
     if (errorMessage) {
       console.log("ERROR:", errorMessage);

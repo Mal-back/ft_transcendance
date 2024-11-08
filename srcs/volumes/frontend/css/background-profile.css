@@ -8,3 +8,10 @@
     width: 100%;
     position: relative;
 }
+
+.text-primary {
+    background-color: transparent;
+    border: none;
+    color: black;
+    text-decoration: none;
+}

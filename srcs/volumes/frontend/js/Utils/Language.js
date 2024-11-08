@@ -24,20 +24,20 @@ export default class Language {
     const logIcon = document.querySelector("#logIconRef");
     const logIconImg = document.querySelector("#logIconImg");
     if (username && accessToken && refreshToken) {
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["menu", "logout"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-right"></i> ${this.lang.getTranslation(["title", "logout"])}`;
       loginOverlay.href = "/logout";
       logIcon.href = "/logout";
-      logIcon.title = this.lang.getTranslation(["menu", "logout"]);
+      logIcon.title = this.lang.getTranslation(["title", "logout"]);
       logIconImg.classList.remove("bi-box-arrow-left");
       logIconImg.classList.add("bi-box-arrow-right");
     } else {
       if (username || accessToken || refreshToken) {
         removeSessionStorage();
       }
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["menu", "login"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-left"></i> ${this.lang.getTranslation(["title", "login"])}`;
       loginOverlay.href = "/login";
       logIcon.href = "/login";
-      logIcon.title = this.lang.getTranslation(["menu", "login"]);
+      logIcon.title = this.lang.getTranslation(["title", "login"]);
       logIconImg.classList.remove("bi-box-arrow-right");
       logIconImg.classList.add("bi-box-arrow-left");
     }
@@ -45,29 +45,29 @@ export default class Language {
 
   translateIndex() {
     const menuPong = document.getElementById("menuPong");
-    menuPong.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["menu", "pong"])}`;
+    menuPong.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["title", "pong"])}`;
     const menuConnect4 = document.getElementById("menuConnect4");
-    menuConnect4.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["menu", "connect4"])}`;
+    menuConnect4.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["title", "c4"])}`;
     document.getElementById("menuProfile").innerHTML =
-      `<i class="bi bi-person"></i> ${this.getTranslation(["menu", "profile"])}`;
+      `<i class="bi bi-person"></i> ${this.getTranslation(["title", "profile"])}`;
     document.getElementById("menuFriends").innerHTML =
-      `<i class="bi bi-person-heart"></i> ${this.getTranslation(["menu", "friends"])}`;
+      `<i class="bi bi-person-heart"></i> ${this.getTranslation(["title", "friends"])}`;
     const loginOverlay = document.querySelector("#overlayLogin");
     if (sessionStorage.getItem("accessJWT_transcendence")) {
-      loginOverlay.innerHTML = `<i class="bi bi=box-arrow-in-right"></i> ${this.getTranslation(["menu", "logout"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi=box-arrow-in-right"></i> ${this.getTranslation(["title", "logout"])}`;
       document.querySelector("#logIconRef").title = this.getTranslation([
-        "menu",
+        "title",
         "logout",
       ]);
     } else {
-      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${this.getTranslation(["menu", "login"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${this.getTranslation(["title", "login"])}`;
       document.querySelector("#logIconRef").title = this.getTranslation([
-        "menu",
+        "title",
         "login",
       ]);
     }
     const alertLabel = document.getElementById("alertLabel");
-    alertLabel.innerText = this.getTranslation(["modal", "error"]);
+    alertLabel.innerText = this.getTranslation(["modal", "title","error"]);
   }
 
   async fetchJSONLanguage() {

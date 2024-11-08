@@ -4,15 +4,19 @@ from .models import InQueueUser, Match, MatchUser
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 
 def check_range_update(user:InQueueUser):
-    if now() - user.last_range_update > timedelta(seconds=10): 
-        user.range_to_search += 0.05
+    if now() - user.last_range_update > timedelta(seconds=3): 
+        user.range_to_search += 0.1
         user.last_range_update = now()
         user.save()
 
 def get_opponent(user:InQueueUser):
+    print("In Func")
     check_range_update(user)
-    potential_opps = InQueueUser.objects.filter(win_rate__range=(user.minimal_wr, user.maximal_wr)).exclude(user=user.user).order_by('?')
+    print(f'{user.minimal_wr}, {user.maximal_wr}')
+    potential_opps = InQueueUser.objects.filter(win_rate__range=(user.minimal_wr, user.maximal_wr),
+                                                game_type=user.game_type).exclude(user=user.user).order_by('?')
     for potential_opp in potential_opps:
+        print("testing a opps")
         check_range_update(potential_opp)
         reverse_opps = InQueueUser.objects.filter(win_rate__range=(potential_opp.minimal_wr, potential_opp.maximal_wr))
         if user in reverse_opps:
@@ -29,14 +33,16 @@ def get_opponent(user:InQueueUser):
                         )
                 response = ret['http://game:8443/api/game/pong-remote/create/'] 
                 matchId = response.text.strip('"')
-                Match.objects.create
             except (RequestsFailed, InvalidCredentialsException):
-                pass
-            try:
-                player1 = MatchUser.objects.get(username=user.user)
-                player2 = MatchUser.objects.get(username=potential_opp.user)
-            except MatchUser.DoesNotExit:
-                pass
+                raise YouHaveNoOpps('You\'re an OG with no opps')
+            match = Match.objects.create(player1=user.user,
+                                 player2=potential_opp.user,
+                                 game_type=user.game_type,
+                                 matchId=matchId,
+                                 status='in_progress')
+            user.delete()
+            potential_opp.delete()
+            return match
     raise YouHaveNoOpps('You\'re an OG with no opps')
 
 class YouHaveNoOpps(Exception):

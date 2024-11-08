@@ -35,8 +35,8 @@ canvas {
 }
 
 .Avatar-Resize {
-    width: 8vw;
-    height: 8vh;
+    width: min(8vh, 8vw);
+    height: min(8vh, 8vw);
     max-width: 80px;
     max-height: 80px;
 }

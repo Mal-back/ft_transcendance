@@ -18,6 +18,15 @@ import PongRemoteMenu from "./pages/PongRemoteMenu.js";
 import PongLocalLobby from "./pages/PongLocalLobby.js";
 import PongRemoteLobby from "./pages/PongRemoteLobby.js";
 import PongLocalTournament from "./pages/PongLocalTournament.js";
+
+// import Puissance4 Local
+import Connect4Local from "./pages/Connect4Local.js";
+import Connect4Menu from "./pages/Connect4Mode.js";
+import Connect4LocalMenu from "./pages/Connect4LocalMenu.js";
+import Connect4RemoteMenu from "./pages/Connect4RemoteMenu.js";
+import Connect4LocalLobby from "./pages/Connect4LocalLobby.js";
+import Connect4RemoteLobby from "./pages/Connect4RemoteLobby.js";
+import Connect4LocalTournament from "./pages/Connect4LocalTournament.js";
 import AbstractViews from "./pages/AbstractViews.js";
 
 export const navigateTo = (url) => {
@@ -45,13 +54,22 @@ const router = async () => {
     { path: "/friends", view: Friends },
     { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
-    { path: "/pong-local", view: PongLocal },
+    { path: "/pong", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
     { path: "/pong-local-menu", view: PongLocalMenu },
     { path: "/pong-remote-menu", view: PongRemoteMenu },
     { path: "/pong-local-lobby", view: PongLocalLobby },
     { path: "/pong-remote-lobby", view: PongRemoteLobby },
     { path: "/pong-local-tournament", view: PongLocalTournament },
+
+    //PUISSANCE 4 routes
+    { path: "/c4", view: Connect4Local },
+    { path: "/c4-menu", view: Connect4Menu },
+    { path: "/c4-local-menu", view: Connect4LocalMenu },
+    { path: "/c4-remote-menu", view: Connect4RemoteMenu },
+    { path: "/c4-local-lobby", view: Connect4LocalLobby },
+    { path: "/c4-remote-lobby", view: Connect4RemoteLobby },
+    { path: "/c4-local-tournament", view: Connect4LocalTournament },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -83,7 +101,7 @@ const router = async () => {
     document.querySelector("#app").innerHTML = "";
     await view.checkLogin();
     document.querySelector("#app").innerHTML = await view.getHtml();
-    if (match.route.path == "/pong-local" || match.route.path == "/pong")
+    if (match.route.path == "/c4" || match.route.path == "/pong")
       await view.game();
     await view.addEventListeners();
   } catch (error) {
@@ -112,12 +130,15 @@ const router = async () => {
   // Call the function to print all CSS links
 
   // print all html
-  //   printAllCssLinks();
+  // printAllCssLinks();
   //   console.log("PRINT HTML")
   // console.log(document.documentElement.outerHTML);
 };
 
-window.addEventListener("popstate", router);
+window.addEventListener("popstate", () => {
+  if (view) view.destroy();
+  router();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.addEventListener("click", handleClick);
@@ -195,6 +216,27 @@ document.addEventListener("keydown", (ev) => {
     modalInstance.hide();
   }
 });
+
+document
+  .getElementById("buttonOnGoingGame")
+  .addEventListener("click", async (ev) => {
+    ev.preventDefault();
+    const url = ev.currentTarget.dataset.redirectUrl;
+    if (url) {
+      if (ev.target.innerText == "CANCEL") {
+        const request = await view.makeRequest(url, "DELETE");
+        const response = await fetch(request);
+        const data = await view.getErrorLogfromServer(response);
+        console.log("cancel: ", response);
+        console.log("Cancel: ", data);
+        const divOnGoingGame = document.querySelector("#divOnGoingGame");
+        divOnGoingGame.style.display = "none";
+      } else navigateTo(url);
+      const friendModalDiv = document.querySelector("#inviteUserModal");
+      const modal = bootstrap.Modal.getInstance(friendModalDiv);
+      modal.hide();
+    }
+  });
 
 // const inviteList = document.getElementById("inviteList");
 //

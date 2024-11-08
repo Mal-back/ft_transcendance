@@ -51,7 +51,7 @@ class IsGame(permissions.BasePermission):
 
             # Check if the service_name is "Auth"
             service_name = decoded_token.get('service_name')
-            if service_name != 'pong' or service_name != 'connect_four':
+            if service_name != 'game':
                 return False  # Service name does not match
 
             return True  # Service name matches "Auth"
@@ -63,10 +63,22 @@ class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.username == request.user.username 
 
+class IsInitiatingPlayer(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.player1.username == request.user.username 
+
 
 class IsInvitedPlayer(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.player2.username == request.user.username 
+
+class IsInvitedPlayerTournament(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user in obj.invited_players.all() 
+
+class IsConfirmedPlayerTournament(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user.username in obj.confirmed_players.values_list('user', flat=True) 
 
 class IsAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
