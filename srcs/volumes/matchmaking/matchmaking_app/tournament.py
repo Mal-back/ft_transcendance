@@ -1,6 +1,8 @@
 from requests import delete
 from rest_framework import status
 from rest_framework.views import Response
+
+from matchmaking.matchmaking_app.serializers import TournamentDetailSerializer, TournamentToHistorySerializer
 from .models import Tournament, Match, MatchUser, TournamentUser
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from django.db.models import F
@@ -63,17 +65,20 @@ def handle_finished_matches(match:Match, data:dict):
     if not match.objects.filter(tournament=tournament).exists() :
         tournament.round += 1
         if tournament.round == tournament.confirmed_players.count():
-            match.status = 'finished'
-            # serialize results
-            # send results to history
+            tournament.status = 'finished'
+            serializer = TournamentToHistorySerializer(tournament)
+            try:
+                sender = MicroServiceClient()
+                sender.send_requests(
+                    urls = [f'http://game:8443/api/history/tournament/create/'],
+                    expected_status=[201],
+                    method='post',
+                    body=serializer.data
+                    )
+            except (RequestsFailed, InvalidCredentialsException):
+                pass
             delete_tournament(tournament.id)
-            # return results
-            pass
-        try :
-            create_round_matches(tournament)
-        except (RequestsFailed, InvalidCredentialsException):
-            tournament.delete()
-            return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        tournament.save()
         
 
 def round_robin_scheduler(players):
