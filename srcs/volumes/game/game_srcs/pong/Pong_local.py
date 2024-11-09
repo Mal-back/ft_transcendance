@@ -186,8 +186,7 @@ class PongLocalEngine(threading.Thread):
                 "Frame": self.frame.render(),
             })
         except Exception:
-            return
-            # print("PongLocalEngine : Can not send frame to group channel " + self.game_id)
+            print("PongLocalEngine : Can not send frame to group channel " + self.game_id)
 
 
     def send_config(self) -> None:

@@ -234,6 +234,4 @@ class Board:
 			# print(self)
 			player = self.player1 if w == 0 else self.player2
 			return player
-		if self.board_is_full():
-			self.flush_board()
 		return None
