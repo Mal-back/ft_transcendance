@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class AbstractViews {
   static invitesArray = [];
   static pollingInterval = null;
-  static MatchmakingInterval = null;
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
@@ -478,9 +477,10 @@ export default class AbstractViews {
           clearInterval(AbstractViews.pollingInterval);
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
-          if (error instanceof CustomError)
+          if (error instanceof CustomError) {
             showModal(error.title, error.message);
-          navigateTo("/");
+            navigateTo(error.redirect);
+          } else console.error("startNotificationPolling: ", error)
         }
       }, 3000);
     }
@@ -583,9 +583,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -772,7 +772,7 @@ export default class AbstractViews {
       }
       const parseToken = this.parseJwt(authToken);
       const currentTime = Math.floor(Date.now() / 1000);
-      if (parseToken.exp + 1 <= currentTime) {
+      if (parseToken.exp + 10 <= currentTime) {
         await this.refreshToken(authToken);
       }
     } catch (error) {

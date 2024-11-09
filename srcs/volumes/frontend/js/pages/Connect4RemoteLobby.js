@@ -1,30 +1,30 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import {
-    removeSessionStorage,
-    setSessionStorage,
-    showModal,
+  removeSessionStorage,
+  setSessionStorage,
+  showModal,
 } from "../Utils/Utils.js";
 import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
-    constructor() {
-        super();
-        this.setTitle("Connect4 Lobby");
-        // this.handleShowFriendsModal = this.handleShowFriendsModal.bind(this);
-    }
+  constructor() {
+    super();
+    this.setTitle("Connect4 Lobby");
+    // this.handleShowFriendsModal = this.handleShowFriendsModal.bind(this);
+  }
 
-    async loadCss() {
-        this.createPageCss("../css/game-menu-buttons.css");
-        this.createPageCss("../css/margin.css");
-        this.createPageCss("../css/tournament-local.css");
-    }
+  async loadCss() {
+    this.createPageCss("../css/game-menu-buttons.css");
+    this.createPageCss("../css/margin.css");
+    this.createPageCss("../css/tournament-local.css");
+  }
 
-    async getHtml() {
-        return `
+  async getHtml() {
+    return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-          ${this.lang.getTranslation(["game", "c4", "title"])} - ${this.lang.getTranslation(["game", "remote"])} - ${this.lang.getTranslation(["game", "tournament"])}</h1>
+          ${this.lang.getTranslation(["title", "c4"]).toUpperCase()} - ${this.lang.getTranslation(["title", "remote"]).toUpperCase()} - ${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
         <br>
         <div class="tournament-creation ranking ">
           <div class=" text-center text-white  rounded">
@@ -94,84 +94,84 @@ export default class extends AbstractView {
         </div>
       </div>
                       `;
+  }
+
+  async getFriendList() {
+    const username = sessionStorage.getItem("username_transcendence");
+    let data = null;
+
+    try {
+      const request = await this.makeRequest(
+        `/api/users/${username}/friend/`,
+        "GET",
+      );
+      const response = await fetch(request);
+      if (!response.ok) {
+        showModal(
+          this.lang.getTranslation(["modal", "error"]),
+          await this.getErrorLogfromServer(response),
+        );
+        return;
+      }
+      data = await response.json();
+      if (data.count === 0) {
+        return "<p class='text-center'>No friends found.</p>";
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
+        console.error("error", error);
+        return;
+      }
     }
 
-    async getFriendList() {
-        const username = sessionStorage.getItem("username_transcendence");
-        let data = null;
+    // Generate the friend list HTML
+    let friendsArray = data.results;
+    const friendsHtml = friendsArray
+      .map((friendJson) => this.createFriendElement(friendJson))
+      .join("");
 
-        try {
-            const request = await this.makeRequest(
-                `/api/users/${username}/friend/`,
-                "GET",
-            );
-            const response = await fetch(request);
-            if (!response.ok) {
-                showModal(
-                    this.lang.getTranslation(["modal", "error"]),
-                    await this.getErrorLogfromServer(response),
-                );
-                return;
-            }
-            data = await response.json();
-            if (data.count === 0) {
-                return "<p class='text-center'>No friends found.</p>";
-            }
-        } catch (error) {
-            if (error instanceof CustomError) throw error;
-            else {
-                showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-                console.error("error", error);
-                return;
-            }
-        }
-
-        // Generate the friend list HTML
-        let friendsArray = data.results;
-        const friendsHtml = friendsArray
+    // Paginate if there are additional pages of friends
+    let nextPage = data.next;
+    while (nextPage) {
+      try {
+        const request = await this.makeRequest(nextPage, "GET", null);
+        const response = await fetch(request);
+        if (response.ok) {
+          const pageData = await response.json();
+          friendsArray = pageData.results;
+          friendsHtml += friendsArray
             .map((friendJson) => this.createFriendElement(friendJson))
             .join("");
-
-        // Paginate if there are additional pages of friends
-        let nextPage = data.next;
-        while (nextPage) {
-            try {
-                const request = await this.makeRequest(nextPage, "GET", null);
-                const response = await fetch(request);
-                if (response.ok) {
-                    const pageData = await response.json();
-                    friendsArray = pageData.results;
-                    friendsHtml += friendsArray
-                        .map((friendJson) => this.createFriendElement(friendJson))
-                        .join("");
-                    nextPage = pageData.next;
-                } else {
-                    const log = await this.getErrorLogfromServer(response);
-                    console.log(log);
-                    showModal(this.lang.getTranslation(["modal", "error"]), log);
-                    break;
-                }
-            } catch (error) {
-                if (error instanceof CustomError) throw error;
-                else {
-                    console.error("Error fetching next page:", error);
-                    break;
-                }
-            }
+          nextPage = pageData.next;
+        } else {
+          const log = await this.getErrorLogfromServer(response);
+          console.log(log);
+          showModal(this.lang.getTranslation(["modal", "error"]), log);
+          break;
         }
-
-        return `<div class="list-group">${friendsHtml}</div>`;
+      } catch (error) {
+        if (error instanceof CustomError) throw error;
+        else {
+          console.error("Error fetching next page:", error);
+          break;
+        }
+      }
     }
 
-    createFriendElement(friendJson) {
-        const friendStatus = friendJson.is_online
-            ? "status-online"
-            : "status-offline";
-        const friendAvatarUrl = friendJson.profilePic
-            ? `url('${friendJson.profilePic}')`
-            : "url('/path/to/default-avatar.jpg')"; // fallback image
+    return `<div class="list-group">${friendsHtml}</div>`;
+  }
 
-        return `
+  createFriendElement(friendJson) {
+    const friendStatus = friendJson.is_online
+      ? "status-online"
+      : "status-offline";
+    const friendAvatarUrl = friendJson.profilePic
+      ? `url('${friendJson.profilePic}')`
+      : "url('/path/to/default-avatar.jpg')"; // fallback image
+
+    return `
       <div class="list-group-item d-flex align-items-center mb-3 rounded">
         <div class="rounded-circle Avatar ${friendStatus} me-3" 
              style="background-image: ${friendAvatarUrl}; width: 40px; height: 40px; background-size: cover; background-position: center;" 
@@ -185,26 +185,26 @@ export default class extends AbstractView {
         </button>
       </div>
     `;
-    }
+  }
 
-    async addEventListeners() {
-        const startTournamentBtn = document.querySelector("#startTournamentBtn");
-        startTournamentBtn.addEventListener("click", this.handleStartTournament);
+  async addEventListeners() {
+    const startTournamentBtn = document.querySelector("#startTournamentBtn");
+    startTournamentBtn.addEventListener("click", this.handleStartTournament);
 
-        const showFriends = document.querySelector("#friend-list");
-        showFriends.addEventListener("click", this.handleShowFriendsModal);
+    const showFriends = document.querySelector("#friend-list");
+    showFriends.addEventListener("click", this.handleShowFriendsModal);
 
-        document
-            .getElementById("friend-list")
-            .addEventListener("click", async () => {
-                const friendListContent = await this.getFriendList();
-                document.getElementById("friendListModalContent").innerHTML =
-                    friendListContent;
-                // Show the modal after setting the content
-                const friendListModal = new bootstrap.Modal(
-                    document.getElementById("friendListModal"),
-                );
-                friendListModal.show();
-            });
-    }
+    document
+      .getElementById("friend-list")
+      .addEventListener("click", async () => {
+        const friendListContent = await this.getFriendList();
+        document.getElementById("friendListModalContent").innerHTML =
+          friendListContent;
+        // Show the modal after setting the content
+        const friendListModal = new bootstrap.Modal(
+          document.getElementById("friendListModal"),
+        );
+        friendListModal.show();
+      });
+  }
 }

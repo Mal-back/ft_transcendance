@@ -27,12 +27,12 @@ export default class extends AbstractView {
     return `
       <div class="background removeElem"  style="background-image:url('../img/forest.png');">
         <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-          ${this.lang.getTranslation(["game", "c4", "title"])} - ${this.lang.getTranslation(["game", "local"])} - ${this.lang.getTranslation(["game", "tournament"])}</h1>
+          ${this.lang.getTranslation(["title", "c4"]).toUpperCase()} - ${this.lang.getTranslation(["title", "local"]).toUpperCase()} - ${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
         <br>
         <div class="tournament-creation removeElem">
         <div class="text-white text-center mv-80 removeElem">
           <div class="removeElem">
-            <h5 class="form-label removeElem" id="SelectPlayersTitle">${this.lang.getTranslation(["game", "numberPlayer"])}</h5>
+            <h5 class="form-label removeElem" id="SelectPlayersTitle">${this.lang.getTranslation(["game", "selectNbPlayer"])}</h5>
             <input class="removeElem" type="number" id="usernameCount" class="form-control" min="3" max="10" value="3">
           </div>
         </div>

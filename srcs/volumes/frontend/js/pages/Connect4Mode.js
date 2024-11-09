@@ -24,13 +24,13 @@ export default class extends AbstractView {
     <div class="background removeElem">
       <div class="custom-container d-flex flex-column justify-content-center align-items-center removeElem">
         <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
-          ${this.lang.getTranslation(["game", "c4", "title"])}</h1>
+          ${this.lang.getTranslation(["title", "c4"]).toUpperCase()}</h1>
         <br>
         <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
-         id="c4LocalButton">${this.lang.getTranslation(["game", "local"])}</button>
+         id="c4LocalButton">${this.lang.getTranslation(["title", "local"]).toUpperCase()}</button>
         <br>
         <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-          id="c4RemoteButton">${this.lang.getTranslation(["game", "remote"])}</button>
+          id="c4RemoteButton">${this.lang.getTranslation(["title", "remote"]).toUpperCase()}</button>
         <br>
       </div>
     </div> 

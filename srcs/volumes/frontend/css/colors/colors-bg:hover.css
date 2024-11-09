@@ -27,10 +27,6 @@
     background-color: rgb(255, 102, 178);
 }
 
-.bg-gray:hover {
-    /* background-color: rgb(153, 153, 153); */
-}
-
 .bg-brown:hover {
     background-color: rgb(165, 42, 42);
 }
@@ -156,7 +152,7 @@
 }
 
 .bg-maroon:hover {
-    background-color: rgb(128, 0, 0);
+    background-color: rgb(214, 0, 0);
 }
 
 .bg-navy:hover {
