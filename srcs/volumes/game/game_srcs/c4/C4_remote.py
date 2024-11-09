@@ -184,7 +184,7 @@ class C4RemoteEngine(threading.Thread):
 
 
 
-    def clean_game(self, event):
+    def clean_game(self):
         try:
             game_instance = C4RemoteGame.objects.get(game_id=self.game_id)
             game_instance.delete()
