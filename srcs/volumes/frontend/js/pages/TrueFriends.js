@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Friends");
     this.handleRemoveFriends = this.handleRemoveFriends.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
   }
@@ -22,6 +21,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["title", "friends"])}`);
     const mainDiv = document.createElement("div");
     mainDiv.innerHTML = await this.getMaindiv();
     return mainDiv.innerHTML;
@@ -32,8 +32,8 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       if (username == friendname) {
         showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          this.lang.getTranslation(["Friends", "error", "yourself"]),
+          this.lang.getTranslation(["modal","title", "error"]),
+          this.lang.getTranslation(["modal", "message", "addYourself"]),
         );
         return;
       }

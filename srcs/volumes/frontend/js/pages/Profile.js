@@ -19,24 +19,6 @@ export default class extends AbstractView {
     this.createPageCss("../css/background-profile.css");
   }
 
-  removeEventListeners() {
-    document.querySelectorAll('[data-link="view"]').forEach((button) => {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.handleClick);
-    });
-  }
-
-  removeCss() {
-    document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
-      e.remove();
-    });
-  }
-  destroy() {
-    this.removeEventListeners();
-    this.removeCss();
-  }
-
   async loadUserData() {
     const username = sessionStorage.getItem("username_transcendence");
     console.log("username = ", username);
@@ -103,9 +85,7 @@ export default class extends AbstractView {
       );
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
-        console.log("pongMatchHistory: response", mainResponse);
         const data = await this.getDatafromRequest(mainResponse);
-        console.log("pongMatchHistory: data", data);
 
         let matchesArray = data.results;
         const matchesHTMLArray = await Promise.all(
@@ -149,15 +129,19 @@ export default class extends AbstractView {
         this.lang.getTranslation(["game", "battle"]) +
         " " +
         this.lang.getTranslation(["game", "history"]);
+
       let fillModal = await this.pongMatchHistory(userData);
       if (!fillModal)
         fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
       const winRatePong = userData.total_games
         ? `${userData.single_games_win_rate * 100} %`
         : `${this.lang.getTranslation(["game", "n/a"])}`;
+
       const winRateC4 = userData.total_games
         ? `${userData.single_games_win_rate * 100} %`
         : `${this.lang.getTranslation(["game", "n/a"])}`;
+
       const htmlContent = `
 <div class="background">
   <div class="mt-4 text-white d-flex justify-content-center align-items-center">
@@ -379,8 +363,7 @@ export default class extends AbstractView {
   removeEventListeners() {
     const button = document.querySelector("#settingsButton");
     if (button) {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.loginEvent);
+      button.removeEventListener("click", this.handleSettingButton)
     }
     // document.querySelectorAll('[data-link="view"]').forEach((button) => {
     //   console.info("removing event click on button : " + button.innerText);

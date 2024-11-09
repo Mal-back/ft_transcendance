@@ -189,8 +189,8 @@ export default class Pong {
     if (this.mode == "local") {
       let winner =
         data.winner == "player_1"
-          ? this.lang.getTranslation(["game", "blue"])
-          : this.lang.getTranslation(["game", "red"]);
+          ? this.player1.username
+          : this.player2.username
       winner += " Player";
       let score =
         data.winner == "player_1"

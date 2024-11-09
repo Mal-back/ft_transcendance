@@ -162,7 +162,7 @@ export default class extends AbstractView {
   }
 
   setPlayersName() {
-    const maxRound = this.playerInputs.length;
+    const maxRound = this.playerInputs.length % 2 == 0 ? this.playerInputs.length - 1: this.playerInputs.length;
     const playerValues = Array.from(this.playerInputs).map(
       (input) => input.value,
     );
@@ -207,7 +207,6 @@ export default class extends AbstractView {
         currentMatch: 0,
       },
     };
-    console.log("tournament", tournament);
     sessionStorage.setItem(
       "tournament_transcendence_local",
       JSON.stringify(tournament),

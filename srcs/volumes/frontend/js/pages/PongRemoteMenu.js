@@ -192,19 +192,23 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         if (response.status == 204) return;
+
         clearInterval(this.matchMakingInterval);
         this.matchMakingInterval = null;
         const modalLoadingDiv = document.querySelector("#loading-modal");
         const modalLoading = bootstrap.Modal.getInstance(modalLoadingDiv);
         modalLoading.hide();
+
         if (response.status == 409) return;
-        console.log("success matchmaking/get_match:response", response);
+        // console.log("success matchmaking/get_match:response", response);
         const data = await this.getDatafromRequest(response);
         this.showModalMatch(data);
-        console.log("success matchmaking/get_match:data", data);
+        // console.log("success matchmaking/get_match:data", data);
       }
+
       clearInterval(this.matchMakingInterval);
       this.matchMakingInterval = null;
+
       const modalLoadingDiv = document.querySelector("#loading-modal");
       const modalLoading = bootstrap.Modal.getInstance(modalLoadingDiv);
       modalLoading.hide();
@@ -214,27 +218,36 @@ export default class extends AbstractView {
   }
 
   async showModalMatch(data) {
-    console.log("HERE");
-    const modalLoadingDiv = document.querySelector("#loading-modal");
-    const modalLoading = bootstrap.Modal.getInstance(modalLoadingDiv);
-    modalLoading.hide();
+    try {
+      const modalLoadingDiv = document.querySelector("#loading-modal");
+      const modalLoading = bootstrap.Modal.getInstance(modalLoadingDiv);
+      modalLoading.hide();
 
-    clearInterval(this.matchMakingInterval);
-    this.matchMakingInterval = null;
-    const modalMatchFoundDiv = document.querySelector("#matchFoundModal");
-    let modalMatchFound = bootstrap.Modal.getInstance(modalMatchFoundDiv);
-    if (!modalMatchFound)
-      modalMatchFound = new bootstrap.Modal(modalMatchFoundDiv);
-    const opponentId = document.querySelector("#opponentMatchFoundId");
-    const username = sessionStorage.getItem("username_transcendence");
-    const opponent = username == data.player1 ? data.player2 : data.player1;
-    opponentId.innerText = opponent;
-    const dataOpponent = await this.getUserInfo(opponent);
-    const opponentAvatar = document.querySelector("#opponentMatchFoundAvatar");
-    opponentAvatar.style = `background-image: url(${dataOpponent.profilePic})`;
-    const joinButton = document.getElementById("matchFoundJoin");
-    joinButton.dataset.gameId = data.matchId;
-    modalMatchFound.show();
+      clearInterval(this.matchMakingInterval);
+      this.matchMakingInterval = null;
+
+      const modalMatchFoundDiv = document.querySelector("#matchFoundModal");
+      let modalMatchFound = bootstrap.Modal.getInstance(modalMatchFoundDiv);
+      if (!modalMatchFound)
+        modalMatchFound = new bootstrap.Modal(modalMatchFoundDiv);
+
+      const opponentId = document.querySelector("#opponentMatchFoundId");
+      const username = sessionStorage.getItem("username_transcendence");
+      const opponent = username == data.player1 ? data.player2 : data.player1;
+      opponentId.innerText = opponent;
+
+      const dataOpponent = await this.getUserInfo(opponent);
+      const opponentAvatar = document.querySelector(
+        "#opponentMatchFoundAvatar",
+      );
+      opponentAvatar.style = `background-image: url(${dataOpponent.profilePic})`;
+
+      const joinButton = document.getElementById("matchFoundJoin");
+      joinButton.dataset.gameId = data.matchId;
+      modalMatchFound.show();
+    } catch (error) {
+      this.handleCatch(error);
+    }
   }
 
   async joinMatchmakingQueue() {
@@ -407,9 +420,25 @@ export default class extends AbstractView {
       );
 
     const opponentInput = document.getElementById("opponentUsername");
-    opponentInput.removeEventListener("input", this.handleInputOpponent);
+    if (opponentInput)
+      opponentInput.removeEventListener("input", this.handleInputOpponent);
     const inviteButton = document.querySelector("#inviteButton");
     if (inviteButton)
       inviteButton.removeEventListener("click", this.handleMatchRemote);
+
+    const matchmakingModalShow = document.querySelector(
+      "#PongMatchmakingButton",
+    );
+    if (matchmakingModalShow)
+      matchmakingModalShow.removeEventListener(
+        "click",
+        this.handleShowMatchmakingModal,
+      );
+
+    const joinButtonMatchFound = document.querySelector("#matchFoundJoin");
+    if (joinButtonMatchFound)
+      joinButtonMatchFound.removeEventListener("click", this.redirectToGame);
+
+    document.removeEventListener("beforeunload", this.handleUnloadQueue);
   }
 }
