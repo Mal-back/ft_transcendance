@@ -11,7 +11,6 @@ import {
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Local Connect4");
     this.connect4 = new Connect4(this.handleGetUsername.bind(this));
   }
 
@@ -40,6 +39,9 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "c4"])}`,
+    );
     const htmlContent = `
         <div class="col d-flex flex-column align-items-center justify-content-center">
             <div class="background background-battle d-flex flex-column align-items-center">
@@ -136,7 +138,7 @@ export default class extends AbstractView {
                     </div>
                 </div>
                 <div class="m-3">
-                        <button id="helpBtn" type="button" class="btn btn-secondary">HELP</button>
+                        <button id="helpBtn" type="button" class="btn btn-secondary"></button>
                         <button id="giveUpBtn" type="button" class="btn btn-danger" style="display: none;">GIVE UP</button>
                         <button id="startBtn" type="button" class="removeElem btn btn-success">START</button>
                         <button id="returnBtn" type="button" class="removeElem btn btn-success" style="display: none;">RETURN</button>

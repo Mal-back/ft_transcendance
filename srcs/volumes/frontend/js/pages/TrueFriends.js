@@ -32,7 +32,7 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       if (username == friendname) {
         showModal(
-          this.lang.getTranslation(["modal","title", "error"]),
+          this.lang.getTranslation(["modal", "title", "error"]),
           this.lang.getTranslation(["modal", "message", "addYourself"]),
         );
         return;
@@ -244,14 +244,16 @@ export default class extends AbstractView {
     const friendUsername = button
       .closest(".list-group-item")
       .querySelector("h5").textContent;
-    console.log("Removing:", friendUsername);
 
     ev.preventDefault();
     try {
       await this.removeFriends(friendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
+        showModal(error.title, error.message);
         navigateTo(error.redirect);
+      } else {
+        console.error("handleRemoveFriends:", error);
       }
     }
   }
@@ -265,7 +267,10 @@ export default class extends AbstractView {
       await this.addFriendRequest(addFriendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
+        showModal(error.title, error.message);
         navigateTo(error.redirect);
+      } else {
+        console.error("handleAddFriend:", error);
       }
     }
   }

@@ -2,7 +2,6 @@ import Home from "./pages/Home.js";
 import Profile from "./pages/Profile.js";
 import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
-import Matchmaking from "./pages/Matchmaking.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
 import Friends from "./pages/TrueFriends.js";
@@ -215,21 +214,21 @@ document
   .getElementById("buttonOnGoingGame")
   .addEventListener("click", async (ev) => {
     try {
-    ev.preventDefault();
-    const url = ev.currentTarget.dataset.redirectUrl;
-    if (url) {
-      if (ev.target.innerText == "CANCEL") {
-        const request = await view.makeRequest(url, "DELETE");
-        const response = await fetch(request);
-        if (view.handleStatus(response)){ 
-        const divOnGoingGame = document.querySelector("#divOnGoingGame");
-        divOnGoingGame.style.display = "none";
-        }
-      } else navigateTo(url);
-      const friendModalDiv = document.querySelector("#inviteUserModal");
-      const modal = bootstrap.Modal.getInstance(friendModalDiv);
-      modal.hide();
-    }
+      ev.preventDefault();
+      const url = ev.currentTarget.dataset.redirectUrl;
+      if (url) {
+        if (ev.target.innerText == "CANCEL") {
+          const request = await view.makeRequest(url, "DELETE");
+          const response = await fetch(request);
+          if (view.handleStatus(response)) {
+            const divOnGoingGame = document.querySelector("#divOnGoingGame");
+            divOnGoingGame.style.display = "none";
+          }
+        } else navigateTo(url);
+        const friendModalDiv = document.querySelector("#inviteUserModal");
+        const modal = bootstrap.Modal.getInstance(friendModalDiv);
+        modal.hide();
+      }
     } catch (error) {
       if (error instanceof CustomError) {
         showModal(error.title, error.message);

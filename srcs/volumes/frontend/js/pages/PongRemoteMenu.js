@@ -90,7 +90,7 @@ export default class extends AbstractView {
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="matchFoundTitle">${this.lang.getTranslation(["game", "match"])}
-              ${this.lang.getTranslation(["game", "found"])}</h5>
+              ${this.lang.getTranslation(["game", "found"])}!</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -303,7 +303,7 @@ export default class extends AbstractView {
           if (error instanceof CustomError) {
             showModal(error.title, error.message);
             navigateTo(error.redirect);
-          } else console.error(": ", error);
+          } else console.error("handleShowMatchmakingModal: ", error);
         }
       }, 500);
     }
