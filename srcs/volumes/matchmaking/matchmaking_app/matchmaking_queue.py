@@ -23,15 +23,15 @@ def get_opponent(user:InQueueUser):
             try:
                 sender = MicroServiceClient()
                 ret = sender.send_requests(
-                        urls = ['http://game:8443/api/game/pong-remote/create/'],
+                        urls = [f'http://game:8443/api/game/{user.game_type}-remote/create/'],
                         expected_status=[201],
                         method='post',
                         body={
-                            'player_1_name':f'{user.user}',
-                            'player_2_name':f'{potential_opp.user}',
+                            'player_1_name':f'{user.user.username}',
+                            'player_2_name':f'{potential_opp.user.username}',
                             }
                         )
-                response = ret['http://game:8443/api/game/pong-remote/create/'] 
+                response = ret[f'http://game:8443/api/game/{user.game_type}-remote/create/'] 
                 matchId = response.text.strip('"')
             except (RequestsFailed, InvalidCredentialsException):
                 raise YouHaveNoOpps('You\'re an OG with no opps')

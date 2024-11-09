@@ -265,37 +265,15 @@ class TournamentRemovePlayersSerializer(serializers.ModelSerializer):
 
         return instance
 
-class TournamentDetailSerializer(serializers.ModelSerializer):
-    player_type = serializers.SerializerMethodField()
+class TournamentConciseSerializer(serializers.ModelSerializer):
     accept_invite = serializers.SerializerMethodField()
     decline_invite = serializers.SerializerMethodField()
-    leave_tournament = serializers.SerializerMethodField()
+    owner_name = serializers.SerializerMethodField()
     delete_tournament = serializers.SerializerMethodField()
-    round_number = serializers.SerializerMethodField()
-    invited_players_profiles = serializers.SerializerMethodField()
-    confirmed_players_profiles = serializers.SerializerMethodField()
-    owner_profile = serializers.SerializerMethodField()
-    invite_players = serializers.SerializerMethodField()
-    remove_players = serializers.SerializerMethodField()
-    launch_tournament = serializers.SerializerMethodField()
 
     class Meta:
         model = Tournament
-        fields = ['game_type', 'status', 'player_type', 'accept_invite', 'decline_invite',
-                  'leave_tournament', 'delete_tournament', 'round_number', 'invited_players_profiles',
-                  'confirmed_players_profiles', 'owner_profile', 'invite_players', 'remove_players',
-                  'launch_tournament',]
-
-    def get_player_type(self, obj):
-        request = self.context.get('request')
-        user = request.user
-        if user in obj.invited_players.all(): 
-            return('Invited Player')
-        elif user in obj.confirmed_players.values_list('user', flat=True): 
-            return ('Confirmed Player')
-        elif user == obj.owner:
-            return('Owner')
-        return None
+        fields = ['game_type', 'status', 'accept_invite', 'decline_invite', 'owner_name', 'delete_tournament']
 
     def get_accept_invite(self, obj):
         request = self.context.get('request')
@@ -309,6 +287,48 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
         user = request.user
         if user in obj.invited_players.all() and obj.status == 'pending': 
             return(f'/api/matchmaking/tournament/{obj.id}/decline/')
+        return None
+
+    def get_delete_tournament(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if obj.owner == user and obj.status == 'pending': 
+            return(f'/api/matchmaking/tournament/delete/')
+        return None
+
+    def get_owner_name(self, obj):
+        return obj.owner.username
+
+class TournamentDetailSerializer(serializers.ModelSerializer):
+    player_type = serializers.SerializerMethodField()
+    leave_tournament = serializers.SerializerMethodField()
+    delete_tournament = serializers.SerializerMethodField()
+    round_number = serializers.SerializerMethodField()
+    invited_players_profiles = serializers.SerializerMethodField()
+    confirmed_players_profiles = serializers.SerializerMethodField()
+    players_order = serializers.SerializerMethodField()
+    owner_profile = serializers.SerializerMethodField()
+    invite_players = serializers.SerializerMethodField()
+    remove_players = serializers.SerializerMethodField()
+    launch_tournament = serializers.SerializerMethodField()
+    launch_next_round = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tournament
+        fields = ['game_type', 'status', 'player_type', 'accept_invite', 'decline_invite',
+                  'leave_tournament', 'delete_tournament', 'round_number', 'invited_players_profiles',
+                  'confirmed_players_profiles', 'owner_profile', 'invite_players', 'remove_players',
+                  'launch_tournament', 'players_order', 'launch_next_round']
+
+    def get_player_type(self, obj):
+        request = self.context.get('request')
+        user = request.user
+        if user in obj.invited_players.all(): 
+            return('Invited Player')
+        elif user in obj.confirmed_players.values_list('user', flat=True): 
+            return ('Confirmed Player')
+        elif user == obj.owner:
+            return('Owner')
         return None
 
     def get_leave_tournament(self, obj):
@@ -345,11 +365,13 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
         return None
 
     def get_confirmed_players_profiles(self, obj):
-        links = []
-        for username in  obj.confirmed_players.values_list('user__username', flat=True):
-            profile_url = f'/api/users/{username}/'
-            links.append({'username': username, 'profile':profile_url})
-        return links
+        if obj.status == 'pending':
+            links = []
+            for username in  obj.confirmed_players.values_list('user__username', flat=True):
+                profile_url = f'/api/users/{username}/'
+                links.append({'username': username, 'profile':profile_url})
+            return links
+        return None
 
     def get_owner_profile(self, obj):
         return f'/api/users/{obj.owner.username}/'
@@ -374,3 +396,43 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
         if obj.owner == user and obj.confirmed_players.count() > 2:
             return '/api/matchmaking/tournament/launch/'
         return None
+
+    def get_launch_next_round(self, obj):
+        if obj.status == 'in_progress' and not Match.objects.filter(tournament=obj).exists():
+            return('/api/matchmaking/tournament/next_round/')
+        return None
+
+    def get_players_order(self, obj):
+        if obj.status == 'in_progress':
+            sorted_participants = obj.confirmed_user.order_by('-match_won')
+            return TournamentUserSerializer(sorted_participants, many=True).data
+        return None
+
+class TournamentToHistorySerializer(serializers.ModelField):
+    order = serializers.SerializerMethodField()
+    class Meta:
+        model = Tournament
+        field = ['game_type', 'order']
+
+    def get_order(self, obj):
+        if obj.status == 'in_progress':
+            sorted_participants = obj.confirmed_user.order_by('-match_won')
+            return TournamentUserSerializer(sorted_participants, many=True).data
+        return None
+
+class TournamentUserSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+    user_profile = serializers.SerializerMethodField()
+    game_played = serializers.SerializerMethodField()
+    class Meta:
+        model = TournamentUser
+        fields = ['username', 'match_won', 'match_lost', 'user_profile']
+
+    def get_username(self, obj):
+        return obj.user.username
+
+    def get_user_profile(self, obj):
+        return(f'/api/users/{obj.user.username}')
+
+    def get_game_played(self, obj):
+        return obj.match_won + obj.match_lost
