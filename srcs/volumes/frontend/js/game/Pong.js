@@ -124,6 +124,7 @@ export default class Pong {
         game_id: uuid,
         auth_key: this.token,
       };
+      console.log("try to auth with: ", body)
       this.webSocket.send(JSON.stringify(body));
     }
     this.webSocket.send(JSON.stringify({ type: "init_game" }));

@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class AbstractViews {
   static invitesArray = [];
   static pollingInterval = null;
-  static MatchmakingInterval = null;
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
@@ -478,9 +477,10 @@ export default class AbstractViews {
           clearInterval(AbstractViews.pollingInterval);
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
-          if (error instanceof CustomError)
+          if (error instanceof CustomError) {
             showModal(error.title, error.message);
-          navigateTo("/");
+          navigateTo(error.redirect);
+          } else console.error("startNotificationPolling: ", error)
         }
       }, 3000);
     }
