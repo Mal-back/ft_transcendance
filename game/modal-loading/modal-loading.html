@@ -11,8 +11,24 @@
     <link rel="stylesheet" href="../css/notif.css">
     <link rel="stylesheet" href="../css/colors/colors.css">
     <link rel="stylesheet" href="../css/background-basic.css">
+    <link rel="stylesheet" href="../css/friend-list.css">
     <title id="page-title">TOURNAMENT - CONNECT 4 - GLOBAL RANKING</title>
-
+    <style>
+        .gif {
+            background-image: url("../img/bg.jpeg");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            /* height: 100%; */
+            /* width: 100%; */
+            width: 100px;
+            /* Example width */
+            height: 100px;
+            position: relative;
+            max-width: min(7vh, 7vw);
+            max-height: min(7vh, 7vw);
+        }
+    </style>
 </head>
 
 <body>
@@ -116,6 +132,10 @@
                         data-bs-target="#legalMentions">
                         Legal Mentions
                     </button>
+                    <button type="button" class="btn btn-danger white-txt" data-bs-toggle="modal"
+                        data-bs-target="#matchFoundModal">
+                        Match Found
+                    </button>
                 </div>
             </div>
             <div class="modal fade" id="legalMentions" tabindex="-1" aria-labelledby="legalMentionsLabel"
@@ -200,92 +220,119 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="matchFoundModal" tabindex="-1" aria-labelledby="matchFoundModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered loading-modal-diag">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-center" id="matchFoundTitle">Game Result:</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="d-flex align-items-center justify-content-center row">
+                                <div class="text-center m-1">
+                                    <h5><strong>WINNER : <span style="color:red">CAT</span></strong></h5>
+                                </div>
+                                <div class="text-center m-1">
+                                    <h6><strong>1 - 0</strong></h6>
+                                </div>
+                                <div class="text-center m-1">
+                                    <h5><strong>LOOSER : <span style="color:blue">DOG</span></strong></h5>
+                                </div>
+                                <div class="gif rounded-circle"
+                                    style="background-image: url(../img/ts/taylor-swift-cookie.gif); ">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script>
-        function changeLanguage(translations) {
-            const translation = translations;
-            console.log(translation);
-            if (translation) {
-                // Update main content translations
-                // Update menu translations using innerHTML
-                document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
-                document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
-                document.getElementById('menuProfile').innerHTML = `<i class="bi bi-person"></i> ${translation.menu.profile}`;
-                document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
-                document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
-                document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+        <script>
+            function changeLanguage(translations) {
+                const translation = translations;
+                console.log(translation);
+                if (translation) {
+                    // Update main content translations
+                    // Update menu translations using innerHTML
+                    document.getElementById('menuHome').innerHTML = `<i class="bi bi-house-fill"></i> ${translation.menu.home}`;
+                    document.getElementById('menuGame').innerHTML = `<i class="bi bi-controller"></i> ${translation.menu.game}`;
+                    document.getElementById('menuProfile').innerHTML = `<i class="bi bi-person"></i> ${translation.menu.profile}`;
+                    document.getElementById('menuFriends').innerHTML = `<i class="bi bi-person-heart"></i> ${translation.menu.friends}`;
+                    document.getElementById('menuLogout').innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${translation.menu.logout}`;
+                    document.getElementById('menuLogin').innerHTML = `<i class="bi bi-box-arrow-in-left"></i> ${translation.menu.login}`;
+                }
             }
-        }
 
-        // On page load, fetch the translations and apply the selected language
-        document.addEventListener('DOMContentLoaded', function () {
-            const params = new URLSearchParams(window.location.search);
-            const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
-            console.log(selectedLang);
-            const translationFile = selectedLang === 'fr' ? '../json/fr.json' : '../json/en.json';
+            // On page load, fetch the translations and apply the selected language
+            document.addEventListener('DOMContentLoaded', function () {
+                // const params = new URLSearchParams(window.location.search);
+                // const selectedLang = params.get('lang') || 'en'; // Default to English if no language parameter is found
+                // console.log(selectedLang);
+                // const translationFile = selectedLang === 'fr' ? '../json/fr.json' : '../json/en.json';
+                // 
+                // fetch(translationFile)
+                // .then(response => {
+                // if (!response.ok) {
+                // throw new Error('Network response was not ok');
+                // }
+                // return response.json();
+                // })
+                // .then(translations => {
+                // changeLanguage(translations);
+                // })
+                // .catch(error => {
+                // console.error('There was a problem with the fetch operation:', error);
+                // });
+            });
+            // Event listener for Privacy Policy button in the Legal Mentions modal
+            document.getElementById('openPrivacyPolicyBtn').addEventListener('click', function () {
+                fetch('../rgpd/politique-en.txt')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.text();
+                    })
+                    .then(data => {
+                        document.getElementById('privacyPolicyContent').textContent = data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching the privacy policy:', error);
+                        document.getElementById('privacyPolicyContent').textContent = 'Error loading privacy policy.';
+                    });
 
-            fetch(translationFile)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(translations => {
-                    changeLanguage(translations);
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                });
-        });
-        // Event listener for Privacy Policy button in the Legal Mentions modal
-        document.getElementById('openPrivacyPolicyBtn').addEventListener('click', function () {
-            fetch('../rgpd/politique-en.txt')
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.text();
-                })
-                .then(data => {
-                    document.getElementById('privacyPolicyContent').textContent = data;
-                })
-                .catch(error => {
-                    console.error('Error fetching the privacy policy:', error);
-                    document.getElementById('privacyPolicyContent').textContent = 'Error loading privacy policy.';
-                });
+                // Show Privacy Policy modal
+                let privacyPolicyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+                privacyPolicyModal.show();
+            });
 
-            // Show Privacy Policy modal
-            let privacyPolicyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
-            privacyPolicyModal.show();
-        });
+            // Event listener for Terms of Use button in the Legal Mentions modal
+            document.getElementById('openTermsOfUseBtn').addEventListener('click', function () {
+                fetch('../rgpd/terms-of-use-en.txt')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.text();
+                    })
+                    .then(data => {
+                        document.getElementById('termsOfUseContent').textContent = data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching the terms of use:', error);
+                        document.getElementById('termsOfUseContent').textContent = 'Error loading terms of use.';
+                    });
 
-        // Event listener for Terms of Use button in the Legal Mentions modal
-        document.getElementById('openTermsOfUseBtn').addEventListener('click', function () {
-            fetch('../rgpd/terms-of-use-en.txt')
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.text();
-                })
-                .then(data => {
-                    document.getElementById('termsOfUseContent').textContent = data;
-                })
-                .catch(error => {
-                    console.error('Error fetching the terms of use:', error);
-                    document.getElementById('termsOfUseContent').textContent = 'Error loading terms of use.';
-                });
-
-            // Show Terms of Use modal
-            let termsOfUseModal = new bootstrap.Modal(document.getElementById('termsOfUseModal'));
-            termsOfUseModal.show();
-        });
+                // Show Terms of Use modal
+                let termsOfUseModal = new bootstrap.Modal(document.getElementById('termsOfUseModal'));
+                termsOfUseModal.show();
+            });
 
 
-    </script>
-    <script src="../js/notif.js"></script>
+        </script>
+        <script src="../js/notif.js"></script>
 </body>
 
 </html>

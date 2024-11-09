@@ -118,7 +118,8 @@
                                             profile</button>
                                     </div>
                                     <div>
-                                        <button class="btn btn-sm btn-success ms-auto"><i class="bi bi-send"></i>
+                                        <button class="btn btn-sm btn-success ms-auto" data-bs-toggle="modal"
+                                            data-bs-target="#player_usernameInvite"><i class="bi bi-send"></i>
                                             Invite</button>
                                         <button class="btn btn-sm btn-danger ms-auto"><i class="bi bi-x-circle"></i>
                                             Remove</button>
@@ -153,6 +154,33 @@
 
                                 <p class="h4">Please, add friends</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="player_usernameInvite" tabindex="-1"
+                aria-labelledby="player_usernameInviteLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="player_usernameInviteChooseGame">Invite</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                            <div class="row justify-content-center align-items-start">
+                                <h5 class="text-center mb-3">Choose Game Mode :</h5>
+
+                                <div class="col-6 text-center">
+                                    <button type="button" class="btn btn-danger">Pong</button>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <button type="button" class="btn btn-success">Connect 4</button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>

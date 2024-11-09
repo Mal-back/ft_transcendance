@@ -150,7 +150,10 @@
                                 <div class="ranking-number gold">1</div>
                                 <div class="Avatar status-online me-3"></div>
                                 <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</h5>
+
+                                    <h5 class="mb-0 username" data-bs-toggle="modal"
+                                        data-bs-target="#player_usernameHistory">
+                                        USERNAMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</h5>
                                 </div>
                             </div>
                             <div class="score">
@@ -164,7 +167,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="ranking-number silver">2</div>
                                 <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
+                                <div class="flex-fill username">
                                     <h5 class="mb-0">USERNAME2</h5>
                                 </div>
                             </div>
@@ -180,105 +183,7 @@
                                 <div class="ranking-number bronze">3</div>
                                 <div class="Avatar status-online me-3"></div>
                                 <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME3</h5>
-                                </div>
-                            </div>
-                            <div class="score">
-                                <span>Played : 2</span>
-                                <br>
-                                <span>WR: 50%</span>
-                            </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center justify-content-between rounded w-100">
-                            <div class="d-flex align-items-center">
-                                <div class="ranking-number black">4</div>
-                                <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME4</h5>
-                                </div>
-                            </div>
-                            <div class="score">
-                                <span>Played : 2</span>
-                                <br>
-                                <span>WR: 50%</span>
-                            </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center justify-content-between rounded w-100">
-                            <div class="d-flex align-items-center">
-                                <div class="ranking-number black">5</div>
-                                <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME5</h5>
-                                </div>
-                            </div>
-                            <div class="score">
-                                <span>Played : 2</span>
-                                <br>
-                                <span>WR: 50%</span>
-                            </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center justify-content-between rounded w-100">
-                            <div class="d-flex align-items-center">
-                                <div class="ranking-number black">6</div>
-                                <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME6</h5>
-                                </div>
-                            </div>
-                            <div class="score">
-                                <span>Played : 2</span>
-                                <br>
-                                <span>WR: 50%</span>
-                            </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center justify-content-between rounded w-100">
-                            <div class="d-flex align-items-center">
-                                <div class="ranking-number black">7</div>
-                                <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME7</h5>
-                                </div>
-                            </div>
-                            <div class="score">
-                                <span>Played : 2</span>
-                                <br>
-                                <span>WR: 50%</span>
-                            </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center justify-content-between rounded w-100">
-                            <div class="d-flex align-items-center">
-                                <div class="ranking-number black">8</div>
-                                <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME8</h5>
-                                </div>
-                            </div>
-                            <div class="score">
-                                <span>Played : 2</span>
-                                <br>
-                                <span>WR: 50%</span>
-                            </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center justify-content-between rounded w-100">
-                            <div class="d-flex align-items-center">
-                                <div class="ranking-number black">9</div>
-                                <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME9</h5>
-                                </div>
-                            </div>
-                            <div class="score">
-                                <span>Played : 2</span>
-                                <br>
-                                <span>WR: 50%</span>
-                            </div>
-                        </div>
-                        <div class="list-group-item d-flex align-items-center justify-content-between rounded w-100">
-                            <div class="d-flex align-items-center">
-                                <div class="ranking-number black">10</div>
-                                <div class="Avatar status-online me-3"></div>
-                                <div class="flex-fill">
-                                    <h5 class="mb-0">USERNAME10</h5>
+                                    <h5 class="mb-0 username">USERNAME3</h5>
                                 </div>
                             </div>
                             <div class="score">
@@ -310,6 +215,52 @@
                     <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
                         id="TournamentButton">NEXT GAME</button>
                 </div> -->
+                </div>
+            </div>
+            <div class="modal fade" id="player_usernameHistory" tabindex="-1"
+                aria-labelledby="player_usernameHistoryLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="player_usernameChooseHistory">Player History</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                            <div class="row justify-content-center align-items-start">
+                                <div class="col-6">
+                                    <h5 class="text-center mb-3">Remote Battles :</h5>
+                                    <div class="box bg-light history">
+                                        <!-- match div -->
+                                        <div class="bg-gray text-white text-center px-3 py-1 mb-1 rounded">
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                <!-- Player 1 -->
+                                                <div class="text-center player-container ">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name"><span>coucouuuuuuuuuuuuuuuu</span></div>
+                                                </div>
+                                                <!-- Match Info -->
+                                                <div class="text-center match-info ">
+                                                    <h5>WIN-LOSE</h5>
+                                                    <h4>1 - 0</h4>
+                                                    <p id="matchDate">DATE</p>
+                                                </div>
+                                                <!-- Player 2 -->
+                                                <div class="text-center player-container">
+                                                    <div class="player-circle mx-auto mb-2"></div>
+                                                    <div class="player-name">
+                                                        <span>helloooooooooooo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
