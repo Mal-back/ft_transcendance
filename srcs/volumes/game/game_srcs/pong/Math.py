@@ -7,6 +7,7 @@ class Circle:
     position : Coordinates = field(validator=validators.instance_of(Coordinates))
     radius: int = field(validator=validators.instance_of(int))
 
+
 def CollisionCirclePoint(point : Coordinates, circle : Circle) -> bool:
     d2 =  pow(point.x - circle.position.x, 2) + pow(point.y - circle.position.y, 2)
     if d2 > pow(circle.radius, 2):
@@ -14,16 +15,20 @@ def CollisionCirclePoint(point : Coordinates, circle : Circle) -> bool:
     else:
         return True
 
-def CollisionCircleLine(A : Coordinates, B : Coordinates, circle : Circle):
+
+def CollisionCircleLine(A : Coordinates, B : Coordinates, circle : Circle) -> bool:
     u = Direction(B.x - A.x, B.y - A.y)
     AC = Direction(circle.position.x - A.x, circle.position.y - A.y)
     num = abs(u.dx * AC.dy - u.dy * AC.dx)
     den = math.sqrt(u.dx * u.dx + u.dy * u.dy)
+    if den == 0:
+        return False
     CI = num / den
     if (CI < circle.radius):
         return True
     else:
         return False
+
 
 def CollisionCircleSegment(A : Coordinates, B : Coordinates, circle : Circle) -> bool:
     if CollisionCircleLine(A, B, circle) == False:
@@ -38,11 +43,17 @@ def CollisionCircleSegment(A : Coordinates, B : Coordinates, circle : Circle) ->
         return True
     return False
 
+
 def ImpactProjection(A : Coordinates, B : Coordinates, C : Coordinates) -> Coordinates:
     u = Direction(B.x - A.x, B.y - A.y)
     AC = Direction(C.x - A.x, C.y - A.y)
-    ti = (u.dx * AC.dx + u.dy * AC.dy) / (u.dx * u.dx + u.dy * u.dy)
+    try:
+        ti = (u.dx * AC.dx + u.dy * AC.dy) / (u.dx * u.dx + u.dy * u.dy)
+    except ZeroDivisionError:
+        print("ImpactProjection : exception caught ZeroDivisionError")
+        ti = 1000000000
     return Coordinates(int(A.x + ti * u.dx), int(A.y + ti * u.dy))
+
 
 def GetNormal(A : Coordinates, B : Coordinates, C : Coordinates) -> Direction:
     u = Direction(B.x - A.x, B.y - A.y)
@@ -50,11 +61,14 @@ def GetNormal(A : Coordinates, B : Coordinates, C : Coordinates) -> Direction:
     step = u.dx * AC.dy - u.dy * AC.dx
     N = Direction(-u.dy * step, u.dx * step)
     norme = math.sqrt(N.dx * N.dx + N.dy * N.dy)
-    return Direction(int(N.dx / norme), int(N.dy / norme))
+    try:
+        return Direction(int(N.dx / norme), int(N.dy / norme))
+    except ZeroDivisionError:
+        print("GetNormal : exception caught ZeroDivisionError")
+        return Direction(1000000000, 1000000000)
+        
 
 def GetBounceDir(v : Direction, N : Direction) -> Direction:
     pscal = v.dx * N.dx + v.dy * N.dy
-    v2 =  Direction(int(v.dx - 2 * pscal * N.dx), int(v.dy - 2 * pscal * N.dy))
-    return v2
-    
-
+    bounce_dir =  Direction(int(v.dx - 2 * pscal * N.dx), int(v.dy - 2 * pscal * N.dy))
+    return bounce_dir

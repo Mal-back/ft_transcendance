@@ -3,7 +3,6 @@ from .Coord import Coordinates, Direction
 from attrs import define, field, validators
 
 allowed_movement = ["UP", "DOWN", "NONE"]
-allowed_pause = ["stop", "start"]
 
 @define
 class Player:
@@ -15,20 +14,25 @@ class Player:
     height: int = field(validator=validators.instance_of(int), default=Const["PAD_HEIGHT"].value)
     speed: int = field(validator=validators.instance_of(int), default=Const["PAD_SPEED"].value)
     movement: str = field(validator=[validators.instance_of(str), validators.in_(allowed_movement),], default="NONE")
- 
+
+
     def render(self) -> dict:
         return { "position": self.top_left().render(),
             "score": self.score,
         }
-    
+
+
     def top_left(self) -> Coordinates:
         return Coordinates(self.position.x - self.len, self.position.y - self.height)
+
 
     def top(self) -> int:
         return self.position.y - self.height
 
+
     def bot(self) -> int:
         return self.position.y + self.height
+
 
     def front(self) -> int:
         if self.position.x < Const["CENTER"].value.x:
@@ -36,11 +40,13 @@ class Player:
         else:
             return self.position.x - self.len
 
+
     def back(self) -> int:
         if self.position.x < Const["CENTER"].value.x:
             return self.position.x - self.len
         else:
             return self.position.x + self.len
+
 
     def correct_direction(self) -> Direction:
         new_dy = self.direction.dy
@@ -50,10 +56,12 @@ class Player:
             new_dy = -self.top()
         return Direction(self.direction.dx, new_dy)
 
+
     def reset_direction(self) -> None:
         self.direction = Direction(0, 0)
         self.movement = "NONE"
-        
+
+
     def read_movement(self) -> Direction:
         if self.movement == "UP":
             return Direction(0, -self.speed)
@@ -61,6 +69,7 @@ class Player:
             return Direction(0, +self.speed)
         else:
             return self.direction
+
     
     def move(self) -> None:
         self.direction = self.read_movement()

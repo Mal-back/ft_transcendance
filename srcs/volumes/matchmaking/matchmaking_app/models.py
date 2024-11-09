@@ -61,8 +61,12 @@ class Tournament(models.Model):
     current_round = models.IntegerField(default=1)
     game_type = models.TextField(choices=[('pong', 'Pong'),
                                            ('c4', 'Connect four')])
+
+    round_schedule = models.JSONField(null=True)
     status = models.TextField(max_length=20, default='pending', choices=[('pending', 'Pending'),
-                                                                         ('in_progess', 'In progress'),])
+                                                                         ('in_progress', 'In progress'),
+                                                                         ('finished', 'Finished')
+                                                                        ])
     winner = models.ForeignKey('MatchUser',
                                 related_name='winner',
                                 on_delete=models.PROTECT,

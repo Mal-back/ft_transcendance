@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const readline = require('readline');
 
 const wsUrl = 'wss://localhost:8080/api/game/pong-local/join/';
-const ws = new WebSocket(wsUrl);
+const ws = new WebSocket(wsUrl, {rejectUnauthorized: false});
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -105,6 +105,24 @@ function down_2() {
 	}))
 }
 
+function test_move() {
+    rl.question('player: ', (player) => {
+        const Player = player;
+
+        rl.question('Direction: ', (direction) => {
+            const Direction = direction;
+
+            ws.send(JSON.stringify({
+                type: "move",
+                player: Player,
+                direction: Direction
+            }));
+
+            promptInput(); // Ensure this function exists and prompts correctly
+        });
+    });
+}
+
 function showHelp() {
 	console.log(`
   Available commands:
@@ -156,6 +174,9 @@ function handleInput(input) {
 		break;
 	case 'surrend_2':
 		surrend_2();
+		break;
+	case 'move_test':
+		test_move();
 		break;
 	case 'up_1':
 		up_1();

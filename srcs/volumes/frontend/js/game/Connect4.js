@@ -206,7 +206,7 @@ export default class Connect4 {
           cell.classList.add(`cell-${color}`);
         } else {
           const cell = document.getElementById(`cell${row}-${col}`);
-          cell.classList.remove();
+          cell.classList.remove(`cell-red`,`cell-blue`);
           cell.classList.add(`cell`, `cell-empty`);
         }
       }

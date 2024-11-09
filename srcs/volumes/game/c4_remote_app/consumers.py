@@ -14,43 +14,6 @@ from django.conf import settings
 
 log = logging.getLogger(__name__)
 
-# ######### WARNING #####
-# # CODE COPIE COLLE POUR DEBUG UTILISATION
-# from functools import wraps
-# from inspect import iscoroutinefunction
-# from logging import getLogger
-
-# from channels.exceptions import AcceptConnection, DenyConnection, StopConsumer, ChannelFull
-
-# logger = getLogger()
-
-# def apply_wrappers(consumer_class):
-# 	for method_name, method in list(consumer_class.__dict__.items()):
-# 		if iscoroutinefunction(method):  # an async method
-# 			# wrap the method with a decorator that propagate exceptions
-# 			setattr(consumer_class, method_name, propagate_exceptions(method))
-# 	return consumer_class
-
-
-# def propagate_exceptions(func):
-# 	async def wrapper(*args, **kwargs):  # we're wrapping an async function
-# 		try:
-# 			return await func(*args, **kwargs)
-# 		except (AcceptConnection, DenyConnection, StopConsumer, ChannelFull):  # these are handled by channels
-# 			raise
-# 		except Exception as exception:  # any other exception
-# 			# avoid logging the same exception multiple times
-# 			if not getattr(exception, "caught", False):
-# 				setattr(exception, "caught", True)
-# 				logger.error(
-# 					"Exception occurred in {}:".format(func.__qualname__),
-# 					exc_info=exception,
-# 				)
-# 			raise  # propagate the exception
-# 	return wraps(func)(wrapper)
-# ####### WARNING #####
-
-# @apply_wrappers
 class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = "None"
@@ -366,30 +329,30 @@ class C4RemoteGameConsumer(SyncConsumer):
 			print("C4RemoteGameConsumer : Can not join thread " + str(game_id))
   
    
-	def clean_game(self, event):
-		game_id = event["game_id"]
-		try:
-			game_instance = C4RemoteGame.objects.get(game_id=game_id)
-			game_instance.delete()
-			print("C4RemoteGameConsumer : Cleaning game " + str(game_id))
-		except:
-			print("C4RemoteGameConsumer : Can not delete game " + str(game_id))
+	# def clean_game(self, event):
+	# 	game_id = event["game_id"]
+	# 	try:
+	# 		game_instance = C4RemoteGame.objects.get(game_id=game_id)
+	# 		game_instance.delete()
+	# 		print("C4RemoteGameConsumer : Cleaning game " + str(game_id))
+	# 	except:
+	# 		print("C4RemoteGameConsumer : Can not delete game " + str(game_id))
 
 
-	def send_result(self, event):
-		url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
-		print("C4RemoteGameConsumer : Sending result to url : " + url)
-		print("C4RemoteGameConsumer : End state = " + str(event["End_state"]))
-		try: 
-			sender = MicroServiceClient()
-			sender.send_requests(
-				urls=[url,],
-				method='post',
-				expected_status=[200],
-				body=event["End_state"],
-			)
-		except RequestsFailed:
-			print("C4RemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])
+	# def send_result(self, event):
+	# 	url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
+	# 	print("C4RemoteGameConsumer : Sending result to url : " + url)
+	# 	print("C4RemoteGameConsumer : End state = " + str(event["End_state"]))
+	# 	try: 
+	# 		sender = MicroServiceClient()
+	# 		sender.send_requests(
+	# 			urls=[url,],
+	# 			method='post',
+	# 			expected_status=[200],
+	# 			body=event["End_state"],
+	# 		)
+	# 	except RequestsFailed:
+	# 		print("C4RemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])
 
 
 
