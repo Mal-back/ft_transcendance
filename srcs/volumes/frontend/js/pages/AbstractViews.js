@@ -300,7 +300,6 @@ export default class AbstractViews {
         "#opponentInviteAvatar",
       );
       let opponent = data.player1;
-      console.log("OPPONENT DATA =>", data);
       const username = sessionStorage.getItem("username_transcendence");
       if (username != data.player1) {
         opponent = data.player2;
@@ -308,7 +307,6 @@ export default class AbstractViews {
       opponentInviteId.innerText = "";
       opponentInviteId.innerText = opponent;
       const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
-      console.log("REQUEST =>", request);
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
@@ -381,48 +379,6 @@ export default class AbstractViews {
     }
   }
 
-  async updatePendingInvites(data) {
-    console.log("PENDING INVITES =>", data);
-    try {
-      for (let invite of data.match_pending) {
-        console.log(invite);
-        const t =
-          document.querySelector("#buttonOnGoingGame");
-        console.log(t)
-        if (invite.delete_invite) {
-          console.log("INV DEL =>", invite.delete_invite)
-          const onGoingGameButton =
-            document.querySelector("#buttonOnGoingGame");
-          onGoingGameButton.innerText = this.lang
-            .getTranslation(["button", "cancel"])
-            .toUpperCase();
-          console.log("REDIR URL", onGoingGameButton.dataset.redirectUrl)
-          onGoingGameButton.dataset.redirectUrl = invite.delete_invite;
-          onGoingGameButton.classList.remove("btn-success");
-          onGoingGameButton.classList.add("btn-danger");
-          console.log("ICI", onGoingGameButton)
-        }
-      }
-      // const request = await this.makeRequest(
-      // data.accept_invite,
-      // "GET",
-      // );
-      // console.log("REQ", request);
-      // const response = await fetch(request);
-      // if (await this.handleStatus(response)) {
-      // const data = await this.getDatafromRequest(response);
-      // console.log("SentInvite: ", data);
-      // console.log("SentInvite:data.delete_invite:", data.delete_invite);
-      // if (response.status == 200) {
-
-      // return 1;
-      // }
-      return 0;
-      // }
-    } catch (error) {
-      this.handleCatch(error);
-    }
-  }
   // async fetchSentInvite() {
   //   try {
   //     const request = await this.makeRequest(
@@ -523,7 +479,7 @@ export default class AbstractViews {
           removeSessionStorage();
           if (error instanceof CustomError) {
             showModal(error.title, error.message);
-          navigateTo(error.redirect);
+            navigateTo(error.redirect);
           } else console.error("startNotificationPolling: ", error)
         }
       }, 3000);
@@ -627,9 +583,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -816,7 +772,7 @@ export default class AbstractViews {
       }
       const parseToken = this.parseJwt(authToken);
       const currentTime = Math.floor(Date.now() / 1000);
-      if (parseToken.exp + 1 <= currentTime) {
+      if (parseToken.exp + 10 <= currentTime) {
         await this.refreshToken(authToken);
       }
     } catch (error) {

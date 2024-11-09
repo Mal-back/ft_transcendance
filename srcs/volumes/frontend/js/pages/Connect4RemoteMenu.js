@@ -34,7 +34,7 @@ export default class extends AbstractView {
             id="Connect4RemotePlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-            id="Connect4RemoteTournamentButton">${this.lang.getTranslation(["game", "tournament"])}</button>
+            id="Connect4RemoteTournamentButton">${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</button>
           <br>
         </div>
       </div>

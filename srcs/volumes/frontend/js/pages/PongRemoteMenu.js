@@ -40,7 +40,7 @@ export default class extends AbstractView {
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
             id="PongRemotePlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
           <br>
-          <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button" data-bs-toggle="modal" data-bs-target="#loading-modal"
+          <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-maroon custom-button" data-bs-toggle="modal" data-bs-target="#loading-modal"
             id="PongMatchmakingButton">${this.lang.getTranslation(["title", "matchmaking"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
@@ -263,7 +263,7 @@ export default class extends AbstractView {
     if (modalMatchmaking) modalMatchmaking.hide();
     try {
       await leaveMatchmakingQueue();
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async addEventListeners() {

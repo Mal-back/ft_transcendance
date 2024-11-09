@@ -178,7 +178,6 @@ export default class extends AbstractView {
       }
       const leftPlayerText = document.getElementById("leftPlayer");
       const rightPlayerText = document.getElementById("rightPlayer");
-
       leftPlayerText.innerText = player_1Username;
       rightPlayerText.innerText = player_2Username;
     } catch (error) {
