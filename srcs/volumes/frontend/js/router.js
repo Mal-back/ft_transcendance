@@ -1,15 +1,11 @@
 import Home from "./pages/Home.js";
-// import Game from "./pages/Game.js";
 import Profile from "./pages/Profile.js";
 import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
 import Matchmaking from "./pages/Matchmaking.js";
-import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
-import TrueFriends from "./pages/Friends.js";
 import Friends from "./pages/TrueFriends.js";
-// import Pong from "./pages/Pong.js";
 import PongLocal from "./pages/PongLocal.js";
 import CustomError from "./Utils/CustomError.js";
 import PongMenu from "./pages/PongMode.js";
@@ -45,15 +41,12 @@ const router = async () => {
   console.info("Router is on");
   const routes = [
     { path: "/", view: Home },
-    { path: "/game", view: Matchmaking },
     { path: "/profile", view: Profile },
     { path: "/createUser", view: CreateUser },
     { path: "/login", view: Login },
     { path: "/logout", view: Logout },
-    { path: "/epic-mode", view: EpicMode },
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
-    { path: "/friendstrue", view: TrueFriends },
     // { path: "/pong", view: Pong },
     { path: "/pong", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
@@ -244,27 +237,3 @@ document
       }
     }
   });
-
-// const inviteList = document.getElementById("inviteList");
-//
-// inviteList.addEventListener("click", (event) => {
-//   console.log("CLICKED");
-//   // Check if the clicked element is an accept or refuse button
-//   const button = event.target.closest(".accept-button, .refuse-button");
-//   if (!button) return; // If not, exit the function
-//
-//   const inviteId = button.dataset.inviteId;
-//   const action = button.dataset.action;
-//
-//   const invite = AbstractViews.invitesArray.find((inv) => inv.id === inviteId);
-//   if (invite) {
-//     const url =
-//       action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
-//     console.log(`URL: ${url}; action: ${action}`);
-//   }
-// });
-
-// handleInviteResponse(url) {
-//   console.log(`Invite ${action}: ${url}`);
-//   // Additional code to handle the invite response
-// }

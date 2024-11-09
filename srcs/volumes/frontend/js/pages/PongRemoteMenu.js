@@ -11,7 +11,7 @@ export default class extends AbstractView {
   constructor() {
     super();
 
-    const matchMakingInterval = null;
+    this.matchMakingInterval = null;
 
     this.handleRemoteTournamentRedirection =
       this.handleRemoteTournamentRedirection.bind(this);
@@ -21,6 +21,8 @@ export default class extends AbstractView {
     this.handleShowMatchmakingModal =
       this.handleShowMatchmakingModal.bind(this);
     this.handleStopMatchmaking = this.handleStopMatchmaking.bind(this);
+    this.handleUnloadQueue = this.handleUnloadQueue.bind(this);
+    this.redirectToGame = this.redirectToGame.bind(this);
   }
 
   async loadCss() {
@@ -82,7 +84,33 @@ export default class extends AbstractView {
           </div>
         </div>
       </div>
-              `;
+  <div class="modal fade" id="matchFoundModal" tabindex="-1" aria-labelledby="matchFoundModalLabel"
+    aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered loading-modal-diag">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="matchFoundTitle">${this.lang.getTranslation(["game", "match"])}
+              ${this.lang.getTranslation(["game", "found"])}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex align-items-center justify-content-center row">
+              <img id="opponentMatchFoundAvatar" class="rounded-circle Avatar" max-width="50px"
+                max-height="50px">
+              <div class="text-center mx-3">
+                <h5><strong id="opponentMatchFoundId"></strong></h5>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="matchFoundJoin">
+              ${this.lang.getTranslation(["button", "join"]).toUpperCase()}
+            </button>
+          </div>
+        </div>
+      </div>
+  </div>
+            `;
   }
 
   handleRemoteTournamentRedirection(ev) {
@@ -166,13 +194,47 @@ export default class extends AbstractView {
         if (response.status == 204) return;
         clearInterval(this.matchMakingInterval);
         this.matchMakingInterval = null;
+        const modalLoadingDiv = document.querySelector("#loading-modal");
+        const modalLoading = bootstrap.Modal.getInstance(modalLoadingDiv);
+        modalLoading.hide();
+        if (response.status == 409) return;
         console.log("success matchmaking/get_match:response", response);
         const data = await this.getDatafromRequest(response);
+        this.showModalMatch(data);
         console.log("success matchmaking/get_match:data", data);
       }
+      clearInterval(this.matchMakingInterval);
+      this.matchMakingInterval = null;
+      const modalLoadingDiv = document.querySelector("#loading-modal");
+      const modalLoading = bootstrap.Modal.getInstance(modalLoadingDiv);
+      modalLoading.hide();
     } catch (error) {
       this.handleCatch(error);
     }
+  }
+
+  async showModalMatch(data) {
+    console.log("HERE");
+    const modalLoadingDiv = document.querySelector("#loading-modal");
+    const modalLoading = bootstrap.Modal.getInstance(modalLoadingDiv);
+    modalLoading.hide();
+
+    clearInterval(this.matchMakingInterval);
+    this.matchMakingInterval = null;
+    const modalMatchFoundDiv = document.querySelector("#matchFoundModal");
+    let modalMatchFound = bootstrap.Modal.getInstance(modalMatchFoundDiv);
+    if (!modalMatchFound)
+      modalMatchFound = new bootstrap.Modal(modalMatchFoundDiv);
+    const opponentId = document.querySelector("#opponentMatchFoundId");
+    const username = sessionStorage.getItem("username_transcendence");
+    const opponent = username == data.player1 ? data.player2 : data.player1;
+    opponentId.innerText = opponent;
+    const dataOpponent = await this.getUserInfo(opponent);
+    const opponentAvatar = document.querySelector("#opponentMatchFoundAvatar");
+    opponentAvatar.style = `background-image: url(${dataOpponent.profilePic})`;
+    const joinButton = document.getElementById("matchFoundJoin");
+    joinButton.dataset.gameId = data.matchId;
+    modalMatchFound.show();
   }
 
   async joinMatchmakingQueue() {
@@ -184,9 +246,8 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
+        if (response.status == 204) return true;
         const data = await this.getDatafromRequest(response);
-        console.log("join queue: response", response);
-        console.log("join queue: data", data);
         return true;
       }
       return false;
@@ -231,14 +292,14 @@ export default class extends AbstractView {
             navigateTo(error.redirect);
           } else console.error(": ", error);
         }
-      }, 1000);
+      }, 500);
     }
   }
 
   async leaveMatchmakingQueue() {
     try {
       const request = await this.makeRequest(
-        "/api/matchmaking/matchmaking/leave",
+        "/api/matchmaking/matchmaking/leave/",
         "DELETE",
       );
       const response = await fetch(request);
@@ -262,8 +323,40 @@ export default class extends AbstractView {
     const modalMatchmaking = bootstrap.Modal.getInstance(modalMatchmakingDiv);
     if (modalMatchmaking) modalMatchmaking.hide();
     try {
-      await leaveMatchmakingQueue();
-    } catch (error) {}
+      await this.leaveMatchmakingQueue();
+    } catch (error) {
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleStopMatchmaking:", error);
+      }
+    }
+  }
+
+  handleUnloadQueue(ev) {
+    ev.preventDefault();
+    if (this.matchMakingInterval) {
+      clearInterval(this.matchMakingInterval);
+      this.matchMakingInterval = null;
+    }
+    const myHeaders = new Headers();
+    const authToken = sessionStorage.getItem("accessJWT_transcendence");
+    myHeaders.append("Authorization", "Bearer" + authToken);
+    fetch("api/matchmaking/leave/", {
+      method: `delete`,
+      headers: myHeaders,
+      keepalive: true,
+    });
+  }
+
+  redirectToGame(ev) {
+    ev.preventDefault();
+    sessionStorage.setItem(
+      "transcendence_game_id",
+      ev.currentTarget.dataset.gameId,
+    );
+    navigateTo("/pong?connection=remote");
   }
 
   async addEventListeners() {
@@ -295,6 +388,11 @@ export default class extends AbstractView {
     if (stopMatchmaking) {
       stopMatchmaking.addEventListener("click", this.handleStopMatchmaking);
     }
+
+    const joinButtonMatchFound = document.querySelector("#matchFoundJoin");
+    joinButtonMatchFound.addEventListener("click", this.redirectToGame);
+
+    document.addEventListener("beforeunload", this.handleUnloadQueue);
   }
 
   removeEventListeners() {

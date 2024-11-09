@@ -2,11 +2,11 @@ from requests import delete
 from rest_framework import status
 from rest_framework.views import Response
 
-from matchmaking.matchmaking_app.serializers import TournamentDetailSerializer, TournamentToHistorySerializer
+from .serializers import TournamentDetailSerializer, TournamentToHistorySerializer
 from .models import Tournament, Match, MatchUser, TournamentUser
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from django.db.models import F
-from background_task import background
+# from background_task import background
 
 def schedule_rounds(tournament:Tournament):
     players_list = tournament.confirmed_players.values_list('user__username', flat=True)
@@ -49,12 +49,12 @@ def create_round_matches(tournament:Tournament):
                              tournament=tournament,
                              )
 
-@background(schedule=30)
-def delete_tournament(id):
-    try:
-        Tournament.objects.get(id=id).delete()
-    except Tournament.DoesNotExists:
-        pass
+# @background(schedule=30)
+# def delete_tournament(id):
+#     try:
+#         Tournament.objects.get(id=id).delete()
+#     except Tournament.DoesNotExists:
+#         pass
 
 def handle_finished_matches(match:Match, data:dict):
     TournamentUser.objects.filter(username=data['winner']).update(match_won=F('match_won') + 1) 

@@ -170,8 +170,8 @@ export default class AbstractViews {
   }
 
   async createInvites(data, username) {
-    console.log(data);
     if (!data || data.length == 0) return 0;
+    console.log(data);
     try {
       let count = 0;
       for (const item of data) {
@@ -250,43 +250,12 @@ export default class AbstractViews {
     }
   }
 
-  // async fetchInvites(boolGame) {
-  //   AbstractViews.invitesArray = [];
-  //   try {
-  //     const request = await this.makeRequest(
-  //       "/api/matchmaking/match/pending_invites/",
-  //       "GET",
-  //     );
-  //     //TODO loop on next if more than 10 invite
-  //     const response = await fetch(request);
-  //     if (await this.handleStatus(response)) {
-  //       if (response.status == 204) return;
-  //       const data = await this.getDatafromRequest(response);
-  //       console.info(response);
-  //       console.info(data);
-  //       const count = data.count ? data.count : 0;
-  //       const badge = document.getElementById("notificationbell");
-  //       if (count + boolGame == 0) {
-  //         badge.innerHTML = "";
-  //         return;
-  //       }
-  //       badge.innerHTML = `< div class="notification-badge" > ${ boolGame } </div > `;
-  //       const username = sessionStorage.getItem("username_transcendence");
-  //       await this.createInvites(data, username);
-  //       badge.innerHTML = `< div class="notification-badge" > ${ AbstractViews.invitesArray.length + boolGame } </div > `;
-  //     }
-  //   } catch (error) {
-  //     this.handleCatch(error);
-  //   }
-  // }
-
-  async updatePendingInvites(data, boolGame) {
+  async updatePendingInvites(data) {
     try {
       AbstractViews.invitesArray = [];
       const username = sessionStorage.getItem("username_transcendence");
-      const totalCount = data.length + boolGame;
-      boolGame += await this.createInvites(data, username);
-      return totalCount;
+      let boolGame = await this.createInvites(data, username);
+      return boolGame;
     } catch (error) {
       this.handleCatch(error);
       return 0;
@@ -363,11 +332,11 @@ export default class AbstractViews {
           onGoingGame.style.display = "none";
           return 0;
         }
-        boolGame += await this.updateOnGoingMatch(data.on_going_match);
-        const count = await this.updatePendingInvites(
+        boolGame = await this.updateOnGoingMatch(data.on_going_match);
+        boolGame += await this.updatePendingInvites(
           data.match_pending,
-          boolGame,
         );
+        const count = (data.on_going_match.length ? data.on_going_match.length: 0) + boolGame
         if (boolGame == 0) onGoingGame.style.display = "none";
         else onGoingGame.style.display = "block";
         //count += await fillPendingTournament(data);
@@ -379,78 +348,8 @@ export default class AbstractViews {
     }
   }
 
-  // async fetchSentInvite() {
-  //   try {
-  //     const request = await this.makeRequest(
-  //       "api/matchmaking/match/sent_invite/",
-  //       "GET",
-  //     );
-  //     const response = await fetch(request);
-  //     if (await this.handleStatus(response)) {
-  //       const data = await this.getDatafromRequest(response);
-  //       // console.log("SentInvite: ", data);
-  //       // console.log("SentInvite:data.delete_invite:", data.delete_invite);
-  //       if (response.status == 200) {
-  //         this.updateOnGoing(data);
-  //         const onGoingGameButton =
-  //           document.querySelector("#buttonOnGoingGame");
-  //         onGoingGameButton.innerText = this.lang
-  //           .getTranslation(["button", "cancel"])
-  //           .toUpperCase();
-  //         onGoingGameButton.dataset.redirectUrl = data.delete_invite;
-  //         onGoingGameButton.classList.remove("btn-success");
-  //         onGoingGameButton.classList.add("btn-danger");
-  //         return 1;
-  //       }
-  //       return 0;
-  //     }
-  //   } catch (error) {
-  //     this.handleCatch(error);
-  //   }
-  // }
-
-  // async fetchOnGoingGame() {
-  //   const joinButton = document.querySelector("#buttonOnGoingGame");
-  //   if (AbstractViews.AcceptInterval) return 0;
-  //   try {
-  //     const request = await this.makeRequest(
-  //       "/api/matchmaking/match/get_accepted",
-  //       "GET",
-  //     );
-  //     const response = await fetch(request);
-  //     if (await this.handleStatus(response)) {
-  //       if (response.status == 200) {
-  //         const data = await this.getDatafromRequest(response);
-  //         console.info("OngoingGame:", data);
-  //         await this.updateOnGoing(data);
-  //         sessionStorage.setItem("transcendence_game_id", data.matchId);
-  //         joinButton.classList.remove("btn-danger");
-  //         joinButton.classList.add("btn-success");
-  //         joinButton.innerText = "JOIN";
-  //         joinButton.dataset.redirectUrl = "/c4?connection=remote";
-  //         return 1;
-  //       } else {
-  //         return 0;
-  //       }
-  //     }
-  //   } catch (error) {
-  //     this.handleCatch(error);
-  //   }
-  // }
-
   async fetchNotifications() {
-    // try {
-    //   let boolGame = await this.fetchOnGoingGame();
-    //   boolGame += await this.fetchSentInvite();
-    //   const onGoingGame = document.querySelector("#divOnGoingGame");
-    //   if (boolGame == 0) {
-    //     onGoingGame.style.display = "none";
-    //   } else onGoingGame.style.display = "block";
-    //   await this.fetchInvites(boolGame);
-    // } catch (error) {
-    //   this.handleCatch(error);
-    // }
-    //
+
     try {
       const badge = document.getElementById("notificationbell");
       const numberBell = await this.fetchMainInvites();
@@ -772,7 +671,7 @@ export default class AbstractViews {
       }
       const parseToken = this.parseJwt(authToken);
       const currentTime = Math.floor(Date.now() / 1000);
-      if (parseToken.exp + 1 <= currentTime) {
+      if (parseToken.exp + 10 <= currentTime) {
         await this.refreshToken(authToken);
       }
     } catch (error) {
