@@ -78,7 +78,7 @@ class PongLocalEngine(threading.Thread):
                 return
             except:
                 print("PongLocalEngine : Can not send join thread to pong_local_engine from game " + self.game_id)
-            time.sleep(0.5)				
+            time.sleep(2)				
 
 
     def receive_movement(self, player : str, direction : str) -> None:
@@ -224,4 +224,4 @@ class PongLocalEngine(threading.Thread):
                 return
             except Exception:
                 print("PongLocalEngine : Can not send end state to group channel " + self.game_id)
-            time.sleep(0.5)
+            time.sleep(2)
