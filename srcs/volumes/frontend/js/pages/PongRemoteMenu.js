@@ -309,7 +309,7 @@ export default class extends AbstractView {
       );
 
     const opponentInput = document.getElementById("opponentUsername");
-    opponentInput.removeEventListener("input", this.handleInputOpponent);
+	if (opponentInput) opponentInput.removeEventListener("input", this.handleInputOpponent);
     const inviteButton = document.querySelector("#inviteButton");
     if (inviteButton)
       inviteButton.removeEventListener("click", this.handleMatchRemote);
