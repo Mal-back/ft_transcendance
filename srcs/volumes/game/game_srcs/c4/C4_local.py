@@ -64,13 +64,16 @@ class C4LocalEngine(threading.Thread):
 
 
     def join_thread(self):
-        try:
-            async_to_sync(self.channel_layer.send)("c4_local_engine", {
-                "type": "join.thread",
-                "game_id": self.game_id
-            })
-        except:
-            print("C4LocalEngine : Can not send join thread to C4LocalGameConsumer from thread num " + self.game_id)	
+        while True:
+            try:
+                async_to_sync(self.channel_layer.send)("c4_local_engine", {
+                    "type": "join.thread",
+                    "game_id": self.game_id
+                })
+                return
+            except:
+                print("C4LocalEngine : Can not send join thread to C4LocalGameConsumer from thread num " + self.game_id)
+            time.sleep(0.5)
 
     
     def check_winner(self):
@@ -109,13 +112,16 @@ class C4LocalEngine(threading.Thread):
         data = {"winner" : self.winner,
           "looser" : looser,
         }
-        try:
-            async_to_sync(self.channel_layer.group_send)(self.game_id, {
-                "type" : "send.end.state",
-                "End_state" : data,
-            })
-        except Exception:
-            print("C4LocalEngine : Can not send end state to group channel " + self.game_id)
+        while True:
+            try:
+                async_to_sync(self.channel_layer.group_send)(self.game_id, {
+                    "type" : "send.end.state",
+                    "End_state" : data,
+                })
+                return
+            except Exception:
+                print("C4LocalEngine : Can not send end state to group channel " + self.game_id)
+            time.sleep(0.5)
             
 
     def send_frame(self):

@@ -34,6 +34,7 @@ class PongRemoteEngine(threading.Thread):
         self.surrender = "None"
         self.surrender_lock = threading.Lock()
         self.winner = "None"
+        self.cancel = False
         
     def wait_start(self):
         print("PongRemoteEngine : Waiting for game instance " + self.game_id + " to start")
@@ -99,16 +100,7 @@ class PongRemoteEngine(threading.Thread):
             except:
                 print("PongRemoteEngine : Can not send join thread to pong_remote_engine from thread num " + self.game_id)
             time.sleep(0.5)
-   
-    def clean_game(self):
-        try:
-            async_to_sync(self.channel_layer.send)("pong_remote_engine", {
-                "type": "clean.game",
-                "game_id": self.game_id
-            })
-        except:
-            print("PongRemoteEngine : Can not send clean game to pong_remote_engine from thread num " + self.game_id)     
-            
+      
           
     def receive_movement(self, player : str, direction : str):
         with self.start_lock:
@@ -145,6 +137,7 @@ class PongRemoteEngine(threading.Thread):
         frame.player_2.move()
         return frame
 
+
     def check_pause(self) -> None :
         with self.start_lock:
             if self.runing_player_1 == "start" and self.runing_player_2 == "start":
@@ -165,6 +158,7 @@ class PongRemoteEngine(threading.Thread):
             count += 1
             time.sleep(self.frame_rate)
         self.send_pause("start" )
+
 
     def move_ball(self, frame : Frame) -> Frame:
         if frame.board.ball.direction.dx < 0:
@@ -247,6 +241,7 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send frame to  channel " + channel)
+            self.cancel_game()
 
 
     def send_frame(self) -> None:
@@ -257,7 +252,8 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send frame to group channel " + self.game_id)
-    
+            self.cancel_game()
+
      
     def send_config(self, channel_name : str) -> None:
         conf = self.config.render()
@@ -274,6 +270,7 @@ class PongRemoteEngine(threading.Thread):
                     self.send_pause_channel("start", channel_name)
         except Exception:
             print("PongRemoteEngine : Can not send config to channel " + channel_name)
+            self.cancel_game()
   
   
     def send_pause_channel(self, action : str, channel : str) -> None:
@@ -284,6 +281,7 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send pause to channel " + channel)
+            self.cancel_game()
 
 
     def send_pause(self, action : str) -> None:
@@ -294,6 +292,7 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send pause to group channel " + self.game_id)
+            self.cancel_game()
 
         
     def send_end_state(self, last_frame) -> None:
@@ -305,6 +304,8 @@ class PongRemoteEngine(threading.Thread):
           "winner_points" : winner_points,
           "looser_points" : looser_points,
         }
+        self.send_result(data)
+        self.clean_game()
         try:
             async_to_sync(self.channel_layer.group_send)(self.game_id, {
                 "type" : "send.end.state",
@@ -320,8 +321,7 @@ class PongRemoteEngine(threading.Thread):
         #     })
         # except Exception:
         #     print("PongRemoteEngine : Can not send result to PongRemoteGameConsumer for game " + self.game_id)
-        self.clean_game()
-        self.send_result(data)
+
 
     def clean_game(self):
         try:
@@ -346,8 +346,11 @@ class PongRemoteEngine(threading.Thread):
             )
         except RequestsFailed:
             print("PongRemoteEngine : Error sending result to matchmaking application for game " + self.game_id)
+           
             
     def cancel_game(self):
+        if self.cancel == True:
+            return
         url = f'http://matchmaking:8443/api/matchmaking/match/' + self.game_id + '/finished/'
         print("PongRemoteEngine : Sending cancel game to url : " + url)
         try: 
@@ -355,8 +358,8 @@ class PongRemoteEngine(threading.Thread):
             sender.send_requests(
                 urls=[url,],
                 method='delete',
-                expected_status=[200],
+                expected_status=[204],
             )
+            self.cancel = True
         except RequestsFailed:
             print("PongRemoteEngine : Error sending cancel game to matchmaking application for game " + self.game_id)
-        

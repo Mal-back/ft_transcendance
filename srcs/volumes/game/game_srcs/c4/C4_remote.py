@@ -30,6 +30,7 @@ class C4RemoteEngine(threading.Thread):
         self.input_column = "None"
         self.timer = 0
         self.timer_max = 60
+        self.cancel = False
 
 
     def wait_start(self):
@@ -84,23 +85,16 @@ class C4RemoteEngine(threading.Thread):
   
   
     def join_thread(self):
-        try:
-            async_to_sync(self.channel_layer.send)("c4_remote_engine", {
-                "type": "join.thread",
-                "game_id": self.game_id
-            })
-        except:
-            print("C4RemoteEngine : Can not send join thread to channel c4_remote_engine from thread " + self.game_id)
-   
-   
-    def clean_game(self):
-        try:
-            async_to_sync(self.channel_layer.send)("c4_remote_engine", {
-                "type": "clean.game",
-                "game_id": self.game_id
-            })
-        except:
-            print("C4RemoteEngine : Can not send clean game to channel c4_remote_engine from thread " + self.game_id)
+        while True:
+            try:
+                async_to_sync(self.channel_layer.send)("c4_remote_engine", {
+                    "type": "join.thread",
+                    "game_id": self.game_id
+                })
+                return
+            except:
+                print("C4RemoteEngine : Can not send join thread to channel c4_remote_engine from thread " + self.game_id)
+            time.sleep(0.5)
    
 
     def check_timer(self):
@@ -147,6 +141,8 @@ class C4RemoteEngine(threading.Thread):
             self.send_frame_channel(channel_name)
         except Exception:
             print("C4RemoteEngine : Can not send config to channel " + self.game_id)
+            self.cancel_game()
+            
             
     def send_timer(self, time_left : int) -> None:
         data = {"time_left" : str(time_left)}
@@ -157,6 +153,8 @@ class C4RemoteEngine(threading.Thread):
             })
         except Exception:
             print("C4RemoteEngine : Can not send timer to group channel " + self.game_id)
+            self.cancel_game()
+            
  
     def send_end_state(self) -> None:
         looser = self.player_1_username if self.winner == self.player_2_username else self.player_2_username
@@ -166,6 +164,8 @@ class C4RemoteEngine(threading.Thread):
           "winner_points" : 1,
           "looser_points" : 0,
         }
+        self.send_result(data)
+        self.clean_game()
         try:
             async_to_sync(self.channel_layer.group_send)(self.game_id, {
                 "type" : "send.end.state",
@@ -181,8 +181,8 @@ class C4RemoteEngine(threading.Thread):
         #     })
         # except Exception:
         #     print("C4RemoteEngine : Can not send result to channel c4_remote_engine " + self.game_id)
-        self.clean_game()
-        self.send_result(data)
+
+
 
     def clean_game(self, event):
         try:
@@ -209,6 +209,23 @@ class C4RemoteEngine(threading.Thread):
             print("C4RemoteEngine : Error sending result to matchmaking application for game " + self.game_id)
 
 
+    def cancel_game(self):
+        if self.cancel == True:
+            return
+        url = f'http://matchmaking:8443/api/matchmaking/match/' + self.game_id + '/finished/'
+        print("C4RemoteEngine : Sending cancel game to url : " + url)
+        try: 
+            sender = MicroServiceClient()
+            sender.send_requests(
+                urls=[url,],
+                method='delete',
+                expected_status=[204],
+            )
+            self.cancel = True
+        except RequestsFailed:
+            print("C4RemoteEngine : Error sending cancel game to matchmaking application for game " + self.game_id)
+        
+
     def send_frame_channel(self, channel : str):
         try:
             async_to_sync(self.channel_layer.send)(channel, {
@@ -217,6 +234,7 @@ class C4RemoteEngine(threading.Thread):
             })
         except Exception:
              print("C4RemoteEngine : Can not send frame to channel  " + channel)
+             self.cancel_game()
 
 
     def send_frame(self):
@@ -227,6 +245,7 @@ class C4RemoteEngine(threading.Thread):
             })
         except Exception:
             print("C4RemoteEngine : Can not send frame to group channel " + self.game_id)
+            self.cancel_game()
 
 
     def receive_input(self, player : str, column : str):

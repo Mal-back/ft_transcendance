@@ -252,6 +252,7 @@ class HandleMatchResult(APIView):
     def delete(self, request, *args, **kwargs):
         match = self.get_object(kwargs['matchId'])
         match.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class DebugSetGameAsFinished(APIView):
     def get(self, request, *args, **kwargs):
