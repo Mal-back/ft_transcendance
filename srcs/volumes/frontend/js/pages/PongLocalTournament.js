@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { showModal } from "../Utils/Utils.js";
+import { showModal, removeSessionStorage } from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
 
@@ -73,8 +73,21 @@ export default class extends AbstractView {
     this.createPageCss("../css/ranking-tournament.css");
   }
 
-  checkLogin() {
-    return;
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
+        }
+      } catch (error) {
+        removeSessionStorage();
+        this.handleCatch(error);
+      }
+    }
   }
 
   async getHtml() {
@@ -156,29 +169,6 @@ export default class extends AbstractView {
               <h5><strong>${this.lang.getTranslation(["modal", "message", "clickNewTourn"])}</strong></h5>
              `;
     }
-    //
-    // if (!this.tournament.PlayerA[this.tournament.round.currentMatch]) {
-    //   console.log(
-    //     "PlayerA ",
-    //     this.tournament.PlayerA[this.tournament.round.currentMatch],
-    //   );
-    //   console.log(
-    //     "PlayerB ",
-    //     this.tournament.PlayerB[this.tournament.round.currentMatch],
-    //   );
-    //   return `
-    // <strong role="text">${this.tournament.PlayerB[this.tournament.round.currentMatch].name}</strong>
-    // <br>
-    // <strong role="text">You got a bye round! Congrats! ;)</strong>
-    //         `;
-    // }
-    // if (!this.tournament.PlayerB[this.tournament.round.currentMatch]) {
-    //   return `
-    // <strong role="text">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
-    // <br>
-    // <strong role="text">You got a bye round! Congrats! ;)</strong>
-    //         `;
-    // }
     return `
   <strong role="text">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
   <br>

@@ -124,6 +124,7 @@ export default class Pong {
         game_id: uuid,
         auth_key: this.token,
       };
+      console.log("try to auth with: ", body)
       this.webSocket.send(JSON.stringify(body));
     }
     this.webSocket.send(JSON.stringify({ type: "init_game" }));
@@ -175,7 +176,6 @@ export default class Pong {
       playerA.winRate = (playerA.win / (playerA.win + playerA.loss)) * 100;
     }
     this.tournament.round.currentMatch += 1;
-    console.log("CURRENT MATCH = ", this.tournament.round.currentMatch);
     sessionStorage.setItem(
       "tournament_transcendence_local",
       JSON.stringify(this.tournament),
@@ -187,7 +187,10 @@ export default class Pong {
     let modalMessage = "";
     const username = sessionStorage.getItem("username_transcendence");
     if (this.mode == "local") {
-      let winner = data.winner == "player_1" ? this.lang.getTranslation(["game", "blue"]) : this.lang.getTranslation(["game", "red"]);
+      let winner =
+        data.winner == "player_1"
+          ? this.lang.getTranslation(["game", "blue"])
+          : this.lang.getTranslation(["game", "red"]);
       winner += " Player";
       let score =
         data.winner == "player_1"
@@ -223,8 +226,6 @@ export default class Pong {
         break;
       }
       case "pause": {
-        console.log("receive pause");
-        console.log(data);
         if (data.action == "start") {
           this.context.strokeText("", 10, 80);
           this.gamePause = false;
@@ -260,7 +261,6 @@ export default class Pong {
 
   startTimeout() {
     this.timeout = setTimeout(() => {
-      console.log("no frame recieved in the last 3s");
       this.sendPing();
     }, 3000);
   }
@@ -285,15 +285,12 @@ export default class Pong {
     if (this.webSocket.readyState === WebSocket.OPEN) {
       switch (ev.key) {
         case " ": {
-          console.log("SPACE");
           ev.preventDefault();
           if (!this.gameStart) {
             this.webSocket.send(JSON.stringify({ type: "start_game" }));
-            console.log("START");
             this.gameStart = true;
           } else {
             if (!this.gamePause) {
-              console.log("send pause");
               this.webSocket.send(
                 JSON.stringify({ type: "pause", action: "stop" }),
               );
@@ -306,7 +303,6 @@ export default class Pong {
               this.player2.downPressed = false;
               this.player2.lastDirection = null;
             } else {
-              console.log("send start");
               this.webSocket.send(
                 JSON.stringify({ type: "pause", action: "start" }),
               );
@@ -389,19 +385,19 @@ export default class Pong {
 
   handleGiveUp(ev) {
     ev.preventDefault();
-    console.log("give up");
     if (this.gamePause) {
       this.webSocket.send(JSON.stringify({ type: "pause", action: "start" }));
     }
-    console.log("sent ", JSON.stringify({ type: "surrend" }));
     this.webSocket.send(JSON.stringify({ type: "surrend" }));
   }
 
   addPongEvent() {
-    this.webSocket.addEventListener("open", this.handleWebSocketOpen);
-    this.webSocket.addEventListener("close", this.handleWebSocketClose);
-    this.webSocket.addEventListener("error", this.handleWebSocketError);
-    this.webSocket.addEventListener("message", this.handleWebSocketMessage);
+    if (this.webSocket) {
+      this.webSocket.addEventListener("open", this.handleWebSocketOpen);
+      this.webSocket.addEventListener("close", this.handleWebSocketClose);
+      this.webSocket.addEventListener("error", this.handleWebSocketError);
+      this.webSocket.addEventListener("message", this.handleWebSocketMessage);
+    }
     document.addEventListener("beforeunload", this.handleUnloadPage);
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("keyup", this.handleKeyUp);
@@ -415,7 +411,6 @@ export default class Pong {
     clearTimeout(this.pingInterval);
     clearTimeout(this.timeout);
     if (this.webSocket) {
-      console.log("Closing Websocket");
       this.webSocket.close();
       this.webSocket.removeEventListener("open", this.handleWebSocketOpen);
       this.webSocket.removeEventListener("close", this.handleWebSocketClose);
