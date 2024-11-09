@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.db.models import F, Q
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
@@ -245,8 +245,8 @@ class HandleMatchResult(APIView):
                 end_single_match(match, serializer.validated_data)
                 return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
             else :
-                 response = handle_finished_matches(match, serializer.validated_data)
-                 return response
+                handle_finished_matches(match, serializer.validated_data)
+                return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
@@ -471,6 +471,50 @@ class LaunchTournament(APIView):
             obj.delete()
             return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         return Response({'OK':'Tournament started'}, status=status.HTTP_200_OK)
+
+class LaunchNextRound(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        try :
+            obj = Tournament.objects.get(owner=user)
+        except Tournament.DoesNotExist:
+            return None
+        return obj
+
+    def patch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        if Match.objects.filter(tournament=obj).exists() :
+            return Response({'Error':'Round is not finished'}, status=status.HTTP_409_CONFLICT)
+        try :
+            schedule_rounds(obj)
+        except TournamentInternalError:
+            obj.delete()
+            return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return Response({'OK':'Next round started'}, status=status.HTTP_200_OK)
+
+class getTournament(APIView):
+    def get_object(self):
+        user = self.request.user
+        try :
+            t_user = TournamentUser.objects.get(user=user)
+            obj = TournamentUser.tournament
+        except TournamentUser.DoesNotExist:
+            return None
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        if obj.status == 'finished':
+            return redirect(f'/api/matchmaking/tournament/{obj.historyId}/', permanent=False)
+        serializer = TournamentDetailSerializer(obj, context={'request':request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class DebugSetTournamentAsFinished(APIView):
     def get(self, request, *args, **kwargs):

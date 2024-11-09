@@ -67,10 +67,7 @@ class Tournament(models.Model):
                                                                          ('in_progress', 'In progress'),
                                                                          ('finished', 'Finished')
                                                                         ])
-    winner = models.ForeignKey('MatchUser',
-                                related_name='winner',
-                                on_delete=models.PROTECT,
-                                null=True)
+    historyId = models.IntegerField(null=True)
 
 class Match(models.Model):
     player1 = models.ForeignKey('MatchUser',
