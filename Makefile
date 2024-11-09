@@ -48,6 +48,7 @@ clean_docker:
 	docker rm $$(docker ps -qa);\
 	docker rmi -f $$(docker images -qa);\
 	docker volume rm $$(docker volume ls -q);\
+	rm -rf srcs/volumes/avatar_media/users_avatars/*
 
 clean : clean_migration clean_docker
 

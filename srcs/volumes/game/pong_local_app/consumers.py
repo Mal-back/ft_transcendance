@@ -191,14 +191,6 @@ class PongLocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def send_pong(self):
 		data = {"type" : "pong"}
 		try:
-			await self.channel_layer.send("pong_local_engine", {
-				"type" : "ping",
-				"game_id" : self.group_name,
-			})			
-		except:
-			log.info("PongLocalPlayerConsumer : Error sending ping to PongLocalEngine")
-			await self.close()
-		try:
 			await self.send(dumps(data))
 		except:
 			log.info("PongLocalPlayerConsumer : Can not send on closed websocket")
@@ -312,7 +304,3 @@ class PongLocalGameConsumer(SyncConsumer):
 			print("PongLocalGameConsumer : Thread waited !")
 		except:
 			print("PongLocalGameConsumer : Can not join thread " + str(game_id))
-   
-   
-	def ping(self, event) -> None:
-		print("PongLocalGameConsumer : available")

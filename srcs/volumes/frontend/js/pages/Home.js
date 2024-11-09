@@ -1,6 +1,6 @@
 import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
-import { getIpPortAdress } from "../Utils/Utils.js";
+import { getIpPortAdress, removeSessionStorage } from "../Utils/Utils.js";
 
 export default class extends AbstractView {
   constructor() {
@@ -29,14 +29,17 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     if (username) {
       try {
-        await this.fetchNotifications();
-      } catch (error) {
-        if (error instanceof CustomError) throw error;
-        else {
-          console.error("Home:checkLogin:", error);
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
         }
+      } catch (error) {
+        console.log("FAIL");
+        removeSessionStorage();
+        this.handleCatch(error);
       }
-      return;
     }
   }
 }

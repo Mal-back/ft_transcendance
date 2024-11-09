@@ -1,30 +1,30 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import {
-    removeSessionStorage,
-    setSessionStorage,
-    showModal,
+  removeSessionStorage,
+  setSessionStorage,
+  showModal,
 } from "../Utils/Utils.js";
 import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
-    constructor() {
-        super();
-        this.boolLogin = true;
-        this.setTitle("Conect4 Remote");
-        this.handleRemoteTournamentRedirection =
-            this.handleRemoteTournamentRedirection.bind(this);
-        this.handleShowInviteModal = this.handleShowInviteModal.bind(this);
-        this.handleMatchRemote = this.handleMatchRemote.bind(this);
-        this.handleInputOpponent = this.handleInputOpponent.bind(this);
-    }
+  constructor() {
+    super();
+    this.boolLogin = true;
+    this.setTitle("Conect4 Remote");
+    this.handleRemoteTournamentRedirection =
+      this.handleRemoteTournamentRedirection.bind(this);
+    this.handleShowInviteModal = this.handleShowInviteModal.bind(this);
+    this.handleMatchRemote = this.handleMatchRemote.bind(this);
+    this.handleInputOpponent = this.handleInputOpponent.bind(this);
+  }
 
-    async loadCss() {
-        this.createPageCss("../css/game-menu-buttons.css");
-    }
+  async loadCss() {
+    this.createPageCss("../css/game-menu-buttons.css");
+  }
 
-    async getHtml() {
-        return `
+  async getHtml() {
+    return `
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
           <h1 class="removeElem mb-3 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -56,133 +56,141 @@ export default class extends AbstractView {
         </div>
       </div>
               `;
-    }
+  }
 
-    handleRemoteTournamentRedirection(ev) {
-        ev.preventDefault();
-        navigateTo("/c4-remote-lobby");
-    }
+  handleRemoteTournamentRedirection(ev) {
+    ev.preventDefault();
+    navigateTo("/c4-remote-lobby");
+  }
 
-    handleShowInviteModal(ev) {
-        ev.preventDefault();
-        const modalId = document.getElementById("inviteC4Modal");
-        console.log(modalId);
-        let inviteModal = bootstrap.Modal.getInstance(modalId);
-        if (!inviteModal) inviteModal = new bootstrap.Modal(modalId);
-        inviteModal.show();
-    }
+  handleShowInviteModal(ev) {
+    ev.preventDefault();
+    const modalId = document.getElementById("inviteC4Modal");
+    console.log(modalId);
+    let inviteModal = bootstrap.Modal.getInstance(modalId);
+    if (!inviteModal) inviteModal = new bootstrap.Modal(modalId);
+    inviteModal.show();
+  }
 
-    validateOpponentName(opponentInput) {
-        let errorMessage = "";
-        const errorDiv = document.querySelector("#opponentUsernameError");
-        errorDiv.innerHTML = "";
-        if (opponentInput.value.trim() === "") {
-            errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
-        } else if (!this.sanitizeInput(opponentInput.value)) {
-            errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
-        }
-        if (errorMessage) {
-            errorDiv.textContent = errorMessage;
-            errorDiv.style.color = "red";
-            errorDiv.style.fontStyle = "italic";
-        }
-        errorDiv.classList.add("removeElem");
-        return errorMessage;
+  validateOpponentName(opponentInput) {
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#opponentUsernameError");
+    errorDiv.innerHTML = "";
+    if (opponentInput.value.trim() === "") {
+      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+    } else if (!this.sanitizeInput(opponentInput.value)) {
+      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
     }
-
-    async handleMatchRemote(ev) {
-        ev.preventDefault();
-        const opponent = document.querySelector("#opponentUsername");
-        if (this.validateOpponentName(opponent)) return;
-        try {
-            const request = await this.makeRequest(
-                "/api/matchmaking/match/create/",
-                "POST",
-                { player2: opponent.value, game_type: "connect_four" },
-            );
-            const response = await fetch(request);
-            console.log("Request:", request);
-            console.log("response:", response);
-            const data = await this.getErrorLogfromServer(response, true);
-            console.log("data:", data);
-            if (!response.ok) {
-                console.log("Error invite: ", data);
-                console.log("Error invite: ", response);
-                showModal(`${this.lang.getTranslation(["modal", "error"])}`, data);
-            } else {
-                AbstractView.AcceptInterval = setInterval(async () => {
-                    try {
-                        const requestInvite = await this.makeRequest(
-                            `/api/matchmaking/match/get_accepted`,
-                            "GET",
-                        );
-                        const responseInvite = await fetch(requestInvite);
-                        const dataInvite = await this.getErrorLogfromServer(
-                            responseInvite,
-                            true,
-                        );
-                        console.log("Response sent invite:", dataInvite);
-                        if (responseInvite.ok) {
-                            clearInterval(AbstractView.AcceptInterval);
-                            sessionStorage.setItem(
-                                "transcendence_game_id",
-                                dataInvite.matchId,
-                            );
-                            navigateTo("/c4?connection=remote");
-                        }
-                    } catch (error) {
-                        clearInterval(AbstractView.AcceptInterval);
-                        if (error instanceof CustomError) throw error;
-                        else {
-                            console.error("error in AcceptInterval", error);
-                        }
-                    }
-                }, 1000);
-            }
-        } catch (error) {
-            if (error instanceof CustomError) throw error;
-            else {
-                console.error("Connect4RemoteMenu:handleMatchRemote:", error);
-            }
-        }
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
     }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
+  }
 
-    handleInputOpponent(ev) {
-        ev.preventDefault();
-        this.validateOpponentName(document.querySelector("#opponentUsername"));
-    }
-
-    async addEventListeners() {
-        const playButton = document.querySelector("#Connect4RemotePlayButton");
-        playButton.addEventListener("click", this.handleShowInviteModal);
-        const tournament = document.querySelector("#Connect4RemoteTournamentButton");
-        tournament.addEventListener(
-            "click",
-            this.handleRemoteTournamentRedirection,
+  async handleMatchRemote(ev) {
+    ev.preventDefault();
+    const opponent = document.querySelector("#opponentUsername");
+    if (this.validateOpponentName(opponent)) return;
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/match/create/",
+        "POST",
+        { player2: opponent.value, game_type: "c4" },
+      );
+      const response = await fetch(request);
+      console.log("Request:", request);
+      console.log("response:", response);
+      const data = await this.getDatafromRequest(response);
+      console.log("data:", data);
+      if (!response.ok) {
+        console.log("Error invite: ", data);
+        console.log("Error invite: ", response);
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          data.Error,
         );
-
-        const opponentInput = document.getElementById("opponentUsername");
-        opponentInput.addEventListener("input", this.handleInputOpponent);
-
-        const inviteButton = document.querySelector("#inviteButton");
-        inviteButton.addEventListener("click", this.handleMatchRemote);
+      } else {
+        // AbstractView.AcceptInterval = setInterval(async () => {
+        //   try {
+        //     const requestInvite = await this.makeRequest(
+        //       `/ api / matchmaking / match / get_accepted`,
+        //       "GET",
+        //     );
+        //     const responseInvite = await fetch(requestInvite);
+        //     const dataInvite = await this.getErrorLogfromServer(
+        //       responseInvite,
+        //       true,
+        //     );
+        //     console.log("Response sent invite:", dataInvite);
+        //     if (responseInvite.ok) {
+        //       clearInterval(AbstractView.AcceptInterval);
+        //       sessionStorage.setItem(
+        //         "transcendence_game_id",
+        //         dataInvite.matchId,
+        //       );
+        //       navigateTo("/c4?connection=remote");
+        //     }
+        //   } catch (error) {
+        //     clearInterval(AbstractView.AcceptInterval);
+        //     if (error instanceof CustomError) throw error;
+        //     else {
+        //       console.error("error in AcceptInterval", error);
+        //     }
+        //   }
+        // }, 1000);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) throw error;
+      else {
+        console.error("Connect4RemoteMenu:handleMatchRemote:", error);
+      }
     }
+  }
 
-    removeEventListeners() {
-        const remote = document.querySelector("#Connect4RemotePlayButton");
-        if (remote) remote.removeEventListener("click", this.handleShowInviteModal);
+  handleInputOpponent(ev) {
+    ev.preventDefault();
+    this.validateOpponentName(document.querySelector("#opponentUsername"));
+  }
 
-        const tournament = document.querySelector("#Connect4RemoteTournamentButton");
-        if (tournament)
-            tournament.removeEventListener(
-                "click",
-                this.handleRemoteTournamentRedirection,
-            );
+  async addEventListeners() {
+    const playButton = document.querySelector("#Connect4RemotePlayButton");
+    playButton.addEventListener("click", this.handleShowInviteModal);
+    const tournament = document.querySelector(
+      "#Connect4RemoteTournamentButton",
+    );
+    tournament.addEventListener(
+      "click",
+      this.handleRemoteTournamentRedirection,
+    );
 
-        const opponentInput = document.getElementById("opponentUsername");
-        opponentInput.removeEventListener("input", this.handleInputOpponent);
-        const inviteButton = document.querySelector("#inviteButton");
-        if (inviteButton)
-            inviteButton.removeEventListener("click", this.handleMatchRemote);
-    }
+    const opponentInput = document.getElementById("opponentUsername");
+    opponentInput.addEventListener("input", this.handleInputOpponent);
+
+    const inviteButton = document.querySelector("#inviteButton");
+    inviteButton.addEventListener("click", this.handleMatchRemote);
+  }
+
+  removeEventListeners() {
+    const remote = document.querySelector("#Connect4RemotePlayButton");
+    if (remote) remote.removeEventListener("click", this.handleShowInviteModal);
+
+    const tournament = document.querySelector(
+      "#Connect4RemoteTournamentButton",
+    );
+    if (tournament)
+      tournament.removeEventListener(
+        "click",
+        this.handleRemoteTournamentRedirection,
+      );
+
+    const opponentInput = document.getElementById("opponentUsername");
+    if (opponentInput)
+      opponentInput.removeEventListener("input", this.handleInputOpponent);
+    const inviteButton = document.querySelector("#inviteButton");
+    if (inviteButton)
+      inviteButton.removeEventListener("click", this.handleMatchRemote);
+  }
 }

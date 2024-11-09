@@ -206,7 +206,7 @@ class C4RemoteEngine(threading.Thread):
                 body=data,
             )
         except RequestsFailed:
-            print("C4RemoteEngine : Error sending result to matchmaking application for game " + event["game_id"])
+            print("C4RemoteEngine : Error sending result to matchmaking application for game " + self.game_id)
 
 
     def send_frame_channel(self, channel : str):
