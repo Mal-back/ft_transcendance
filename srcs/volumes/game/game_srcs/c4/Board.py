@@ -1,6 +1,3 @@
-import json
-import sys
-
 class FullError(Exception):
 	"""
 	Exception Raised when a column is full
@@ -11,6 +8,7 @@ class FullError(Exception):
 	
 	def __str__(self):
 		return self.message
+
 	
 class IndexColError(Exception):
 	"""
@@ -24,6 +22,7 @@ class IndexColError(Exception):
 	def __str__(self):
 		return self.message
 	
+ 
 class Win(Exception):
 	"""
 	Class that holds the winner
@@ -36,6 +35,7 @@ class Win(Exception):
  
 	def __str__(self):
 		return self.message
+
 
 class Board:
 	"""
@@ -78,6 +78,7 @@ class Board:
 			"piece_2":self.pieces[1],
 		}
 		return config
+
 
 	def returnBoardState(self) -> dict:
 		"""Returns the current state of the game as a JSON string."""

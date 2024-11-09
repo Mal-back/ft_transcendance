@@ -69,13 +69,16 @@ class PongLocalEngine(threading.Thread):
 
 
     def join_thread(self) -> None:
-        try:
-            async_to_sync(self.channel_layer.send)("pong_local_engine", {
-                "type": "join.thread",
-                "game_id": self.game_id
-            })
-        except:
-            print("PongLocalEngine : Can not send join thread to pong_local_engine from game " + self.game_id)					
+        while True:
+            try:
+                async_to_sync(self.channel_layer.send)("pong_local_engine", {
+                    "type": "join.thread",
+                    "game_id": self.game_id
+                })
+                return
+            except:
+                print("PongLocalEngine : Can not send join thread to pong_local_engine from game " + self.game_id)
+            time.sleep(0.5)				
 
 
     def receive_movement(self, player : str, direction : str) -> None:
@@ -177,13 +180,13 @@ class PongLocalEngine(threading.Thread):
 
 
     def send_frame(self) -> None:
-        # try:
+        try:
             async_to_sync(self.channel_layer.group_send)(self.game_id, {
                 "type": "send.frame",
                 "Frame": self.frame.render(),
             })
-        # except Exception:
-            # print("PongLocalEngine : Can not send frame to group channel " + self.game_id)
+        except Exception:
+            print("PongLocalEngine : Can not send frame to group channel " + self.game_id)
 
 
     def send_config(self) -> None:
@@ -212,10 +215,13 @@ class PongLocalEngine(threading.Thread):
           "score_1" : last_frame.player_1.score,
           "score_2" : last_frame.player_2.score,
         }
-        try:
-            async_to_sync(self.channel_layer.group_send)(self.game_id, {
-                "type" : "send.end.state",
-                "End_state" : data,
-            })
-        except Exception:
-            print("PongLocalEngine : Can not send end state to group channel " + self.game_id)
+        while True:
+            try:
+                async_to_sync(self.channel_layer.group_send)(self.game_id, {
+                    "type" : "send.end.state",
+                    "End_state" : data,
+                })
+                return
+            except Exception:
+                print("PongLocalEngine : Can not send end state to group channel " + self.game_id)
+            time.sleep(0.5)

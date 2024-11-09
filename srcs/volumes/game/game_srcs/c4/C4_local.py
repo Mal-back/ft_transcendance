@@ -20,7 +20,7 @@ class C4LocalEngine(threading.Thread):
         self.end_lock = threading.Lock()
         self.start_lock= threading.Lock()
         self.running = False
-        self.sleep = 0.01
+        self.sleep = 1/60
         self.input_lock = threading.Lock()
         self.input_receive = False
         self.input_player = "None"

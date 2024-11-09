@@ -89,13 +89,16 @@ class PongRemoteEngine(threading.Thread):
             
                    
     def join_thread(self):
-        try:
-            async_to_sync(self.channel_layer.send)("pong_remote_engine", {
-                "type": "join.thread",
-                "game_id": self.game_id
-            })
-        except:
-            print("PongRemoteEngine : Can not send join thread to pong_remote_engine from thread num " + self.game_id)
+        while True:
+            try:
+                async_to_sync(self.channel_layer.send)("pong_remote_engine", {
+                    "type": "join.thread",
+                    "game_id": self.game_id
+                })
+                return
+            except:
+                print("PongRemoteEngine : Can not send join thread to pong_remote_engine from thread num " + self.game_id)
+            time.sleep(0.5)
    
     def clean_game(self):
         try:
@@ -342,4 +345,18 @@ class PongRemoteEngine(threading.Thread):
                 body=data,
             )
         except RequestsFailed:
-            print("PongRemoteEngine : Error sending result to matchmaking application for game " + event["game_id"])
+            print("PongRemoteEngine : Error sending result to matchmaking application for game " + self.game_id)
+            
+    def cancel_game(self):
+        url = f'http://matchmaking:8443/api/matchmaking/match/' + self.game_id + '/finished/'
+        print("PongRemoteEngine : Sending cancel game to url : " + url)
+        try: 
+            sender = MicroServiceClient()
+            sender.send_requests(
+                urls=[url,],
+                method='delete',
+                expected_status=[200],
+            )
+        except RequestsFailed:
+            print("PongRemoteEngine : Error sending cancel game to matchmaking application for game " + self.game_id)
+        
