@@ -45,6 +45,7 @@ export default class Connect4 {
     this.handleHelp = this.handleHelp.bind(this);
     this.handleGiveUp = this.handleGiveUp.bind(this);
     this.setBackground = this.setBackground.bind(this);
+    this.showTimer = this.showTimer.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
 
@@ -237,6 +238,10 @@ export default class Connect4 {
         this.drawFrame(data);
         break;
       }
+      case "timer": {
+        this.showTimer(data);
+        break;
+      }
       case "end_state": {
         console.log("END:", data);
         this.removeC4Event();
@@ -399,5 +404,14 @@ export default class Connect4 {
       this.webSocket.send(JSON.stringify(movementData));
       console.info("SENT =>", movementData);
     }
+  }
+
+  showTimer(data) {
+    const display = document.getElementById("displayTime");
+    const time = document.getElementById("timer");
+    console.log("DISPLAY =>", display)
+    console.log("TIME =>", time)
+    time.innerText = data.time_left;
+    display.style.display = "inline-block";
   }
 }

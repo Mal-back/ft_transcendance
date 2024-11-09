@@ -129,6 +129,14 @@ export default class extends AbstractView {
 
                     </div>
                 </div>
+                <div class="d-flex justify-content-center text-black mt-3">
+                    <div id="displayTime" style="display: none;">
+                        <h3 class="text-white username-outline"
+                            style="font-size: 3vh; margin-bottom: 0;">
+                            Time Left: <span id="timer"></span>s
+                        </h3>
+                    </div>
+                </div>
                 <div class="d-flex flex-row justify-content-center text-white text-section mt-3 w-80"
                     style="background-color: rgb(0, 0, 0,0.5);">
                     <div class="text-center" id="Turn">
