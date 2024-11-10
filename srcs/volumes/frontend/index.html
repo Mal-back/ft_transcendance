@@ -71,7 +71,7 @@
         </div>
         <div class="modal-body">
           <div id="divOnGoingGame" style="display: none">
-            <h6>Ongoing game</h6>
+            <h6 id="onGoingGameText">Ongoing game</h6>
             <div class="list-group mb-2">
               <li class="list-group-item">
                 <div class="d-flex align-items-center">
@@ -89,14 +89,14 @@
             </div>
           </div>
           <div>
-            <h6>Invites</h6>
+            <h6 id="invitesModalTextTitle">Invites</h6>
           </div>
           <div class="scroll-notif">
             <ul id="inviteList" class="list-group"></ul>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <button id="invitesModalCloseButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Close
           </button>
         </div>
