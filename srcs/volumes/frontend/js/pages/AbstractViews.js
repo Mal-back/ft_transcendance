@@ -192,7 +192,7 @@ export default class AbstractViews {
           declineInviteUrl: item.decline_invite,
           opponentAvatar: opponent.profilePic,
           opponentStatus: opponent.is_online,
-          message: `${opponentName} invites you to a game of ${item.game_type}`,
+          message: `${opponentName} ${this.lang.getTranslation(["modal", "message", "inviteYou"])} ${item.game_type}`,
         };
         console.log("invite", invite);
         AbstractViews.invitesArray.push(invite);
@@ -333,10 +333,10 @@ export default class AbstractViews {
           return 0;
         }
         boolGame = await this.updateOnGoingMatch(data.on_going_match);
-        boolGame += await this.updatePendingInvites(
-          data.match_pending,
-        );
-        const count = (data.on_going_match.length ? data.on_going_match.length: 0) + boolGame
+        const count =
+          (data.match_pending.length ? data.match_pending.length : 0) +
+          boolGame;
+        boolGame += await this.updatePendingInvites(data.match_pending);
         if (boolGame == 0) onGoingGame.style.display = "none";
         else onGoingGame.style.display = "block";
         //count += await fillPendingTournament(data);
@@ -349,7 +349,6 @@ export default class AbstractViews {
   }
 
   async fetchNotifications() {
-
     try {
       const badge = document.getElementById("notificationbell");
       const numberBell = await this.fetchMainInvites();
@@ -379,7 +378,7 @@ export default class AbstractViews {
           if (error instanceof CustomError) {
             showModal(error.title, error.message);
             navigateTo(error.redirect);
-          } else console.error("startNotificationPolling: ", error)
+          } else console.error("startNotificationPolling: ", error);
         }
       }, 3000);
     }
@@ -482,15 +481,16 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
     if (accessToken != null) {
       myHeaders.append("Authorization", "Bearer " + accessToken);
     }
+    myHeaders.append("lang", this.lang.getCurrentLanguage());
     if (boolJSON === true) {
       console.log("manual header");
       myHeaders.append("Content-Type", "application/json");
@@ -525,6 +525,7 @@ export default class AbstractViews {
         if (response.status == 404) return false;
         console.error(`${response.status} error: response: `, response);
         const data = await this.getDatafromRequest(response);
+        console.error("with json:", data);
         showModal(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
           this.JSONtoModal(data),
@@ -618,7 +619,7 @@ export default class AbstractViews {
       removeSessionStorage();
       throw new CustomError(
         `${this.lang.getTranslation("modal", "title", "error")}`,
-        `${this.lang.getTranslation(["modal", "message", ""])}`,
+        `${this.lang.getTranslation(["modal", "message", "authError"])}`,
         "/login",
       );
     }
@@ -638,16 +639,16 @@ export default class AbstractViews {
       } else {
         removeSessionStorage();
         throw new CustomError(
-          `${this.lang.getTranslation("modal", "error")}`,
-          `${this.lang.getTranslation(["error", "failRefresh"])}`,
+          `${this.lang.getTranslation("modal", "title", "error")}`,
+          `${this.lang.getTranslation(["modal", "message", "authError"])}`,
           "/login",
         );
       }
     } catch (error) {
       this.handleCatch(error);
       throw new CustomError(
-        `${this.lang.getTranslation("modal", "error")}`,
-        `${this.lang.getTranslation(["error", "failRefresh"])}`,
+        `${this.lang.getTranslation("modal", "title", "error")}`,
+        `${this.lang.getTranslation(["modal", "message", "authError"])}`,
         "/login",
       );
     }
@@ -664,14 +665,14 @@ export default class AbstractViews {
       ) {
         removeSessionStorage();
         throw new CustomError(
-          `${this.lang.getTranslation(["modal", "error"])}`,
-          `${this.lang.getTranslation(["error", "notAuthentified"])}`,
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${this.lang.getTranslation(["modal", "message", "notLog"])}`,
           "/login",
         );
       }
       const parseToken = this.parseJwt(authToken);
       const currentTime = Math.floor(Date.now() / 1000);
-      if (parseToken.exp + 10 <= currentTime) {
+      if (parseToken.exp - 10 <= currentTime) {
         await this.refreshToken(authToken);
       }
     } catch (error) {
