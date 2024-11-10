@@ -158,6 +158,7 @@ export default class extends AbstractView {
   }
 
   createFriendElement(friendJson) {
+    console.log("Friend:", friendJson)
     const friendStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";

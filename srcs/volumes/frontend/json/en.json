@@ -152,7 +152,8 @@
       "wonTournament": "won the tournament",
       "help": "Space to start the game.<br>Space to pause/unpause the game.<br>W to go up.<br>S to go down.<br>In local game for the Red Player:<br> -ArrowUp to go up.<br> -ArrowDown to go down.",
       "lostGame": "Better luck next time",
-      "addYourself": "You can't add yourself as a friend"
+      "addYourself": "You can't add yourself as a friend",
+      "inviteYou": "invites you to a game of"
     }
   }
 }

@@ -5,8 +5,9 @@ import Login from "./pages/Login.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
 import Friends from "./pages/TrueFriends.js";
+import Ranking from "./pages/Ranking.js";
+
 import PongLocal from "./pages/PongLocal.js";
-import CustomError from "./Utils/CustomError.js";
 import PongMenu from "./pages/PongMode.js";
 import PongLocalMenu from "./pages/PongLocalMenu.js";
 import PongRemoteMenu from "./pages/PongRemoteMenu.js";
@@ -23,6 +24,7 @@ import Connect4LocalLobby from "./pages/Connect4LocalLobby.js";
 import Connect4RemoteLobby from "./pages/Connect4RemoteLobby.js";
 import Connect4LocalTournament from "./pages/Connect4LocalTournament.js";
 import AbstractViews from "./pages/AbstractViews.js";
+import CustomError from "./Utils/CustomError.js";
 import { showModal } from "./Utils/Utils.js";
 
 export const navigateTo = (url) => {
@@ -46,6 +48,7 @@ const router = async () => {
     { path: "/logout", view: Logout },
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
+    { path: "/rankings", view: Ranking },
     // { path: "/pong", view: Pong },
     { path: "/pong", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
