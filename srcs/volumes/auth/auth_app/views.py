@@ -81,6 +81,8 @@ class UserUpdateView(generics.UpdateAPIView):
                         'refresh': refresh_token, 
                         }
                 return Response(response_data, status=status.HTTP_200_OK)
+            serializer.save()
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
 

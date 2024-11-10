@@ -252,6 +252,7 @@ class HandleMatchResult(APIView):
     def delete(self, request, *args, **kwargs):
         match = self.get_object(kwargs['matchId'])
         match.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class DebugSetGameAsFinished(APIView):
     def get(self, request, *args, **kwargs):
@@ -279,6 +280,12 @@ class MatchMakingRequestMatch(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        try :
+            on_going_match = Match.objects.get(Q(player1=request.user) | Q(player2=request.user), status__in=['accepted', 'in_progress'])
+            serializer = AcceptedMatchSerializer(on_going_match)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Match.DoesNotExist:
+            pass
         try :
             queueUser = InQueueUser.objects.get(user=request.user.username)
         except InQueueUser.DoesNotExist :
