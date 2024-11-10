@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { getIpPortAdress, setSessionStorage, showModal } from "../Utils/Utils.js";
+import { getIpPortAdress, showModalGameResult } from "../Utils/Utils.js";
 import Language from "../Utils/Language.js";
 
 export default class Connect4 {
@@ -44,8 +44,6 @@ export default class Connect4 {
     this.sendPlayerMovement = this.sendPlayerMovement.bind(this);
     this.handleUnloadPage = this.handleUnloadPage.bind(this);
     this.handleStartGame = this.handleStartGame.bind(this);
-    this.handleHelp = this.handleHelp.bind(this);
-    this.handleGiveUp = this.handleGiveUp.bind(this);
     this.setBackground = this.setBackground.bind(this);
     this.showTimer = this.showTimer.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
@@ -106,6 +104,7 @@ export default class Connect4 {
     );
     element.style = `background-image:url('../img/forest.png');`;
   }
+
   setUsername(player1Name, player2Name, tournament) {
     this.player1.username = player1Name;
     this.player2.username = player2Name;
@@ -204,7 +203,7 @@ export default class Connect4 {
           cell.classList.add(`cell-${color}`);
         } else {
           const cell = document.getElementById(`cell${row}-${col}`);
-          cell.classList.remove(`cell-red`,`cell-blue`);
+          cell.classList.remove(`cell-red`, `cell-blue`);
           cell.classList.add(`cell`, `cell-empty`);
         }
       }
@@ -264,11 +263,19 @@ export default class Connect4 {
         console.log("END:", data);
         this.removeC4Event();
         this.printMessage(data);
-       if (this.tournament) {
+        if (this.tournament) {
           this.handleTournamentData(data);
         }
         navigateTo(this.redirectURL);
-        showModal("coucou", "tu as gagnes");
+        if (this.mode != "local") {
+          const gif = data.winner == sessionStorage.getItem("username_transcendence") ? "../img/ts/taylor-swift-win.gif" : "../img/ts/taylor-swift-cookie.gif";
+          showModalGameResult(data.winner, data.looser, gif);
+        }
+        else {
+          const winner = this.player1.player == data.winner ? this.player1.username : this.player2.username;
+          const loser = this.player1.player == data.looser ? this.player1.username : this.player2.username;
+          showModalGameResult(winner, loser, "../img/ts/taylor-swift-cookie.gif");
+        }
         return;
       }
       default: {

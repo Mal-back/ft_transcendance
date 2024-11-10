@@ -1,3 +1,5 @@
+import Language from "./Language.js";
+
 export function removeSessionStorage() {
   sessionStorage.removeItem("accessJWT_transcendence");
   sessionStorage.removeItem("refreshJWT_transcendence");
@@ -46,6 +48,41 @@ export function showModal(title, message) {
   modalTitleElement.textContent = title;
   errorMessageElement.innerHTML = message;
   const modalId = document.getElementById("alertModal");
+  let modal = bootstrap.Modal.getInstance(modalId);
+  if (!modal) {
+    modal = new bootstrap.Modal(modalId);
+  }
+  modal.show();
+  modalId.querySelector(".btn-close").onclick = (ev) => {
+    ev.preventDefault();
+    closeModal();
+  };
+}
+
+export function showModalGameResult(winnerUsername, loserUsername, gif = undefined, score = undefined) {
+
+  const lang = new Language();
+  const winner = document.getElementById("gameWinnerTitle");
+  const loser = document.getElementById("gameLoserTitle");
+  const scoreGame = document.getElementById("scoreGameResult");
+
+  winner.innerHTML = `${lang.getTranslation(["game", "winner"])} : <span style="color:red" id="winnerGameResult">${winnerUsername}</span>`;
+  loser.innerHTML = `${lang.getTranslation(["game", "loser"])} : <span style="color:blue" id="loserGameResult">${loserUsername}</span>`;
+
+  if (gif != undefined) {
+    const gifElement = document.getElementById("gifGameResult");
+    gifElement.style.backgroundImage = `url(${gif})`;
+  }
+
+  if (score != undefined) {
+    scoreGame.innerText = score;
+  }
+
+  else {
+    scoreGame.style.display = "none";
+  }
+
+  const modalId = document.getElementById("gameResultModal");
   let modal = bootstrap.Modal.getInstance(modalId);
   if (!modal) {
     modal = new bootstrap.Modal(modalId);

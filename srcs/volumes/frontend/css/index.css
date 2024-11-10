@@ -77,3 +77,17 @@ p {
     height: 80vh;
     max-height: 80vh;
 }
+
+.gif {
+    background-image: url(../img/ts/taylor-swift-cookie.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100px;
+    height: 100px;
+    position: relative;
+    max-width: min(7vh, 7vw);
+    max-height: min(7vh, 7vw);
+    min-width: 50px;
+    min-height: 50px;
+}

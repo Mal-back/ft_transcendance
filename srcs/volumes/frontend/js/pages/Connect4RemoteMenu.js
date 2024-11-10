@@ -20,7 +20,7 @@ export default class extends AbstractView {
     this.handleInputOpponent = this.handleInputOpponent.bind(this);
     this.handleShowMatchmakingModal =
       this.handleShowMatchmakingModal.bind(this);
-    this.handleUnloadQueue = this.handleUnloadQueue.bind(this);
+    // this.handleUnloadQueue = this.handleUnloadQueue.bind(this);
     this.redirectToGame = this.redirectToGame.bind(this);
     this.handleStopMatchmaking = this.handleStopMatchmaking.bind(this);
   }
@@ -388,7 +388,7 @@ export default class extends AbstractView {
     const joinButtonMatchFound = document.querySelector("#matchFoundJoin");
     joinButtonMatchFound.addEventListener("click", this.redirectToGame);
 
-    document.addEventListener("beforeunload", this.handleUnloadQueue);
+    // document.addEventListener("beforeunload", this.handleUnloadQueue);
   }
 
   removeEventListeners() {
@@ -424,7 +424,7 @@ export default class extends AbstractView {
     if (joinButtonMatchFound)
       joinButtonMatchFound.removeEventListener("click", this.redirectToGame);
 
-    document.removeEventListener("beforeunload", this.handleUnloadQueue);
+    // document.removeEventListener("beforeunload", this.handleUnloadQueue);
 
   }
 }

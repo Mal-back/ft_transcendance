@@ -27,7 +27,7 @@ export default class extends AbstractView {
       `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}`,
     );
     return `
-      <div class="background removeElem">
+      <div class="background removeElem"  style="background-image:url('../img/ow.jpg');">
         <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
           ${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}</h1>
         <br>
@@ -159,7 +159,7 @@ export default class extends AbstractView {
   }
 
   setPlayersName() {
-    const maxRound = this.playerInputs.length % 2 == 0 ? this.playerInputs.length - 1: this.playerInputs.length;
+    const maxRound = this.playerInputs.length % 2 == 0 ? this.playerInputs.length - 1 : this.playerInputs.length;
     const playerValues = Array.from(this.playerInputs).map(
       (input) => input.value,
     );

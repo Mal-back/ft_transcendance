@@ -68,7 +68,7 @@
     "next": "Next",
     "time": "Time Left",
     "its": "It's",
-    "turn": "Turn",
+    "turn": "'s Turn",
     "match": "Match",
     "found": "Found",
     "loadling": "Loading",
@@ -84,7 +84,10 @@
     "waiting": "waiting for",
     "history": "History",
     "winRate": "Win Rate",
-    "n/a": "n/a"
+    "n/a": "n/a",
+    "result": "Result",
+    "winner": "Winner",
+    "loser": "Loser"
   },
   "homePage": {
     "title": "Welcome to Our Pong!",

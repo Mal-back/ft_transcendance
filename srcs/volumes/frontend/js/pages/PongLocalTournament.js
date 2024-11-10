@@ -47,7 +47,7 @@ export default class extends AbstractView {
       this.handleCatch(error);
     }
     return `
-    <div class="background">
+    <div class="background" style="background-image:url('../img/ow.jpg');">
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
         ${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
       <br>

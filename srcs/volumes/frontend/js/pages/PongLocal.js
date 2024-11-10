@@ -105,6 +105,7 @@ export default class extends AbstractView {
           );
           return;
         }
+        this.pong.setBackground();
         const parsedTournament = JSON.parse(tournament);
         if (
           !parsedTournament.round ||
