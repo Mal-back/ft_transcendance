@@ -148,7 +148,7 @@ class GetInvite(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         combined_data = {
-            'is_in_tournament': True if is_in_tournament else False,
+            'current_tournament': '/api/matchmaking/detail/' if is_in_tournament else None,
             'is_in_queue': True if is_in_queue else False,
             'on_going_match': on_going_data if on_going_match else {},  
             'match_pending': match_data if match_data else [],
