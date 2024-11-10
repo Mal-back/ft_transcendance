@@ -105,7 +105,7 @@ export default class extends AbstractView {
     return `
     <div class="background" style="background-image:url('../img/forest.png');">
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-      ${this.lang.getTranslation(["game", "tournament"])} - ${this.lang.getTranslation(["game", "c4", "title"])} - ${this.lang.getTranslation(["game", "Ranking"])}</h1>
+      ${this.lang.getTranslation(["title", "tournament"]).toUpperCase()} - ${this.lang.getTranslation(["title", "c4"]).toUpperCase()} - ${this.lang.getTranslation(["title", "ranking"]).toUpperCase()}</h1>
       <br>
       <div class="tournament-creation list-group ranking">
       ${listPlayer}

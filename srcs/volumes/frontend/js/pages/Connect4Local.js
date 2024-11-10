@@ -131,6 +131,14 @@ export default class extends AbstractView {
 
                     </div>
                 </div>
+                <div class="d-flex justify-content-center text-black mt-3">
+                    <div id="displayTime" style="display: none;">
+                        <h3 class="text-white username-outline"
+                            style="font-size: 3vh; margin-bottom: 0;">
+                            Time Left: <span id="timer"></span>s
+                        </h3>
+                    </div>
+                </div>
                 <div class="d-flex flex-row justify-content-center text-white text-section mt-3 w-80"
                     style="background-color: rgb(0, 0, 0,0.5);">
                     <div class="text-center" id="Turn">
@@ -224,63 +232,54 @@ export default class extends AbstractView {
         "GET",
       );
       const responseUser1 = await fetch(requestUser1);
-      if (responseUser1.ok) {
-        const data = await this.getErrorLogfromServer(responseUser1, true);
+      if (await this.handleStatus(responseUser1)) {
+        const data = await this.getDatafromRequest(responseUser1);
         ret.push(data.profilePic);
-      } else {
-        const data = await this.getErrorLogfromServer(responseUser1);
-        console.error(`RequestAvatars: fail for ${player_1Username}`, data);
       }
       const requestUser2 = await this.makeRequest(
         `api/users/${player_2Username}`,
         "GET",
       );
       const responseUser2 = await fetch(requestUser2);
-      if (responseUser2.ok) {
-        const data = await this.getErrorLogfromServer(responseUser2, true);
+      if (await this.handleStatus(responseUser2)) {
+        const data = await this.getDatafromRequest(responseUser2);
         ret.push(data.profilePic);
-      } else {
-        const data = await this.getErrorLogfromServer(responseUser2);
-        console.error(`RequestAvatars: fail for ${player_2Username}`, data);
       }
       return ret;
     } catch (error) {
-      console.error("requestAvatars:", error);
+      this.handleCatch(error);
     }
   }
 
-  async handleGetUsername(
-    mode,
-    player_1Username,
-    player_2Username,
-    currentPlayer,
-  ) {
+  async handleGetUsername(mode, player_1Username, player_2Username) {
     try {
-      console.log("View:handleGetUsername");
       if (mode == "remote") {
         const avatars = await this.requestAvatars(
           player_1Username,
           player_2Username,
         );
-        const User1Avatar = document.getElementById("User1Avatar");
-        const User2Avatar = document.getElementById("User2Avatar");
+        const leftPlayerAvatar = document.getElementById("leftPlayerAvatar");
+        const rightPlayerAvatar = document.getElementById("rightPlayerAvatar");
         if (avatars) {
-          User1Avatar.style = `background-image: url(${avatars[0]})`;
-          User2Avatar.style = `background-image: url(${avatars[1]})`;
+          leftPlayerAvatar.style = `background-image: url(${avatars[0]})`;
+          rightPlayerAvatar.style = `background-image: url(${avatars[1]})`;
         }
       }
-      const User1Text = document.getElementById("leftUser");
-      const User2Text = document.getElementById("rightUser");
-      const UserTurnText = document.getElementById("userTurn");
-
-      User1Text.innerText = player_1Username;
-      User2Text.innerText = player_2Username;
-      UserTurnText.innerText = currentPlayer;
+      const leftPlayerText = document.getElementById("leftUser");
+      const rightPlayerText = document.getElementById("rightUser");
+      console.log("LEFT =>", leftPlayerText, player_1Username);
+      console.log("RIGHT =>", rightPlayerText, player_2Username)
+      leftPlayerText.innerText = player_1Username;
+      rightPlayerText.innerText = player_2Username;
     } catch (error) {
-      console.error("handleSetUsername:", error);
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleGetUsername:", error);
+      }
     }
   }
-
   async addEventListeners() {
     this.connect4.addC4Event();
   }

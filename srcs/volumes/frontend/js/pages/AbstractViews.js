@@ -378,7 +378,7 @@ export default class AbstractViews {
           removeSessionStorage();
           if (error instanceof CustomError) {
             showModal(error.title, error.message);
-          navigateTo(error.redirect);
+            navigateTo(error.redirect);
           } else console.error("startNotificationPolling: ", error)
         }
       }, 3000);
@@ -482,9 +482,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();

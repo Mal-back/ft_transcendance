@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { getIpPortAdress, showModal } from "../Utils/Utils.js";
+import { getIpPortAdress, setSessionStorage, showModal } from "../Utils/Utils.js";
 
 export default class Connect4 {
   constructor(setUsernameCallBack) {
@@ -21,7 +21,7 @@ export default class Connect4 {
       player: "player_1",
       name: "player_1",
       color: "Red",
-      span: `<span class="user1-txt">`,
+      span: `<span id="leftUser" class="user1-txt">`,
       piece: "X",
     };
     this.player2 = {
@@ -30,7 +30,7 @@ export default class Connect4 {
       player: "player_2",
       name: "player_2",
       color: "Blue",
-      span: `<span class="user2-txt">`,
+      span: `<span id="rightUser" class="user2-txt">`,
       piece: "0",
     };
     this.currentPlayer = this.player1;
@@ -45,6 +45,7 @@ export default class Connect4 {
     this.handleHelp = this.handleHelp.bind(this);
     this.handleGiveUp = this.handleGiveUp.bind(this);
     this.setBackground = this.setBackground.bind(this);
+    this.showTimer = this.showTimer.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
 
@@ -123,7 +124,6 @@ export default class Connect4 {
       this.mode,
       this.player1.username,
       this.player2.username,
-      this.currentPlayer.username,
     );
   }
 
@@ -181,6 +181,7 @@ export default class Connect4 {
   }
 
   togglePlayer() {
+    console.log("TOGGLE");
     this.currentColor = this.currentPlayer == this.player1 ? "blue" : "red";
     this.currentPlayer =
       this.currentPlayer == this.player1 ? this.player2 : this.player1;
@@ -205,12 +206,13 @@ export default class Connect4 {
           cell.classList.add(`cell-${color}`);
         } else {
           const cell = document.getElementById(`cell${row}-${col}`);
-          cell.classList.remove();
+          cell.classList.remove(`cell-red`,`cell-blue`);
           cell.classList.add(`cell`, `cell-empty`);
         }
       }
     }
-    if (data.currentPlayer !== this.currentPlayer.player) {
+    console.log("CHECK THIS", data)
+    if (data.current_player !== this.currentPlayer.player) {
       this.togglePlayer();
       document.getElementById("Turn").innerHTML =
         `<h3>It's ${this.currentPlayer.span}${this.currentPlayer.username}</span>'s turn!</h3>`;
@@ -234,6 +236,10 @@ export default class Connect4 {
       case "frame": {
         console.log("FRAME", data);
         this.drawFrame(data);
+        break;
+      }
+      case "timer": {
+        this.showTimer(data);
         break;
       }
       case "end_state": {
@@ -367,7 +373,7 @@ export default class Connect4 {
   }
 
   configGame(data) {
-    console.log(data);
+    console.log("CONFIG", data);
     this.player1.piece = data.player_1_piece;
     this.player2.piece = data.player_2_piece;
     this.player1.player = data.player_1_username;
@@ -376,26 +382,14 @@ export default class Connect4 {
       this.player1.username = data.player_1_username;
       this.player2.username = data.player_2_username;
     }
-    // if (document.getElementById('User1') && document.getElementById('User2')) {
-    document.getElementById("User1").innerHTML =
-      `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`;
-    document.getElementById("User2").innerHTML =
-      `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>`;
-    document
-      .getElementById("User1")
-      .setAttribute(
-        "title",
-        `${this.player1.username} is ${this.player1.color}`,
-      );
-    document
-      .getElementById("User2")
-      .setAttribute(
-        "title",
-        `${this.player2.username} is ${this.player2.color}`,
-      );
-    // }
-    document.getElementById("Turn").innerHTML =
-      `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
+    document.getElementById("User1").innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`;
+    document.getElementById("User2").innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>`;
+    document.getElementById("User1").setAttribute("title", `${this.player1.username} is ${this.player1.color}`,);
+    document.getElementById("User2").setAttribute("title", `${this.player2.username} is ${this.player2.color}`,);
+    this.currentPlayer = this.player1.player === data.starting_player ? this.player1 : this.player2;
+
+    document.getElementById("Turn").innerHTML = `<h3>It's ${this.currentPlayer.span}${this.currentPlayer.username}</span>'s turn!</h3>`;
+    this.getUsername()
   }
 
   sendPlayerMovement(player, col) {
@@ -410,5 +404,14 @@ export default class Connect4 {
       this.webSocket.send(JSON.stringify(movementData));
       console.info("SENT =>", movementData);
     }
+  }
+
+  showTimer(data) {
+    const display = document.getElementById("displayTime");
+    const time = document.getElementById("timer");
+    console.log("DISPLAY =>", display)
+    console.log("TIME =>", time)
+    time.innerText = data.time_left;
+    display.style.display = "inline-block";
   }
 }
