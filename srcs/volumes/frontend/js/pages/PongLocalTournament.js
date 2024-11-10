@@ -44,10 +44,7 @@ export default class extends AbstractView {
       this.actualizeTournament();
       listPlayer = this.getListPlayer();
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("PongLocalTournament:getHtml:", error);
-      }
+      this.handleCatch(error);
     }
     return `
     <div class="background">
@@ -63,17 +60,17 @@ export default class extends AbstractView {
       </div>
     </div>
     <div class="modal fade" id="next-game-modal" tabindex="-1" aria-labelledby="next-game-modalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered loading-modal-diag">
-                    <div class="modal-content">
-                        <div class="modal-body next-battle-modal-body text-center">
-                            ${this.getNextMatch()}
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button id="startBattle" type="button" class="btn btn-secondary">${this.lang.getTranslation(["game", "start"])} ${this.lang.getTranslation(["game", "battle"])}</button>
-                        </div>
-                    </div>
-                </div>
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered loading-modal-diag">
+          <div class="modal-content">
+              <div class="modal-body next-battle-modal-body text-center">
+                  ${this.getNextMatch()}
+              </div>
+              <div class="modal-footer justify-content-center">
+                  <button id="startBattle" type="button" class="btn btn-secondary">${this.lang.getTranslation(["game", "start"])} ${this.lang.getTranslation(["game", "battle"])}</button>
+              </div>
+          </div>
+      </div>
     </div>
         `;
   }

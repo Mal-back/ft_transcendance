@@ -135,21 +135,21 @@ export default class extends AbstractView {
                     <div id="displayTime" style="display: none;">
                         <h3 class="text-white username-outline"
                             style="font-size: 3vh; margin-bottom: 0;">
-                            Time Left: <span id="timer"></span>s
+                            ${this.lang.getTranslation(["game", "time"])}: <span id="timer"></span>s
                         </h3>
                     </div>
                 </div>
                 <div class="d-flex flex-row justify-content-center text-white text-section mt-3 w-80"
                     style="background-color: rgb(0, 0, 0,0.5);">
                     <div class="text-center" id="Turn">
-                        <h3>It's <span class="user1-txt" id="userTurn"></span>'s turn!</h3>
+                        <h3>${this.lang.getTranslation(["game", "its"])} <span class="user1-txt" id="userTurn"></span>${this.lang.getTranslation(["game", "turn"])}!</h3>
                     </div>
                 </div>
                 <div class="m-3">
-                        <button id="helpBtn" type="button" class="btn btn-secondary"></button>
-                        <button id="giveUpBtn" type="button" class="btn btn-danger" style="display: none;">GIVE UP</button>
-                        <button id="startBtn" type="button" class="removeElem btn btn-success">START</button>
-                        <button id="returnBtn" type="button" class="removeElem btn btn-success" style="display: none;">RETURN</button>
+                        <button id="helpBtn" type="button" class="btn btn-secondary">${this.lang.getTranslation(["button", "help"]).toUpperCase()}</button>
+                        <button id="giveUpBtn" type="button" class="btn btn-danger" style="display: none;">${this.lang.getTranslation(["button", "giveUp"]).toUpperCase()}</button>
+                        <button id="startBtn" type="button" class="removeElem btn btn-success">${this.lang.getTranslation(["button", "start"]).toUpperCase()}</button>
+                        <button id="returnBtn" type="button" class="removeElem btn btn-success" style="display: none;">${this.lang.getTranslation(["button", "return"])}</button>
                 </div>
             </div>
         </div>
@@ -162,7 +162,6 @@ export default class extends AbstractView {
   }
 
   async game() {
-    console.log("COUCOU");
     try {
       const params = new URLSearchParams(window.location.search);
       let auth_token = null;
@@ -181,7 +180,6 @@ export default class extends AbstractView {
         auth_token,
       );
       if (mode == "tournament") {
-        console.log("tournament mode");
         const tournament = sessionStorage.getItem(
           "tournament_transcendence_local",
         );
@@ -209,7 +207,6 @@ export default class extends AbstractView {
             return;
           }
         }
-        console.log("TOURNAMENT START C4:", parsedTournament);
         this.connect4.setUsername(
           parsedTournament.PlayerA[parsedTournament.round.currentMatch].name,
           parsedTournament.PlayerB[parsedTournament.round.currentMatch].name,
@@ -217,10 +214,7 @@ export default class extends AbstractView {
         );
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("game:", error);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -267,8 +261,6 @@ export default class extends AbstractView {
       }
       const leftPlayerText = document.getElementById("leftUser");
       const rightPlayerText = document.getElementById("rightUser");
-      console.log("LEFT =>", leftPlayerText, player_1Username);
-      console.log("RIGHT =>", rightPlayerText, player_2Username)
       leftPlayerText.innerText = player_1Username;
       rightPlayerText.innerText = player_2Username;
     } catch (error) {
@@ -280,11 +272,25 @@ export default class extends AbstractView {
       }
     }
   }
+
+  handleHelpButton(ev) {
+    ev.preventDefault();
+    showModal(
+      `${this.lang.getTranslation(["button", "help"])}`,
+      `${this.lang.getTranslation(["modal", "message", "help"])}`,
+    );
+  }
+
   async addEventListeners() {
+    const helpButton = document.querySelector("#helpBtn");
+    if (helpButton) helpButton.addEventListener("click", this.handleHelpButton);
     this.connect4.addC4Event();
   }
 
   removeEventListeners() {
     if (this.connect4) this.connect4.removeC4Event();
+    const helpButton = document.querySelector("#helpBtn");
+    if (helpButton)
+      helpButton.removeEventListener("click", this.handleHelpButton);
   }
 }

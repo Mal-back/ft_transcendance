@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Connect4 Lobby");
     this.playerInputs = [];
     this.handleGeneratePlayers = this.handleGeneratePlayers.bind(this);
     this.handleValidatePlayerInput = this.handleValidatePlayerInput.bind(this);
@@ -24,6 +23,9 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "c4"])} ${this.lang.getTranslation(["title", "lobby"])}`,
+    );
     return `
       <div class="background removeElem"  style="background-image:url('../img/forest.png');">
         <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -86,13 +88,11 @@ export default class extends AbstractView {
   }
 
   checkUnique(playerName) {
-    console.log("check unique:");
     let count = 0;
     this.playerInputs.forEach((input) => {
       console.log(`${input.value} vs ${playerName}`);
       if (input.value == playerName) count++;
     });
-    console.log("count = ", count);
     return count == 1;
   }
 
@@ -105,10 +105,9 @@ export default class extends AbstractView {
     } else if (!this.sanitizeInput(target.value)) {
       errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
     } else if (!this.checkUnique(target.value)) {
-      errorMessage = "Not a unique Username";
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "unique"])}`;
     }
     if (errorMessage) {
-      console.log("ERROR:", errorMessage);
       errorDiv.textContent = errorMessage;
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";
@@ -158,9 +157,10 @@ export default class extends AbstractView {
   }
 
   setPlayersName() {
-    console.log("setsPlayerName:", this.playerInputs);
-
-    const maxRound = this.playerInputs.length;
+    const maxRound =
+      this.playerInputs.length % 2 == 0
+        ? this.playerInputs.length - 1
+        : this.playerInputs.length;
     const playerValues = Array.from(this.playerInputs).map(
       (input) => input.value,
     );
@@ -181,15 +181,13 @@ export default class extends AbstractView {
     }
 
     function teams() {
-      const playerList = Object.values(players()); // Convert the players object to an array of player objects
+      const playerList = Object.values(players());
       const n = playerList.length;
       const mid = Math.floor(n / 2);
 
-      // Split into two halves
       const firstHalf = playerList.slice(0, mid);
       const secondHalf = playerList.slice(mid, n);
 
-      // If odd number of players, add an `undefined` for balancing
       if (n % 2 !== 0) {
         firstHalf.push(undefined);
       }
@@ -207,8 +205,6 @@ export default class extends AbstractView {
         currentMatch: 0,
       },
     };
-    console.log("tournament", tournament);
-    console.log(tournament.PlayerA.length);
     sessionStorage.setItem(
       "tournament_transcendence_local",
       JSON.stringify(tournament),
@@ -221,9 +217,7 @@ export default class extends AbstractView {
     this.playerInputs.forEach((input) => {
       if (this.validatePlayerInput(input)) isValid = false;
     });
-    console.log(`isValid = ${isValid}`);
     if (!isValid) return;
-    console.log("CHECK HERE");
     this.setPlayersName();
     navigateTo("/c4-local-tournament");
   }
@@ -244,12 +238,14 @@ export default class extends AbstractView {
   }
 
   removeEventListeners() {
-    console.log("WHY CALL");
     const generateBtn = document.getElementById("usernameCount");
-    generateBtn.removeEventListener("input", this.handleGeneratePlayers);
-    generateBtn.removeEventListener("change", this.handleGeneratePlayers);
+    if (generateBtn) {
+      generateBtn.removeEventListener("input", this.handleGeneratePlayers);
+      generateBtn.removeEventListener("change", this.handleGeneratePlayers);
+    }
     const startGameBtn = document.querySelector("#startGameBtn");
-    startGameBtn.removeEventListener("click", this.handleStartGame);
+    if (startGameBtn)
+      startGameBtn.removeEventListener("click", this.handleStartGame);
     this.cleanUpPlayersInput();
   }
 }

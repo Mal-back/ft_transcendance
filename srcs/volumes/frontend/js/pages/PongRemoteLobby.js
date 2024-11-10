@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Pong Lobby");
     // this.handleShowFriendsModal = this.handleShowFriendsModal.bind(this);
   }
 
@@ -21,10 +20,16 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    return `
+    try {
+      this.setTitle(
+        `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "lobby"])}`,
+      );
+
+      await this.createTournament();
+      return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-          PONG - REMOTE - TOURNAMENT</h1>
+          ${this.lang.getTranslation(["title", "pong"]).toUpperCase()} - ${this.lang.getTranslation(["title", "remote"]).toUpperCase()} - ${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
         <br>
         <div class="tournament-creation ranking ">
           <div class=" text-center text-white  rounded">
@@ -94,6 +99,9 @@ export default class extends AbstractView {
         </div>
       </div>
                       `;
+    } catch (error) {
+      this.handleCatch(error);
+    }
   }
 
   async getFriendList() {

@@ -88,13 +88,11 @@ export default class extends AbstractView {
   }
 
   checkUnique(playerName) {
-    console.log("check unique:");
     let count = 0;
     this.playerInputs.forEach((input) => {
       console.log(`${input.value} vs ${playerName}`);
       if (input.value == playerName) count++;
     });
-    console.log("count = ", count);
     return count == 1;
   }
 
@@ -110,7 +108,6 @@ export default class extends AbstractView {
       errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "unique"])}`;
     }
     if (errorMessage) {
-      console.log("ERROR:", errorMessage);
       errorDiv.textContent = errorMessage;
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";

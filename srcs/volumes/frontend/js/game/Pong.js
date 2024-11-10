@@ -66,10 +66,6 @@ export default class Pong {
     const computedStyle = window.getComputedStyle(this.canvas);
     this.canvas.width = parseFloat(computedStyle.width);
     this.canvas.height = parseFloat(computedStyle.height);
-    console.log("CANVAS:", {
-      width: this.canvas.width,
-      height: this.canvas.height,
-    });
     this.player1.username = this.lang.getTranslation(["game", "blue"]);
     this.player2.username = this.lang.getTranslation(["game", "red"]);
     this.mode = mode;
@@ -161,7 +157,6 @@ export default class Pong {
   }
 
   handleTournamentData(data) {
-    console.log("TOURNAMENT:", this.tournament);
     const playerA = this.tournament.PlayerA[this.tournament.round.currentMatch];
     const playerB = this.tournament.PlayerB[this.tournament.round.currentMatch];
     if (data.winner == "player_1") {

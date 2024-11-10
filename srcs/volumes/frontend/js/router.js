@@ -128,7 +128,7 @@ const router = async () => {
   // console.log(document.documentElement.outerHTML);
 };
 
-window.addEventListener("popstate", () => {
+window.addEventListener("popstate", async () => {
   if (view) view.destroy();
   router();
 });

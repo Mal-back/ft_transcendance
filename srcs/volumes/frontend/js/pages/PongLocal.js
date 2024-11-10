@@ -201,7 +201,7 @@ export default class extends AbstractView {
   }
 
   removeEventListeners() {
-    this.pong.removePongEvent();
+    if (this.pong) this.pong.removePongEvent();
     const helpButton = document.querySelector("#helpButton");
     if (helpButton)
       helpButton.removeEventListener("click", this.handleHelpButton);

@@ -156,11 +156,8 @@ export default class extends AbstractView {
         { player2: opponent.value, game_type: "pong" },
       );
       const response = await fetch(request);
-      console.log("Request:", request);
-      console.log("response:", response);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        console.log("data:", data);
         const modalInviteMatchId = document.getElementById("invitePongModal");
         const modalElemInvite = bootstrap.Modal.getInstance(modalInviteMatchId);
         modalElemInvite.hide();
@@ -348,7 +345,6 @@ export default class extends AbstractView {
   }
 
   handleUnloadQueue(ev) {
-    ev.preventDefault();
     if (this.matchMakingInterval) {
       clearInterval(this.matchMakingInterval);
       this.matchMakingInterval = null;
@@ -440,5 +436,18 @@ export default class extends AbstractView {
       joinButtonMatchFound.removeEventListener("click", this.redirectToGame);
 
     document.removeEventListener("beforeunload", this.handleUnloadQueue);
+  }
+
+  destroy() {
+    console.log("Destroy");
+    if (this.matchMakingInterval) {
+      clearInterval(this.matchMakingInterval);
+      this.matchMakingInterval = null;
+    }
+    this.removeInviteEventListeners();
+    this.removeEventListeners();
+    this.cleanModal();
+    this.removeCss();
+    this.removeElem();
   }
 }
