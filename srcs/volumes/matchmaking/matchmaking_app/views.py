@@ -118,6 +118,11 @@ class GetInvite(APIView):
         except Match.DoesNotExist:
             on_going_match = None
 
+        try :
+            is_in_queue = InQueueUser.objects.get(user=request.user)
+        except Match.DoesNotExist:
+            is_in_queue = None
+
         if matchQuery.exists():
             match_serializer = InviteSerializer(matchQuery, context={'request':request}, many=True)
             match_data = match_serializer.data
@@ -138,6 +143,7 @@ class GetInvite(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         combined_data = {
+                'is_in_queue': True if is_in_queue else False,
             'on_going_match': on_going_data if on_going_match else {},  
             'match_pending': match_data if match_data else [],
             'tournament_pending': tournament_data if tournament_data else []
