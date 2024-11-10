@@ -4,7 +4,7 @@ from requests import delete
 from rest_framework import status
 from rest_framework.views import Response
 
-from serializers import TournamentDetailSerializer, TournamentToHistorySerializer
+from .serializers import TournamentDetailSerializer, TournamentToHistorySerializer
 from .models import Tournament, Match, MatchUser, TournamentUser
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from django.db.models import F
