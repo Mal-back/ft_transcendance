@@ -123,6 +123,11 @@ class GetInvite(APIView):
         except Match.DoesNotExist:
             is_in_queue = None
 
+        try :
+            is_in_tournament = TournamentUser.objects.get(user=request.user)
+        except Match.DoesNotExist:
+            is_in_queue = None
+
         if matchQuery.exists():
             match_serializer = InviteSerializer(matchQuery, context={'request':request}, many=True)
             match_data = match_serializer.data
@@ -143,7 +148,8 @@ class GetInvite(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         combined_data = {
-                'is_in_queue': True if is_in_queue else False,
+            'is_in_tournament': True if is_in_tournament else False,
+            'is_in_queue': True if is_in_queue else False,
             'on_going_match': on_going_data if on_going_match else {},  
             'match_pending': match_data if match_data else [],
             'tournament_pending': tournament_data if tournament_data else []
@@ -501,6 +507,12 @@ class LaunchNextRound(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         if Match.objects.filter(tournament=obj).exists() :
             return Response({'Error':'Round is not finished'}, status=status.HTTP_409_CONFLICT)
+        elif obj.status == 'pending':
+            return Response({'Error':'Tournament did not start'}, status=status.HTTP_409_CONFLICT)
+        elif obj.status == 'finished':
+            return Response({'Error':'Tournament already finished'}, status=status.HTTP_409_CONFLICT)
+        obj.current_round += 1
+        obj.save()
         try :
             schedule_rounds(obj)
         except TournamentInternalError:
@@ -508,7 +520,7 @@ class LaunchNextRound(APIView):
             return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         return Response({'OK':'Next round started'}, status=status.HTTP_200_OK)
 
-class getTournament(APIView):
+class GetTournament(APIView):
     def get_object(self):
         user = self.request.user
         try :

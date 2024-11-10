@@ -18,9 +18,12 @@ FrontEnd Urls :
    Tournament status must be 'pending'. Method: PATCH Body: invited_players as a list. 
 - 'tournament/delete/': Delete tournament. Permission: User must be tournament owner.Tournament status must be 'pending'. Method: DELETE
 -	'tournament/launch/': Launch Tournament. Permission: User must be tournament owner, tournament should have at least 3 confirmed players.Tournament status must be 'pending'. method: PATCH
+-	'tournament/next_round/': Launch Next tournament round. Permission: User must be tournament owner, current round must be finished .Tournament status must be 'in_progress'. method: PATCH
+- 'tournament/<int:pk>/accept/': Accept invite. Permission: User must be invited.Tournament status must be 'pending'. method: PATCH
 - 'tournament/<int:pk>/accept/': Accept invite. Permission: User must be invited.Tournament status must be 'pending'. method: PATCH
 - 'tournament/<int:pk>/decline/': Decline invite. Permission: User must be invited.Tournament status must be 'pending'. method: PATCH
 - 'tournament/<int:pk>/leave/': Leave tournament. Permission: User must have previously accept the invite.Tournament status must be 'pending'. method: PATCH
+- 'tournament/detail/': Return tournament detail or 404. Permission: User should be in  a tournament . method: GET
 
 
 DEBUG ONLY:
