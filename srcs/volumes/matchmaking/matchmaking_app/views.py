@@ -525,7 +525,7 @@ class GetTournament(APIView):
         user = self.request.user
         try :
             t_user = TournamentUser.objects.get(user=user)
-            obj = TournamentUser.tournament
+            obj = t_user.tournament
         except TournamentUser.DoesNotExist:
             return None
         return obj
