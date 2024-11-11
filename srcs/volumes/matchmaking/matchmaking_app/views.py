@@ -120,13 +120,13 @@ class GetInvite(APIView):
 
         try :
             is_in_queue = InQueueUser.objects.get(user=request.user)
-        except Match.DoesNotExist:
+        except InQueueUser.DoesNotExist:
             is_in_queue = None
 
         try :
             is_in_tournament = TournamentUser.objects.get(user=request.user)
-        except Match.DoesNotExist:
-            is_in_queue = None
+        except TournamentUser.DoesNotExist:
+            is_in_tournament = None
 
         if matchQuery.exists():
             match_serializer = InviteSerializer(matchQuery, context={'request':request}, many=True)

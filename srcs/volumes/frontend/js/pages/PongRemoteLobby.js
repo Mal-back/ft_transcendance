@@ -11,6 +11,10 @@ export default class extends AbstractView {
   constructor() {
     super();
     // this.handleShowFriendsModal = this.handleShowFriendsModal.bind(this);
+
+    this.acceptedTournamentInvites = [];
+    this.pendingTournamentInvites = [];
+
     this.handleInvitePlayerTournament =
       this.handleInvitePlayerTournament.bind(this);
     this.handleInputUsername = this.handleInputUsername.bind(this);
@@ -28,7 +32,8 @@ export default class extends AbstractView {
         `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "lobby"])}`,
       );
       const username = sessionStorage.getItem("username_transcendence");
-      await this.createTournament();
+      let data = await this.checkTournament();
+      if (data == undefined) await this.createTournament();
       return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -107,7 +112,26 @@ export default class extends AbstractView {
     }
   }
 
+  async checkTournament() {
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/tournament/detail/",
+        "GET",
+      );
+      const response = await fetch(request);
+      if (response.status == 404) return undefined;
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        await fillTournamentInvites(data);
+      }
+      return undefined;
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
   async createTournament() {
+    showModal("Tournament", "invite 1 person");
     try {
       const request = await this.makeRequest(
         "/api/matchmaking/tournament/create/",
