@@ -1,6 +1,6 @@
 function createInstance() {
 	const WebSocket = require('ws');
-	const socket = new WebSocket('wss://made-f0Ar1s4.clusters.42paris.fr:8080/api/game/pong-local/join/', {
+	const socket = new WebSocket('wss://localhost:8080/api/game/pong-local/join/', {
 		rejectUnauthorized: false
 	});
 	socket.onopen = function(event) {

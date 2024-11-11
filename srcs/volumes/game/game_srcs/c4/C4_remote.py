@@ -183,7 +183,6 @@ class C4RemoteEngine(threading.Thread):
         #     print("C4RemoteEngine : Can not send result to channel c4_remote_engine " + self.game_id)
 
 
-
     def clean_game(self, event):
         try:
             game_instance = C4RemoteGame.objects.get(game_id=self.game_id)
