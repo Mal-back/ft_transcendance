@@ -363,12 +363,7 @@ export default class extends AbstractView {
         return "<p class='text-center'>No friends found.</p>";
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-        console.error("error", error);
-        return;
-      }
+      this.handleCatch(error);
     }
 
     // Generate the friend list HTML
@@ -397,11 +392,7 @@ export default class extends AbstractView {
           break;
         }
       } catch (error) {
-        if (error instanceof CustomError) throw error;
-        else {
-          console.error("Error fetching next page:", error);
-          break;
-        }
+        this.handleCatch(error);
       }
     }
 
@@ -485,7 +476,7 @@ export default class extends AbstractView {
       await this.invitePlayerTournament(inputPlayerUsername.value);
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("invitePlayerTournament:", error);

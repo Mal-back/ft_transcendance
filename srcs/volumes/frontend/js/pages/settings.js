@@ -490,7 +490,7 @@ export default class extends AbstractView {
       await this.changeUsername();
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       }
     }
@@ -599,7 +599,7 @@ export default class extends AbstractView {
       );
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       }
     }
@@ -618,7 +618,7 @@ export default class extends AbstractView {
       await this.changeMail(oldMail.value, newMail.value, confirmMail.value);
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       }
     }
@@ -681,10 +681,11 @@ export default class extends AbstractView {
         console.log("DATA: ", data);
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.log("Error", error);
-        showModal("ERROR", error.message);
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.log("handleUploadAvatar:", error);
       }
     }
   }
@@ -745,10 +746,11 @@ export default class extends AbstractView {
         showModal(this.lang.getTranslation(["modal", "error"]), dataError);
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-        console.error("ChangeProfilePic: ", error);
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("changeProfilePic:", error);
       }
     }
   }

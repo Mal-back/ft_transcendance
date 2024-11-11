@@ -179,7 +179,7 @@ export default class extends AbstractView {
       rightPlayerText.innerText = player_2Username;
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("handleGetUsername:", error);

@@ -9,7 +9,7 @@ import CustomError from "../Utils/CustomError.js";
 
 export default class AbstractViews {
   static invitesArray = [];
-  static invitesTournament= [];
+  static invitesTournament = [];
   static pollingInterval = null;
 
   constructor() {
@@ -166,7 +166,7 @@ export default class AbstractViews {
       if (await this.handleStatus(response))
         data = await this.getDatafromRequest(response);
       if (data == null) {
-        throw new Error(`fail to get info on ${user}`)
+        throw new Error(`fail to get info on ${user}`);
       }
       return data;
     } catch (error) {
@@ -249,7 +249,7 @@ export default class AbstractViews {
       }
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else console.error("handleInvites:", error);
     }
@@ -325,14 +325,11 @@ export default class AbstractViews {
     }
   }
 
-
-
   async updateMainPendingTournament(data) {
-    AbstractViews.invitesTournament= [];
-     if (!data || data.length == 0) return 0;
+    AbstractViews.invitesTournament = [];
+    if (!data || data.length == 0) return 0;
     console.log(data);
     try {
-
     } catch (error) {
       this.handleCatch(error);
       return 0;
@@ -359,7 +356,9 @@ export default class AbstractViews {
         boolGame += await this.updatePendingInvites(data.match_pending);
         if (boolGame == 0) onGoingGame.style.display = "none";
         else onGoingGame.style.display = "block";
-        count += await this.updateMainPendingTournament(data.tournament_pending);
+        count += await this.updateMainPendingTournament(
+          data.tournament_pending,
+        );
         return count;
       }
       onGoingGame.style.display = "none";
@@ -396,7 +395,7 @@ export default class AbstractViews {
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
           if (error instanceof CustomError) {
-            showModal(error.title, error.message);
+            error.showModalCustom();
             navigateTo(error.redirect);
           } else console.error("startNotificationPolling: ", error);
         }
@@ -524,15 +523,22 @@ export default class AbstractViews {
   async handleStatus(response) {
     try {
       let data;
+      let value;
       if (!response.ok) {
-         data = await this.getDatafromRequest(response);
+        data = await this.getDatafromRequest(response);
+        const key = Object.keys(data)[0];
+        value = data[key];
       }
       if (response.status == 401) {
         console.error("401 error:response:", response);
+        console.log(
+          "lang: ",
+          this.lang.getTranslation(["modal", "title", "error"]),
+        );
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
-          `${this.lang.getTranslation(["modal", "message", data])}`,
+          `${value}`,
           "/login",
         );
       }
@@ -548,10 +554,11 @@ export default class AbstractViews {
       if (!response.ok) {
         if (response.status == 404) return false;
         console.error(`${response.status} error: response: `, response);
-        console.error("with json:", data);
+        console.log("HERE");
+        console.error("with json:", value);
         showModal(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
-          this.JSONtoModal(data),
+          this.JSONtoModal(value),
         );
         return false;
       }

@@ -36,7 +36,6 @@ export default class extends AbstractView {
           );
         }
       } catch (error) {
-        console.log("FAIL");
         removeSessionStorage();
         this.handleCatch(error);
       }

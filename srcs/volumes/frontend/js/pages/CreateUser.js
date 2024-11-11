@@ -18,14 +18,17 @@ export default class extends AbstractView {
 
   async makeUsers() {
     const user = "user";
-    for (let index = 0; index< 26; index++) {
-      let username = `${user}${index}`
-      await this.submitNewUser(`${username}`, `${username}@google.com`, `${username}`, `${username}`)
+    for (let index = 0; index < 26; index++) {
+      let username = `${user}${index}`;
+      await this.submitNewUser(
+        `${username}`,
+        `${username}@google.com`,
+        `${username}`,
+        `${username}`,
+      );
       console.log(`${username} created`);
     }
-
   }
-
 
   async getHtml() {
     await this.makeUsers();
@@ -206,7 +209,12 @@ export default class extends AbstractView {
         password2Input.value,
       );
     } catch (error) {
-      if (error instanceof CustomError) showModal(error.title, error.message);
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleSubmitNewUser:", error);
+      }
     }
   }
 

@@ -158,7 +158,7 @@ export default class extends AbstractView {
   }
 
   createFriendElement(friendJson) {
-    console.log("Friend:", friendJson)
+    console.log("Friend:", friendJson);
     const friendStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";
@@ -251,7 +251,7 @@ export default class extends AbstractView {
       await this.removeFriends(friendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("handleRemoveFriends:", error);
@@ -268,7 +268,7 @@ export default class extends AbstractView {
       await this.addFriendRequest(addFriendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("handleAddFriend:", error);
