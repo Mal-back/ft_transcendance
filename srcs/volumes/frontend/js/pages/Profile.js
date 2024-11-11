@@ -47,8 +47,8 @@ export default class extends AbstractView {
         : this.lang.getTranslation(["game", "lost"]).toUpperCase();
       lostWin += "-";
       lostWin = boolWin
-        ? this.lang.getTranslation(["game", "lost"]).toUpperCase()
-        : this.lang.getTranslation(["game", "won"]).toUpperCase();
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">

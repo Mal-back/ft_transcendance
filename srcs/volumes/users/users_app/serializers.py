@@ -57,7 +57,7 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
         if obj.single_games_won == 0:
             return 0
         total_games = obj.single_games_won + obj.single_games_lost
-        return obj.single_games_won / obj.single_games_lost if obj.single_games_lost != 0 else 1
+        return obj.single_games_won / total_games if total_games != 0 else 1
 
     def get_overall_win_rate(self, obj):
         if self.get_overall_wins(obj) == 0:
