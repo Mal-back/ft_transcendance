@@ -534,9 +534,9 @@ class GetTournament(APIView):
         obj = self.get_object()
         if obj is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
-        if obj.tournament.status == 'finished':
+        if obj.status == 'finished':
             return redirect(f'/api/matchmaking/tournament/{obj.historyId}/', permanent=False)
-        serializer = TournamentDetailSerializer(obj.tournament, context={'request':request})
+        serializer = TournamentDetailSerializer(obj, context={'request':request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

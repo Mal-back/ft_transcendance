@@ -9,6 +9,7 @@ import CustomError from "../Utils/CustomError.js";
 
 export default class AbstractViews {
   static invitesArray = [];
+  static invitesTournament= [];
   static pollingInterval = null;
 
   constructor() {
@@ -161,8 +162,12 @@ export default class AbstractViews {
     try {
       const request = await this.makeRequest(`/api/users/${user}/`, "GET");
       const response = await fetch(request);
-      const data = await this.getDatafromRequest(response);
-      await this.handleStatus(response);
+      let data = null;
+      if (await this.handleStatus(response))
+        data = await this.getDatafromRequest(response);
+      if (data == null) {
+        throw new Error(`fail to get info on ${user}`)
+      }
       return data;
     } catch (error) {
       this.handleCatch(error);
@@ -320,6 +325,20 @@ export default class AbstractViews {
     }
   }
 
+
+
+  async updateMainPendingTournament(data) {
+    AbstractViews.invitesTournament= [];
+     if (!data || data.length == 0) return 0;
+    console.log(data);
+    try {
+
+    } catch (error) {
+      this.handleCatch(error);
+      return 0;
+    }
+  }
+
   async fetchMainInvites() {
     try {
       const onGoingGame = document.querySelector("#divOnGoingGame");
@@ -328,18 +347,19 @@ export default class AbstractViews {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
+        console.log("Invites: ", data);
         if (response.status == 204) {
           onGoingGame.style.display = "none";
           return 0;
         }
         boolGame = await this.updateOnGoingMatch(data.on_going_match);
-        const count =
+        let count =
           (data.match_pending.length ? data.match_pending.length : 0) +
           boolGame;
         boolGame += await this.updatePendingInvites(data.match_pending);
         if (boolGame == 0) onGoingGame.style.display = "none";
         else onGoingGame.style.display = "block";
-        //count += await fillPendingTournament(data);
+        count += await this.updateMainPendingTournament(data.tournament_pending);
         return count;
       }
       onGoingGame.style.display = "none";
@@ -528,7 +548,6 @@ export default class AbstractViews {
       if (!response.ok) {
         if (response.status == 404) return false;
         console.error(`${response.status} error: response: `, response);
-        const data = await this.getDatafromRequest(response);
         console.error("with json:", data);
         showModal(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,

@@ -47,8 +47,8 @@ export default class extends AbstractView {
         : this.lang.getTranslation(["game", "lost"]).toUpperCase();
       lostWin += "-";
       lostWin = boolWin
-        ? this.lang.getTranslation(["game", "lost"]).toUpperCase()
-        : this.lang.getTranslation(["game", "won"]).toUpperCase();
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
@@ -86,6 +86,7 @@ export default class extends AbstractView {
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
         const data = await this.getDatafromRequest(mainResponse);
+        console.log("matchHistory: data:", data);
 
         let matchesArray = data.results;
         const matchesHTMLArray = await Promise.all(
