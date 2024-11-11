@@ -23,7 +23,7 @@ class C4RemoteEngine(threading.Thread):
         self.start_lock= threading.Lock()
         self.runing_player_1 = "stop"
         self.runing_player_2 = "stop"
-        self.sleep = 0.01
+        self.sleep = 0.1
         self.input_lock = threading.Lock()
         self.input_receive = False
         self.input_player = "None"
@@ -130,7 +130,8 @@ class C4RemoteEngine(threading.Thread):
             self.board.tick = 0
             self.send_frame()
             self.timer = 0
-   
+            self.send_timer(self.timer_max)
+
    
     def send_config(self, channel_name : str) -> None:
         try:
@@ -164,8 +165,7 @@ class C4RemoteEngine(threading.Thread):
           "winner_points" : 1,
           "looser_points" : 0,
         }
-        self.send_result(data)
-        self.clean_game()
+
         try:
             async_to_sync(self.channel_layer.group_send)(self.game_id, {
                 "type" : "send.end.state",
@@ -173,6 +173,8 @@ class C4RemoteEngine(threading.Thread):
             })
         except Exception:
             print("C4RemoteEngine : Can not send end state to group channel " + self.game_id)
+        self.send_result(data)
+        self.clean_game()
         # try:
         #     async_to_sync(self.channel_layer.send)("c4_remote_engine", {
         #         "type" : "send.result",
