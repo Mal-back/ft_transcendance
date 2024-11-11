@@ -3,61 +3,6 @@ import { showModal, removeSessionStorage } from "../Utils/Utils.js";
 import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
 
-// `
-// <div>
-//           <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
-//             <div class="d-flex align-items-center">
-//               <div class="ranking-number gold">1</div>
-//               <div class="Avatar status-online me-3"></div>
-//               <div class="flex-fill">
-//                 <h5 class="mb-0">USERNAME</h5>
-//               </div>
-//             </div>
-//             <div class="score">
-//               <span>WINS: 1</span>
-//               <br>
-//               <span>LOSS: 2</span>
-//             </div>
-//           </div>
-//         </div>
-//         <div>
-//           <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
-//             <div class="d-flex align-items-center">
-//               <div class="ranking-number silver">2</div>
-//               <div class="Avatar status-online me-3"></div>
-//               <div class="flex-fill">
-//                 <h5 class="mb-0">USERNAME2</h5>
-//               </div>
-//             </div>
-//             <div class="score">
-//               <span>WINS: 1</span>
-//               <br>
-//               <span>LOSS: 2</span>
-//             </div>
-//           </div>
-//         </div>
-// `
-
-/*
-            <div class="modal fade" id="next-game-modal" tabindex="-1" aria-labelledby="next-game-modalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered loading-modal-diag">
-                    <div class="modal-content">
-                        <div class="modal-body next-battle-modal-body text-center">
-                            <strong role="text">PLAYER 1</strong>
-                            <br>
-                            <strong role="text">VS</strong>
-                            <br>
-                            <strong role="text">PLAYER 2</strong>
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button id="startBattle" type="button" class="btn btn-secondary">Start Battle</button>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
- */
 export default class extends AbstractView {
   constructor() {
     super();
@@ -99,13 +44,10 @@ export default class extends AbstractView {
       this.actualizeTournament();
       listPlayer = this.getListPlayer();
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("PongLocalTournament:getHtml:", error);
-      }
+      this.handleCatch(error);
     }
     return `
-    <div class="background">
+    <div class="background" style="background-image:url('../img/ow.jpg');">
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
         ${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
       <br>
@@ -118,17 +60,17 @@ export default class extends AbstractView {
       </div>
     </div>
     <div class="modal fade" id="next-game-modal" tabindex="-1" aria-labelledby="next-game-modalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered loading-modal-diag">
-                    <div class="modal-content">
-                        <div class="modal-body next-battle-modal-body text-center">
-                            ${this.getNextMatch()}
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button id="startBattle" type="button" class="btn btn-secondary">${this.lang.getTranslation(["game", "start"])} ${this.lang.getTranslation(["game", "battle"])}</button>
-                        </div>
-                    </div>
-                </div>
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered loading-modal-diag">
+          <div class="modal-content">
+              <div class="modal-body next-battle-modal-body text-center">
+                  ${this.getNextMatch()}
+              </div>
+              <div class="modal-footer justify-content-center">
+                  <button id="startBattle" type="button" class="btn btn-secondary">${this.lang.getTranslation(["game", "start"])} ${this.lang.getTranslation(["game", "battle"])}</button>
+              </div>
+          </div>
+      </div>
     </div>
         `;
   }
@@ -226,7 +168,6 @@ export default class extends AbstractView {
         if (!color) color = "black";
     }
     if (nextPlayerRank == null) return "";
-    console.log("nextPlayer:", nextPlayerRank.name);
     return `
         <div>
           <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
@@ -282,13 +223,7 @@ export default class extends AbstractView {
       if (this.tournament.round.currentMatch >= this.tournament.PlayerA.length)
         this.getNextRound();
       if (this.tournament.round.current >= this.tournament.round.max) break;
-      console.log(
-        `current ROUND: ${this.tournament.round.current}; maxRound: ${this.tournament.round.max}`,
-      );
     }
-    console.log(
-      `next match is : ${playerA[this.tournament.round.currentMatch].name} vs ${playerB[this.tournament.round.currentMatch].name}`,
-    );
   }
 
   actualizeTournament() {
@@ -302,7 +237,6 @@ export default class extends AbstractView {
         "/pong-local-lobby",
       );
     }
-    console.log("tournament start:", this.tournament);
     this.updateRank();
     this.skipByeMatch();
     if (this.tournament.round.currentMatch >= this.tournament.PlayerA.length)

@@ -105,6 +105,7 @@ export default class extends AbstractView {
           );
           return;
         }
+        this.pong.setBackground();
         const parsedTournament = JSON.parse(tournament);
         if (
           !parsedTournament.round ||
@@ -120,7 +121,6 @@ export default class extends AbstractView {
             return;
           }
         }
-        console.log("TOURNAMENT START PONG:", parsedTournament);
         this.pong.setUsername(
           parsedTournament.PlayerA[parsedTournament.round.currentMatch].name,
           parsedTournament.PlayerB[parsedTournament.round.currentMatch].name,
@@ -128,10 +128,7 @@ export default class extends AbstractView {
         );
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("game:", error);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -205,7 +202,7 @@ export default class extends AbstractView {
   }
 
   removeEventListeners() {
-    this.pong.removePongEvent();
+    if (this.pong) this.pong.removePongEvent();
     const helpButton = document.querySelector("#helpButton");
     if (helpButton)
       helpButton.removeEventListener("click", this.handleHelpButton);

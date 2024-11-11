@@ -26,6 +26,8 @@
     "invite": "Invite",
     "save": "Save",
     "cancel": "Cancel",
+    "return": "Return",
+    "stop": "Stop",
     "help": "Help",
     "giveUp": "Give up",
     "show": "Show",
@@ -44,6 +46,7 @@
   },
   "user": {
     "you": "You",
+    "is": "is",
     "your": "Your",
     "account": "Account",
     "avatar": "Avatar",
@@ -57,14 +60,22 @@
   "game": {
     "label": "Game",
     "win": "Win",
+    "wins": "Wins",
     "won": "Won",
     "loss": "Loss",
     "lost": "Lost",
     "play": "Play",
     "next": "Next",
+    "time": "Time Left",
+    "its": "It's",
+    "turn": "'s Turn",
     "match": "Match",
+    "onGoing": "Ongoing",
+    "found": "Found",
+    "loadling": "Loading",
     "inviteMatch": "Invite to a Match",
     "noInvite": "No Invites",
+    "invites": "Invites",
     "player": "Player",
     "blue": "Blue",
     "red": "Red",
@@ -75,7 +86,10 @@
     "waiting": "waiting for",
     "history": "History",
     "winRate": "Win Rate",
-    "n/a": "n/a"
+    "n/a": "n/a",
+    "result": "Result",
+    "winner": "Winner",
+    "loser": "Loser"
   },
   "homePage": {
     "title": "Welcome to Our Pong!",
@@ -139,7 +153,9 @@
       "failTournament": "Failed to retrieve tournament information",
       "wonTournament": "won the tournament",
       "help": "Space to start the game.<br>Space to pause/unpause the game.<br>W to go up.<br>S to go down.<br>In local game for the Red Player:<br> -ArrowUp to go up.<br> -ArrowDown to go down.",
-      "lostGame": "Better luck next time"
+      "lostGame": "Better luck next time",
+      "addYourself": "You can't add yourself as a friend",
+      "inviteYou": "invites you to a game of"
     }
   }
 }

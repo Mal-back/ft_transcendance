@@ -78,12 +78,14 @@ export default class extends AbstractView {
 
   removeEventListeners() {
     const local = document.querySelector("#PongLocalPlayButton");
-    local.removeEventListener("click", this.handleLocalGameRedirection);
+    if (local)
+      local.removeEventListener("click", this.handleLocalGameRedirection);
 
     const tournament = document.querySelector("#PongLocalTournamentButton");
-    tournament.removeEventListener(
-      "click",
-      this.handleLocalTournamentRedirection,
-    );
+    if (tournament)
+      tournament.removeEventListener(
+        "click",
+        this.handleLocalTournamentRedirection,
+      );
   }
 }

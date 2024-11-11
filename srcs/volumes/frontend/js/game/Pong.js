@@ -1,5 +1,5 @@
 import { navigateTo } from "../router.js";
-import { getIpPortAdress, showModal } from "../Utils/Utils.js";
+import { getIpPortAdress, showModalGameResult } from "../Utils/Utils.js";
 import Language from "../Utils/Language.js";
 
 export default class Pong {
@@ -52,6 +52,7 @@ export default class Pong {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleGiveUp = this.handleGiveUp.bind(this);
+    this.setBackground = this.setBackground.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
 
@@ -66,10 +67,6 @@ export default class Pong {
     const computedStyle = window.getComputedStyle(this.canvas);
     this.canvas.width = parseFloat(computedStyle.width);
     this.canvas.height = parseFloat(computedStyle.height);
-    console.log("CANVAS:", {
-      width: this.canvas.width,
-      height: this.canvas.height,
-    });
     this.player1.username = this.lang.getTranslation(["game", "blue"]);
     this.player2.username = this.lang.getTranslation(["game", "red"]);
     this.mode = mode;
@@ -104,6 +101,13 @@ export default class Pong {
     this.player2.username = player2Name;
     this.tournament = tournament;
     this.redirectURL = this.setRedirecturl();
+  }
+
+  setBackground() {
+    const element = document.querySelector(
+      ".background.background-battle.d-flex.flex-column.align-items-center",
+    );
+    element.style = `background-image:url('../img/ow.jpg');`;
   }
 
   getUsername() {
@@ -161,7 +165,6 @@ export default class Pong {
   }
 
   handleTournamentData(data) {
-    console.log("TOURNAMENT:", this.tournament);
     const playerA = this.tournament.PlayerA[this.tournament.round.currentMatch];
     const playerB = this.tournament.PlayerB[this.tournament.round.currentMatch];
     if (data.winner == "player_1") {
@@ -183,27 +186,34 @@ export default class Pong {
   }
 
   showResultModal(data) {
-    let modalTitle = "";
-    let modalMessage = "";
+    let winner = "";
+    let loser = "";
+    let score = "";
+    let gif = "../img/ts/taylor-swift-cookie.gif"
     const username = sessionStorage.getItem("username_transcendence");
     if (this.mode == "local") {
-      let winner =
+      winner =
         data.winner == "player_1"
-          ? this.lang.getTranslation(["game", "blue"])
-          : this.lang.getTranslation(["game", "red"]);
-      winner += " Player";
-      let score =
+          ? this.player1.username
+          : this.player2.username
+      loser = data.looser == "player_1"
+        ? this.player1.username
+        : this.player2.username
+      score =
         data.winner == "player_1"
           ? `${data.score_1} - ${data.score_2}`
-          : `${data.score_2} ${data.score_1}`;
-      modalTitle = `${this.lang.getTranslation(["modal", "title", "congrats"])}`;
-      modalMessage = `${winner} ${this.lang.getTranslation(["game", "won"]).toLowerCase()} ${score} !`;
+          : `${data.score_2} - ${data.score_1}`;
     } else {
-      let boolWin = username == data.winner;
-      modalTitle = `${boolWin ? this.lang.getTranslation(["game", "won"]) : this.lang.getTranslation(["game", "lost"])}`;
-      modalMessage = `${this.lang.getTranslation(["user", "you"])} ${modalTitle} vs ${boolWin ? data.looser : data.winner} ${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}<br> ${boolWin ? this.lang.getTranslation("modal", "title", "congrats") : this.lang.getTranslation(["modal", "message", "lostGame"])}!`;
+      winner = data.winner;
+      loser = data.looser;
+      gif = data.winner == username ? "../img/ts/taylor-swift-win.gif" : "../img/ts/taylor-swift-cookie.gif";
+      score =
+        data.winner == username
+          ? `${data.winner_points} - ${data.looser_points}`
+          : `${data.looser_points} - ${data.winner_points}`;
     }
-    showModal(modalTitle, modalMessage);
+
+    showModalGameResult(winner, loser, gif, score);
   }
 
   handleWebSocketMessage(ev) {

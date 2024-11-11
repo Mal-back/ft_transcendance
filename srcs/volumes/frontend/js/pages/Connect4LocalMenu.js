@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Connect4 Local");
     this.handleLocalGameRedirection =
       this.handleLocalGameRedirection.bind(this);
     this.handleLocalTournamentRedirection =
@@ -22,6 +21,9 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "c4"])} ${this.lang.getTranslation(["title", "local"])}`,
+    );
     return `
       <div class="background removeElem">
         <div class=" removeElem custom-container d-flex flex-column justify-content-center align-items-center">
@@ -76,12 +78,14 @@ export default class extends AbstractView {
 
   removeEventListeners() {
     const local = document.querySelector("#c4LocalPlayButton");
-    local.removeEventListener("click", this.handleLocalGameRedirection);
+    if (local)
+      local.removeEventListener("click", this.handleLocalGameRedirection);
 
     const tournament = document.querySelector("#c4LocalTournamentButton");
-    tournament.removeEventListener(
-      "click",
-      this.handleLocalTournamentRedirection,
-    );
+    if (tournament)
+      tournament.removeEventListener(
+        "click",
+        this.handleLocalTournamentRedirection,
+      );
   }
 }

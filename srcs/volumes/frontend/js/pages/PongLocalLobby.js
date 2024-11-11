@@ -27,7 +27,7 @@ export default class extends AbstractView {
       `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}`,
     );
     return `
-      <div class="background removeElem">
+      <div class="background removeElem"  style="background-image:url('../img/ow.jpg');">
         <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
           ${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}</h1>
         <br>
@@ -88,13 +88,11 @@ export default class extends AbstractView {
   }
 
   checkUnique(playerName) {
-    console.log("check unique:");
     let count = 0;
     this.playerInputs.forEach((input) => {
       console.log(`${input.value} vs ${playerName}`);
       if (input.value == playerName) count++;
     });
-    console.log("count = ", count);
     return count == 1;
   }
 
@@ -110,7 +108,6 @@ export default class extends AbstractView {
       errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "unique"])}`;
     }
     if (errorMessage) {
-      console.log("ERROR:", errorMessage);
       errorDiv.textContent = errorMessage;
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";
@@ -162,7 +159,7 @@ export default class extends AbstractView {
   }
 
   setPlayersName() {
-    const maxRound = this.playerInputs.length;
+    const maxRound = this.playerInputs.length % 2 == 0 ? this.playerInputs.length - 1 : this.playerInputs.length;
     const playerValues = Array.from(this.playerInputs).map(
       (input) => input.value,
     );
@@ -207,7 +204,6 @@ export default class extends AbstractView {
         currentMatch: 0,
       },
     };
-    console.log("tournament", tournament);
     sessionStorage.setItem(
       "tournament_transcendence_local",
       JSON.stringify(tournament),

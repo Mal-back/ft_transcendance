@@ -1,10 +1,13 @@
+import threading
+from time import sleep
 from requests import delete
 from rest_framework import status
 from rest_framework.views import Response
+
+from .serializers import TournamentDetailSerializer, TournamentToHistorySerializer
 from .models import Tournament, Match, MatchUser, TournamentUser
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from django.db.models import F
-# from background_task import background
 
 def schedule_rounds(tournament:Tournament):
     players_list = tournament.confirmed_players.values_list('user__username', flat=True)
@@ -47,12 +50,12 @@ def create_round_matches(tournament:Tournament):
                              tournament=tournament,
                              )
 
-# @background(schedule=30)
-# def delete_tournament(id):
-#     try:
-#         Tournament.objects.get(id=id).delete()
-#     except Tournament.DoesNotExists:
-#         pass
+def delete_tournament(id):
+    sleep(30)
+    try:
+        Tournament.objects.get(id=id).delete()
+    except Tournament.DoesNotExists:
+        pass
 
 def handle_finished_matches(match:Match, data:dict):
     TournamentUser.objects.filter(username=data['winner']).update(match_won=F('match_won') + 1) 
@@ -61,19 +64,26 @@ def handle_finished_matches(match:Match, data:dict):
     match.delete()
 
     if not match.objects.filter(tournament=tournament).exists() :
-        tournament.round += 1
-        if tournament.round == tournament.confirmed_players.count():
-            match.status = 'finished'
-            # serialize results
-            # send results to history
-            delete_tournament(tournament.id)
-            # return results
-            pass
-        try :
-            create_round_matches(tournament)
-        except (RequestsFailed, InvalidCredentialsException):
-            tournament.delete()
-            return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        if tournament.round + 1 == tournament.confirmed_players.count():
+            tournament.status = 'finished'
+            serializer = TournamentToHistorySerializer(tournament)
+            try:
+                sender = MicroServiceClient()
+                sender.send_requests(
+                    urls = [f'http://game:8443/api/history/tournament/create/'],
+                    expected_status=[201],
+                    method='post',
+                    body=serializer.data
+                    )
+            except (RequestsFailed, InvalidCredentialsException):
+                pass
+            def delete_tournament():
+                try:
+                    Tournament.objects.get(id=id).delete()
+                except Tournament.DoesNotExists:
+                    pass
+            timer = threading.Timer(10, delete_tournament)
+        tournament.save()
         
 
 def round_robin_scheduler(players):

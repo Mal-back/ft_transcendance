@@ -1,8 +1,10 @@
 import { navigateTo } from "../router.js";
-import { getIpPortAdress, setSessionStorage, showModal } from "../Utils/Utils.js";
+import { getIpPortAdress, showModalGameResult } from "../Utils/Utils.js";
+import Language from "../Utils/Language.js";
 
 export default class Connect4 {
   constructor(setUsernameCallBack) {
+    this.lang = new Language();
     this.rows = 6;
     this.cols = 7;
     this.context = null;
@@ -42,9 +44,8 @@ export default class Connect4 {
     this.sendPlayerMovement = this.sendPlayerMovement.bind(this);
     this.handleUnloadPage = this.handleUnloadPage.bind(this);
     this.handleStartGame = this.handleStartGame.bind(this);
-    this.handleHelp = this.handleHelp.bind(this);
-    this.handleGiveUp = this.handleGiveUp.bind(this);
     this.setBackground = this.setBackground.bind(this);
+    this.showTimer = this.showTimer.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
 
@@ -56,7 +57,6 @@ export default class Connect4 {
   ) {
     this.mode = mode;
     this.token = token;
-    console.log("COUCOU");
     this.redirectURL = this.setRedirecturl();
     document.getElementById("User1").innerHTML =
       `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`;
@@ -66,16 +66,17 @@ export default class Connect4 {
       .getElementById("User1")
       .setAttribute(
         "title",
-        `${this.player1.username} is ${this.player1.color}`,
+        `${this.player1.username} ${this.lang.getTranslation(["user", "is"])} ${this.player1.color}`,
       );
     document
       .getElementById("User2")
       .setAttribute(
         "title",
-        `${this.player2.username} is ${this.player2.color}`,
+        `${this.player2.username} ${this.lang.getTranslation(["user", "is"])} ${this.player2.color}`,
       );
     document.getElementById("Turn").innerHTML =
-      `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
+      `<h3>${this.lang.getTranslation(["game", "its"])} ${this.player1.span}${this.player1.username}</span> ${this.lang.getTranslation(["game", "turn"])}!</h3>`;
+    console.log("connecting to :", websocket);
     this.webSocket = new WebSocket(websocket);
   }
 
@@ -95,7 +96,6 @@ export default class Connect4 {
 
   setToken(authToken) {
     this.token = authToken;
-    console.log("TOKEN IN PONG:", authToken);
   }
 
   setBackground() {
@@ -104,6 +104,7 @@ export default class Connect4 {
     );
     element.style = `background-image:url('../img/forest.png');`;
   }
+
   setUsername(player1Name, player2Name, tournament) {
     this.player1.username = player1Name;
     this.player2.username = player2Name;
@@ -114,11 +115,10 @@ export default class Connect4 {
     document.getElementById("User2").innerHTML =
       `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>`;
     document.getElementById("Turn").innerHTML =
-      `<h3>It's ${this.player1.span}${this.player1.username}</span>'s turn!</h3>`;
+      `<h3>${this.lang.getTranslation(["game", "its"])} ${this.player1.span}${this.player1.username}</span> ${this.lang.getTranslation(["game", "turn"])}!</h3>`;
   }
 
   getUsername() {
-    console.log("Pong:getUsername");
     this.setUsernameCallBack(
       this.mode,
       this.player1.username,
@@ -127,9 +127,8 @@ export default class Connect4 {
   }
 
   handleWebSocketOpen(ev) {
-    console.log("WEBSOCKET IS OPEN");
+    console.log("WEBSOCKET IS OPEN: mode = ", this.mode);
     if (this.mode == "remote") {
-      // console.log("CouCOU");
       let uuid = sessionStorage.getItem("transcendence_game_id");
 
       const body = {
@@ -159,13 +158,13 @@ export default class Connect4 {
     navigateTo(this.redirectURL);
   }
 
-  handleHelp(ev) {
-    //nothing yet
-  }
-
-  handleGiveUp(ev) {
-    //nothing yet
-  }
+  // handleHelp(ev) {
+  //   //nothing yet
+  // }
+  //
+  // handleGiveUp(ev) {
+  //   //nothing yet
+  // }
 
   printMessage(data) {
     console.log(this.currentPlayer, this.player1, this.player2);
@@ -173,14 +172,13 @@ export default class Connect4 {
       this.togglePlayer();
     }
     document.getElementById("Turn").innerHTML =
-      `<h3>Player ${this.currentPlayer.span}${this.currentPlayer.username}</span> wins!</h3>`;
+      `<h3>${this.lang.getTranslation(["game", "player"])} ${this.currentPlayer.span}${this.currentPlayer.username}</span> ${this.lang.getTranslation(["game", "wins"])}!</h3>`;
     this.gameActive = false;
     document.getElementById("giveUpBtn").style = `display : none;`;
     document.getElementById("returnBtn").style = `display : inline;`;
   }
 
   togglePlayer() {
-    console.log("TOGGLE");
     this.currentColor = this.currentPlayer == this.player1 ? "blue" : "red";
     this.currentPlayer =
       this.currentPlayer == this.player1 ? this.player2 : this.player1;
@@ -205,17 +203,37 @@ export default class Connect4 {
           cell.classList.add(`cell-${color}`);
         } else {
           const cell = document.getElementById(`cell${row}-${col}`);
-          cell.classList.remove(`cell-red`,`cell-blue`);
+          cell.classList.remove(`cell-red`, `cell-blue`);
           cell.classList.add(`cell`, `cell-empty`);
         }
       }
     }
-    console.log("CHECK THIS", data)
     if (data.current_player !== this.currentPlayer.player) {
       this.togglePlayer();
       document.getElementById("Turn").innerHTML =
-        `<h3>It's ${this.currentPlayer.span}${this.currentPlayer.username}</span>'s turn!</h3>`;
+        `<h3>${this.lang.getTranslation(["game", "its"])} ${this.currentPlayer.span}${this.currentPlayer.username}</span> ${this.lang.getTranslation(["game", "turn"])}!</h3>`;
     }
+  }
+
+  handleTournamentData(data) {
+    const playerA = this.tournament.PlayerA[this.tournament.round.currentMatch];
+    const playerB = this.tournament.PlayerB[this.tournament.round.currentMatch];
+    if (data.winner == "player_1") {
+      playerA.win += 1;
+      playerA.winRate = (playerA.win / (playerA.win + playerA.loss)) * 100;
+      playerB.loss += 1;
+      playerB.winRate = (playerB.win / (playerB.win + playerB.loss)) * 100;
+    } else {
+      playerB.win += 1;
+      playerB.winRate = (playerB.win / (playerB.win + playerB.loss)) * 100;
+      playerA.loss += 1;
+      playerA.winRate = (playerA.win / (playerA.win + playerA.loss)) * 100;
+    }
+    this.tournament.round.currentMatch += 1;
+    sessionStorage.setItem(
+      "tournament_transcendence_local",
+      JSON.stringify(this.tournament),
+    );
   }
 
   handleWebSocketMessage(ev) {
@@ -237,40 +255,27 @@ export default class Connect4 {
         this.drawFrame(data);
         break;
       }
+      case "timer": {
+        this.showTimer(data);
+        break;
+      }
       case "end_state": {
         console.log("END:", data);
         this.removeC4Event();
         this.printMessage(data);
         if (this.tournament) {
-          console.log("TOURNAMENT:", this.tournament);
-          const playerA =
-            this.tournament.PlayerA[this.tournament.round.currentMatch];
-          const playerB =
-            this.tournament.PlayerB[this.tournament.round.currentMatch];
-          if (data.winner == "player_1") {
-            playerA.win += 1;
-            playerA.winRate =
-              (playerA.win / (playerA.win + playerA.loss)) * 100;
-            playerB.loss += 1;
-            playerB.winRate =
-              (playerB.win / (playerB.win + playerB.loss)) * 100;
-          } else {
-            playerB.win += 1;
-            playerB.winRate =
-              (playerB.win / (playerB.win + playerB.loss)) * 100;
-            playerA.loss += 1;
-            playerA.winRate =
-              (playerA.win / (playerA.win + playerA.loss)) * 100;
-          }
-          this.tournament.round.currentMatch += 1;
-          console.log("CURRENT MATCH = ", this.tournament.round.currentMatch);
-          sessionStorage.setItem(
-            "tournament_transcendence_local",
-            JSON.stringify(this.tournament),
-          );
+          this.handleTournamentData(data);
         }
         navigateTo(this.redirectURL);
-        showModal("coucou", "tu as gagnes");
+        if (this.mode != "local") {
+          const gif = data.winner == sessionStorage.getItem("username_transcendence") ? "../img/ts/taylor-swift-win.gif" : "../img/ts/taylor-swift-cookie.gif";
+          showModalGameResult(data.winner, data.looser, gif);
+        }
+        else {
+          const winner = this.player1.player == data.winner ? this.player1.username : this.player2.username;
+          const loser = this.player1.player == data.looser ? this.player1.username : this.player2.username;
+          showModalGameResult(winner, loser, "../img/ts/taylor-swift-cookie.gif");
+        }
         return;
       }
       default: {
@@ -379,16 +384,15 @@ export default class Connect4 {
     }
     document.getElementById("User1").innerHTML = `<div class="Avatar Avatar-Resize status-playing me-3" alt="Avatar" id="leftPlayerAvatar"></div><h3 class="username-outline" style="cursor: pointer;">${this.player1.span}${this.player1.username}</span></h3>`;
     document.getElementById("User2").innerHTML = `</div><h3 class="username-outline" style="cursor: pointer;">${this.player2.span}${this.player2.username}</span></h3><div class="Avatar Avatar-Resize status-playing ms-3" alt="Avatar" id="rightPlayerAvatar"></div>`;
-    document.getElementById("User1").setAttribute("title", `${this.player1.username} is ${this.player1.color}`,);
-    document.getElementById("User2").setAttribute("title", `${this.player2.username} is ${this.player2.color}`,);
+    document.getElementById("User1").setAttribute("title", `${this.player1.username} ${this.lang.getTranslation(["user", "is"])} ${this.player1.color}`,);
+    document.getElementById("User2").setAttribute("title", `${this.player2.username} ${this.lang.getTranslation(["user", "is"])} ${this.player2.color}`,);
     this.currentPlayer = this.player1.player === data.starting_player ? this.player1 : this.player2;
 
-    document.getElementById("Turn").innerHTML = `<h3>It's ${this.currentPlayer.span}${this.currentPlayer.username}</span>'s turn!</h3>`;
+    document.getElementById("Turn").innerHTML = `<h3>${this.lang.getTranslation(["game", "its"])} ${this.currentPlayer.span}${this.currentPlayer.username}</span>${this.lang.getTranslation(["game", "turn"])}!</h3>`;
     this.getUsername()
   }
 
   sendPlayerMovement(player, col) {
-    console.log("TRYING TO SEND MOVE => Game started? ", this.gameStart);
     if (this.gameStart) {
       // console.log("SENT:", player)
       const movementData = {
@@ -397,7 +401,13 @@ export default class Connect4 {
         column: col,
       };
       this.webSocket.send(JSON.stringify(movementData));
-      console.info("SENT =>", movementData);
     }
+  }
+
+  showTimer(data) {
+    const display = document.getElementById("displayTime");
+    const time = document.getElementById("timer");
+    time.innerText = data.time_left;
+    display.style.display = "inline-block";
   }
 }

@@ -45,7 +45,7 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
     def get_tournament_win_rate(self, obj):
         if obj.tournaments_lost == 0:
             return 0
-        return obj.tournaments_won / obj.tournaments_lost if obj.tournaments_lost != 0 else 100
+        return obj.tournaments_won / obj.tournaments_lost if obj.tournaments_lost != 0 else 1
 
     def get_tournament_games_win_rate(self, obj):
         if obj.tournament_games_won == 0:
@@ -57,12 +57,12 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
         if obj.single_games_won == 0:
             return 0
         total_games = obj.single_games_won + obj.single_games_lost
-        return obj.single_games_won / obj.single_games_lost if obj.single_games_lost != 0 else 100
+        return obj.single_games_won / obj.single_games_lost if obj.single_games_lost != 0 else 1
 
     def get_overall_win_rate(self, obj):
         if self.get_overall_wins(obj) == 0:
             return 0
-        return self.get_overall_wins(obj) / self.get_overall_losts(obj) if self.get_overall_losts(obj) != 0 else 100
+        return self.get_overall_wins(obj) / self.get_overall_losts(obj) if self.get_overall_losts(obj) != 0 else 1
 
     def get_is_online(self, obj):
         if obj.last_seen_online == None or now() - obj.last_seen_online > timedelta(minutes=15):

@@ -1,17 +1,13 @@
 import Home from "./pages/Home.js";
-// import Game from "./pages/Game.js";
 import Profile from "./pages/Profile.js";
 import CreateUser from "./pages/CreateUser.js";
 import Login from "./pages/Login.js";
-import Matchmaking from "./pages/Matchmaking.js";
-import EpicMode from "./pages/epicMode.js";
 import Logout from "./pages/Logout.js";
 import Settings from "./pages/settings.js";
-import TrueFriends from "./pages/Friends.js";
 import Friends from "./pages/TrueFriends.js";
-// import Pong from "./pages/Pong.js";
+import Ranking from "./pages/Ranking.js";
+
 import PongLocal from "./pages/PongLocal.js";
-import CustomError from "./Utils/CustomError.js";
 import PongMenu from "./pages/PongMode.js";
 import PongLocalMenu from "./pages/PongLocalMenu.js";
 import PongRemoteMenu from "./pages/PongRemoteMenu.js";
@@ -28,6 +24,7 @@ import Connect4LocalLobby from "./pages/Connect4LocalLobby.js";
 import Connect4RemoteLobby from "./pages/Connect4RemoteLobby.js";
 import Connect4LocalTournament from "./pages/Connect4LocalTournament.js";
 import AbstractViews from "./pages/AbstractViews.js";
+import CustomError from "./Utils/CustomError.js";
 import { showModal } from "./Utils/Utils.js";
 
 export const navigateTo = (url) => {
@@ -45,15 +42,13 @@ const router = async () => {
   console.info("Router is on");
   const routes = [
     { path: "/", view: Home },
-    { path: "/game", view: Matchmaking },
     { path: "/profile", view: Profile },
     { path: "/createUser", view: CreateUser },
     { path: "/login", view: Login },
     { path: "/logout", view: Logout },
-    { path: "/epic-mode", view: EpicMode },
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
-    { path: "/friendstrue", view: TrueFriends },
+    { path: "/rankings", view: Ranking },
     // { path: "/pong", view: Pong },
     { path: "/pong", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
@@ -136,7 +131,7 @@ const router = async () => {
   // console.log(document.documentElement.outerHTML);
 };
 
-window.addEventListener("popstate", () => {
+window.addEventListener("popstate", async () => {
   if (view) view.destroy();
   router();
 });
@@ -222,21 +217,21 @@ document
   .getElementById("buttonOnGoingGame")
   .addEventListener("click", async (ev) => {
     try {
-    ev.preventDefault();
-    const url = ev.currentTarget.dataset.redirectUrl;
-    if (url) {
-      if (ev.target.innerText == "CANCEL") {
-        const request = await view.makeRequest(url, "DELETE");
-        const response = await fetch(request);
-        if (view.handleStatus(response)){ 
-        const divOnGoingGame = document.querySelector("#divOnGoingGame");
-        divOnGoingGame.style.display = "none";
-        }
-      } else navigateTo(url);
-      const friendModalDiv = document.querySelector("#inviteUserModal");
-      const modal = bootstrap.Modal.getInstance(friendModalDiv);
-      modal.hide();
-    }
+      ev.preventDefault();
+      const url = ev.currentTarget.dataset.redirectUrl;
+      if (url) {
+        if (ev.target.innerText == "CANCEL") {
+          const request = await view.makeRequest(url, "DELETE");
+          const response = await fetch(request);
+          if (view.handleStatus(response)) {
+            const divOnGoingGame = document.querySelector("#divOnGoingGame");
+            divOnGoingGame.style.display = "none";
+          }
+        } else navigateTo(url);
+        const friendModalDiv = document.querySelector("#inviteUserModal");
+        const modal = bootstrap.Modal.getInstance(friendModalDiv);
+        modal.hide();
+      }
     } catch (error) {
       if (error instanceof CustomError) {
         showModal(error.title, error.message);
@@ -244,27 +239,3 @@ document
       }
     }
   });
-
-// const inviteList = document.getElementById("inviteList");
-//
-// inviteList.addEventListener("click", (event) => {
-//   console.log("CLICKED");
-//   // Check if the clicked element is an accept or refuse button
-//   const button = event.target.closest(".accept-button, .refuse-button");
-//   if (!button) return; // If not, exit the function
-//
-//   const inviteId = button.dataset.inviteId;
-//   const action = button.dataset.action;
-//
-//   const invite = AbstractViews.invitesArray.find((inv) => inv.id === inviteId);
-//   if (invite) {
-//     const url =
-//       action === "accept" ? invite.acceptInviteUrl : invite.declineInviteUrl;
-//     console.log(`URL: ${url}; action: ${action}`);
-//   }
-// });
-
-// handleInviteResponse(url) {
-//   console.log(`Invite ${action}: ${url}`);
-//   // Additional code to handle the invite response
-// }

@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Connect4 mode");
     this.handleLocalRedirection = this.handleLocalRedirection.bind(this);
     this.handleRemoteRedirection = this.handleRemoteRedirection.bind(this);
   }
@@ -20,6 +19,9 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "c4"])} ${this.lang.getTranslation(["title", "mode"])}`,
+    );
     return `
     <div class="background removeElem">
       <div class="custom-container d-flex flex-column justify-content-center align-items-center removeElem">

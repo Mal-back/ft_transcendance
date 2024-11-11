@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Settings");
     this.selectedBackground = null;
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
     this.handleInputUsername = this.handleInputUsername.bind(this);
@@ -32,6 +31,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["title", "settings"])}`);
     const currentAvatar = await this.getCurrentAvatar();
     const defaultAvatar = await this.getDefaultAvatar(currentAvatar);
     const htmlContent = `
@@ -288,6 +288,7 @@ export default class extends AbstractView {
       return "";
     } catch (error) {
       this.handleCatch(error);
+      return "";
     }
   }
 
@@ -295,7 +296,7 @@ export default class extends AbstractView {
     try {
       const defaultAvatarMainDiv = document.createElement("div");
       defaultAvatarMainDiv.classList.add("removeElem", "row");
-      const request = await this.makeRequest("api/avatars", "GET", null);
+      const request = await this.makeRequest("api/avatars/", "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
@@ -310,6 +311,7 @@ export default class extends AbstractView {
       return "";
     } catch (error) {
       this.handleCatch(error);
+      return "";
     }
   }
 
@@ -384,12 +386,13 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
+        const modalPasswordDiv = document.querySelector("#handlePassword");
+        const modalPassword = bootstrap.Modal.getInstance(modalPasswordDiv);
+        modalPassword.hide();
         showModal(
           `${this.lang.getTranslation(["modal", "title", "success"])}`,
           `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["modal", "message", "successChange"])}`,
         );
-        // const data = await response.json();
-        // console.log("data after change =", data);
       }
     } catch (error) {
       this.handleCatch(error);
@@ -409,6 +412,9 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
+        const modalEmailDiv = document.querySelector("#handleEmail");
+        const modalEmail = bootstrap.Modal.getInstance(modalEmailDiv);
+        modalEmail.hide();
         showModal(
           `${this.lang.getTranslation(["modal", "title", "success"])}`,
           `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["modal", "message", "successChange"])}`,
@@ -423,7 +429,7 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     try {
       const request = await this.makeRequest(
-        `/api/auth/delete/${username}`,
+        `/api/auth/delete/${username}/`,
         "DELETE",
       );
       const response = await fetch(request);
@@ -457,9 +463,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#settingsUsernameError");
     errorDiv.innerHTML = "";
     if (usernameInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(usernameInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -495,7 +501,7 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#newPassError");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -511,10 +517,10 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#confirmPassError");
     errorDiv.innerHTML = "";
     if (passwordInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     }
     if (password2Input.value !== passwordInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "password"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -530,9 +536,9 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#newMailError");
     errorDiv.innerHTML = "";
     if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -548,11 +554,11 @@ export default class extends AbstractView {
     const errorDiv = document.querySelector("#confirmMailError");
     errorDiv.innerHTML = "";
     if (mailInput.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(mailInput.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     } else if (mailInput.value != confirmMailInput.value) {
-      errorMessage = `${this.lang.getTranslation(["input", "labal", "email"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
     }
     if (errorMessage) {
       errorDiv.textContent = errorMessage;
@@ -570,7 +576,7 @@ export default class extends AbstractView {
     const confirmPasswordInput = document.querySelector(
       "#confirm-new-password-settings",
     );
-    this.validatePasswordMatch(confirmPasswordInput);
+    this.validatePasswordMatch(newPasswordInput, confirmPasswordInput);
   }
 
   async handleChangePassword(ev) {

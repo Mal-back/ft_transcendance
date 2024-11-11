@@ -10,7 +10,6 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Friends");
     this.handleRemoveFriends = this.handleRemoveFriends.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
   }
@@ -22,6 +21,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    this.setTitle(`${this.lang.getTranslation(["title", "friends"])}`);
     const mainDiv = document.createElement("div");
     mainDiv.innerHTML = await this.getMaindiv();
     return mainDiv.innerHTML;
@@ -32,8 +32,8 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       if (username == friendname) {
         showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          this.lang.getTranslation(["Friends", "error", "yourself"]),
+          this.lang.getTranslation(["modal", "title", "error"]),
+          this.lang.getTranslation(["modal", "message", "addYourself"]),
         );
         return;
       }
@@ -158,6 +158,7 @@ export default class extends AbstractView {
   }
 
   createFriendElement(friendJson) {
+    console.log("Friend:", friendJson)
     const friendStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";
@@ -244,14 +245,16 @@ export default class extends AbstractView {
     const friendUsername = button
       .closest(".list-group-item")
       .querySelector("h5").textContent;
-    console.log("Removing:", friendUsername);
 
     ev.preventDefault();
     try {
       await this.removeFriends(friendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
+        showModal(error.title, error.message);
         navigateTo(error.redirect);
+      } else {
+        console.error("handleRemoveFriends:", error);
       }
     }
   }
@@ -265,7 +268,10 @@ export default class extends AbstractView {
       await this.addFriendRequest(addFriendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
+        showModal(error.title, error.message);
         navigateTo(error.redirect);
+      } else {
+        console.error("handleAddFriend:", error);
       }
     }
   }
