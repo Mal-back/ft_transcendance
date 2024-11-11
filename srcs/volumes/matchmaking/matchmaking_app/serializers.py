@@ -312,13 +312,14 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
     remove_players = serializers.SerializerMethodField()
     launch_tournament = serializers.SerializerMethodField()
     launch_next_round = serializers.SerializerMethodField()
+    rounds_schedule = serializers.SerializerMethodField()
 
     class Meta:
         model = Tournament
-        fields = ['game_type', 'status', 'player_type', 'accept_invite', 'decline_invite',
-                  'leave_tournament', 'delete_tournament', 'round_number', 'invited_players_profiles',
-                  'confirmed_players_profiles', 'owner_profile', 'invite_players', 'remove_players',
-                  'launch_tournament', 'players_order', 'launch_next_round']
+        fields = ['game_type', 'status', 'player_type', 'leave_tournament', 'delete_tournament',
+                  'round_number', 'invited_players_profiles', 'confirmed_players_profiles',
+                  'owner_profile', 'invite_players', 'remove_players',
+                  'launch_tournament', 'players_order', 'launch_next_round', 'rounds_schedule']
 
     def get_player_type(self, obj):
         request = self.context.get('request')
@@ -406,6 +407,11 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
         if obj.status == 'in_progress':
             sorted_participants = obj.confirmed_user.order_by('-match_won')
             return TournamentUserSerializer(sorted_participants, many=True).data
+        return None
+
+    def get_rounds_schedule(self, obj):
+        if obj.status == 'in_progress':
+            return obj.round_schedule
         return None
 
 class TournamentToHistorySerializer(serializers.ModelField):
