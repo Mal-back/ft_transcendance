@@ -81,7 +81,7 @@ export default class extends AbstractView {
     const mainDiv = document.createElement("div");
     try {
       const mainRequest = await this.makeRequest(
-        `/api/history/match/?username=${userData.username}`,
+        `/api/history/match/?username=${userData.username}&game_type=pong`,
       );
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
@@ -134,12 +134,12 @@ export default class extends AbstractView {
       if (!fillModal)
         fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
 
-      const winRatePong = userData.total_games
-        ? `${userData.single_games_win_rate * 100} %`
+      const winRatePong = userData.total_single_games_pong
+        ? `${userData.single_games_pong_win_rate * 100} %`
         : `${this.lang.getTranslation(["game", "n/a"])}`;
 
-      const winRateC4 = userData.total_games
-        ? `${userData.single_games_win_rate * 100} %`
+      const winRateC4 = userData.total_single_games_c4
+        ? `${userData.single_games_c4_win_rate * 100} %`
         : `${this.lang.getTranslation(["game", "n/a"])}`;
 
       const htmlContent = `
