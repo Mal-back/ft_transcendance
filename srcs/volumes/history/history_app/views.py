@@ -53,18 +53,19 @@ class TournamentCreate(APIView):
     permission_classes = [IsMatchMaking]
 
     def post(self, request, *args, **kwargs):
-        serializer = TournamentSerializer(request.data)
+        serializer = TournamentSerializer(data=request.data)
         if serializer.is_valid():
             obj = serializer.save()
+            print(obj.id)
             return Response({'id':obj.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TournamentList(generics.ListAPIView):
-    serializer_class = MatchGetSerializer 
+    serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
 
 class TournamentRetrieve(generics.RetrieveAPIView):
-    serializer_class = MatchGetSerializer 
+    serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
     lookup_field = 'pk'
 

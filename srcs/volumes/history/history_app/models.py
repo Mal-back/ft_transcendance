@@ -7,15 +7,15 @@ class MatchUser(models.Model):
 
 class TournamentUser(models.Model):
     username = models.ForeignKey('MatchUser',
-                                 related_name='final_ranking',
+                                 related_name='user',
                                  on_delete=models.PROTECT,
                                  to_field='username')
     matches_won = models.IntegerField()
     matches_lost = models.IntegerField()
     games_played = models.IntegerField()
-    user_profile = models.URLField()
+    user_profile = models.CharField()
     tournament = models.ForeignKey('Tournament',
-                                   related_name='tournament',
+                                   related_name='final_ranking',
                                    on_delete=models.CASCADE)
 
 class Tournament(models.Model):

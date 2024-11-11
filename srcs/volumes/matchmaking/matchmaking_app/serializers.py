@@ -438,5 +438,5 @@ class TournamentUserSerializer(serializers.ModelSerializer):
     def get_user_profile(self, obj):
         return(f'/api/users/{obj.user.username}')
 
-    def get_game_played(self, obj):
+    def get_games_played(self, obj):
         return obj.matches_won + obj.matches_lost

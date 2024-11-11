@@ -397,6 +397,8 @@ class LeaveTournament(generics.UpdateAPIView):
             player = tournament.confirmed_players.get(user=request.user)
         except TournamentUser.DoesNotExist:
             return Response({'Error':'You\'re not in the tournament'}, status=status.HTTP_409_CONFLICT)
+        if tournament.owner == request.user:
+            return Response({'Error':'You\'re the owner of the tournament'}, status=status.HTTP_409_CONFLICT)
         if tournament.status != 'pending':
             return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
         player.delete()
@@ -560,4 +562,16 @@ class DebugCreateFinishedTournament(APIView):
         TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=0, matches_lost=3)
         serializer = TournamentToHistorySerializer(tournament)
         print(serializer.data)
+        try:
+            sender = MicroServiceClient()
+            responses = sender.send_requests(
+                urls = [f'http://history:8443/api/history/tournament/create/'],
+                expected_status=[201],
+                method='post',
+                body=serializer.data
+                )
+        except (RequestsFailed, InvalidCredentialsException):
+            pass
+        ret = responses['http://history:8443/api/history/tournament/create/']
+        print(ret.json()['id'])
         return Response(serializer.data, status=status.HTTP_200_OK)
