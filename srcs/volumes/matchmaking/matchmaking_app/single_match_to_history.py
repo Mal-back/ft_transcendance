@@ -7,8 +7,8 @@ def end_single_match(match, data):
         MatchUser.objects.filter(username=data['looser']).update(match_won=F('match_lost') + 1) 
         sender = MicroServiceClient()
         try :
-            sender.send_requests(urls=[f"http://users:8443/api/users/{data['winner']}/increment/single_games_won/",
-                                        f"http://users:8443/api/users/{data['looser']}/increment/single_games_lost/",],
+            sender.send_requests(urls=[f"http://users:8443/api/users/{data['winner']}/increment/single_games_{data["game_type"]}_won/",
+                                        f"http://users:8443/api/users/{data['looser']}/increment/single_games_{data["game_type"]}_lost/",],
                                  method='patch',
                                  expected_status=[200]) 
         except (RequestsFailed, InvalidCredentialsException):

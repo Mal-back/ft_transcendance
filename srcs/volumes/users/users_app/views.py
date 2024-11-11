@@ -24,12 +24,14 @@ class PublicUserList(generics.ListAPIView):
         allowed_order_fields = [
                 'username',
                 'account_creation',
-                'single_games_won',
-                'single_games_lost',
-                'tournament_games_won',
-                'tournament_games_lost',
-                'tournaments_won',
-                'tournaments_lost',
+                'single_games_pong_won',
+                'single_games_pong_lost',
+                'single_games_c4_won',
+                'single_games_c4_lost',
+                'tournaments_pong_won',
+                'tournaments_pong_lost',
+                'tournaments_c4_won',
+                'tournaments_c4_lost',
                 ]
         order_by = self.request.query_params.get('order_by')
         if order_by in allowed_order_fields:
@@ -69,12 +71,14 @@ class PublicUserIncrement(APIView):
             return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         allowedFields = {
-                'single_games_won':'single_games_won',
-                'single_games_lost':'single_games_lost',
-                'tournament_games_won':'tournament_games_won',
-                'tournament_games_lost':'tournament_games_lost',
-                'tournaments_won':'tournaments_won',
-                'tournaments_lost':'tournaments_lost',
+                'single_games_pong_won' : 'single_games_pong_won',
+                'single_games_pong_lost' : 'single_games_pong_lost',
+                'single_games_c4_won' : 'single_games_c4_won',
+                'single_games_c4_lost' : 'single_games_c4_lost',
+                'tournaments_pong_won' : 'tournaments_pong_won',
+                'tournaments_pong_lost' : 'tournaments_pong_lost',
+                'tournaments_c4_won' : 'tournaments_c4_won',
+                'tournaments_c4_lost' : 'tournaments_c4_lost',
                 }
         if lookupfield not in allowedFields:
             return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
