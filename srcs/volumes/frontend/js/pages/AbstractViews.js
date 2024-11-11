@@ -503,12 +503,16 @@ export default class AbstractViews {
 
   async handleStatus(response) {
     try {
+      let data;
+      if (!response.ok) {
+         data = await this.getDatafromRequest(response);
+      }
       if (response.status == 401) {
         console.error("401 error:response:", response);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
-          `${this.lang.getTranslation(["modal", "message", "notLog"])}`,
+          `${this.lang.getTranslation(["modal", "message", data])}`,
           "/login",
         );
       }

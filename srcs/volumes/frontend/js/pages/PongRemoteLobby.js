@@ -33,7 +33,6 @@ export default class extends AbstractView {
       );
       const username = sessionStorage.getItem("username_transcendence");
       let data = await this.checkTournament();
-      if (data == undefined) await this.createTournament();
       return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -112,6 +111,13 @@ export default class extends AbstractView {
     }
   }
 
+  async fillTournamentInvites(data) {
+    try {
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
   async checkTournament() {
     try {
       const request = await this.makeRequest(
@@ -122,7 +128,7 @@ export default class extends AbstractView {
       if (response.status == 404) return undefined;
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        await fillTournamentInvites(data);
+        await this.fillTournamentInvites(data);
       }
       return undefined;
     } catch (error) {
