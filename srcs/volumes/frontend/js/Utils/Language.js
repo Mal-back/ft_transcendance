@@ -54,7 +54,7 @@ export default class Language {
       `<i class="bi bi-person-heart"></i> ${this.getTranslation(["title", "friends"])}`;
     const loginOverlay = document.querySelector("#overlayLogin");
     if (sessionStorage.getItem("accessJWT_transcendence")) {
-      loginOverlay.innerHTML = `<i class="bi bi=box-arrow-in-right"></i> ${this.getTranslation(["title", "logout"])}`;
+      loginOverlay.innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${this.getTranslation(["title", "logout"])}`;
       document.querySelector("#logIconRef").title = this.getTranslation([
         "title",
         "logout",
@@ -66,6 +66,9 @@ export default class Language {
         "login",
       ]);
     }
+  }
+
+  translateModal() {
     const alertLabel = document.getElementById("alertLabel");
     alertLabel.innerText = this.getTranslation(["modal", "title", "error"]);
     const gameResultModal = document.getElementById("gameResultModal");
@@ -74,7 +77,23 @@ export default class Language {
     const gameLoserTitle = gameResultModal.querySelector("#gameLoserTitle");
     gameResultTitle.innerText = `${this.getTranslation(["game", "label"])} ${this.getTranslation(["game", "result"])}:`;
     gameWinnerTitle.innerText = `${this.getTranslation(["game", "winner"])} : `;
-    gameLoserTitle.innerText = `${this.getTranslation(["game", "loser"])} : `
+    gameLoserTitle.innerText = `${this.getTranslation(["game", "loser"])} : `;
+
+    const inviteModalLabel = document.getElementById("inviteModalLabel");
+    inviteModalLabel.innerText = `${this.getTranslation(["game", "label"])} ${this.getTranslation(["game", "invites"])}`;
+    const onGoingGameText = document.getElementById("onGoingGameText");
+    onGoingGameText.innerText = `${this.getTranslation(["game", "onGoing"])} ${this.getTranslation(["game", "label"])}`;
+    const onGoingGameButton = document.querySelector("#buttonOnGoingGame");
+    onGoingGameButton.innerText = `${this.getTranslation(["button", "cancel"]).toUpperCase()}`;
+    const invitesModalTextTitle = document.getElementById(
+      "invitesModalTextTitle",
+    );
+    invitesModalTextTitle.innerText = `${this.getTranslation(["game", "invites"])}`;
+
+    const invitesModalCloseButton = document.getElementById(
+      "invitesModalCloseButton",
+    );
+    invitesModalCloseButton.innerText = `${this.getTranslation(["button", "close"])}`;
   }
 
   objectToMap(jsonDict) {
@@ -105,6 +124,7 @@ export default class Language {
         this.currentLanguage = lang;
         console.debug("Get JSON Language:", this.JSONLanguage);
         this.translateIndex();
+        this.translateModal();
       } else {
         console.error("fail to fetch languageJSON");
         sessionStorage.removeItem("transcendence_language");

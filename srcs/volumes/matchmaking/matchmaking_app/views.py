@@ -118,6 +118,16 @@ class GetInvite(APIView):
         except Match.DoesNotExist:
             on_going_match = None
 
+        try :
+            is_in_queue = InQueueUser.objects.get(user=request.user)
+        except InQueueUser.DoesNotExist:
+            is_in_queue = None
+
+        try :
+            is_in_tournament = TournamentUser.objects.get(user=request.user)
+        except TournamentUser.DoesNotExist:
+            is_in_tournament = None
+
         if matchQuery.exists():
             match_serializer = InviteSerializer(matchQuery, context={'request':request}, many=True)
             match_data = match_serializer.data
@@ -138,6 +148,8 @@ class GetInvite(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         combined_data = {
+            'current_tournament': '/api/matchmaking/detail/' if is_in_tournament else None,
+            'is_in_queue': True if is_in_queue else False,
             'on_going_match': on_going_data if on_going_match else {},  
             'match_pending': match_data if match_data else [],
             'tournament_pending': tournament_data if tournament_data else []
@@ -232,7 +244,7 @@ class GetAcceptedMatch(generics.RetrieveAPIView):
 class HandleMatchResult(APIView):
     queryset = Match.objects.all()
     lookup_field = 'matchId'
-    permission_classes = [IsGame]
+    # permission_classes = [IsGame]
 
     def get_object(self, matchId):
         return get_object_or_404(self.queryset, matchId=matchId)
@@ -280,6 +292,12 @@ class MatchMakingRequestMatch(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        try :
+            on_going_match = Match.objects.get(Q(player1=request.user) | Q(player2=request.user), status__in=['accepted', 'in_progress'])
+            serializer = AcceptedMatchSerializer(on_going_match)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Match.DoesNotExist:
+            pass
         try :
             queueUser = InQueueUser.objects.get(user=request.user.username)
         except InQueueUser.DoesNotExist :
@@ -489,6 +507,12 @@ class LaunchNextRound(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         if Match.objects.filter(tournament=obj).exists() :
             return Response({'Error':'Round is not finished'}, status=status.HTTP_409_CONFLICT)
+        elif obj.status == 'pending':
+            return Response({'Error':'Tournament did not start'}, status=status.HTTP_409_CONFLICT)
+        elif obj.status == 'finished':
+            return Response({'Error':'Tournament already finished'}, status=status.HTTP_409_CONFLICT)
+        obj.current_round += 1
+        obj.save()
         try :
             schedule_rounds(obj)
         except TournamentInternalError:
@@ -496,7 +520,7 @@ class LaunchNextRound(APIView):
             return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         return Response({'OK':'Next round started'}, status=status.HTTP_200_OK)
 
-class getTournament(APIView):
+class GetTournament(APIView):
     def get_object(self):
         user = self.request.user
         try :
