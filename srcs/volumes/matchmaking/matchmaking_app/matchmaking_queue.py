@@ -1,5 +1,5 @@
 from datetime import timedelta
-from django.utils.timezone import now
+from django.utils.timezone import now, timedelta
 from .models import InQueueUser, Match, MatchUser
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 
@@ -10,13 +10,12 @@ def check_range_update(user:InQueueUser):
         user.save()
 
 def get_opponent(user:InQueueUser):
-    print("In Func")
     check_range_update(user)
-    print(f'{user.minimal_wr}, {user.maximal_wr}')
+    cutoff = now() - timedelta(seconds=10)
+    InQueueUser.objects.filter(last_range_update__lt=cutoff).delete()
     potential_opps = InQueueUser.objects.filter(win_rate__range=(user.minimal_wr, user.maximal_wr),
                                                 game_type=user.game_type).exclude(user=user.user).order_by('?')
     for potential_opp in potential_opps:
-        print("testing a opps")
         check_range_update(potential_opp)
         reverse_opps = InQueueUser.objects.filter(win_rate__range=(potential_opp.minimal_wr, potential_opp.maximal_wr))
         if user in reverse_opps:
