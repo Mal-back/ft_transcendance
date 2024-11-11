@@ -5,7 +5,7 @@ from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer, InviteSerializer, TournamentDetailSerializer, TournamentConciseSerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer, InviteSerializer, TournamentDetailSerializer, TournamentConciseSerializer, TournamentToHistorySerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame, IsInitiatingPlayer, IsInvitedPlayerTournament, IsConfirmedPlayerTournament
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
@@ -546,3 +546,18 @@ class DebugSetTournamentAsFinished(APIView):
         tournament = Tournament.objects.get(id=id)
         tournament.delete()
         return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
+
+class DebugCreateFinishedTournament(APIView):
+    def get(self, request, *args, **kwargs):
+        val = MatchUser.objects.get(username='val')
+        lui = MatchUser.objects.get(username='lui')
+        vl = MatchUser.objects.get(username='vl')
+        elle = MatchUser.objects.get(username='elle')
+        tournament = Tournament.objects.create(owner=val, game_type='pong', status='finished')
+        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=3, matches_lost=0)
+        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=2, matches_lost=1)
+        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=1, matches_lost=2)
+        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=0, matches_lost=3)
+        serializer = TournamentToHistorySerializer(tournament)
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)

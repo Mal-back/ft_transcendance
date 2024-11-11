@@ -2,8 +2,8 @@ from django.db import transaction
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.views import APIView, Response
-from .models import Match, MatchUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer
+from .models import Match, MatchUser, Tournament
+from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
 from .permissions import IsAuth, IsMatchMaking
 
 # Create your views here.
@@ -47,7 +47,26 @@ class MatchUserDelete(generics.DestroyAPIView):
 class MatchCreate(generics.CreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer 
-    # permission_classes = [IsMatchMaking]
+    permission_classes = [IsMatchMaking]
+
+class TournamentCreate(APIView):
+    permission_classes = [IsMatchMaking]
+
+    def post(self, request, *args, **kwargs):
+        serializer = TournamentSerializer(request.data)
+        if serializer.is_valid():
+            obj = serializer.save()
+            return Response({'id':obj.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TournamentList(generics.ListAPIView):
+    serializer_class = MatchGetSerializer 
+    queryset = Tournament.objects.all()
+
+class TournamentRetrieve(generics.RetrieveAPIView):
+    serializer_class = MatchGetSerializer 
+    queryset = Tournament.objects.all()
+    lookup_field = 'pk'
 
 class MatchList(generics.ListAPIView):
     serializer_class = MatchGetSerializer 

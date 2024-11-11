@@ -335,7 +335,7 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
     def get_leave_tournament(self, obj):
         request = self.context.get('request')
         user = request.user
-        if user.username in obj.confirmed_players.values_list('user', flat=True) and obj.status == 'pending': 
+        if user.username in obj.confirmed_players.values_list('user', flat=True) and obj.status == 'pending' and user != obj.owner: 
             return(f'/api/matchmaking/tournament/{obj.id}/leave/')
         return None
 
@@ -414,25 +414,23 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
             return obj.round_schedule
         return None
 
-class TournamentToHistorySerializer(serializers.ModelField):
-    order = serializers.SerializerMethodField()
+class TournamentToHistorySerializer(serializers.ModelSerializer):
+    final_ranking = serializers.SerializerMethodField()
     class Meta:
         model = Tournament
-        field = ['game_type', 'order']
+        fields = ['game_type', 'final_ranking']
 
-    def get_order(self, obj):
-        if obj.status == 'in_progress':
-            sorted_participants = obj.confirmed_user.order_by('-match_won')
-            return TournamentUserSerializer(sorted_participants, many=True).data
-        return None
+    def get_final_ranking(self, obj):
+        sorted_participants = obj.confirmed_players.order_by('-matches_won')
+        return TournamentUserSerializer(sorted_participants, many=True).data
 
 class TournamentUserSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     user_profile = serializers.SerializerMethodField()
-    game_played = serializers.SerializerMethodField()
+    games_played = serializers.SerializerMethodField()
     class Meta:
         model = TournamentUser
-        fields = ['username', 'match_won', 'match_lost', 'user_profile']
+        fields = ['username', 'matches_won', 'matches_lost', 'user_profile', 'games_played']
 
     def get_username(self, obj):
         return obj.user.username
@@ -441,4 +439,4 @@ class TournamentUserSerializer(serializers.ModelSerializer):
         return(f'/api/users/{obj.user.username}')
 
     def get_game_played(self, obj):
-        return obj.match_won + obj.match_lost
+        return obj.matches_won + obj.matches_lost

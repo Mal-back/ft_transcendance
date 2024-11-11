@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.utils import choices
 from rest_framework import serializers
-from .models import MatchUser, Match
+from .models import MatchUser, Match, Tournament, TournamentUser
 
 class MatchUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,3 +27,19 @@ class MatchGetSerializer(serializers.ModelSerializer):
     def get_looser_profile(self, obj):
         looser = obj.looser.username
         return(f"/api/users/{looser}")
+
+class TournamentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tournament
+        fields = ['game_type', 'final_ranking']
+
+    def create(self, validated_data):
+        final_ranking = validated_data.pop('ranking')
+        tournament = Tournament.objects.create(**validated_data)
+        for user in final_ranking:
+            TournamentUser.objects.create(tournament=tournament, **user)
+
+class TournamentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TournamentUser
+        fields = ['__all__']
