@@ -77,11 +77,12 @@ export default class extends AbstractView {
       return "";
     }
   }
-  async pongMatchHistory(userData) {
+
+  async matchHistory(userData, gameType) {
     const mainDiv = document.createElement("div");
     try {
       const mainRequest = await this.makeRequest(
-        `/api/history/match/?username=${userData.username}&game_type=pong`,
+        `/api/history/match/?username=${userData.username}&game_type=` + gameType,
       );
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
@@ -120,6 +121,8 @@ export default class extends AbstractView {
     }
   }
 
+
+
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["title", "profile"])}`);
     let userData = null;
@@ -130,7 +133,7 @@ export default class extends AbstractView {
         " " +
         this.lang.getTranslation(["game", "history"]);
 
-      let fillModal = await this.pongMatchHistory(userData);
+      let fillModal = await this.MatchHistory(userData, "pong");
       if (!fillModal)
         fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
 
