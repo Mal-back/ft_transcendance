@@ -19,6 +19,7 @@ export default class extends AbstractView {
     this.createPageCss("../css/background-profile.css");
   }
 
+
   async loadUserData() {
     const username = sessionStorage.getItem("username_transcendence");
     console.log("username = ", username);
@@ -35,6 +36,7 @@ export default class extends AbstractView {
       this.handleCatch(error);
     }
   }
+
 
   async createMatchElement(data, userData) {
     try {
@@ -78,7 +80,8 @@ export default class extends AbstractView {
     }
   }
 
-  async matchHistory(userData, gameType) {
+
+  async getMatchHistory(userData, gameType) {
     const mainDiv = document.createElement("div");
     try {
       const mainRequest = await this.makeRequest(
@@ -122,6 +125,91 @@ export default class extends AbstractView {
   }
 
 
+  async createTournamentElement(data, userData) {
+    try {
+      const boolWin = userData.username == data.winner ? true : false;
+      const opponentName = boolWin ? data.looser : data.winner;
+      const opponentInfo = await this.getUserInfo(opponentName);
+      const color = boolWin ? "bg-dark" : "bg-gray";
+      let lostWin = boolWin
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
+      lostWin += "-";
+      lostWin = boolWin
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
+      return `
+  <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
+    <div class="d-flex justify-content-around align-items-center">
+      <div class="text-center player-container">
+        <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
+        <div class="player-name">
+          <span>${userData.username}</span>
+        </div>
+      </div>
+      <div class="text-center match-info">
+        <h5>${lostWin}</h5> 
+        <h4>${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}</h4>
+        <p id="matchDate">${formateDate(data.played_at)}</p>
+      </div>
+        <div class="text-center player-container">
+          <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
+          <div class="player-name">
+            <span>${opponentName}</span>
+          </div>
+        </div>
+      </div>
+    </div> 
+          `;
+    } catch (error) {
+      this.handleCatch(error);
+      return "";
+    }
+  }
+
+
+  async getTournamentHistory(userData, gameType) {
+    const mainDiv = document.createElement("div");
+    try {
+      const mainRequest = await this.makeRequest(
+        `/api/history/tournament/?username=${userData.username}&game_type=` + gameType,
+      );
+      const mainResponse = await fetch(mainRequest);
+      if (await this.handleStatus(mainResponse)) {
+        const data = await this.getDatafromRequest(mainResponse);
+
+        let tournamentsArray = data.results;
+        const tournamentsHTMLArray = await Promise.all(
+          tournamentsArray.map((tournamentData) =>
+            this.createTournamentElement(tournamentData, userData),
+          ),
+        );
+        mainDiv.innerHTML = tournamentsHTMLArray.join("");
+        let nextPage = data.next;
+        while (nextPage) {
+          const request = await this.makeRequest(nextPage, "GET");
+          const response = await fetch(request);
+          if (await this.handleStatus(response)) {
+            const pageData = await response.json();
+            tournamentsArray = pageData.results;
+            const newTournamentHtmlArray = await Promise.all(
+              tournamentsArray.map((matchData) =>
+                this.createTournamentElement(matchData, userData),
+              ),
+            );
+            mainDiv.innerHTML += newTournamentHtmlArray.join("");
+            nextPage = pageData.next;
+          } else {
+            break;
+          }
+        }
+        return mainDiv.innerHTML;
+      }
+    } catch (error) {
+      this.handleCatch(error);
+      return "";
+    }
+  }
 
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["title", "profile"])}`);
@@ -133,9 +221,21 @@ export default class extends AbstractView {
         " " +
         this.lang.getTranslation(["game", "history"]);
 
-      let fillModal = await this.MatchHistory(userData, "pong");
-      if (!fillModal)
-        fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+      let fillModalMatchPong = await this.getMatchHistory(userData, "pong");
+      if (!fillModalMatchPong)
+        fillModalMatchPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+	  let fillModalMatchC4 = await this.getMatchHistory(userData, "c4");
+      if (!fillModalMatchC4)
+        fillModalMatchC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+	
+      let fillModalTournamentPong = await this.getTournamentHistory(userData, "pong");
+      if (!fillModalTournamentPong)
+        fillModalTournamentPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+	  let fillModalTournamentC4 = await this.getTournamentHistory(userData, "c4");
+      if (!fillModalTournamentC4)
+        fillModalTournamentC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;	  
 
       const winRatePong = userData.total_single_games_pong
         ? `${userData.single_games_pong_win_rate * 100} %`
@@ -229,13 +329,13 @@ export default class extends AbstractView {
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
             <div class="box bg-light history">
-              ${fillModal}
+              ${fillModalMatchPong}
             </div>
           </div>
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
             <div class="box bg-light">
-              <p class="text-center">n/a</p>
+			  <span>N/A</span>
             </div>
           </div>
         </div>
@@ -273,65 +373,13 @@ export default class extends AbstractView {
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
             <div class="box bg-light history">
-              <p class="text-center">n/a</p>
+			${fillModalMatchC4}
             </div>
           </div>
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
             <div class="box bg-light">
-              <div
-                class="bg-dark text-white text-center px-3 py-1 mb-1 rounded"
-              >
-                <div class="d-flex justify-content-around align-items-center">
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>coucouuuuuuuuuuuuuuuu</span>
-                    </div>
-                  </div>
-                  <!-- Match Info -->
-                  <div class="text-center match-info">
-                    <h5>WIN-LOSE</h5>
-                    <h4>1 - 0</h4>
-                    <p id="matchDate">DATE</p>
-                  </div>
-                  <!-- Player 2 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>helloooooooooooo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- match div -->
-              <div
-                class="bg-gray text-white text-center px-3 py-1 mb-1 rounded"
-              >
-                <div class="d-flex justify-content-around align-items-center">
-                  <!-- Player 1 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>coucouuuuuuuuuuuuuuuu</span>
-                    </div>
-                  </div>
-                  <!-- Match Info -->
-                  <div class="text-center match-info">
-                    <h5>WIN-LOSE</h5>
-                    <h4>1 - 0</h4>
-                    <p id="matchDate">DATE</p>
-                  </div>
-                  <!-- Player 2 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>helloooooooooooo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <span>N/A</span>
             </div>
           </div>
         </div>

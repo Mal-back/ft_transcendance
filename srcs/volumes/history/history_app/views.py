@@ -59,6 +59,6 @@ class MatchList(generics.ListAPIView):
         game_type = self.request.query_params.get('game_type')
 
         if user and game_type:
-            queryset = queryset.filter(winner__username=user, game_type=game_type) | queryset.filter(looser__username=user)
+            queryset = queryset.filter(winner__username=user, game_type=game_type) | queryset.filter(looser__username=user, game_type=game_type)
         
         return queryset
