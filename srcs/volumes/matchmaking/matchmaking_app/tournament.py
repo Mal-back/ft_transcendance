@@ -1,10 +1,6 @@
 import threading
-from time import sleep
-from requests import delete
-from rest_framework import status
-from rest_framework.views import Response
-
-from .serializers import TournamentDetailSerializer, TournamentToHistorySerializer
+from django.db import connection
+from .serializers import TournamentToHistorySerializer
 from .models import Tournament, Match, MatchUser, TournamentUser
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from django.db.models import F
@@ -51,11 +47,11 @@ def create_round_matches(tournament:Tournament):
                              )
 
 def delete_tournament(id):
-    sleep(30)
     try:
         Tournament.objects.get(id=id).delete()
     except Tournament.DoesNotExists:
         pass
+    connection.close()
 
 def handle_finished_matches(match:Match, data:dict):
     TournamentUser.objects.filter(username=data['winner']).update(match_won=F('match_won') + 1) 
@@ -69,20 +65,23 @@ def handle_finished_matches(match:Match, data:dict):
             serializer = TournamentToHistorySerializer(tournament)
             try:
                 sender = MicroServiceClient()
-                sender.send_requests(
-                    urls = [f'http://game:8443/api/history/tournament/create/'],
+                responses = sender.send_requests(
+                    urls = [f'http://history:8443/api/history/tournament/create/'],
                     expected_status=[201],
                     method='post',
                     body=serializer.data
                     )
             except (RequestsFailed, InvalidCredentialsException):
                 pass
+            ret = responses['http://history:8443/api/history/tournament/create/']
+            tournament.historyId = ret.json()['id']
             def delete_tournament():
                 try:
                     Tournament.objects.get(id=id).delete()
                 except Tournament.DoesNotExists:
                     pass
             timer = threading.Timer(10, delete_tournament)
+            timer.start()
         tournament.save()
         
 

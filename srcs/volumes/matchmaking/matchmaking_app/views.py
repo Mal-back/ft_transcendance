@@ -5,7 +5,7 @@ from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer, InviteSerializer, TournamentDetailSerializer, TournamentConciseSerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer, InviteSerializer, TournamentDetailSerializer, TournamentConciseSerializer, TournamentToHistorySerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame, IsInitiatingPlayer, IsInvitedPlayerTournament, IsConfirmedPlayerTournament
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
@@ -114,7 +114,7 @@ class GetInvite(APIView):
         matchQuery = Match.objects.filter(Q(player1=user) | Q(player2=user), status='pending')
         tournamentQuery = Tournament.objects.filter(Q(invited_players=user) | Q(confirmed_players__user=user), status='pending').distinct() 
         try :
-            on_going_match = Match.objects.get(Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress'])
+            on_going_match = Match.objects.filter(Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress']).distinct()
         except Match.DoesNotExist:
             on_going_match = None
 
@@ -135,7 +135,7 @@ class GetInvite(APIView):
             match_data = None
 
         if on_going_match:
-            on_going_match_serializer = AcceptedMatchSerializer(on_going_match)
+            on_going_match_serializer = AcceptedMatchSerializer(on_going_match[0])
             on_going_data = on_going_match_serializer.data
 
         if tournamentQuery.exists():
@@ -397,6 +397,8 @@ class LeaveTournament(generics.UpdateAPIView):
             player = tournament.confirmed_players.get(user=request.user)
         except TournamentUser.DoesNotExist:
             return Response({'Error':'You\'re not in the tournament'}, status=status.HTTP_409_CONFLICT)
+        if tournament.owner == request.user:
+            return Response({'Error':'You\'re the owner of the tournament'}, status=status.HTTP_409_CONFLICT)
         if tournament.status != 'pending':
             return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
         player.delete()
@@ -525,7 +527,7 @@ class GetTournament(APIView):
         user = self.request.user
         try :
             t_user = TournamentUser.objects.get(user=user)
-            obj = TournamentUser.tournament
+            obj = t_user.tournament
         except TournamentUser.DoesNotExist:
             return None
         return obj
@@ -546,3 +548,32 @@ class DebugSetTournamentAsFinished(APIView):
         tournament = Tournament.objects.get(id=id)
         tournament.delete()
         return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
+
+class DebugCreateFinishedTournament(APIView):
+    def get(self, request, *args, **kwargs):
+        val = MatchUser.objects.get(username='val')
+        lui = MatchUser.objects.get(username='lui')
+        vl = MatchUser.objects.get(username='vl')
+        elle = MatchUser.objects.get(username='elle')
+        tournament = Tournament.objects.create(owner=val, game_type='pong', status='finished')
+        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=0, matches_lost=3)
+        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=1, matches_lost=2)
+        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=2, matches_lost=1)
+        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=3, matches_lost=0)
+        serializer = TournamentToHistorySerializer(tournament)
+        print(serializer.data)
+        try:
+            sender = MicroServiceClient()
+            responses = sender.send_requests(
+                urls = [f'http://history:8443/api/history/tournament/create/'],
+                expected_status=[201],
+                method='post',
+                body=serializer.data
+                )
+        except (RequestsFailed, InvalidCredentialsException):
+            pass
+        ret = responses['http://history:8443/api/history/tournament/create/']
+        print(ret.json()['id'])
+        tournament.delete()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return Response({'ok':'kr'}, status=status.HTTP_200_OK)

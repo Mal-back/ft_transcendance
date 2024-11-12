@@ -28,6 +28,7 @@ urlpatterns = [
         path('tournament/<int:pk>/leave/', views.LeaveTournament.as_view(), name='tournament-leave'),
         path('<str:username>/update/', views.MatchUserUpdate.as_view(), name='user-delete'),
         path('<str:username>/delete/', views.MatchUserDelete.as_view(), name='user-update'),
+        path('tournament/debug_create_finished/', views.DebugCreateFinishedTournament.as_view(), name='create-finished',),
         path('matchmaking/<str:username>/win/', views.DebugIncrementVictory.as_view(), name='debug1'),
         path('matchmaking/<str:username>/lost/', views.DebugIncrementLoose.as_view(), name='debug2'),
         path('match/<int:pk>/debug_force_finished/', views.DebugSetGameAsFinished.as_view(), name='force-finished-game',),
