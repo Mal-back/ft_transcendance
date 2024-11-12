@@ -488,6 +488,7 @@ class LaunchTournament(APIView):
         if obj.confirmed_players.count() < 3:
             return Response({'Error': 'A tournament should have at least three players'}, status=status.HTTP_409_CONFLICT)
         obj.status = 'in_progress'
+        obj.invited_players.clear()
         obj.save()
         try :
             schedule_rounds(obj)
