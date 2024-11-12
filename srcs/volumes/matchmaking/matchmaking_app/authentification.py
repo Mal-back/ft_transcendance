@@ -36,7 +36,10 @@ class CustomAuthentication(BaseAuthentication):
         user = clear_token.get('username')
         if user is None:
             return(None, None)
-        user_obj = MatchUser.objects.get(username=user)
+        try:
+            user_obj = MatchUser.objects.get(username=user)
+        except MatchUser.DoesNotExist:
+            raise AuthenticationFailed('Unknown User')
         if user_obj.last_online_update is None or now() - user_obj.last_online_update > timedelta(minutes=2):
             thread = threading.Thread(target=update_online_status, args=(user_obj.username,))
             thread.daemon = True

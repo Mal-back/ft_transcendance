@@ -57,7 +57,7 @@ class Tournament(models.Model):
                                 related_name='tournament_owner',
                                 on_delete=models.PROTECT,
                                 to_field='username')
-    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players',)
+    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', null=True)
     current_round = models.IntegerField(default=1)
     game_type = models.TextField(choices=[('pong', 'Pong'),
                                            ('c4', 'Connect four')])

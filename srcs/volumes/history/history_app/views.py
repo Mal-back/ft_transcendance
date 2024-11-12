@@ -2,8 +2,8 @@ from django.db import transaction
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.views import APIView, Response
-from .models import Match, MatchUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer
+from .models import Match, MatchUser, Tournament, TournamentUser
+from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
 from .permissions import IsAuth, IsMatchMaking
 
 # Create your views here.
@@ -29,6 +29,8 @@ class MatchUserUpdate(generics.UpdateAPIView):
             user.save()
             Match.objects.filter(winner=old_username).update(winner=new_username)
             Match.objects.filter(looser=old_username).update(looser=new_username)
+            TournamentUser.objects.filter(user=old_username).update(user=new_username)
+
 
         return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)
 
@@ -42,12 +44,33 @@ class MatchUserDelete(generics.DestroyAPIView):
         username = instance.username
         Match.objects.filter(winner=username).update(winner='deleted_account')
         Match.objects.filter(looser=username).update(looser='deleted_account')
+        TournamentUser.objects.filter(username=username).update(username='deleted_account', user_profile=None)
         instance.delete()
 
 class MatchCreate(generics.CreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer 
-    # permission_classes = [IsMatchMaking]
+    permission_classes = [IsMatchMaking]
+
+class TournamentCreate(APIView):
+    permission_classes = [IsMatchMaking]
+
+    def post(self, request, *args, **kwargs):
+        serializer = TournamentSerializer(data=request.data)
+        if serializer.is_valid():
+            obj = serializer.save()
+            print(obj.id)
+            return Response({'id':obj.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TournamentList(generics.ListAPIView):
+    serializer_class = TournamentSerializer 
+    queryset = Tournament.objects.all()
+
+class TournamentRetrieve(generics.RetrieveAPIView):
+    serializer_class = TournamentSerializer 
+    queryset = Tournament.objects.all()
+    lookup_field = 'pk'
 
 class MatchList(generics.ListAPIView):
     serializer_class = MatchGetSerializer 
