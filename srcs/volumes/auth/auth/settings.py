@@ -37,6 +37,10 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
 ]
 
+
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,7 +53,11 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'auth_app.apps.AuthAppConfig'
+    'auth_app.apps.AuthAppConfig',
+    'django.contrib.sites',
+    # 'django_otp',
+    # 'django_otp.plugins.otp_email',
+    # 'two_factor',
 ]
 
 MIDDLEWARE = [
@@ -96,7 +104,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'auth.wsgi.application'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "apikey"
+EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
