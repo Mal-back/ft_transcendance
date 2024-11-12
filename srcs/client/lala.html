@@ -1,8 +1,8 @@
 HTTP/1.1 500 Internal Server Error
 Server: nginx/1.27.1
-Date: Mon, 11 Nov 2024 10:48:44 GMT
+Date: Tue, 12 Nov 2024 11:37:18 GMT
 Content-Type: text/html; charset=utf-8
-Content-Length: 133290
+Content-Length: 120389
 Connection: keep-alive
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
@@ -14,8 +14,8 @@ Cross-Origin-Opener-Policy: same-origin
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="robots" content="NONE,NOARCHIVE">
-  <title>ImproperlyConfigured
-          at /api/matchmaking/tournament/detail/</title>
+  <title>AttributeError
+          at /api/matchmaking/invites/</title>
   <style>
     html * { padding:0; margin:0; }
     body * { padding:10px 20px; }
@@ -111,9 +111,11 @@ Cross-Origin-Opener-Policy: same-origin
 </head>
 <body>
 <header id="summary">
-  <h1>ImproperlyConfigured
-       at /api/matchmaking/tournament/detail/</h1>
-  <pre class="exception_value">Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre>
+  <h1>AttributeError
+       at /api/matchmaking/invites/</h1>
+  <pre class="exception_value">Got AttributeError when attempting to get a value for field `player1` on serializer `AcceptedMatchSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.
+Original exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.</pre>
   <table class="meta">
 
     <tr>
@@ -122,7 +124,7 @@ Cross-Origin-Opener-Policy: same-origin
     </tr>
     <tr>
       <th scope="row">Request URL:</th>
-      <td>http://localhost:8080/api/matchmaking/tournament/detail/</td>
+      <td>http://localhost:8080/api/matchmaking/invites/</td>
     </tr>
 
     <tr>
@@ -132,25 +134,27 @@ Cross-Origin-Opener-Policy: same-origin
 
     <tr>
       <th scope="row">Exception Type:</th>
-      <td>ImproperlyConfigured</td>
+      <td>AttributeError</td>
     </tr>
 
 
     <tr>
       <th scope="row">Exception Value:</th>
-      <td><pre>Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
+      <td><pre>Got AttributeError when attempting to get a value for field `player1` on serializer `AcceptedMatchSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.
+Original exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.</pre></td>
     </tr>
 
 
     <tr>
       <th scope="row">Exception Location:</th>
-      <td><span class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</span>, line 1367, in build_unknown_field</td>
+      <td><span class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</span>, line 470, in get_attribute</td>
     </tr>
 
 
     <tr>
       <th scope="row">Raised during:</th>
-      <td>matchmaking_app.views.GetTournament</td>
+      <td>matchmaking_app.views.GetInvite</td>
     </tr>
 
     <tr>
@@ -172,7 +176,7 @@ Cross-Origin-Opener-Policy: same-origin
     </tr>
     <tr>
       <th scope="row">Server time:</th>
-      <td>Mon, 11 Nov 2024 10:48:44 +0000</td>
+      <td>Tue, 12 Nov 2024 11:37:18 +0000</td>
     </tr>
   </table>
 </header>
@@ -190,50 +194,50 @@ Cross-Origin-Opener-Policy: same-origin
     <ul class="traceback">
       
         
-        <li class="frame django">
+        <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py</code>, line 55, in inner
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 437, in get_attribute
           
 
           
-            <div class="context" id="c140697792176640">
+            <div class="context" id="c140540535544960">
               
-                <ol start="48" class="pre-context" id="pre140697792176640">
+                <ol start="430" class="pre-context" id="pre140540535544960">
                 
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>        return inner</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>    def get_attribute(self, instance):</pre></li>
                 
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>    else:</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>        &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>        Given the *outgoing* object instance, return the primitive value</pre></li>
                 
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>        @wraps(get_response)</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>        that should be used for this field.</pre></li>
                 
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>        def inner(request):</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>        &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>        try:</pre></li>
                 
                 </ol>
               
-              <ol start="55" class="context-line">
-                <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>                response = get_response(request)
-                               ^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="437" class="context-line">
+                <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>            return get_attribute(instance, self.source_attrs)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='56' class="post-context" id="post140697792176640">
+                <ol start='438' class="post-context" id="post140540535544960">
                   
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>            except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>        except BuiltinSignatureError as exc:</pre></li>
                   
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>                response = response_for_exception(request, exc)</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>            msg = (</pre></li>
                   
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>            return response</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>                &#x27;Field source for `{serializer}.{field}` maps to a built-in &#x27;</pre></li>
                   
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>                &#x27;function type and is invalid. Define a property or method on &#x27;</pre></li>
                   
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre>        return inner</pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>                &#x27;the `{instance}` instance that wraps the call to the built-in &#x27;</pre></li>
                   
-                  <li onclick="toggle('pre140697792176640', 'post140697792176640')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535544960', 'post140540535544960')"><pre>                &#x27;function.&#x27;.format(</pre></li>
                   
               </ol>
               
@@ -245,7 +249,189 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792176640">
+            <table class="vars" id="v140540535544960">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>instance</td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>msg</td>
+                    <td class="code"><pre>(&#x27;Got AttributeError when attempting to get a value for field `player1` on &#x27;
+ &#x27;serializer `AcceptedMatchSerializer`.\n&#x27;
+ &#x27;The serializer field might be named incorrectly and not match any attribute &#x27;
+ &#x27;or key on the `QuerySet` instance.\n&#x27;
+ &quot;Original exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.&quot;)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 104, in get_attribute
+          
+
+          
+            <div class="context" id="c140540535291520">
+              
+                <ol start="97" class="pre-context" id="pre140540535291520">
+                
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>    Also accepts either attribute lookup on objects or dictionary lookups.</pre></li>
+                
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>    &quot;&quot;&quot;</pre></li>
+                
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>    for attr in attrs:</pre></li>
+                
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>        try:</pre></li>
+                
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>            if isinstance(instance, Mapping):</pre></li>
+                
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>                instance = instance[attr]</pre></li>
+                
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>            else:</pre></li>
+                
+                </ol>
+              
+              <ol start="104" class="context-line">
+                <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>                instance = getattr(instance, attr)
+                                ^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='105' class="post-context" id="post140540535291520">
+                  
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>        except ObjectDoesNotExist:</pre></li>
+                  
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>            return None</pre></li>
+                  
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>        if is_simple_callable(instance):</pre></li>
+                  
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>            try:</pre></li>
+                  
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>                instance = instance()</pre></li>
+                  
+                  <li onclick="toggle('pre140540535291520', 'post140540535291520')"><pre>            except (AttributeError, KeyError) as exc:</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140540535291520">
+              <thead>
+                <tr>
+                  <th scope="col">Variable</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>attr</td>
+                    <td class="code"><pre>&#x27;player1&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>attrs</td>
+                    <td class="code"><pre>[&#x27;player1&#x27;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>instance</td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+          <li class="cause"><h3>
+          
+            During handling of the above exception (&#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;), another exception occurred:
+          
+        </h3></li>
+        
+        <li class="frame django">
+          
+            <code class="fname">/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py</code>, line 55, in inner
+          
+
+          
+            <div class="context" id="c140540535551296">
+              
+                <ol start="48" class="pre-context" id="pre140540535551296">
+                
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>        return inner</pre></li>
+                
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>    else:</pre></li>
+                
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>        @wraps(get_response)</pre></li>
+                
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>        def inner(request):</pre></li>
+                
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="55" class="context-line">
+                <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>                response = get_response(request)
+                               ^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='56' class="post-context" id="post140540535551296">
+                  
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>            except Exception as exc:</pre></li>
+                  
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>                response = response_for_exception(request, exc)</pre></li>
+                  
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>            return response</pre></li>
+                  
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre>        return inner</pre></li>
+                  
+                  <li onclick="toggle('pre140540535551296', 'post140540535551296')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v140540535551296">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -256,17 +442,17 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>ImproperlyConfigured(&#x27;Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.&#x27;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `player1` on serializer `AcceptedMatchSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.\nOriginal exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.&quot;)</pre></td>
                   </tr>
                 
                   <tr>
                     <td>get_response</td>
-                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7ff6c4b358e0&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fd2283e1f40&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -282,44 +468,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792176896">
+            <div class="context" id="c140540535551232">
               
-                <ol start="190" class="pre-context" id="pre140697792176896">
+                <ol start="190" class="pre-context" id="pre140540535551232">
                 
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>        if response is None:</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>        if response is None:</pre></li>
                 
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
                 
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
                 
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>            if iscoroutinefunction(wrapped_callback):</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>            if iscoroutinefunction(wrapped_callback):</pre></li>
                 
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
                 
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>            try:</pre></li>
                 
                 </ol>
               
               <ol start="197" class="context-line">
-                <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)
+                <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)
                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='198' class="post-context" id="post140697792176896">
+                <ol start='198' class="post-context" id="post140540535551232">
                   
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>            except Exception as e:</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>            except Exception as e:</pre></li>
                   
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
                   
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>                if response is None:</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>                if response is None:</pre></li>
                   
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>                    raise</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>                    raise</pre></li>
                   
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792176896', 'post140697792176896')"><pre>        # Complain if the view returned None (a common error).</pre></li>
+                  <li onclick="toggle('pre140540535551232', 'post140540535551232')"><pre>        # Complain if the view returned None (a common error).</pre></li>
                   
               </ol>
               
@@ -331,7 +517,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792176896">
+            <table class="vars" id="v140540535551232">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -342,7 +528,7 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>callback</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7ff6c1eb6ca0&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fd224add620&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -362,7 +548,7 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -372,12 +558,12 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7ff6c4b358e0&gt;</pre></td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fd2283e1f40&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>wrapped_callback</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7ff6c1eb6ca0&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fd224add620&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -393,40 +579,40 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792173440">
+            <div class="context" id="c140540535551168">
               
-                <ol start="58" class="pre-context" id="pre140697792173440">
+                <ol start="58" class="pre-context" id="pre140540535551168">
                 
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre>        async def _view_wrapper(request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre>        async def _view_wrapper(request, *args, **kwargs):</pre></li>
                 
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre>            return await view_func(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre>            return await view_func(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre>    else:</pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre>    else:</pre></li>
                 
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre>        def _view_wrapper(request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre>        def _view_wrapper(request, *args, **kwargs):</pre></li>
                 
                 </ol>
               
               <ol start="65" class="context-line">
-                <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre>            return view_func(request, *args, **kwargs)
+                <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre>            return view_func(request, *args, **kwargs)
                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='66' class="post-context" id="post140697792173440">
+                <ol start='66' class="post-context" id="post140540535551168">
                   
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre>    _view_wrapper.csrf_exempt = True</pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre>    _view_wrapper.csrf_exempt = True</pre></li>
                   
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792173440', 'post140697792173440')"><pre>    return wraps(view_func)(_view_wrapper)</pre></li>
+                  <li onclick="toggle('pre140540535551168', 'post140540535551168')"><pre>    return wraps(view_func)(_view_wrapper)</pre></li>
                   
               </ol>
               
@@ -438,7 +624,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792173440">
+            <table class="vars" id="v140540535551168">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -459,12 +645,12 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>view_func</td>
-                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7ff6c1eb6c00&gt;</pre></td>
+                    <td class="code"><pre>&lt;function View.as_view.&lt;locals&gt;.view at 0x7fd224add580&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -480,44 +666,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792654848">
+            <div class="context" id="c140540535289024">
               
-                <ol start="97" class="pre-context" id="pre140697792654848">
+                <ol start="97" class="pre-context" id="pre140540535289024">
                 
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>            self = cls(**initkwargs)</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>            self = cls(**initkwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>            self.setup(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>            self.setup(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>            if not hasattr(self, &quot;request&quot;):</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>            if not hasattr(self, &quot;request&quot;):</pre></li>
                 
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>                raise AttributeError(</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>                raise AttributeError(</pre></li>
                 
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>                    &quot;%s instance has no &#x27;request&#x27; attribute. Did you override &quot;</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>                    &quot;%s instance has no &#x27;request&#x27; attribute. Did you override &quot;</pre></li>
                 
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>                    &quot;setup() and forget to call super()?&quot; % cls.__name__</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>                    &quot;setup() and forget to call super()?&quot; % cls.__name__</pre></li>
                 
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>                )</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>                )</pre></li>
                 
                 </ol>
               
               <ol start="104" class="context-line">
-                <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>            return self.dispatch(request, *args, **kwargs)
+                <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>            return self.dispatch(request, *args, **kwargs)
                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='105' class="post-context" id="post140697792654848">
+                <ol start='105' class="post-context" id="post140540535289024">
                   
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>        view.view_class = cls</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>        view.view_class = cls</pre></li>
                   
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>        view.view_initkwargs = initkwargs</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>        view.view_initkwargs = initkwargs</pre></li>
                   
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>        # __name__ and __qualname__ are intentionally left unchanged as</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>        # __name__ and __qualname__ are intentionally left unchanged as</pre></li>
                   
-                  <li onclick="toggle('pre140697792654848', 'post140697792654848')"><pre>        # view_class should be used to robustly determine the name of the view</pre></li>
+                  <li onclick="toggle('pre140540535289024', 'post140540535289024')"><pre>        # view_class should be used to robustly determine the name of the view</pre></li>
                   
               </ol>
               
@@ -529,7 +715,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792654848">
+            <table class="vars" id="v140540535289024">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -545,7 +731,7 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>cls</td>
-                    <td class="code"><pre>&lt;class &#x27;matchmaking_app.views.GetTournament&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;class &#x27;matchmaking_app.views.GetInvite&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -560,12 +746,12 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;</pre></td>
+                    <td class="code"><pre>&lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -581,44 +767,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792519680">
+            <div class="context" id="c140540535551104">
               
-                <ol start="502" class="pre-context" id="pre140697792519680">
+                <ol start="502" class="pre-context" id="pre140540535551104">
                 
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>                                  self.http_method_not_allowed)</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>                                  self.http_method_not_allowed)</pre></li>
                 
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>            else:</pre></li>
                 
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>                handler = self.http_method_not_allowed</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>                handler = self.http_method_not_allowed</pre></li>
                 
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>            response = handler(request, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>            response = handler(request, *args, **kwargs)</pre></li>
                 
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>        except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>        except Exception as exc:</pre></li>
                 
                 </ol>
               
               <ol start="509" class="context-line">
-                <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>            response = self.handle_exception(exc)
+                <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>            response = self.handle_exception(exc)
                             ^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='510' class="post-context" id="post140697792519680">
+                <ol start='510' class="post-context" id="post140540535551104">
                   
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
                   
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>        return self.response</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>        return self.response</pre></li>
                   
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>    def options(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>    def options(self, request, *args, **kwargs):</pre></li>
                   
-                  <li onclick="toggle('pre140697792519680', 'post140697792519680')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140540535551104', 'post140540535551104')"><pre>        &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -630,7 +816,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792519680">
+            <table class="vars" id="v140540535551104">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -646,7 +832,7 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>handler</td>
-                    <td class="code"><pre>&lt;bound method GetTournament.get of &lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method GetInvite.get of &lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -656,12 +842,12 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;</pre></td>
+                    <td class="code"><pre>&lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -677,44 +863,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792513792">
+            <div class="context" id="c140540535551040">
               
-                <ol start="462" class="pre-context" id="pre140697792513792">
+                <ol start="462" class="pre-context" id="pre140540535551040">
                 
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>        exception_handler = self.get_exception_handler()</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>        exception_handler = self.get_exception_handler()</pre></li>
                 
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>        context = self.get_exception_handler_context()</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>        context = self.get_exception_handler_context()</pre></li>
                 
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>        response = exception_handler(exc, context)</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>        response = exception_handler(exc, context)</pre></li>
                 
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>        if response is None:</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>        if response is None:</pre></li>
                 
                 </ol>
               
               <ol start="469" class="context-line">
-                <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>            self.raise_uncaught_exception(exc)
+                <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>            self.raise_uncaught_exception(exc)
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='470' class="post-context" id="post140697792513792">
+                <ol start='470' class="post-context" id="post140540535551040">
                   
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>        response.exception = True</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>        response.exception = True</pre></li>
                   
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>        return response</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>        return response</pre></li>
                   
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
                   
-                  <li onclick="toggle('pre140697792513792', 'post140697792513792')"><pre>        if settings.DEBUG:</pre></li>
+                  <li onclick="toggle('pre140540535551040', 'post140540535551040')"><pre>        if settings.DEBUG:</pre></li>
                   
               </ol>
               
@@ -726,7 +912,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792513792">
+            <table class="vars" id="v140540535551040">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -739,18 +925,18 @@ Cross-Origin-Opener-Policy: same-origin
                     <td>context</td>
                     <td class="code"><pre>{&#x27;args&#x27;: (),
  &#x27;kwargs&#x27;: {},
- &#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;,
- &#x27;view&#x27;: &lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;}</pre></td>
+ &#x27;request&#x27;: &lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/invites/&#x27;&gt;,
+ &#x27;view&#x27;: &lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;}</pre></td>
                   </tr>
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>ImproperlyConfigured(&#x27;Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.&#x27;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `player1` on serializer `AcceptedMatchSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.\nOriginal exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.&quot;)</pre></td>
                   </tr>
                 
                   <tr>
                     <td>exception_handler</td>
-                    <td class="code"><pre>&lt;function exception_handler at 0x7ff6c331b100&gt;</pre></td>
+                    <td class="code"><pre>&lt;function exception_handler at 0x7fd225f432e0&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -760,7 +946,7 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;</pre></td>
+                    <td class="code"><pre>&lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -776,44 +962,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792516480">
+            <div class="context" id="c140540535488960">
               
-                <ol start="473" class="pre-context" id="pre140697792516480">
+                <ol start="473" class="pre-context" id="pre140540535488960">
                 
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>    def raise_uncaught_exception(self, exc):</pre></li>
                 
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>        if settings.DEBUG:</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>        if settings.DEBUG:</pre></li>
                 
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>            request = self.request</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>            request = self.request</pre></li>
                 
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>            renderer_format = getattr(request.accepted_renderer, &#x27;format&#x27;)</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>            renderer_format = getattr(request.accepted_renderer, &#x27;format&#x27;)</pre></li>
                 
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>            use_plaintext_traceback = renderer_format not in (&#x27;html&#x27;, &#x27;api&#x27;, &#x27;admin&#x27;)</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>            use_plaintext_traceback = renderer_format not in (&#x27;html&#x27;, &#x27;api&#x27;, &#x27;admin&#x27;)</pre></li>
                 
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>            request.force_plaintext_errors(use_plaintext_traceback)</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>            request.force_plaintext_errors(use_plaintext_traceback)</pre></li>
                 
                 </ol>
               
               <ol start="480" class="context-line">
-                <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>        raise exc
+                <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>        raise exc
              ^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='481' class="post-context" id="post140697792516480">
+                <ol start='481' class="post-context" id="post140540535488960">
                   
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>    # Note: Views are made CSRF exempt from within `as_view` as to prevent</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>    # Note: Views are made CSRF exempt from within `as_view` as to prevent</pre></li>
                   
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>    # accidental removal of this exemption in cases where `dispatch` needs to</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>    # accidental removal of this exemption in cases where `dispatch` needs to</pre></li>
                   
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>    # be overridden.</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>    # be overridden.</pre></li>
                   
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>    def dispatch(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>    def dispatch(self, request, *args, **kwargs):</pre></li>
                   
-                  <li onclick="toggle('pre140697792516480', 'post140697792516480')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140540535488960', 'post140540535488960')"><pre>        &quot;&quot;&quot;</pre></li>
                   
               </ol>
               
@@ -825,7 +1011,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792516480">
+            <table class="vars" id="v140540535488960">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -836,7 +1022,7 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>exc</td>
-                    <td class="code"><pre>ImproperlyConfigured(&#x27;Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.&#x27;)</pre></td>
+                    <td class="code"><pre>AttributeError(&quot;Got AttributeError when attempting to get a value for field `player1` on serializer `AcceptedMatchSerializer`.\nThe serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.\nOriginal exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.&quot;)</pre></td>
                   </tr>
                 
                   <tr>
@@ -846,12 +1032,12 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;</pre></td>
+                    <td class="code"><pre>&lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -872,44 +1058,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792526400">
+            <div class="context" id="c140540535550912">
               
-                <ol start="499" class="pre-context" id="pre140697792526400">
+                <ol start="499" class="pre-context" id="pre140540535550912">
                 
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>            # Get the appropriate handler method</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>            # Get the appropriate handler method</pre></li>
                 
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>            if request.method.lower() in self.http_method_names:</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>            if request.method.lower() in self.http_method_names:</pre></li>
                 
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>                handler = getattr(self, request.method.lower(),</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>                handler = getattr(self, request.method.lower(),</pre></li>
                 
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>                                  self.http_method_not_allowed)</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>                                  self.http_method_not_allowed)</pre></li>
                 
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>            else:</pre></li>
                 
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>                handler = self.http_method_not_allowed</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>                handler = self.http_method_not_allowed</pre></li>
                 
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre></pre></li>
                 
                 </ol>
               
               <ol start="506" class="context-line">
-                <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>            response = handler(request, *args, **kwargs)
+                <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>            response = handler(request, *args, **kwargs)
                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='507' class="post-context" id="post140697792526400">
+                <ol start='507' class="post-context" id="post140540535550912">
                   
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>        except Exception as exc:</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>        except Exception as exc:</pre></li>
                   
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>            response = self.handle_exception(exc)</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>            response = self.handle_exception(exc)</pre></li>
                   
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>        self.response = self.finalize_response(request, response, *args, **kwargs)</pre></li>
                   
-                  <li onclick="toggle('pre140697792526400', 'post140697792526400')"><pre>        return self.response</pre></li>
+                  <li onclick="toggle('pre140540535550912', 'post140540535550912')"><pre>        return self.response</pre></li>
                   
               </ol>
               
@@ -921,7 +1107,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792526400">
+            <table class="vars" id="v140540535550912">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -937,7 +1123,7 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>handler</td>
-                    <td class="code"><pre>&lt;bound method GetTournament.get of &lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;&gt;</pre></td>
+                    <td class="code"><pre>&lt;bound method GetInvite.get of &lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -947,12 +1133,12 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;</pre></td>
+                    <td class="code"><pre>&lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -964,48 +1150,48 @@ Cross-Origin-Opener-Policy: same-origin
         
         <li class="frame user">
           
-            <code class="fname">/code/matchmaking_app/views.py</code>, line 540, in get
+            <code class="fname">/code/matchmaking_app/views.py</code>, line 140, in get
           
 
           
-            <div class="context" id="c140697792528064">
+            <div class="context" id="c140540535550848">
               
-                <ol start="533" class="pre-context" id="pre140697792528064">
+                <ol start="133" class="pre-context" id="pre140540535550848">
                 
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>    def get(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            match_serializer = InviteSerializer(matchQuery, context={&#x27;request&#x27;:request}, many=True)</pre></li>
                 
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>        obj = self.get_object()</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            match_data = match_serializer.data</pre></li>
                 
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>        if obj is None:</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>        else:</pre></li>
                 
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>            return Response(status=status.HTTP_204_NO_CONTENT)</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            match_data = None</pre></li>
                 
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>        if obj.status == &#x27;finished&#x27;:</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>            return redirect(f&#x27;/api/matchmaking/tournament/{obj.historyId}/&#x27;, permanent=False)</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>        if on_going_match:</pre></li>
                 
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>        serializer = TournamentDetailSerializer(obj, context={&#x27;request&#x27;:request})</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            on_going_match_serializer = AcceptedMatchSerializer(on_going_match)</pre></li>
                 
                 </ol>
               
-              <ol start="540" class="context-line">
-                <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>        return Response(serializer.data, status=status.HTTP_200_OK)
-                             ^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="140" class="context-line">
+                <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            on_going_data = on_going_match_serializer.data
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='541' class="post-context" id="post140697792528064">
+                <ol start='141' class="post-context" id="post140540535550848">
                   
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>        if tournamentQuery.exists():</pre></li>
                   
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>class DebugSetTournamentAsFinished(APIView):</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            tournament_serializer = TournamentConciseSerializer(tournamentQuery, context={&#x27;request&#x27;:request}, many=True) </pre></li>
                   
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>    def get(self, request, *args, **kwargs):</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            tournament_data = tournament_serializer.data</pre></li>
                   
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>        id = self.kwargs.get(&#x27;pk&#x27;)</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>        else:</pre></li>
                   
-                  <li onclick="toggle('pre140697792528064', 'post140697792528064')"><pre>        tournament = Tournament.objects.get(id=id)</pre></li>
+                  <li onclick="toggle('pre140540535550848', 'post140540535550848')"><pre>            tournament_data = None</pre></li>
                   
               </ol>
               
@@ -1017,7 +1203,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792528064">
+            <table class="vars" id="v140540535550848">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1032,28 +1218,65 @@ Cross-Origin-Opener-Policy: same-origin
                   </tr>
                 
                   <tr>
+                    <td>is_in_queue</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>is_in_tournament</td>
+                    <td class="code"><pre>&lt;TournamentUser: TournamentUser object (1)&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
                     <td>kwargs</td>
                     <td class="code"><pre>{}</pre></td>
                   </tr>
                 
                   <tr>
-                    <td>obj</td>
-                    <td class="code"><pre>&lt;Tournament: Tournament object (1)&gt;</pre></td>
+                    <td>matchQuery</td>
+                    <td class="code"><pre>&lt;QuerySet []&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>match_data</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>on_going_match</td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>on_going_match_serializer</td>
+                    <td class="code"><pre>AcceptedMatchSerializer(&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;):
+    player1 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    player2 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    matchId = UUIDField(allow_null=True, label=&#x27;MatchId&#x27;, required=False)
+    player1_profile = SerializerMethodField()
+    player2_profile = SerializerMethodField()
+    is_tournament_match = SerializerMethodField()
+    game_type = ChoiceField(choices=[(&#x27;pong&#x27;, &#x27;Pong&#x27;), (&#x27;c4&#x27;, &#x27;Connect four&#x27;)])</pre></td>
                   </tr>
                 
                   <tr>
                     <td>request</td>
-                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/tournament/detail/&#x27;&gt;</pre></td>
+                    <td class="code"><pre>&lt;rest_framework.request.Request: GET &#x27;/api/matchmaking/invites/&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;matchmaking_app.views.GetTournament object at 0x7ff6c1f30a70&gt;</pre></td>
+                    <td class="code"><pre>&lt;matchmaking_app.views.GetInvite object at 0x7fd226fba720&gt;</pre></td>
                   </tr>
                 
                   <tr>
-                    <td>serializer</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
+                    <td>tournamentQuery</td>
+                    <td class="code"><pre>&lt;QuerySet []&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>user</td>
+                    <td class="code"><pre>&lt;MatchUser: MatchUser object (1)&gt;</pre></td>
                   </tr>
                 
               </tbody>
@@ -1069,44 +1292,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792522752">
+            <div class="context" id="c140540535550784">
               
-                <ol start="564" class="pre-context" id="pre140697792522752">
+                <ol start="564" class="pre-context" id="pre140540535550784">
                 
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>        return BoundField(field, value, error)</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>        return BoundField(field, value, error)</pre></li>
                 
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>    # Include a backlink to the serializer class on return objects.</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>    # Include a backlink to the serializer class on return objects.</pre></li>
                 
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>    # Allows renderers such as HTMLFormRenderer to get the full field info.</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>    # Allows renderers such as HTMLFormRenderer to get the full field info.</pre></li>
                 
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>    @property</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>    @property</pre></li>
                 
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>    def data(self):</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>    def data(self):</pre></li>
                 
                 </ol>
               
               <ol start="571" class="context-line">
-                <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>        ret = super().data
+                <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>        ret = super().data
                    ^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='572' class="post-context" id="post140697792522752">
+                <ol start='572' class="post-context" id="post140540535550784">
                   
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>        return ReturnDict(ret, serializer=self)</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>        return ReturnDict(ret, serializer=self)</pre></li>
                   
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>    @property</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>    @property</pre></li>
                   
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>    def errors(self):</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>    def errors(self):</pre></li>
                   
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>        ret = super().errors</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>        ret = super().errors</pre></li>
                   
-                  <li onclick="toggle('pre140697792522752', 'post140697792522752')"><pre>        if isinstance(ret, list) and len(ret) == 1 and getattr(ret[0], &#x27;code&#x27;, None) == &#x27;null&#x27;:</pre></li>
+                  <li onclick="toggle('pre140540535550784', 'post140540535550784')"><pre>        if isinstance(ret, list) and len(ret) == 1 and getattr(ret[0], &#x27;code&#x27;, None) == &#x27;null&#x27;:</pre></li>
                   
               </ol>
               
@@ -1118,7 +1341,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792522752">
+            <table class="vars" id="v140540535550784">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1134,7 +1357,14 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
+                    <td class="code"><pre>AcceptedMatchSerializer(&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;):
+    player1 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    player2 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    matchId = UUIDField(allow_null=True, label=&#x27;MatchId&#x27;, required=False)
+    player1_profile = SerializerMethodField()
+    player2_profile = SerializerMethodField()
+    is_tournament_match = SerializerMethodField()
+    game_type = ChoiceField(choices=[(&#x27;pong&#x27;, &#x27;Pong&#x27;), (&#x27;c4&#x27;, &#x27;Connect four&#x27;)])</pre></td>
                   </tr>
                 
               </tbody>
@@ -1150,44 +1380,44 @@ Cross-Origin-Opener-Policy: same-origin
           
 
           
-            <div class="context" id="c140697792523264">
+            <div class="context" id="c140540535550720">
               
-                <ol start="242" class="pre-context" id="pre140697792523264">
+                <ol start="242" class="pre-context" id="pre140540535550720">
                 
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>                &#x27;You should either call `.is_valid()` first, &#x27;</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>                &#x27;You should either call `.is_valid()` first, &#x27;</pre></li>
                 
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>                &#x27;or access `.initial_data` instead.&#x27;</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>                &#x27;or access `.initial_data` instead.&#x27;</pre></li>
                 
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>            )</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>            )</pre></li>
                 
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>            raise AssertionError(msg)</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>            raise AssertionError(msg)</pre></li>
                 
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>        if not hasattr(self, &#x27;_data&#x27;):</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>        if not hasattr(self, &#x27;_data&#x27;):</pre></li>
                 
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>            if self.instance is not None and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>            if self.instance is not None and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
                 
                 </ol>
               
               <ol start="249" class="context-line">
-                <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>                self._data = self.to_representation(self.instance)
+                <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>                self._data = self.to_representation(self.instance)
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='250' class="post-context" id="post140697792523264">
+                <ol start='250' class="post-context" id="post140540535550720">
                   
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>            elif hasattr(self, &#x27;_validated_data&#x27;) and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>            elif hasattr(self, &#x27;_validated_data&#x27;) and not getattr(self, &#x27;_errors&#x27;, None):</pre></li>
                   
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>                self._data = self.to_representation(self.validated_data)</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>                self._data = self.to_representation(self.validated_data)</pre></li>
                   
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>            else:</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>            else:</pre></li>
                   
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>                self._data = self.get_initial()</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>                self._data = self.get_initial()</pre></li>
                   
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre>        return self._data</pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre>        return self._data</pre></li>
                   
-                  <li onclick="toggle('pre140697792523264', 'post140697792523264')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550720', 'post140540535550720')"><pre></pre></li>
                   
               </ol>
               
@@ -1199,7 +1429,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792523264">
+            <table class="vars" id="v140540535550720">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1210,7 +1440,14 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
+                    <td class="code"><pre>AcceptedMatchSerializer(&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;):
+    player1 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    player2 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    matchId = UUIDField(allow_null=True, label=&#x27;MatchId&#x27;, required=False)
+    player1_profile = SerializerMethodField()
+    player2_profile = SerializerMethodField()
+    is_tournament_match = SerializerMethodField()
+    game_type = ChoiceField(choices=[(&#x27;pong&#x27;, &#x27;Pong&#x27;), (&#x27;c4&#x27;, &#x27;Connect four&#x27;)])</pre></td>
                   </tr>
                 
               </tbody>
@@ -1222,48 +1459,48 @@ Cross-Origin-Opener-Policy: same-origin
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 523, in to_representation
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 525, in to_representation
           
 
           
-            <div class="context" id="c140697792526016">
+            <div class="context" id="c140540535550656">
               
-                <ol start="516" class="pre-context" id="pre140697792526016">
+                <ol start="518" class="pre-context" id="pre140540535550656">
                 
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>    def to_representation(self, instance):</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>        Object instance -&gt; Dict of primitive datatypes.</pre></li>
                 
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>        &quot;&quot;&quot;</pre></li>
                 
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>        Object instance -&gt; Dict of primitive datatypes.</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>        ret = {}</pre></li>
                 
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>        fields = self._readable_fields</pre></li>
                 
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>        ret = {}</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>        fields = self._readable_fields</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>        for field in fields:</pre></li>
                 
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>            try:</pre></li>
                 
                 </ol>
               
-              <ol start="523" class="context-line">
-                <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>        for field in fields:
-                          ^^^^^^</pre> <span>…</span></li>
+              <ol start="525" class="context-line">
+                <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>                attribute = field.get_attribute(instance)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='524' class="post-context" id="post140697792526016">
+                <ol start='526' class="post-context" id="post140540535550656">
                   
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>            try:</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>            except SkipField:</pre></li>
                   
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>                attribute = field.get_attribute(instance)</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>                continue</pre></li>
                   
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>            except SkipField:</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>                continue</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>            # We skip `to_representation` for `None` values so that fields do</pre></li>
                   
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>            # not have to explicitly deal with that case.</pre></li>
                   
-                  <li onclick="toggle('pre140697792526016', 'post140697792526016')"><pre>            # We skip `to_representation` for `None` values so that fields do</pre></li>
+                  <li onclick="toggle('pre140540535550656', 'post140540535550656')"><pre>            #</pre></li>
                   
               </ol>
               
@@ -1275,7 +1512,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792526016">
+            <table class="vars" id="v140540535550656">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1285,13 +1522,18 @@ Cross-Origin-Opener-Policy: same-origin
               <tbody>
                 
                   <tr>
+                    <td>field</td>
+                    <td class="code"><pre>SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)</pre></td>
+                  </tr>
+                
+                  <tr>
                     <td>fields</td>
-                    <td class="code"><pre>&lt;generator object Serializer._readable_fields at 0x7ff6c1eb8e80&gt;</pre></td>
+                    <td class="code"><pre>&lt;generator object Serializer._readable_fields at 0x7fd224ae0280&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>instance</td>
-                    <td class="code"><pre>&lt;Tournament: Tournament object (1)&gt;</pre></td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;</pre></td>
                   </tr>
                 
                   <tr>
@@ -1301,7 +1543,14 @@ Cross-Origin-Opener-Policy: same-origin
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
+                    <td class="code"><pre>AcceptedMatchSerializer(&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;):
+    player1 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    player2 = SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)
+    matchId = UUIDField(allow_null=True, label=&#x27;MatchId&#x27;, required=False)
+    player1_profile = SerializerMethodField()
+    player2_profile = SerializerMethodField()
+    is_tournament_match = SerializerMethodField()
+    game_type = ChoiceField(choices=[(&#x27;pong&#x27;, &#x27;Pong&#x27;), (&#x27;c4&#x27;, &#x27;Connect four&#x27;)])</pre></td>
                   </tr>
                 
               </tbody>
@@ -1313,48 +1562,48 @@ Cross-Origin-Opener-Policy: same-origin
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 384, in _readable_fields
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/relations.py</code>, line 189, in get_attribute
           
 
           
-            <div class="context" id="c140697792520576">
+            <div class="context" id="c140540535550464">
               
-                <ol start="377" class="pre-context" id="pre140697792520576">
+                <ol start="182" class="pre-context" id="pre140540535550464">
                 
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>    def _writable_fields(self):</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>        for field in self.fields.values():</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>                # Handle edge case where relationship `source` argument points</pre></li>
                 
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>            if not field.read_only:</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>                # to an instance instead of a pk (e.g., a `@property`).</pre></li>
                 
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>                yield field</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>                value = getattr(value, &#x27;pk&#x27;, value)</pre></li>
                 
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre></pre></li>
                 
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>    @property</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>                return PKOnlyObject(pk=value)</pre></li>
                 
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>    def _readable_fields(self):</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>        # Standard case, return the object instance.</pre></li>
                 
                 </ol>
               
-              <ol start="384" class="context-line">
-                <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>        for field in self.fields.values():
-                          ^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="189" class="context-line">
+                <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>        return super().get_attribute(instance)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='385' class="post-context" id="post140697792520576">
+                <ol start='190' class="post-context" id="post140540535550464">
                   
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>            if not field.write_only:</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>                yield field</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>    def get_choices(self, cutoff=None):</pre></li>
                   
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>        queryset = self.get_queryset()</pre></li>
                   
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>    def get_fields(self):</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>        if queryset is None:</pre></li>
                   
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>            # Ensure that field.choices returns something sensible</pre></li>
                   
-                  <li onclick="toggle('pre140697792520576', 'post140697792520576')"><pre>        Returns a dictionary of {field_name: field_instance}.</pre></li>
+                  <li onclick="toggle('pre140540535550464', 'post140540535550464')"><pre>            # even when accessed with a read-only field.</pre></li>
                   
               </ol>
               
@@ -1366,7 +1615,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792520576">
+            <table class="vars" id="v140540535550464">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1376,94 +1625,18 @@ Cross-Origin-Opener-Policy: same-origin
               <tbody>
                 
                   <tr>
-                    <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
-                  </tr>
-                
-              </tbody>
-            </table>
-            </details>
-          
-        </li>
-      
-        
-        <li class="frame django">
-          
-            <code class="fname">/usr/local/lib/python3.12/site-packages/django/utils/functional.py</code>, line 47, in __get__
-          
-
-          
-            <div class="context" id="c140697792527616">
-              
-                <ol start="40" class="pre-context" id="pre140697792527616">
-                
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        &quot;&quot;&quot;</pre></li>
-                
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        Call the function and put the return value in instance.__dict__ so that</pre></li>
-                
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        subsequent attribute access on the instance returns the cached value</pre></li>
-                
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        instead of calling cached_property.__get__().</pre></li>
-                
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        &quot;&quot;&quot;</pre></li>
-                
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        if instance is None:</pre></li>
-                
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>            return self</pre></li>
-                
-                </ol>
-              
-              <ol start="47" class="context-line">
-                <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        res = instance.__dict__[self.name] = self.func(instance)
-                                                 ^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
-              </ol>
-              
-                <ol start='48' class="post-context" id="post140697792527616">
-                  
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>        return res</pre></li>
-                  
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre></pre></li>
-                  
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre></pre></li>
-                  
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>class classproperty:</pre></li>
-                  
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>    &quot;&quot;&quot;</pre></li>
-                  
-                  <li onclick="toggle('pre140697792527616', 'post140697792527616')"><pre>    Decorator that converts a method with a single cls argument into a property</pre></li>
-                  
-              </ol>
-              
-            </div>
-          
-
-          
-            
-              <details>
-                <summary class="commands">Local vars</summary>
-            
-            <table class="vars" id="v140697792527616">
-              <thead>
-                <tr>
-                  <th scope="col">Variable</th>
-                  <th scope="col">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr>
-                    <td>cls</td>
-                    <td class="code"><pre>&lt;class &#x27;matchmaking_app.serializers.TournamentDetailSerializer&#x27;&gt;</pre></td>
+                    <td>__class__</td>
+                    <td class="code"><pre>&lt;class &#x27;rest_framework.relations.RelatedField&#x27;&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>instance</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>&lt;django.utils.functional.cached_property object at 0x7ff6c37bee40&gt;</pre></td>
+                    <td class="code"><pre>SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)</pre></td>
                   </tr>
                 
               </tbody>
@@ -1475,48 +1648,48 @@ Cross-Origin-Opener-Policy: same-origin
         
         <li class="frame user">
           
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 372, in fields
+            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/fields.py</code>, line 470, in get_attribute
           
 
           
-            <div class="context" id="c140697792517760">
+            <div class="context" id="c140540535547392">
               
-                <ol start="365" class="pre-context" id="pre140697792517760">
+                <ol start="463" class="pre-context" id="pre140540535547392">
                 
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>                    exc_type=type(exc).__name__,</pre></li>
                 
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        A dictionary of {field_name: field_instance}.</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>                    field=self.field_name,</pre></li>
                 
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        &quot;&quot;&quot;</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>                    serializer=self.parent.__class__.__name__,</pre></li>
                 
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        # `fields` is evaluated lazily. We do this to ensure that we don&#x27;t</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>                    instance=instance.__class__.__name__,</pre></li>
                 
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        # have issues importing modules that use ModelSerializers as fields,</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>                    exc=exc</pre></li>
                 
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        # even if Django&#x27;s app-loading stage has not yet run.</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>                )</pre></li>
                 
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        fields = BindingDict(self)</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>            )</pre></li>
                 
                 </ol>
               
-              <ol start="372" class="context-line">
-                <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        for key, value in self.get_fields().items():
-                               ^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
+              <ol start="470" class="context-line">
+                <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>            raise type(exc)(msg)
+                 ^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
               </ol>
               
-                <ol start='373' class="post-context" id="post140697792517760">
+                <ol start='471' class="post-context" id="post140540535547392">
                   
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>            fields[key] = value</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre></pre></li>
                   
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        return fields</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>    def get_default(self):</pre></li>
                   
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre></pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>        &quot;&quot;&quot;</pre></li>
                   
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>    @property</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>        Return the default value to use when validating data if no input</pre></li>
                   
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>    def _writable_fields(self):</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre>        is provided for this field.</pre></li>
                   
-                  <li onclick="toggle('pre140697792517760', 'post140697792517760')"><pre>        for field in self.fields.values():</pre></li>
+                  <li onclick="toggle('pre140540535547392', 'post140540535547392')"><pre></pre></li>
                   
               </ol>
               
@@ -1528,7 +1701,7 @@ Cross-Origin-Opener-Policy: same-origin
               <details>
                 <summary class="commands">Local vars</summary>
             
-            <table class="vars" id="v140697792517760">
+            <table class="vars" id="v140540535547392">
               <thead>
                 <tr>
                   <th scope="col">Variable</th>
@@ -1538,367 +1711,22 @@ Cross-Origin-Opener-Policy: same-origin
               <tbody>
                 
                   <tr>
-                    <td>fields</td>
-                    <td class="code"><pre>{}</pre></td>
+                    <td>instance</td>
+                    <td class="code"><pre>&lt;QuerySet [&lt;Match: Match object (1)&gt;]&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>msg</td>
+                    <td class="code"><pre>(&#x27;Got AttributeError when attempting to get a value for field `player1` on &#x27;
+ &#x27;serializer `AcceptedMatchSerializer`.\n&#x27;
+ &#x27;The serializer field might be named incorrectly and not match any attribute &#x27;
+ &#x27;or key on the `QuerySet` instance.\n&#x27;
+ &quot;Original exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.&quot;)</pre></td>
                   </tr>
                 
                   <tr>
                     <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
-                  </tr>
-                
-              </tbody>
-            </table>
-            </details>
-          
-        </li>
-      
-        
-        <li class="frame user">
-          
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 1103, in get_fields
-          
-
-          
-            <div class="context" id="c140697792513920">
-              
-                <ol start="1096" class="pre-context" id="pre140697792513920">
-                
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            extra_field_kwargs = extra_kwargs.get(field_name, {})</pre></li>
-                
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            source = extra_field_kwargs.get(&#x27;source&#x27;, &#x27;*&#x27;)</pre></li>
-                
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            if source == &#x27;*&#x27;:</pre></li>
-                
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>                source = field_name</pre></li>
-                
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            # Determine the serializer field class and keyword arguments.</pre></li>
-                
-                </ol>
-              
-              <ol start="1103" class="context-line">
-                <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            field_class, field_kwargs = self.build_field(
-                                              </pre> <span>…</span></li>
-              </ol>
-              
-                <ol start='1104' class="post-context" id="post140697792513920">
-                  
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>                source, info, model, depth</pre></li>
-                  
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            )</pre></li>
-                  
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre></pre></li>
-                  
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            # Include any kwargs defined in `Meta.extra_kwargs`</pre></li>
-                  
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>            field_kwargs = self.include_extra_kwargs(</pre></li>
-                  
-                  <li onclick="toggle('pre140697792513920', 'post140697792513920')"><pre>                field_kwargs, extra_field_kwargs</pre></li>
-                  
-              </ol>
-              
-            </div>
-          
-
-          
-            
-              <details>
-                <summary class="commands">Local vars</summary>
-            
-            <table class="vars" id="v140697792513920">
-              <thead>
-                <tr>
-                  <th scope="col">Variable</th>
-                  <th scope="col">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr>
-                    <td>declared_fields</td>
-                    <td class="code"><pre>{&#x27;confirmed_players_profiles&#x27;: SerializerMethodField(),
- &#x27;delete_tournament&#x27;: SerializerMethodField(),
- &#x27;invite_players&#x27;: SerializerMethodField(),
- &#x27;invited_players_profiles&#x27;: SerializerMethodField(),
- &#x27;launch_next_round&#x27;: SerializerMethodField(),
- &#x27;launch_tournament&#x27;: SerializerMethodField(),
- &#x27;leave_tournament&#x27;: SerializerMethodField(),
- &#x27;owner_profile&#x27;: SerializerMethodField(),
- &#x27;player_type&#x27;: SerializerMethodField(),
- &#x27;players_order&#x27;: SerializerMethodField(),
- &#x27;remove_players&#x27;: SerializerMethodField(),
- &#x27;round_number&#x27;: SerializerMethodField()}</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>depth</td>
-                    <td class="code"><pre>0</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>extra_field_kwargs</td>
-                    <td class="code"><pre>{}</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>extra_kwargs</td>
-                    <td class="code"><pre>{}</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>field_class</td>
-                    <td class="code"><pre>&lt;class &#x27;rest_framework.fields.ChoiceField&#x27;&gt;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>field_kwargs</td>
-                    <td class="code"><pre>{&#x27;choices&#x27;: [(&#x27;pending&#x27;, &#x27;Pending&#x27;),
-             (&#x27;in_progress&#x27;, &#x27;In progress&#x27;),
-             (&#x27;finished&#x27;, &#x27;Finished&#x27;)],
- &#x27;required&#x27;: False}</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>field_name</td>
-                    <td class="code"><pre>&#x27;accept_invite&#x27;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>field_names</td>
-                    <td class="code"><pre>[&#x27;game_type&#x27;,
- &#x27;status&#x27;,
- &#x27;player_type&#x27;,
- &#x27;accept_invite&#x27;,
- &#x27;decline_invite&#x27;,
- &#x27;leave_tournament&#x27;,
- &#x27;delete_tournament&#x27;,
- &#x27;round_number&#x27;,
- &#x27;invited_players_profiles&#x27;,
- &#x27;confirmed_players_profiles&#x27;,
- &#x27;owner_profile&#x27;,
- &#x27;invite_players&#x27;,
- &#x27;remove_players&#x27;,
- &#x27;launch_tournament&#x27;,
- &#x27;players_order&#x27;,
- &#x27;launch_next_round&#x27;]</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>fields</td>
-                    <td class="code"><pre>{&#x27;game_type&#x27;: ChoiceField(choices=[(&#x27;pong&#x27;, &#x27;Pong&#x27;), (&#x27;c4&#x27;, &#x27;Connect four&#x27;)]),
- &#x27;player_type&#x27;: SerializerMethodField(),
- &#x27;status&#x27;: ChoiceField(choices=[(&#x27;pending&#x27;, &#x27;Pending&#x27;), (&#x27;in_progress&#x27;, &#x27;In progress&#x27;), (&#x27;finished&#x27;, &#x27;Finished&#x27;)], required=False)}</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>hidden_fields</td>
-                    <td class="code"><pre>{}</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>info</td>
-                    <td class="code"><pre>FieldInfo(pk=&lt;django.db.models.fields.BigAutoField: id&gt;, fields={&#x27;current_round&#x27;: &lt;django.db.models.fields.IntegerField: current_round&gt;, &#x27;game_type&#x27;: &lt;django.db.models.fields.TextField: game_type&gt;, &#x27;round_schedule&#x27;: &lt;django.db.models.fields.json.JSONField: round_schedule&gt;, &#x27;status&#x27;: &lt;django.db.models.fields.TextField: status&gt;, &#x27;historyId&#x27;: &lt;django.db.models.fields.IntegerField: historyId&gt;}, forward_relations={&#x27;owner&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ForeignKey: owner&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=False, to_field=&#x27;username&#x27;, has_through_model=False, reverse=False), &#x27;invited_players&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ManyToManyField: invited_players&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=False)}, reverse_relations={&#x27;confirmed_players&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.TournamentUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True), &#x27;tournament&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.Match&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True)}, fields_and_pk={&#x27;pk&#x27;: &lt;django.db.models.fields.BigAutoField: id&gt;, &#x27;id&#x27;: &lt;django.db.models.fields.BigAutoField: id&gt;, &#x27;current_round&#x27;: &lt;django.db.models.fields.IntegerField: current_round&gt;, &#x27;game_type&#x27;: &lt;django.db.models.fields.TextField: game_type&gt;, &#x27;round_schedule&#x27;: &lt;django.db.models.fields.json.JSONField: round_schedule&gt;, &#x27;status&#x27;: &lt;django.db.models.fields.TextField: status&gt;, &#x27;historyId&#x27;: &lt;django.db.models.fields.IntegerField: historyId&gt;}, relations={&#x27;owner&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ForeignKey: owner&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=False, to_field=&#x27;username&#x27;, has_through_model=False, reverse=False), &#x27;invited_players&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ManyToManyField: invited_players&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=False), &#x27;confirmed_players&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.TournamentUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True), &#x27;tournament&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.Match&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True)})</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>model</td>
-                    <td class="code"><pre>&lt;class &#x27;matchmaking_app.models.Tournament&#x27;&gt;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>source</td>
-                    <td class="code"><pre>&#x27;accept_invite&#x27;</pre></td>
-                  </tr>
-                
-              </tbody>
-            </table>
-            </details>
-          
-        </li>
-      
-        
-        <li class="frame user">
-          
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 1249, in build_field
-          
-
-          
-            <div class="context" id="c140697792520512">
-              
-                <ol start="1242" class="pre-context" id="pre140697792520512">
-                
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>        elif hasattr(model_class, field_name):</pre></li>
-                
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>            return self.build_property_field(field_name, model_class)</pre></li>
-                
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>        elif field_name == self.url_field_name:</pre></li>
-                
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>            return self.build_url_field(field_name, model_class)</pre></li>
-                
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre></pre></li>
-                
-                </ol>
-              
-              <ol start="1249" class="context-line">
-                <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>        return self.build_unknown_field(field_name, model_class)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</pre> <span>…</span></li>
-              </ol>
-              
-                <ol start='1250' class="post-context" id="post140697792520512">
-                  
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre></pre></li>
-                  
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>    def build_standard_field(self, field_name, model_field):</pre></li>
-                  
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>        &quot;&quot;&quot;</pre></li>
-                  
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>        Create regular model fields.</pre></li>
-                  
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>        &quot;&quot;&quot;</pre></li>
-                  
-                  <li onclick="toggle('pre140697792520512', 'post140697792520512')"><pre>        field_mapping = ClassLookupDict(self.serializer_field_mapping)</pre></li>
-                  
-              </ol>
-              
-            </div>
-          
-
-          
-            
-              <details>
-                <summary class="commands">Local vars</summary>
-            
-            <table class="vars" id="v140697792520512">
-              <thead>
-                <tr>
-                  <th scope="col">Variable</th>
-                  <th scope="col">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr>
-                    <td>field_name</td>
-                    <td class="code"><pre>&#x27;accept_invite&#x27;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>info</td>
-                    <td class="code"><pre>FieldInfo(pk=&lt;django.db.models.fields.BigAutoField: id&gt;, fields={&#x27;current_round&#x27;: &lt;django.db.models.fields.IntegerField: current_round&gt;, &#x27;game_type&#x27;: &lt;django.db.models.fields.TextField: game_type&gt;, &#x27;round_schedule&#x27;: &lt;django.db.models.fields.json.JSONField: round_schedule&gt;, &#x27;status&#x27;: &lt;django.db.models.fields.TextField: status&gt;, &#x27;historyId&#x27;: &lt;django.db.models.fields.IntegerField: historyId&gt;}, forward_relations={&#x27;owner&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ForeignKey: owner&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=False, to_field=&#x27;username&#x27;, has_through_model=False, reverse=False), &#x27;invited_players&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ManyToManyField: invited_players&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=False)}, reverse_relations={&#x27;confirmed_players&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.TournamentUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True), &#x27;tournament&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.Match&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True)}, fields_and_pk={&#x27;pk&#x27;: &lt;django.db.models.fields.BigAutoField: id&gt;, &#x27;id&#x27;: &lt;django.db.models.fields.BigAutoField: id&gt;, &#x27;current_round&#x27;: &lt;django.db.models.fields.IntegerField: current_round&gt;, &#x27;game_type&#x27;: &lt;django.db.models.fields.TextField: game_type&gt;, &#x27;round_schedule&#x27;: &lt;django.db.models.fields.json.JSONField: round_schedule&gt;, &#x27;status&#x27;: &lt;django.db.models.fields.TextField: status&gt;, &#x27;historyId&#x27;: &lt;django.db.models.fields.IntegerField: historyId&gt;}, relations={&#x27;owner&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ForeignKey: owner&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=False, to_field=&#x27;username&#x27;, has_through_model=False, reverse=False), &#x27;invited_players&#x27;: RelationInfo(model_field=&lt;django.db.models.fields.related.ManyToManyField: invited_players&gt;, related_model=&lt;class &#x27;matchmaking_app.models.MatchUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=False), &#x27;confirmed_players&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.TournamentUser&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True), &#x27;tournament&#x27;: RelationInfo(model_field=None, related_model=&lt;class &#x27;matchmaking_app.models.Match&#x27;&gt;, to_many=True, to_field=None, has_through_model=False, reverse=True)})</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>model_class</td>
-                    <td class="code"><pre>&lt;class &#x27;matchmaking_app.models.Tournament&#x27;&gt;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>nested_depth</td>
-                    <td class="code"><pre>0</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
-                  </tr>
-                
-              </tbody>
-            </table>
-            </details>
-          
-        </li>
-      
-        
-        <li class="frame user">
-          
-            <code class="fname">/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py</code>, line 1367, in build_unknown_field
-          
-
-          
-            <div class="context" id="c140697792655296">
-              
-                <ol start="1360" class="pre-context" id="pre140697792655296">
-                
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>        return field_class, field_kwargs</pre></li>
-                
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre></pre></li>
-                
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>    def build_unknown_field(self, field_name, model_class):</pre></li>
-                
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>        &quot;&quot;&quot;</pre></li>
-                
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>        Raise an error on any unknown fields.</pre></li>
-                
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>        &quot;&quot;&quot;</pre></li>
-                
-                </ol>
-              
-              <ol start="1367" class="context-line">
-                <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>        raise ImproperlyConfigured(
-              ^</pre> <span>…</span></li>
-              </ol>
-              
-                <ol start='1368' class="post-context" id="post140697792655296">
-                  
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>            &#x27;Field name `%s` is not valid for model `%s` in `%s.%s`.&#x27; %</pre></li>
-                  
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>            (field_name, model_class.__name__, self.__class__.__module__, self.__class__.__name__)</pre></li>
-                  
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>        )</pre></li>
-                  
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre></pre></li>
-                  
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>    def include_extra_kwargs(self, kwargs, extra_kwargs):</pre></li>
-                  
-                  <li onclick="toggle('pre140697792655296', 'post140697792655296')"><pre>        &quot;&quot;&quot;</pre></li>
-                  
-              </ol>
-              
-            </div>
-          
-
-          
-            
-              <details>
-                <summary class="commands">Local vars</summary>
-            
-            <table class="vars" id="v140697792655296">
-              <thead>
-                <tr>
-                  <th scope="col">Variable</th>
-                  <th scope="col">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr>
-                    <td>field_name</td>
-                    <td class="code"><pre>&#x27;accept_invite&#x27;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>model_class</td>
-                    <td class="code"><pre>&lt;class &#x27;matchmaking_app.models.Tournament&#x27;&gt;</pre></td>
-                  </tr>
-                
-                  <tr>
-                    <td>self</td>
-                    <td class="code"><pre>Error in formatting: ImproperlyConfigured: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.</pre></td>
+                    <td class="code"><pre>SlugRelatedField(queryset=MatchUser.objects.all(), slug_field=&#x27;username&#x27;)</pre></td>
                   </tr>
                 
               </tbody>
@@ -1914,7 +1742,7 @@ Cross-Origin-Opener-Policy: same-origin
   <div id="pastebinTraceback" class="pastebin">
     <input type="hidden" name="language" value="PythonConsole">
     <input type="hidden" name="title"
-      value="ImproperlyConfigured at /api/matchmaking/tournament/detail/">
+      value="AttributeError at /api/matchmaking/invites/">
     <input type="hidden" name="source" value="Django Dpaste Agent">
     <input type="hidden" name="poster" value="Django">
     <textarea name="content" id="traceback_area" cols="140" rows="25">
@@ -1922,7 +1750,7 @@ Environment:
 
 
 Request Method: GET
-Request URL: http://localhost:8080/api/matchmaking/tournament/detail/
+Request URL: http://localhost:8080/api/matchmaking/invites/
 
 Django Version: 5.1
 Python Version: 3.12.5
@@ -1951,6 +1779,14 @@ Installed Middleware:
 
 
 Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 437, in get_attribute
+    return get_attribute(instance, self.source_attrs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 104, in get_attribute
+    instance = getattr(instance, attr)
+               ^^^^^^^^^^^^^^^^^^^^^^^
+
+During handling of the above exception (&#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;), another exception occurred:
   File "/usr/local/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
                ^^^^^^^^^^^^^^^^^^^^^
@@ -1975,39 +1811,29 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
     response = handler(request, *args, **kwargs)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/code/matchmaking_app/views.py", line 540, in get
-    return Response(serializer.data, status=status.HTTP_200_OK)
-                    ^^^^^^^^^^^^^^^
+  File "/code/matchmaking_app/views.py", line 140, in get
+    on_going_data = on_going_match_serializer.data
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 571, in data
     ret = super().data
           ^^^^^^^^^^^^
   File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 249, in data
     self._data = self.to_representation(self.instance)
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 523, in to_representation
-    for field in fields:
-                 ^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 384, in _readable_fields
-    for field in self.fields.values():
-                 ^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
-    res = instance.__dict__[self.name] = self.func(instance)
-                                         ^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 372, in fields
-    for key, value in self.get_fields().items():
-                      ^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 1103, in get_fields
-    field_class, field_kwargs = self.build_field(
-                                
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 1249, in build_field
-    return self.build_unknown_field(field_name, model_class)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 1367, in build_unknown_field
-    raise ImproperlyConfigured(
-    ^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/serializers.py", line 525, in to_representation
+    attribute = field.get_attribute(instance)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/relations.py", line 189, in get_attribute
+    return super().get_attribute(instance)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/rest_framework/fields.py", line 470, in get_attribute
+    raise type(exc)(msg)
+    ^^^^^^^^^^^^^^^^^^^^
 
-Exception Type: ImproperlyConfigured at /api/matchmaking/tournament/detail/
-Exception Value: Field name `accept_invite` is not valid for model `Tournament` in `matchmaking_app.serializers.TournamentDetailSerializer`.
+Exception Type: AttributeError at /api/matchmaking/invites/
+Exception Value: Got AttributeError when attempting to get a value for field `player1` on serializer `AcceptedMatchSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.
+Original exception text was: &#x27;QuerySet&#x27; object has no attribute &#x27;player1&#x27;.
 </textarea>
   <br><br>
   <input type="submit" value="Share this traceback on a public website">
@@ -2064,7 +1890,7 @@ Exception Value: Field name `accept_invite` is not valid for model `Tournament` 
         <tr>
           <td>HTTP_AUTHORIZATION</td>
           <td class="code"><pre>(&#x27;Bearer &#x27;
- &#x27;eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxMzI1MzA2LCJpYXQiOjE3MzEzMjE3MDYsImp0aSI6IjkxNmVkYTg0YTE1ZjRjOTU4Y2Q1NDZlODE2YzdjMDRhIiwidXNlcm5hbWUiOiJ2YWwifQ.ThFYEW42UlHb1UU2pINlHeJcCPPr1U_JaTGKgpLcx1OUtMC5nE4PEojeXxaOGNWnenVM4Hp3hZIUGTMIhsAD6uB-cArfYBYz2xdakROjDNnSS5hZbuVrgs79_GSNoHfbNsV4fzx1TCveaPSNZ3VbXHG2N5PLPE_l6CbIswfTUAbGx9qcVLsfk9G3mR_DQPIXWeCpOz0S8L0C7RX6FmRhZyms7xvJB-5Lb0iO0F5-9Fdf8Uc9tqf7LuV5LqSbCyGQJYz5tH1dkrqJOhPkDOrHsdaNfW9VH1ljAhKNtGGOAoks6uVlDmHeGsSf-0zU3yW1KE3d2ETdUWStDsEdWKSzRmRc-u0Nb_kxnYwA1K2ucCyEJ8BczRcxRnuKksK8Z6K89BUS-hu8triF-S-88-jWznbhfZyCyQ2Lr0vVTiS75wrO8Fj-Or5yf4wjsB-RtG3aTkzMWBuvBHSKhqJ1ojC64TosCvCqmEF0kAzL7wcDuZ2CfhMx2OhLTWXQqTxQ7Nb5qMR2oKzah4wK5plqfTwZAdbBtkakVEYz01yAjvlc56JzQi_YL9a1Wvqp-OQtSA0aJx4VarHRcUwej_5EwL-Ua66DrWfby0BxzSIj4MNDpx2hce0w91WhwxsjvnJ04i6BYid_Dc_C4hGLTVU7-6XUTDd-cNG9wywxfSyvQchNBJU&#x27;)</pre></td>
+ &#x27;eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxNDE0ODc4LCJpYXQiOjE3MzE0MTEyNzgsImp0aSI6IjlmYTQyOTE1ZWZjMzQxYTRiZDg1ZDQzZDgxOTk2NmUwIiwidXNlcm5hbWUiOiJ2YWwifQ.s5FT7EXkU0MnWODvSwOf0U20bwhfcLJ7B6ELIV30NIKrFhydVRwidfAL1vL6zd9J3tv5lYZuFratKxszH9cZRJXnM1YpTgTuz-MhVxksqJijWhsXJUcALRuIbDzxCy7cVUvDLEqkchhlYDRC_3jliogvQl0xpLZvIgNCWg8RzhoUjzPrAmT1voMb9H9xubHK0ZpyYWZD8p6JdLbRDX-TgHYXuvllihhPSaDY8HQS1_LpV0kzqdrNzwxBwaA2gNB6PO2iypAXyOlyvxE249iPxyUGvo8KQYBVqTfolNp_LGyAA1LsYVAbhHbOtTu1uYdSRhtU9Z4FUB4SJ5v-n6o3vs2hQZdSHGkd00TJcX2pb3fYc_ZrbPTtPVtKFOgyYHcPDxKvCqOVL48NNU_7REyf6aobQUH2lyUoK6SkGu979bByQ13XZMODefKaJwx07R0O15F4FhSWJXUVrYCuiLnq9YMCvr5Up6zy8bKF6ZfXgwe_KQbX9NFdT1i2VhcUuqBOEr28jDuriio7oD1o_uC7H99QmbRVLX_zLCSqO3n41xAvjfWaiWYOKfINewTqVOQJTRoXu-tPzBVQpMR5wZOdrLgAL_PiuOmgf4Gvwd4NbAcMIUICBjKiXyuWZBzPMvCYjdwwY6CLt3-KDIzdTa5r8ozUmocIzUhN9Upc3RLujjY&#x27;)</pre></td>
         </tr>
       
         <tr>
@@ -2099,7 +1925,7 @@ Exception Value: Field name `accept_invite` is not valid for model `Tournament` 
       
         <tr>
           <td>PATH_INFO</td>
-          <td class="code"><pre>&#x27;/api/matchmaking/tournament/detail/&#x27;</pre></td>
+          <td class="code"><pre>&#x27;/api/matchmaking/invites/&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2109,7 +1935,7 @@ Exception Value: Field name `accept_invite` is not valid for model `Tournament` 
       
         <tr>
           <td>RAW_URI</td>
-          <td class="code"><pre>&#x27;/api/matchmaking/tournament/detail/&#x27;</pre></td>
+          <td class="code"><pre>&#x27;/api/matchmaking/invites/&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2119,7 +1945,7 @@ Exception Value: Field name `accept_invite` is not valid for model `Tournament` 
       
         <tr>
           <td>REMOTE_PORT</td>
-          <td class="code"><pre>&#x27;47152&#x27;</pre></td>
+          <td class="code"><pre>&#x27;49278&#x27;</pre></td>
         </tr>
       
         <tr>
@@ -2154,12 +1980,12 @@ Exception Value: Field name `accept_invite` is not valid for model `Tournament` 
       
         <tr>
           <td>gunicorn.socket</td>
-          <td class="code"><pre>&lt;socket.socket fd=9, family=2, type=1, proto=0, laddr=(&#x27;172.18.0.14&#x27;, 8443), raddr=(&#x27;172.18.0.17&#x27;, 47152)&gt;</pre></td>
+          <td class="code"><pre>&lt;socket.socket fd=9, family=2, type=1, proto=0, laddr=(&#x27;172.18.0.12&#x27;, 8443), raddr=(&#x27;172.18.0.17&#x27;, 49278)&gt;</pre></td>
         </tr>
       
         <tr>
           <td>wsgi.errors</td>
-          <td class="code"><pre>&lt;gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7ff6c1f316f0&gt;</pre></td>
+          <td class="code"><pre>&lt;gunicorn.http.wsgi.WSGIErrorsWrapper object at 0x7fd226fb9450&gt;</pre></td>
         </tr>
       
         <tr>
@@ -2169,7 +1995,7 @@ Exception Value: Field name `accept_invite` is not valid for model `Tournament` 
       
         <tr>
           <td>wsgi.input</td>
-          <td class="code"><pre>&lt;gunicorn.http.body.Body object at 0x7ff6c1f30fe0&gt;</pre></td>
+          <td class="code"><pre>&lt;gunicorn.http.body.Body object at 0x7fd226fb9400&gt;</pre></td>
         </tr>
       
         <tr>

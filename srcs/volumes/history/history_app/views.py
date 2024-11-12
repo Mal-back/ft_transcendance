@@ -2,7 +2,7 @@ from django.db import transaction
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.views import APIView, Response
-from .models import Match, MatchUser, Tournament
+from .models import Match, MatchUser, Tournament, TournamentUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
 from .permissions import IsAuth, IsMatchMaking
 
@@ -29,6 +29,8 @@ class MatchUserUpdate(generics.UpdateAPIView):
             user.save()
             Match.objects.filter(winner=old_username).update(winner=new_username)
             Match.objects.filter(looser=old_username).update(looser=new_username)
+            TournamentUser.objects.filter(user=old_username).update(user=new_username)
+
 
         return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)
 
@@ -42,6 +44,7 @@ class MatchUserDelete(generics.DestroyAPIView):
         username = instance.username
         Match.objects.filter(winner=username).update(winner='deleted_account')
         Match.objects.filter(looser=username).update(looser='deleted_account')
+        TournamentUser.objects.filter(user=username).update(user='deleted_account')
         instance.delete()
 
 class MatchCreate(generics.CreateAPIView):
