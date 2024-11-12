@@ -162,7 +162,8 @@ class MatchMakingQueueSerializer(serializers.ModelSerializer):
 class TournamentSerializer(serializers.ModelSerializer):
     invited_players = serializers.ListField(
             child=serializers.CharField(),
-            write_only=True
+            write_only=True,
+            required=False
         )
 
     class Meta:
@@ -406,7 +407,7 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
 
     def get_players_order(self, obj):
         if obj.status == 'in_progress':
-            sorted_participants = obj.confirmed_user.order_by('-match_won')
+            sorted_participants = obj.confirmed_players.order_by('-matches_won')
             return TournamentUserSerializer(sorted_participants, many=True).data
         return None
 

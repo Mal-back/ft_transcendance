@@ -284,7 +284,10 @@ class MatchMakingJoinQueue(APIView):
 
         serializer = MatchMakingQueueSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user, win_rate=request.user.win_rate)
+            if serializer.validated_data['game_type'] == 'pong':
+                serializer.save(user=request.user, win_rate=request.user.pong_win_rate)
+            else:
+                serializer.save(user=request.user, win_rate=request.user.c4_win_rate)
             return Response({'Ok':'You are in queue'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -344,7 +347,8 @@ class CreateTournament(APIView):
 
         serializer = TournamentSerializer(data=request.data)
         if serializer.is_valid():
-            if request.user.username in serializer.validated_data['invited_players']:
+            invited = serializer.validated_data.get('invited_players')
+            if invited is not None and request.user.username in invited:
                 return Response({'Error': 'You can not play against yourself'}, status=status.HTTP_409_CONFLICT)
             tournament = serializer.save(owner=request.user)
             owner = TournamentUser.objects.create(user=request.user, tournament=tournament)
