@@ -315,7 +315,9 @@ export default class Connect4 {
       this.webSocket.send(JSON.stringify({ type: "start_game" }));
       this.gameStart = true;
       document.getElementById("startBtn").style = `display : none;`;
-      document.getElementById("giveUpBtn").style = `display : inline;`;
+	  if (this.mode != "local") {
+      	document.getElementById("giveUpBtn").style = `display : inline;`;
+	  }
       // console.log("SENT START");
     }
   }
@@ -330,9 +332,6 @@ export default class Connect4 {
     document
       .querySelector("#startBtn")
       .addEventListener("click", this.handleStartGame);
-    document
-      .querySelector("#helpBtn")
-      .addEventListener("click", this.handleHelp);
     document
       .querySelector("#giveUpBtn")
       .addEventListener("click", this.handleGiveUp);
@@ -363,8 +362,6 @@ export default class Connect4 {
     }
     const local = document.querySelector("#startBtn");
     if (local) local.addEventListener("click", this.handleStartGame);
-    const helpBtn = document.querySelector("#helpBtn");
-    if (helpBtn) helpBtn.removeEventListener("click", this.handleHelp);
     const giveUpBtn = document.querySelector("#giveUpBtn");
     if (giveUpBtn) giveUpBtn.removeEventListener("click", this.handleGiveUp);
     document.removeEventListener("beforeunload", this.handleUnloadPage);
