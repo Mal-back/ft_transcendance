@@ -11,6 +11,43 @@ from rest_framework import serializers
 from rest_framework.exceptions import APIException
 # Create your views here.
 
+#######################
+from django.core.mail import send_mail
+from rest_framework_simplejwt.views import TokenObtainPairView
+import random
+import string
+from django.conf import settings
+class CustomTokenObtainPairView(TokenObtainPairView):
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        user = CustomUser.objects.get(username=request.data['username'])
+        print("User connected : " + str(user.username))
+        print("User email : " + str(user.email))
+        # otp = self.generate_otp()
+        # print("otp = " + str(otp))
+        # request.session['otp'] = otp
+        # self.send_otp_email(user.email, otp)
+        # response.data['message'] = 'A one-time authentication code has been sent to your email. Please enter it to complete the login.'
+        return response
+
+
+    def send_otp_email(self, email, otp):
+        subject = "Authentication code Transcendance"
+        message = f"Your one-time authentication code is : {otp}"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [email,]
+        send_mail(subject, message, from_email, recipient_list)
+
+
+    def generate_otp(self):
+        otp = str().join(random.choices(string.digits, k=6))
+        return otp
+        
+
+###################################################
+
+
 class UserDetailView(generics.RetrieveAPIView) :
     queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer

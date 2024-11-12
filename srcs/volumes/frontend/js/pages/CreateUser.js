@@ -28,7 +28,7 @@ export default class extends AbstractView {
 
 
   async getHtml() {
-    await this.makeUsers();
+    // await this.makeUsers();
     this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
     return `
       <div class="background createUser removeElem">

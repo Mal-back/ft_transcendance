@@ -55,9 +55,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'auth_app.apps.AuthAppConfig',
     'django.contrib.sites',
-    # 'django_otp',
-    # 'django_otp.plugins.otp_email',
-    # 'two_factor',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +108,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
+# TWO_FACTOR_AUTHENTICATION = True
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
