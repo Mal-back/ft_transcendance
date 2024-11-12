@@ -38,6 +38,9 @@ class AvatarView(APIView):
                 return Response({'error': 'Could not upload new avatar. please try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=400)
 
+    def patch(self, request, *args, **kwargs):
+        return Response({'Ok': 'Kr'}, status=status.HTTP_200_OK)
+
     def delete(self, request, *args, **kwargs):
         if reset_avatar(request.data.get('username')) == True:
             return Response({'OK' : 'Successefully reset the avatar'}, status=status.HTTP_204_NO_CONTENT)

@@ -54,8 +54,8 @@ def delete_tournament(id):
     connection.close()
 
 def handle_finished_matches(match:Match, data:dict):
-    TournamentUser.objects.filter(username=data['winner']).update(match_won=F('match_won') + 1) 
-    TournamentUser.objects.filter(username=data['looser']).update(match_won=F('match_lost') + 1) 
+    TournamentUser.objects.filter(user=data['winner']).update(matches_won=F('matches_won') + 1) 
+    TournamentUser.objects.filter(user=data['looser']).update(matches_won=F('matches_lost') + 1) 
     tournament = match.tournament
     match.delete()
 

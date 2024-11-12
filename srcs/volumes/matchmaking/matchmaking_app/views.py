@@ -244,7 +244,7 @@ class GetAcceptedMatch(generics.RetrieveAPIView):
 class HandleMatchResult(APIView):
     queryset = Match.objects.all()
     lookup_field = 'matchId'
-    # permission_classes = [IsGame]
+    permission_classes = [IsGame]
 
     def get_object(self, matchId):
         return get_object_or_404(self.queryset, matchId=matchId)
