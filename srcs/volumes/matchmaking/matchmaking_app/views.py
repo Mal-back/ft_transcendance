@@ -114,7 +114,7 @@ class GetInvite(APIView):
         matchQuery = Match.objects.filter(Q(player1=user) | Q(player2=user), status='pending')
         tournamentQuery = Tournament.objects.filter(Q(invited_players=user) | Q(confirmed_players__user=user), status='pending').distinct() 
         try :
-            on_going_match = Match.objects.get(Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress'])
+            on_going_match = Match.objects.get(Q(player1=user) | Q(player2=user), status__in=['accepted', 'in_progress']).distinct()
         except Match.DoesNotExist:
             on_going_match = None
 

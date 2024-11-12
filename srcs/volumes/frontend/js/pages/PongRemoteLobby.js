@@ -20,6 +20,8 @@ export default class extends AbstractView {
     this.handleInvitePlayerTournament =
       this.handleInvitePlayerTournament.bind(this);
     this.handleInputUsername = this.handleInputUsername.bind(this);
+    this.handleStartTournament = this.handleStartTournament.bind(this);
+    this.handleRemovePlayer = this.handleRemovePlayer.bind(this);
   }
 
   async loadCss() {
@@ -40,7 +42,6 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       let data = await this.checkTournament();
       await this.createTournament();
-      console.log("DATA", data);
       return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -75,7 +76,7 @@ export default class extends AbstractView {
           <div id="confirmedPlayers">
             ${data.confirmedHtml}
           </div>
-          <div class="d-flex align-items-center justify-content-center mt-2">
+          <div class="d-flex align-items-center justify-content-center mt-2" style="display: ${this.owner ? "block" : "none"}">
             <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
               style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px;"
               id="startTournamentBtn">Start
@@ -121,42 +122,12 @@ export default class extends AbstractView {
     }
   }
 
-  async createPlayerDivConfirmed(dataPlayer) {
-    try {
-      const data = await this.getUserInfo(dataPlayer.username);
-      const playerAvatar = `background-image: url('${data.profilePic}');`;
-      const username = sessionStorage.getItem("username_transcendence");
-      let removeButton = this.owner
-        ? `<button class="btn btn-sm btn-danger ms-auto removePlayer"><i class="bi bi-x-circle"></i>
-      Remove</button>`
-        : ``;
-      if (this.owner == false && username == dataPlayer.username)
-        removeButton = `<button class="btn btn-sm btn-danger ms-auto cancelPlayer"><i class="bi bi-x-circle"></i>
-      Cancel</button>`;
-      return `
-<div>
-  <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
-    <div class="d-flex align-items-center">
-      <div class="Avatar status-online me-3" style="${playerAvatar}"></div>
-      <div class="flex-fill">
-        <h5 class="mb-0">${username}</h5>
-      </div>
-    </div>
-    ${removeButton}
-  </div>
-</div>
-            `;
-    } catch (error) {
-      this.handleCatch(error);
-    }
-  }
-
   async createPlayerDivPending(dataPlayer) {
     try {
       const data = await this.getUserInfo(dataPlayer.username);
       const playerAvatar = `background-image: url('${data.profilePic}');`;
       let cancelButton = this.owner
-        ? `<button class="btn btn-sm btn-danger ms-auto removePlayer"><i class="bi bi-x-circle"></i>
+        ? `<button class="btn btn-sm btn-danger ms-auto cancellPlayer"><i class="bi bi-x-circle"></i>
       Cancel</button>`
         : ``;
       return `
@@ -177,44 +148,31 @@ export default class extends AbstractView {
     }
   }
 
-  async fillPendingPlayers(invited_players_profiles) {
-    console.log(
-      "fillPendingPlayers:invited_players_profiles",
-      invited_players_profiles,
-    );
-    if (!invited_players_profiles || invited_players_profiles.length === 0)
-      return;
+  async createPlayerDivConfirmed(dataPlayer) {
     try {
-      // Await each asynchronous call inside `Promise.all`
-      const playerDivs = await Promise.all(
-        invited_players_profiles.map(async (player) => {
-          console.log("Player:", player);
-          return await this.createPlayerDivPending(player);
-        }),
-      );
-      const allPlayerDivsHTML = `${playerDivs.join("")}`;
-      console.log("PendingPlayers:", allPlayerDivsHTML);
-      return allPlayerDivsHTML;
-    } catch (error) {
-      this.handleCatch(error);
-    }
-  }
-
-  async fillConfirmedPlayers(confirmed_players_profiles, owner) {
-    console.log(
-      "fillConfirmedPlayers:confirmed_players_profiles",
-      confirmed_players_profiles,
-    );
-    if (!confirmed_players_profiles || confirmed_players_profiles.length === 0)
-      return;
-    try {
-      const playerDivs = await Promise.all(
-        confirmed_players_profiles.map((player) => {
-          if (owner != player.profile) this.createPlayerDivPending(player);
-        }),
-      );
-      const allPlayerDivsHTML = `${playerDivs.join("")}`;
-      return allPlayerDivsHTML;
+      const data = await this.getUserInfo(dataPlayer.username);
+      const playerAvatar = `background-image: url('${data.profilePic}');`;
+      const username = sessionStorage.getItem("username_transcendence");
+      let removeButton = this.owner
+        ? `<button class="btn btn-sm btn-danger ms-auto removePlayer"><i class="bi bi-x-circle"></i>
+      Remove</button>`
+        : ``;
+      if (this.owner == false && username == dataPlayer.username)
+        removeButton = `<button class="btn btn-sm btn-danger ms-auto removePlayer"><i class="bi bi-x-circle"></i>
+      Cancel</button>`;
+      return `
+<div>
+  <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
+    <div class="d-flex align-items-center">
+      <div class="Avatar status-online me-3" style="${playerAvatar}"></div>
+      <div class="flex-fill">
+        <h5 class="mb-0">${dataPlayer.username}</h5>
+      </div>
+    </div>
+    ${removeButton}
+  </div>
+</div>
+            `;
     } catch (error) {
       this.handleCatch(error);
     }
@@ -230,10 +188,7 @@ export default class extends AbstractView {
       <div>
         <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
           <div class="d-flex align-items-center">
-            <div
-              class="Avatar status-online me-3"
-              style="${playerAvatar}"
-            ></div>
+            <div class="Avatar status-online me-3" style="${playerAvatar}"></div>
             <div class="flex-fill">
               <h5 class="mb-0">${ownerName}</h5>
             </div>
@@ -241,6 +196,44 @@ export default class extends AbstractView {
           ${OwnerButton}
         </div>
       </div>`;
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  async fillConfirmedPlayers(confirmed_players_profiles, owner) {
+    console.log(
+      "fillConfirmedPlayers:confirmed_players_profiles",
+      confirmed_players_profiles,
+    );
+    if (!confirmed_players_profiles || confirmed_players_profiles.length === 0)
+      return;
+    try {
+      const playerDivs = await Promise.all(
+        confirmed_players_profiles.map(async (player) => {
+          if (owner != player.profile)
+            return await this.createPlayerDivConfirmed(player);
+        }),
+      );
+      const allPlayerDivsHTML = `${playerDivs.join("")}`;
+      return allPlayerDivsHTML;
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  async fillPendingPlayers(invited_players_profiles) {
+    if (!invited_players_profiles || invited_players_profiles.length === 0)
+      return;
+    try {
+      const playerDivs = await Promise.all(
+        invited_players_profiles.map(async (player) => {
+          console.log("Player:", player);
+          return await this.createPlayerDivPending(player);
+        }),
+      );
+      const allPlayerDivsHTML = `${playerDivs.join("")}`;
+      return allPlayerDivsHTML;
     } catch (error) {
       this.handleCatch(error);
     }
@@ -288,7 +281,7 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      if (response.status == 404) return undefined;
+      if (response.status == 204) return undefined;
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
         console.log("checkTournament: data:", data);
@@ -497,9 +490,55 @@ export default class extends AbstractView {
     pendingTournamentModal.show();
   }
 
+  async handleRemovePlayer(ev) {
+    ev.preventDefault();
+    try {
+      const listItem = ev.target.closest(".list-group-item");
+      const usernameElement = listItem.querySelector("h5");
+      const username = usernameElement ? usernameElement.textContent : null;
+      const request = await this.makeRequest(
+        `/api/matchmaking/tournament/remove_players/`,
+        "PATCH",
+        {
+          invited_players: [`${username}`],
+        },
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        console.log(`Player ${username} removed from tournament`);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleRemovePlayer:", error);
+      }
+    }
+  }
+
+  async handleStartTournament(ev) {
+    ev.preventDefault();
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/tournament/launch/",
+        "PATCH",
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        console.log("Success");
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error);
+      } else {
+        console.error("handleStartTournament: ", error);
+      }
+    }
+  }
+
   async addEventListeners() {
-    // const startTournamentBtn = document.querySelector("#startTournamentBtn");
-    // startTournamentBtn.addEventListener("click", this.handleStartTournament);
     const playerInviteTournamentButton = document.querySelector(
       "#invitePlayerTournamentButton",
     );
@@ -531,5 +570,18 @@ export default class extends AbstractView {
         );
         friendListModal.show();
       });
+
+    const allRemoveButton = document.querySelectorAll(".removePlayer");
+    allRemoveButton.forEach((button) => {
+      button.addEventListener("click", this.handleRemovePlayer);
+    });
+
+    const allCancelButton = document.querySelectorAll(".removePlayer");
+    allCancelButton.forEach((button) => {
+      button.addEventListener("click", this.handleRemovePlayer);
+    });
+
+    const startTournamentBtn = document.querySelector("#startTournamentBtn");
+    startTournamentBtn.addEventListener("click", this.handleStartTournament);
   }
 }

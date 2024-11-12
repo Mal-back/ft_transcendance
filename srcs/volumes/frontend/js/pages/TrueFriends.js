@@ -178,7 +178,7 @@ export default class extends AbstractView {
             ${this.lang.getTranslation(["button", "show"])}${this.lang.getTranslation(["title", "profile"])}
           </button>
         </div>
-        <button class="btn btn-sm btn-danger ms-auto removefriend removeElem">
+        <button class="btn btn-sm btn-danger ms-auto removeFriend removeElem">
           <i class="bi bi-x-circle removeElem"></i> ${this.lang.getTranslation(["button", "remove"])}
         </button>
       </div>
@@ -290,7 +290,7 @@ export default class extends AbstractView {
     if (changeUsernameButton) {
       changeUsernameButton.removeEventListener("click", this.handleAddFriend);
     }
-    document.querySelectorAll(".btn-danger").forEach((button) => {
+    document.querySelectorAll(".removeFriend").forEach((button) => {
       button.removeEventListener("click", this.handleRemoveFriends);
     });
   }
