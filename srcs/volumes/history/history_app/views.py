@@ -44,7 +44,7 @@ class MatchUserDelete(generics.DestroyAPIView):
         username = instance.username
         Match.objects.filter(winner=username).update(winner='deleted_account')
         Match.objects.filter(looser=username).update(looser='deleted_account')
-        TournamentUser.objects.filter(user=username).update(user='deleted_account')
+        TournamentUser.objects.filter(username=username).update(username='deleted_account', user_profile=None)
         instance.delete()
 
 class MatchCreate(generics.CreateAPIView):

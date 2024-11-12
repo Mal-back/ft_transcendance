@@ -556,23 +556,24 @@ class DebugCreateFinishedTournament(APIView):
         vl = MatchUser.objects.get(username='vl')
         elle = MatchUser.objects.get(username='elle')
         tournament = Tournament.objects.create(owner=val, game_type='pong', status='finished')
-        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=0, matches_lost=0)
-        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=0, matches_lost=0)
-        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=0, matches_lost=0)
-        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=0, matches_lost=0)
-        # serializer = TournamentToHistorySerializer(tournament)
-        # print(serializer.data)
-        # try:
-        #     sender = MicroServiceClient()
-        #     responses = sender.send_requests(
-        #         urls = [f'http://history:8443/api/history/tournament/create/'],
-        #         expected_status=[201],
-        #         method='post',
-        #         body=serializer.data
-        #         )
-        # except (RequestsFailed, InvalidCredentialsException):
-        #     pass
-        # ret = responses['http://history:8443/api/history/tournament/create/']
-        # print(ret.json()['id'])
-        # return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({'ok':'kr'}, status=status.HTTP_200_OK)
+        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=0, matches_lost=3)
+        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=1, matches_lost=2)
+        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=2, matches_lost=1)
+        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=3, matches_lost=0)
+        serializer = TournamentToHistorySerializer(tournament)
+        print(serializer.data)
+        try:
+            sender = MicroServiceClient()
+            responses = sender.send_requests(
+                urls = [f'http://history:8443/api/history/tournament/create/'],
+                expected_status=[201],
+                method='post',
+                body=serializer.data
+                )
+        except (RequestsFailed, InvalidCredentialsException):
+            pass
+        ret = responses['http://history:8443/api/history/tournament/create/']
+        print(ret.json()['id'])
+        tournament.delete()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return Response({'ok':'kr'}, status=status.HTTP_200_OK)

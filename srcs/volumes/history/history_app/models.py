@@ -13,7 +13,7 @@ class TournamentUser(models.Model):
     matches_won = models.IntegerField()
     matches_lost = models.IntegerField()
     games_played = models.IntegerField()
-    user_profile = models.CharField()
+    user_profile = models.CharField(null=True)
     tournament = models.ForeignKey('Tournament',
                                    related_name='final_ranking',
                                    on_delete=models.CASCADE)
