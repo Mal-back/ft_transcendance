@@ -1,3 +1,4 @@
-
-note moi:
-profile WON/LOST inverser
+MOI : deleete user, avatar not working: 404/ this.getErrorlog a update/ update Interval/ check leaveButton tournois/
+VAL: les tournois(match update casse)
+DJANGO BRUT TRAD:
+Random deco a check;

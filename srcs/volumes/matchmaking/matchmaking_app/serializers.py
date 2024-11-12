@@ -406,7 +406,7 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
 
     def get_players_order(self, obj):
         if obj.status == 'in_progress':
-            sorted_participants = obj.confirmed_user.order_by('-match_won')
+            sorted_participants = obj.confirmed_players.order_by('-matches_won')
             return TournamentUserSerializer(sorted_participants, many=True).data
         return None
 

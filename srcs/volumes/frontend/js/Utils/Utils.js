@@ -37,6 +37,7 @@ export function closeModal() {
 export function showModal(title, message) {
   const modalTitleElement = document.getElementById("alertLabel");
   const errorMessageElement = document.getElementById("alertMessage");
+  console.log("ErrorModalMessage:", message)
   if (title == "Error" || title == "Erreur") {
     modalTitleElement.style.color = "red";
   } else if (title == "Success" || title == "Succes") {

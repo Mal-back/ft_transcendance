@@ -41,7 +41,10 @@ export default class extends AbstractView {
       );
       const username = sessionStorage.getItem("username_transcendence");
       let data = await this.checkTournament();
-      await this.createTournament();
+      if (data == undefined) {
+        await this.createTournament();
+      }
+
       return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -71,17 +74,17 @@ export default class extends AbstractView {
           Players:</h3>
         <div class="tournament-creation list-group ranking" style="margin-bottom: 0px;">
           <div id="ownerDiv">
-            ${data.ownerHtml}
+            ${data ? data.ownerHtml : ""}
           </div>
           <div id="confirmedPlayers">
-            ${data.confirmedHtml}
+            ${data ? data.confirmedHtml : ""}
           </div>
-          <div class="d-flex align-items-center justify-content-center mt-2" style="display: ${this.owner ? "block" : "none"}">
-            <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-              style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px;"
-              id="startTournamentBtn">Start
-              Tournament</button>
-          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center mt-2" style="display: ${this.owner ? "block" : "none"}">
+          <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
+            style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px;"
+            id="startTournamentBtn">Start
+            Tournament</button>
         </div>
       </div>
       <div class="modal fade" id="friendListModal" tabindex="-1" aria-labelledby="friendListModalLabel" aria-hidden="true">
@@ -107,7 +110,7 @@ export default class extends AbstractView {
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="pendingTournamentModalContent" style="max-height: 400px; overflow-y: auto;">
-            ${data.pendingHtml}
+            ${data ? data.pendingHtml : ""}
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -115,6 +118,27 @@ export default class extends AbstractView {
           </div>
         </div>
       </div>
+      <div class="modal fade" id="invitePongModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="inviteModalLabel">Invite at least 2 player to your tournament:</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input type="text" id="opponentUsername1" class="form-control" placeholder="${this.lang.getTranslation(["input", "preview", "opponent"])}">
+              <div id="opponentUsername1Error"></div>
+              <br>
+              <input type="text" id="opponentUsername2" class="form-control" placeholder="${this.lang.getTranslation(["input", "preview", "opponent"])}">
+              <div id="opponentUsername2Error"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" id="inviteButton">${this.lang.getTranslation(["button", "invite"])}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
                       `;
     } catch (error) {
@@ -158,7 +182,7 @@ export default class extends AbstractView {
       Remove</button>`
         : ``;
       if (this.owner == false && username == dataPlayer.username)
-        removeButton = `<button class="btn btn-sm btn-danger ms-auto removePlayer"><i class="bi bi-x-circle"></i>
+        removeButton = `<button class="btn btn-sm btn-danger ms-auto leaveButtonPlayer"><i class="bi bi-x-circle"></i>
       Cancel</button>`;
       return `
 <div>
@@ -281,9 +305,18 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      if (response.status == 204) return undefined;
+      if (response.status == 204) {
+        return undefined;
+      }
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
+        if (data.status != "pending") {
+          throw new CustomError(
+            "Tournament",
+            "already have an ongoing-tournament",
+            "/pong-remote-tournament",
+          );
+        }
         console.log("checkTournament: data:", data);
         const htmlContent = await this.fillTournamentInvites(data);
         return htmlContent;
@@ -420,7 +453,45 @@ export default class extends AbstractView {
     this.validateUsername(ev.target);
   }
 
-  // async updatePendingPlayers(
+  async intervalFunction() {
+    try {
+      const data = await this.checkTournament();
+      if (data == undefined) {
+        throw new CustomError(
+          "Tournament",
+          "Sorry, you were kicked! 🤡",
+          "/pong-remote-menu",
+        );
+      }
+      this.clearDynamicEventListeners();
+      const ownerDiv = document.querySelector("#ownerDiv");
+      ownerDiv.innerHTML = "";
+      ownerDiv.innerHTML = data.ownerHtml;
+      const confirmedPlayers = document.querySelector("#confirmedPlayers");
+      confirmedPlayers.innerHTML = "";
+      confirmedPlayers.innerHTML = data.confirmedHtml;
+      const pendingPlayers = document.querySelector(
+        "#pendingTournamentModalContent",
+      );
+      pendingPlayers.innerHTML = "";
+      pendingPlayers.innerHTML = data.pendingHtml;
+      this.addDynamicEventListeners();
+    } catch (error) {
+      clearInterval(this.tournamentInterval);
+      this.tournamentInterval = null;
+      return error;
+    }
+  }
+
+  async setIntervalTournament() {
+    this.tournamentInterval = setInterval(async () => {
+      const error = await this.intervalFunction();
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      }
+    }, 2000);
+  }
 
   async invitePlayerTournament(username) {
     try {
@@ -538,6 +609,40 @@ export default class extends AbstractView {
     }
   }
 
+  clearDynamicEventListeners() {
+    const allRemoveButton = document.querySelectorAll(".removePlayer");
+    allRemoveButton.forEach((button) => {
+      button.removeEventListener("click", this.handleRemovePlayer);
+    });
+
+    const allCancelButton = document.querySelectorAll(".removePlayer");
+    allCancelButton.forEach((button) => {
+      button.removeEventListener("click", this.handleRemovePlayer);
+    });
+
+    const leave = document.querySelector(".leaveButtonPlayer");
+    if (leave) {
+      leave.removeEventListener("click", this.handleLeavePlayer);
+    }
+  }
+
+  addDynamicEventListeners() {
+    const allRemoveButton = document.querySelectorAll(".removePlayer");
+    allRemoveButton.forEach((button) => {
+      button.addEventListener("click", this.handleRemovePlayer);
+    });
+
+    const allCancelButton = document.querySelectorAll(".removePlayer");
+    allCancelButton.forEach((button) => {
+      button.addEventListener("click", this.handleRemovePlayer);
+    });
+
+    const leave = document.querySelector(".leaveButtonPlayer");
+    if (leave) {
+      leave.addEventListener("click", this.handleLeavePlayer);
+    }
+  }
+
   async addEventListeners() {
     const playerInviteTournamentButton = document.querySelector(
       "#invitePlayerTournamentButton",
@@ -571,17 +676,14 @@ export default class extends AbstractView {
         friendListModal.show();
       });
 
-    const allRemoveButton = document.querySelectorAll(".removePlayer");
-    allRemoveButton.forEach((button) => {
-      button.addEventListener("click", this.handleRemovePlayer);
-    });
-
-    const allCancelButton = document.querySelectorAll(".removePlayer");
-    allCancelButton.forEach((button) => {
-      button.addEventListener("click", this.handleRemovePlayer);
-    });
-
     const startTournamentBtn = document.querySelector("#startTournamentBtn");
     startTournamentBtn.addEventListener("click", this.handleStartTournament);
+
+    this.addDynamicEventListeners();
+    try {
+      await this.setIntervalTournament();
+    } catch (error) {
+      this.handleCatch(error);
+    }
   }
 }

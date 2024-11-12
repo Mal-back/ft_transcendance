@@ -31,7 +31,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     this.setTitle(
-      `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "remote"])}`,
+      `${this.lang.getTranslation(["title", "c4"])} ${this.lang.getTranslation(["title", "remote"])}`,
     );
     return `
       <div class="background removeElem">
@@ -252,7 +252,7 @@ export default class extends AbstractView {
       const request = await this.makeRequest(
         `/api/matchmaking/matchmaking/join/`,
         "POST",
-        { game_type: "pong" },
+        { game_type: "c4" },
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
@@ -350,7 +350,7 @@ export default class extends AbstractView {
       "transcendence_game_id",
       ev.currentTarget.dataset.gameId,
     );
-    navigateTo("/pong?connection=remote");
+    navigateTo("/c4?connection=remote");
   }
 
   async addEventListeners() {

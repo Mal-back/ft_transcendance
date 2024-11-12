@@ -82,13 +82,13 @@ export default class Language {
     const inviteModalLabel = document.getElementById("inviteModalLabel");
     inviteModalLabel.innerText = `${this.getTranslation(["game", "label"])} ${this.getTranslation(["game", "invites"])}`;
     const onGoingGameText = document.getElementById("onGoingGameText");
-    onGoingGameText.innerText = `${this.getTranslation(["game", "onGoing"])} ${this.getTranslation(["game", "label"])}`;
+    onGoingGameText.innerText = `${this.getTranslation(["game", "onGoing"])} ${this.getTranslation(["game", "label"])}:`;
     const onGoingGameButton = document.querySelector("#buttonOnGoingGame");
     onGoingGameButton.innerText = `${this.getTranslation(["button", "cancel"]).toUpperCase()}`;
     const invitesModalTextTitle = document.getElementById(
       "invitesModalTextTitle",
     );
-    invitesModalTextTitle.innerText = `${this.getTranslation(["game", "invites"])}`;
+    invitesModalTextTitle.innerText = `${this.getTranslation(["game", "invites"])}:`;
 
     const invitesModalCloseButton = document.getElementById(
       "invitesModalCloseButton",
