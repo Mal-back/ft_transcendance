@@ -263,6 +263,7 @@ class TournamentRemovePlayersSerializer(serializers.ModelSerializer):
             except TournamentUser.DoesNotExist:
                 pass
 
+        instance.invited_players.remove(*players_to_remove)
         return instance
 
 class TournamentConciseSerializer(serializers.ModelSerializer):
