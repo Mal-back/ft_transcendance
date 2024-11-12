@@ -126,6 +126,9 @@
   },
   "modal": {
     "title": {
+	  "status" : "Statut",
+	  "offline" : "Hors ligne",
+	  "online" : "En ligne",
       "error": "Erreur",
       "success": "Succès",
       "congrats": "Félicitations",
