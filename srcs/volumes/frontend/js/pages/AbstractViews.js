@@ -203,7 +203,7 @@ export default class AbstractViews {
       opponentInviteId.innerText = "";
       opponentInviteId.innerHTML = `${opponent}`;
       const ongoing = document.querySelector("#onGoingGameText");
-      ongoing.innerText = `Current ${data.is_tournament_match ? "Tournament" : "Ranked"} Game:`
+      ongoing.innerText = `Current ${data.is_tournament_match ? "Tournament" : "Ranked"} Game:`;
       const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
@@ -241,7 +241,7 @@ export default class AbstractViews {
       joinButton.classList.remove("btn-danger");
       joinButton.classList.add("btn-success");
       joinButton.innerText = `${this.lang.getTranslation(["button", "join"]).toUpperCase()}`;
-      joinButton.dataset.redirectUrl = `/${data.game_type}?connection=remote`;
+      joinButton.dataset.redirectUrl = `/${data.game_type}?connection=remote&mode=${data.is_tournament_match ? "tournament" : "simple"}`;
       return 1;
     } catch (error) {
       this.handleCatch(error);
@@ -308,11 +308,10 @@ export default class AbstractViews {
       joinButton.classList.add("btn-success");
       joinButton.innerText = `${this.lang.getTranslation(["button", "join"]).toUpperCase()}`;
       const ongoing = document.querySelector("#onGoingGameText");
-      ongoing.innerText = `Current Tournament:`
+      ongoing.innerText = `Current Tournament:`;
 
       let redirect = "lobby";
-      if (data.status == "in_progress")
-        redirect = "tournament";
+      if (data.status == "in_progress") redirect = "tournament";
       joinButton.dataset.redirectUrl = `/${data.game_type}-remote-${redirect}`;
       return 1;
     } catch (error) {
@@ -322,7 +321,7 @@ export default class AbstractViews {
   }
 
   async createsTournamentInvites(data) {
-    console.log("TOURNAMENT_INVITE DATA:", data)
+    console.log("TOURNAMENT_INVITE DATA:", data);
     AbstractViews.invitesTournament = [];
     try {
       let bool = 0;
@@ -661,7 +660,7 @@ export default class AbstractViews {
         data = await this.getDatafromRequest(response);
         const key = Object.keys(data)[0];
         value = data[key];
-        console.log("VALUE:", value)
+        console.log("VALUE:", value);
       }
       if (response.status == 401) {
         console.error("401 error:response:", response);
@@ -692,7 +691,7 @@ export default class AbstractViews {
         console.error("with json:", value);
         showModal(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        value,
+          value,
         );
         return false;
       }

@@ -89,10 +89,11 @@ export default class extends AbstractView {
         "ongoing-game",
         webScoketURL,
         connection,
+        mode,
         "scoreId",
         auth_token,
       );
-      if (mode == "tournament") {
+      if (mode == "tournament" && connection == "local") {
         console.log("tournament mode");
         const tournament = sessionStorage.getItem(
           "tournament_transcendence_local",

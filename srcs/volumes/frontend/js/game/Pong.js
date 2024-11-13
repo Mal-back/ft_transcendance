@@ -8,7 +8,8 @@ export default class Pong {
     this.canvas = null;
     this.context = null;
     this.webSocket = null;
-    this.mode = "local";
+    this.connection = "local";
+    this.mode = "simple";
     this.pingInterval = null;
     this.timeout = null;
     this.redirectURL = null;
@@ -59,7 +60,8 @@ export default class Pong {
   initPong(
     canvas = "ongoing-game",
     websocket = `wss://${getIpPortAdress()}/api/game/pong-local/join/`,
-    mode = "local",
+    connection = "local",
+    mode = "simple",
     scoreId,
     token = null,
   ) {
@@ -70,6 +72,7 @@ export default class Pong {
     this.player1.username = this.lang.getTranslation(["game", "blue"]);
     this.player2.username = this.lang.getTranslation(["game", "red"]);
     this.mode = mode;
+    this.connection = connection;
     this.token = token;
     this.redirectURL = this.setRedirecturl();
     this.scoreId = document.getElementById(scoreId);
@@ -79,17 +82,11 @@ export default class Pong {
   }
 
   setRedirecturl() {
-    if (this.tournament) {
-      return "/pong-local-tournament";
-    }
-    switch (this.mode) {
-      case "remote": {
-        return "/pong-remote-menu";
-      }
-      default: {
-        return "/pong-local-menu";
-      }
-    }
+    let url = "/pong-";
+    url += this.connection == "local" ? "local-" : "remote-";
+    url += this.mode == "simple" ? "menu" : "tournament";
+    console.log(`url = ${url}`);
+    return url;
   }
 
   setToken(authToken) {
@@ -112,7 +109,7 @@ export default class Pong {
 
   getUsername() {
     this.setUsernameCallBack(
-      this.mode,
+      this.connection,
       this.player1.username,
       this.player2.username,
     );
@@ -120,7 +117,7 @@ export default class Pong {
 
   async handleWebSocketOpen(ev) {
     console.log("WEBSOCKET IS OPEN: mode = ", this.mode);
-    if (this.mode == "remote") {
+    if (this.connection == "remote") {
       let uuid = sessionStorage.getItem("transcendence_game_id");
 
       const body = {
@@ -128,7 +125,7 @@ export default class Pong {
         game_id: uuid,
         auth_key: this.token,
       };
-      console.log("try to auth with: ", body)
+      console.log("try to auth with: ", body);
       this.webSocket.send(JSON.stringify(body));
     }
     this.webSocket.send(JSON.stringify({ type: "init_game" }));
@@ -189,16 +186,17 @@ export default class Pong {
     let winner = "";
     let loser = "";
     let score = "";
-    let gif = "../img/ts/taylor-swift-cookie.gif"
+    let gif = "../img/ts/taylor-swift-cookie.gif";
     const username = sessionStorage.getItem("username_transcendence");
     if (this.mode == "local") {
       winner =
         data.winner == "player_1"
           ? this.player1.username
-          : this.player2.username
-      loser = data.looser == "player_1"
-        ? this.player1.username
-        : this.player2.username
+          : this.player2.username;
+      loser =
+        data.looser == "player_1"
+          ? this.player1.username
+          : this.player2.username;
       score =
         data.winner == "player_1"
           ? `${data.score_1} - ${data.score_2}`
@@ -206,7 +204,10 @@ export default class Pong {
     } else {
       winner = data.winner;
       loser = data.looser;
-      gif = data.winner == username ? "../img/ts/taylor-swift-win.gif" : "../img/ts/taylor-swift-cookie.gif";
+      gif =
+        data.winner == username
+          ? "../img/ts/taylor-swift-win.gif"
+          : "../img/ts/taylor-swift-cookie.gif";
       score =
         data.winner == username
           ? `${data.winner_points} - ${data.looser_points}`
@@ -378,13 +379,13 @@ export default class Pong {
           break;
         }
         case "ArrowUp": {
-          if (this.mode == "remote") return;
+          if (this.connection == "remote") return;
           ev.preventDefault();
           this.player2.upPressed = false;
           break;
         }
         case "ArrowDown": {
-          if (this.mode == "remote") return;
+          if (this.connection == "remote") return;
           ev.preventDefault();
           this.player2.downPressed = false;
           break;
@@ -470,7 +471,7 @@ export default class Pong {
     this.ballRadius = data.ball_size;
     // console.log("BallRadius:", this.ballRadius);
     // console.log("Ball:", this.ball);
-    if (this.mode == "remote")
+    if (this.connection == "remote")
       this.setUsername(data.player_1.username, data.player_2.username);
     this.getUsername();
     this.draw();
@@ -550,6 +551,7 @@ export default class Pong {
   }
 
   sendPlayerMovement(player, directionPlayer) {
+    if (!this.webSocket) return;
     const movementData = {
       type: "move",
       player: player,

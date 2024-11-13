@@ -59,8 +59,8 @@ def handle_finished_matches(match:Match, data:dict):
     tournament = match.tournament
     match.delete()
 
-    if not match.objects.filter(tournament=tournament).exists() :
-        if tournament.round + 1 == tournament.confirmed_players.count():
+    if not Match.objects.filter(tournament=tournament).exists() :
+        if tournament.current_round + 1 == tournament.confirmed_players.count():
             tournament.status = 'finished'
             serializer = TournamentToHistorySerializer(tournament)
             try:
