@@ -1,3 +1,4 @@
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
 from .models import CustomUser
@@ -8,7 +9,10 @@ class CustomJWTAuth(JWTAuthentication):
             username = validated_token.get('username')
             if username is None:
                 raise InvalidToken('Info not found')
-            user = CustomUser.objects.get(username=username)
-            return user
+            try:
+                user = CustomUser.objects.get(username=user)
+                return user
+            except CustomUser.DoesNotExist:
+                raise AuthenticationFailed('Unknown User')
         except CustomUser.DoesNotExist:
             raise InvalidToken('user not found')
