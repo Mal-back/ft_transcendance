@@ -725,25 +725,32 @@ export default class extends AbstractView {
     const playerInviteTournamentButton = document.querySelector(
       "#invitePlayerTournamentButton",
     );
-    playerInviteTournamentButton.removeEventListener(
-      "click",
-      this.handleInvitePlayerTournament,
-    );
+    if (playerInviteTournamentButton)
+      playerInviteTournamentButton.removeEventListener(
+        "click",
+        this.handleInvitePlayerTournament,
+      );
 
     const pending = document.querySelector("#pending");
-    pending.removeEventListener("click", this.handleShowPendingButton);
+    if (pending)
+      pending.removeEventListener("click", this.handleShowPendingButton);
 
     const inputPlayerUsername = document.querySelector(
       "#inputInvitePlayerTournament",
     );
-    inputPlayerUsername.removeEventListener("input", this.handleInputUsername);
+    if (inputPlayerUsername)
+      inputPlayerUsername.removeEventListener(
+        "input",
+        this.handleInputUsername,
+      );
 
     const showFriends = document.querySelector("#friend-list");
-    showFriends.removeEventListener("click", this.handleShowFriendsModal);
+    if (showFriends)
+      showFriends.removeEventListener("click", this.handleShowFriendsModal);
 
-    document
-      .getElementById("friend-list")
-      .removeEventListener("click", async () => {
+    const friendList = document.getElementById("friend-list");
+    if (friendList)
+      friendList.removeEventListener("click", async () => {
         const friendListContent = await this.getFriendList();
         document.getElementById("friendListModalContent").innerHTML =
           friendListContent;
@@ -755,7 +762,11 @@ export default class extends AbstractView {
       });
 
     const startTournamentBtn = document.querySelector("#startTournamentBtn");
-    startTournamentBtn.removeEventListener("click", this.handleStartTournament);
+    if (startTournamentBtn)
+      startTournamentBtn.removeEventListener(
+        "click",
+        this.handleStartTournament,
+      );
 
     this.clearDynamicEventListeners();
     this.clearLobbyInterval();

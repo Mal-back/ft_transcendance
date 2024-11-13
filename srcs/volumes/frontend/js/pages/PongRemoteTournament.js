@@ -26,18 +26,11 @@ export default class extends AbstractView {
     this.setTitle(
       `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}`,
     );
-    let listPlayer = null;
+    let html_loaded;
     try {
-      listPlayer = await this.actualizeTournament();
+      html_loaded = await this.actualizeTournament();
     } catch (error) {
       this.handleCatch(error);
-    }
-    if (!listPlayer) {
-      throw new CustomError(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        `No tournament found, go create one!`,
-        `/pong-remote-lobby`,
-      );
     }
     return `
     <div class="background" style="background-image:url('../img/ow.jpg');">
@@ -45,7 +38,7 @@ export default class extends AbstractView {
         ${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
       <br>
       <div class="tournament-creation list-group ranking">
-      ${listPlayer}
+      ${html_loaded.players}
       </div>
       <div class="d-flex align-items-center justify-content-center mt-2">
         <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" data-bs-toggle="modal"
@@ -71,9 +64,9 @@ export default class extends AbstractView {
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered loading-modal-diag">
           <div class="modal-content">
-              <div class="modal-header">Round 1</div>
+              <div class="modal-header">Round ${html_loaded.roundTitle}</div>
               <div class="modal-body next-battle-modal-body text-center">
-                ${"NextMatch"}
+                ${html_loaded.round}
               </div>
           </div>
       </div>
@@ -132,6 +125,16 @@ export default class extends AbstractView {
     }
   }
 
+  getRoundDiv(round) {
+    let html = "Matches: ";
+    console.log(round);
+    round.forEach((element) => {
+      console.log(element);
+      html += `${element[0]} vs ${element[1]}<br>`;
+    });
+    return html;
+  }
+
   async actualizeTournament() {
     try {
       const request = await this.makeRequest(
@@ -145,7 +148,12 @@ export default class extends AbstractView {
         if (response.status == 204 || data.status != "in_progress")
           return undefined;
         const players = await this.createPlayersDiv(data.players_order);
-        return players;
+        const roundTitle = data.round_number;
+        console.log("data.round_schule = ", data.rounds_schedule);
+        const round = this.getRoundDiv(
+          data.rounds_schedule[data.round_number - 1],
+        );
+        return { players, roundTitle, round };
       }
     } catch (error) {
       this.handleCatch(error);
