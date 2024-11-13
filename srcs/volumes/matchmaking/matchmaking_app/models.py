@@ -7,18 +7,24 @@ from django.utils.timezone import now
 class MatchUser(models.Model):
     username = models.CharField(max_length=128, unique=True)
     last_online_update = models.DateTimeField(null=True)
-    match_won = models.IntegerField(default=0)
-    match_lost = models.IntegerField(default=0)
+    pong_match_won = models.IntegerField(default=0)
+    pong_match_lost = models.IntegerField(default=0)
+    c4_match_won = models.IntegerField(default=0)
+    c4_match_lost = models.IntegerField(default=0)
 
     @property
     def is_authenticated(self):
         return True
 
     @property
-    def win_rate(self):
-        total_matches = self.match_lost + self.match_won
-        print(f'{self.match_won}, {self.match_lost}')
-        return self.match_won / total_matches if total_matches != 0 else 0
+    def pong_win_rate(self):
+        total_matches = self.pong_match_lost + self.pong_match_won
+        return self.pong_match_won / total_matches if total_matches != 0 else 0
+
+    @property
+    def c4_win_rate(self):
+        total_matches = self.c4_match_lost + self.c4_match_won
+        return self.c4_match_won / total_matches if total_matches != 0 else 0
         
 class InQueueUser(models.Model):
     user = models.ForeignKey('MatchUser',
@@ -57,7 +63,7 @@ class Tournament(models.Model):
                                 related_name='tournament_owner',
                                 on_delete=models.PROTECT,
                                 to_field='username')
-    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players', null=True)
+    invited_players = models.ManyToManyField('MatchUser', related_name='invited_players')
     current_round = models.IntegerField(default=1)
     game_type = models.TextField(choices=[('pong', 'Pong'),
                                            ('c4', 'Connect four')])

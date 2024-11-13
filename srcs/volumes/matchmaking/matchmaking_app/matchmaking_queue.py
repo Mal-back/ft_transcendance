@@ -13,8 +13,9 @@ def get_opponent(user:InQueueUser):
     check_range_update(user)
     cutoff = now() - timedelta(seconds=10)
     InQueueUser.objects.filter(last_range_update__lt=cutoff).delete()
-    potential_opps = InQueueUser.objects.filter(win_rate__range=(user.minimal_wr, user.maximal_wr),
-                                                game_type=user.game_type).exclude(user=user.user).order_by('?')
+    if user.game_type == 'pong':
+        potential_opps = InQueueUser.objects.filter(win_rate__range=(user.minimal_wr, user.maximal_wr),
+                                                    game_type=user.game_type).exclude(user=user.user).order_by('?')
     for potential_opp in potential_opps:
         check_range_update(potential_opp)
         reverse_opps = InQueueUser.objects.filter(win_rate__range=(potential_opp.minimal_wr, potential_opp.maximal_wr))

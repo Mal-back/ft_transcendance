@@ -38,6 +38,13 @@ class AvatarView(APIView):
                 return Response({'error': 'Could not upload new avatar. please try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=400)
 
+    def patch(self, request, *args, **kwargs):
+        old_username = request.data.get('old_username')
+        new_username = request.data.get('new_username')
+        if rename_avatar(old_username, new_username) == True:
+            return Response({'Ok': 'Kr'}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
+
     def delete(self, request, *args, **kwargs):
         if reset_avatar(request.data.get('username')) == True:
             return Response({'OK' : 'Successefully reset the avatar'}, status=status.HTTP_204_NO_CONTENT)
@@ -54,6 +61,20 @@ def save_image(username:str, validated_data) -> bool:
         for chunk in validated_data['avatar'].chunks():
             f.write(chunk)
     return True
+
+def rename_avatar(old_username:str, new_username:str):
+    paths =  [
+                os.path.join(settings.MEDIA_ROOT, 'users_avatars', f"{old_username}.png"),
+                os.path.join(settings.MEDIA_ROOT, 'users_avatars', f"{old_username}.jpg"),
+                os.path.join(settings.MEDIA_ROOT, 'users_avatars', f"{old_username}.jpeg"),
+                ]
+    for path in paths:
+        if os.path.exists(path):
+            old_path = str(path)
+            new_path = old_path.replace(old_username, new_username)
+            os.rename(old_path, new_path)
+            return True
+    return False 
 
 def reset_avatar(username:str):
     paths =  [

@@ -38,7 +38,7 @@ def send_delete_requests(urls:list, body={}, headers={}) -> bool :
     token = getToken()  
     headers.update({'Authorization': f'Bearer {token}'})
     for url in urls:
-        if send_request(url=url, method='delete', body=body, headers=headers) != 204:
+        if send_request(url=url, method='delete', body=body, headers=headers) not in  [204, 304]:
             return False
     return True
 
@@ -48,7 +48,7 @@ def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bo
     headers.update({'Authorization': f'Bearer {token}'})
     successefull_elements = []
     for url in urls:
-        if send_request(url=url, method='patch', body=body, headers=headers) != 200:
+        if send_request(url=url, method='patch', body=body, headers=headers) not in [200, 304]:
             break
         else:
             successefull_elements.append(url)
