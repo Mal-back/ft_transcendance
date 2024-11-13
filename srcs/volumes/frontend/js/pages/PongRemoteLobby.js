@@ -487,10 +487,6 @@ export default class extends AbstractView {
     let countError = 0;
     this.tournamentInterval = setInterval(async () => {
       const error = await this.intervalFunction();
-      if (error)
-        console.log(
-          `INTERVAL: setIntervalTournament: title: ${error.modalTitle} message: ${error.message}`,
-        );
       if (!error) countError = 0;
       else {
         if (

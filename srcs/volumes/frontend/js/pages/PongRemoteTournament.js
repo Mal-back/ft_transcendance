@@ -11,6 +11,8 @@ export default class extends AbstractView {
   constructor() {
     super();
     this.refreshInterval = null;
+    this.isFinished = false;
+    this.handleStartNextRound = this.handleStartNextRound.bind(this);
   }
   async loadCss() {
     this.createPageCss("../css/game-menu-buttons.css");
@@ -37,12 +39,12 @@ export default class extends AbstractView {
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
         ${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
       <br>
-      <div class="tournament-creation list-group ranking">
+      <div class="tournament-creation list-group ranking" id="playersTournament">
       ${html_loaded.players}
       </div>
       <div class="d-flex align-items-center justify-content-center mt-2">
-        <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" data-bs-toggle="modal"
-              data-bs-target="#next-game-modal">${this.lang.getTranslation(["game", "next"])} ${this.lang.getTranslation(["game", "match"])}</button>
+        <button id="nextRoundBtn" type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" style="display: none;">
+          Next Round</button>
         <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-2" data-bs-toggle="modal"
               data-bs-target="#current-round-modal">${this.lang.getTranslation(["game", "next"])} ${this.lang.getTranslation(["game", "match"])}</button>
       </div>
@@ -52,7 +54,7 @@ export default class extends AbstractView {
       <div class="modal-dialog modal-dialog-centered loading-modal-diag">
           <div class="modal-content">
               <div class="modal-body next-battle-modal-body text-center">
-                ${"NextMatch"}
+                ${"N"}
               </div>
               <div class="modal-footer justify-content-center">
                   <button id="startBattle" type="button" class="btn btn-secondary">${this.lang.getTranslation(["game", "start"])} ${this.lang.getTranslation(["game", "battle"])}</button>
@@ -64,8 +66,8 @@ export default class extends AbstractView {
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered loading-modal-diag">
           <div class="modal-content">
-              <div class="modal-header">Round ${html_loaded.roundTitle}</div>
-              <div class="modal-body next-battle-modal-body text-center">
+              <div class="modal-header" id="roundTitle">${html_loaded.roundTitle}</div>
+              <div class="modal-body next-battle-modal-body text-center" id="roundBody">
                 ${html_loaded.round}
               </div>
           </div>
@@ -135,6 +137,20 @@ export default class extends AbstractView {
     return html;
   }
 
+  updateNextRound(urlNextRound) {
+    console.log("OWNER");
+    try {
+      const nextRoundBtn = document.querySelector("#nextRoundBtn");
+      if (urlNextRound == null) {
+        nextRoundBtn.style.dispay = "none";
+      } else {
+        console.log("BLOCK");
+        nextRoundBtn.style.display = "block";
+        nextRoundBtn.dataset.redirectUrl = `${urlNextRound}`;
+      }
+    } catch (error) {}
+  }
+
   async actualizeTournament() {
     try {
       const request = await this.makeRequest(
@@ -148,15 +164,97 @@ export default class extends AbstractView {
         if (response.status == 204 || data.status != "in_progress")
           return undefined;
         const players = await this.createPlayersDiv(data.players_order);
-        const roundTitle = data.round_number;
+        const roundTitle = ` Round ${data.round_number}:`;
         console.log("data.round_schule = ", data.rounds_schedule);
         const round = this.getRoundDiv(
           data.rounds_schedule[data.round_number - 1],
         );
+        if (data.player_type == "Owner")
+          this.updateNextRound(data.launch_next_round);
         return { players, roundTitle, round };
       }
     } catch (error) {
       this.handleCatch(error);
     }
+  }
+
+  async refreshTournament() {
+    try {
+      const data = await this.actualizeTournament();
+      const playersDiv = document.querySelector("#playersTournament");
+      playersDiv.innerHTML = "";
+      playersDiv.innerHTML = data.players;
+
+      const roundTitle = document.querySelector("#roundTitle");
+      roundTitle.innerText = "";
+      roundTitle.innerText = data.roundTitle;
+
+      const roundBody = document.querySelector("#roundBody");
+      roundBody.innerText = "";
+      roundBody.innerText = data.round;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  clearTournamentInterval(ev) {
+    clearInterval(this.refreshInterval);
+    this.refreshInterval = null;
+  }
+
+  async setUpdateTournament() {
+    let countError = 0;
+    this.refreshInterval = setInterval(async () => {
+      const error = await this.refreshTournament();
+      if (!error) countError = 0;
+      else {
+        countError++;
+      }
+      if (countError == 5) {
+        this.clearTournamentInterval();
+        removeSessionStorage();
+        if (error instanceof CustomError) {
+          error.showModalCustom();
+          navigateTo(error.redirect);
+        } else console.error("startNotificationPolling: ", error);
+      }
+    }, 1000);
+  }
+
+  async handleStartNextRound(ev) {
+    ev.preventDefault();
+    try {
+      const request = await this.makeRequest(
+        `${ev.target.dataset.redirectUrl}`,
+        "PATCH",
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      }
+    }
+  }
+
+  async addEventListeners() {
+    const nextRoundBtn = document.querySelector("#nextRoundBtn");
+    nextRoundBtn.addEventListener("click", this.handleStartNextRound);
+
+    try {
+      if (this.isFinished == false) await this.setUpdateTournament();
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  removeEventListeners() {
+    const nextRoundBtn = document.querySelector("#nextRoundBtn");
+    if (nextRoundBtn)
+      nextRoundBtn.removeEventListener("click", this.handleStartNextRound);
+
+    this.clearTournamentInterval();
   }
 }
