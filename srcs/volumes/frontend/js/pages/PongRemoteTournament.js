@@ -10,6 +10,7 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
+    this.refreshInterval = null;
   }
   async loadCss() {
     this.createPageCss("../css/game-menu-buttons.css");
@@ -81,7 +82,7 @@ export default class extends AbstractView {
         `;
   }
 
-    async getRankDivPlayer(player, rank) {
+  async getRankDivPlayer(player, rank) {
     let color;
     switch (rank) {
       case 1:
@@ -120,14 +121,14 @@ export default class extends AbstractView {
       const playerDivs = await Promise.all(
         data.map(async (player) => {
           count++;
-            return await this.getRankDivPlayer(player, count);
+          return await this.getRankDivPlayer(player, count);
         }),
       );
       const allPlayerDivsHTML = `${playerDivs.join("")}`;
       return allPlayerDivsHTML;
     } catch (error) {
-      this.handleCatch(error)
-      return ""
+      this.handleCatch(error);
+      return "";
     }
   }
 
@@ -140,11 +141,11 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         let data = await this.getDatafromRequest(response);
-        console.log("data:", data)
+        console.log("data:", data);
         if (response.status == 204 || data.status != "in_progress")
           return undefined;
         const players = await this.createPlayersDiv(data.players_order);
-        return players
+        return players;
       }
     } catch (error) {
       this.handleCatch(error);

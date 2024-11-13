@@ -104,6 +104,7 @@ const router = async () => {
     await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
+      console.error("error in view", error);
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {

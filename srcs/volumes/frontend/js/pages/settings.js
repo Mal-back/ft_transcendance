@@ -665,28 +665,16 @@ export default class extends AbstractView {
         true,
       );
       const response = await fetch(request);
-      if (response.ok) {
-        console.log("RESPONSE OK:", response);
-        const data = await response.json();
-        console.log("DATA: ", data);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
         showModal(
           this.lang.getTranslation(["modal", "title", "success"]),
           `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["user", "avatar"])} ${this.lang.getTranslation(["modal", "message", "changeSuccess"])} `,
         );
         navigateTo("/settings");
-      } else {
-        console.log("RESPONSE FAIL:", response);
-        const data = await this.getErrorLogfromServer(response);
-        showModal(this.lang.getTranslation(["modal", "error"]), data);
-        console.log("DATA: ", data);
       }
     } catch (error) {
-      if (error instanceof CustomError) {
-        error.showModalCustom();
-        navigateTo(error.redirect);
-      } else {
-        console.log("handleUploadAvatar:", error);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -732,27 +720,15 @@ export default class extends AbstractView {
         { profile_pic: `${chosenImageUrl}` },
       );
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         showModal(
           this.lang.getTranslation(["modal", "success"]),
           this.lang.getTranslation(["settings", "Background", "changeSuccess"]),
         );
         navigateTo("/settings");
-      } else {
-        console.log("Request", request);
-        console.log("Response:", response);
-        const dataError = this.getErrorLogfromServer(response);
-        console.log("dataError", dataError);
-        showModal(this.lang.getTranslation(["modal", "error"]), dataError);
       }
-    } catch (error) {
-      if (error instanceof CustomError) {
-        error.showModalCustom();
-        navigateTo(error.redirect);
-      } else {
-        console.error("changeProfilePic:", error);
-      }
-    }
+    } catch (error) {}
+    this.handleCatch(error);
   }
 
   showFileUpload(ev) {

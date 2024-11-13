@@ -15,6 +15,7 @@ export default class AbstractViews {
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
     this.handleInvites = this.handleInvites.bind(this);
+    this.clearPollingInterval = this.clearPollingInterval.bind(this);
     this.lang = new Language();
     this.loginToLogout();
     this.addInviteListeners();
@@ -39,14 +40,22 @@ export default class AbstractViews {
     }
   }
 
+  clearPollingInterval(ev) {
+    clearInterval(this.pollingInterval);
+  }
+
   addInviteListeners() {
     const inviteList = document.getElementById("inviteList");
     inviteList.addEventListener("click", this.handleInvites);
+
+    document.addEventListener("beforeunload", this.clearPollingInterval);
   }
 
   removeInviteEventListeners() {
     const inviteList = document.getElementById("inviteList");
     inviteList.removeEventListener("click", this.handleInvites);
+
+    document.removeEventListener("beforeunload", this.clearPollingInterval);
   }
 
   createPageCss(refCss) {
@@ -95,6 +104,9 @@ export default class AbstractViews {
       !sessionStorage.getItem("accessJWT_transcendence") ||
       !sessionStorage.getItem("refreshJWT_transcendence")
     ) {
+      console.error(
+        `checkLogin: missing: username: ${sessionStorage.getItem("username_transcendence")}; access: ${sessionStorage.getItem("accessJWT_transcendence")}; refresh: ${sessionStorage.getItem("refreshJWT_transcendence")}`,
+      );
       removeSessionStorage();
       throw new CustomError(
         `${this.lang.getTranslation(["modal", "title", "error"])}`,
@@ -103,7 +115,8 @@ export default class AbstractViews {
       );
     }
     try {
-      if ((await this.fetchNotifications()) === undefined) {
+      const error = await this.fetchNotifications();
+      if (error instanceof CustomError) {
         throw new CustomError(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
           `${this.lang.getTranslation(["modal", "message", "authError"])}`,
@@ -503,26 +516,27 @@ export default class AbstractViews {
     try {
       const badge = document.getElementById("notificationbell");
       const numberBell = await this.fetchMainInvites();
-      if (numberBell === undefined) {
-        badge.innerHTML = "";
-        return undefined;
-      }
       if (numberBell == 0) badge.innerHTML = "";
       else
         badge.innerHTML = `<div class="notification-badge">${numberBell}</div>`;
       return 0;
     } catch (error) {
-      this.handleCatch(error);
-      return 0;
+      return error;
     }
   }
 
   startNotificationPolling() {
+    let errorCount = 0;
     if (!AbstractViews.pollingInterval) {
       AbstractViews.pollingInterval = setInterval(async () => {
-        try {
-          await this.fetchNotifications();
-        } catch (error) {
+        const error = await this.fetchNotifications();
+        console.log("startNotificationPolling: error: ", error);
+        if (!error) errorCount = 0;
+        if (error instanceof CustomError) {
+          errorCount++;
+          console.error(`startNotificationPolling: errorCount = ${errorCount}`);
+        }
+        if (errorCount == 5) {
           clearInterval(AbstractViews.pollingInterval);
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
@@ -707,7 +721,6 @@ export default class AbstractViews {
     }
     if (error instanceof TypeError && error.message === "Failed to fetch") {
       console.error("Network error detected:", error);
-      removeSessionStorage();
       throw new CustomError(
         `${this.lang.getTranslation(["modal", "title", "error"])} `,
         `${this.lang.getTranslation(["modal", "message", "failConnectServer"])}`,

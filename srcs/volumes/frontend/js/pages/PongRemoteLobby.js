@@ -22,6 +22,7 @@ export default class extends AbstractView {
     this.handleInputUsername = this.handleInputUsername.bind(this);
     this.handleStartTournament = this.handleStartTournament.bind(this);
     this.handleRemovePlayer = this.handleRemovePlayer.bind(this);
+    this.clearLobbyInterval = this.clearLobbyInterval.bind(this);
   }
 
   async loadCss() {
@@ -43,8 +44,8 @@ export default class extends AbstractView {
       let data = await this.checkTournament();
       if (data == undefined) {
         await this.createTournament();
+        data = await this.checkTournament();
       }
-
       return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -80,9 +81,9 @@ export default class extends AbstractView {
             ${data ? data.confirmedHtml : ""}
           </div>
         </div>
-        <div class="d-flex align-items-center justify-content-center mt-2" style="display: ${this.owner ? "block" : "none"}">
+        <div class="d-flex align-items-center justify-content-center mt-2">
           <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-            style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px;"
+            style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px; display: ${this.owner ? "block" : "none"};"
             id="startTournamentBtn">Start
             Tournament</button>
         </div>
@@ -207,6 +208,13 @@ export default class extends AbstractView {
       console.log("createOwnerDiv: ownerName", ownerName);
       const data = await this.getUserInfo(ownerName);
       const playerAvatar = `background-image: url('${data.profilePic}');`;
+      try {
+        if (this.owner) {
+          const startBtn = document.querySelector("#startTournamentBtn");
+          startBtn.style.display = `block`;
+        }
+      } catch (error) {}
+
       let OwnerButton = `<button class="btn btn-sm btn-warning ms-auto"><i class="bi bi-trophy"></i></button>`;
       return `
       <div>
@@ -321,7 +329,6 @@ export default class extends AbstractView {
         const htmlContent = await this.fillTournamentInvites(data);
         return htmlContent;
       }
-      console.log("RETURN UNDEFINED");
       return undefined;
     } catch (error) {
       this.handleCatch(error);
@@ -377,16 +384,11 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      if (!response.ok) {
-        showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          await this.getErrorLogfromServer(response),
-        );
-        return;
-      }
-      data = await response.json();
-      if (data.count === 0) {
-        return "<p class='text-center'>No friends found.</p>";
+      if (await this.handleStatus(response)) {
+        data = await this.getDatafromRequest(response);
+        if (data.count === 0) {
+          return "<p class='text-center'>No friends found.</p>";
+        }
       }
     } catch (error) {
       this.handleCatch(error);
@@ -404,21 +406,19 @@ export default class extends AbstractView {
       try {
         const request = await this.makeRequest(nextPage, "GET", null);
         const response = await fetch(request);
-        if (response.ok) {
-          const pageData = await response.json();
+        if (await this.handleStatus(response)) {
+          const pageData = await this.getDatafromRequest(response);
           friendsArray = pageData.results;
           friendsHtml += friendsArray
             .map((friendJson) => this.createFriendElement(friendJson))
             .join("");
           nextPage = pageData.next;
         } else {
-          const log = await this.getErrorLogfromServer(response);
-          console.log(log);
-          showModal(this.lang.getTranslation(["modal", "error"]), log);
           break;
         }
       } catch (error) {
         this.handleCatch(error);
+        break;
       }
     }
 
@@ -477,20 +477,29 @@ export default class extends AbstractView {
       pendingPlayers.innerHTML = data.pendingHtml;
       this.addDynamicEventListeners();
     } catch (error) {
-      clearInterval(this.tournamentInterval);
-      this.tournamentInterval = null;
       return error;
     }
   }
 
   async setIntervalTournament() {
+    let countError = 0;
     this.tournamentInterval = setInterval(async () => {
       const error = await this.intervalFunction();
-      if (error instanceof CustomError) {
-        error.showModalCustom();
-        navigateTo(error.redirect);
+      if (!error) countError = 0;
+      else {
+        countError++;
+        console.error(`setIntervalTournament: countError = ${countError}`);
       }
-    }, 2000);
+      if (countError == 5) {
+        clearInterval(this.tournamentInterval);
+        this.tournamentInterval = null;
+        removeSessionStorage();
+        if (error instanceof CustomError) {
+          error.showModalCustom();
+          navigateTo(error.redirect);
+        } else console.error("startNotificationPolling: ", error);
+      }
+    }, 1000);
   }
 
   async invitePlayerTournament(username) {
@@ -505,7 +514,6 @@ export default class extends AbstractView {
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
         console.log("invitePlayerTournament: data: ", data);
-        // await updatePendingPlayers(data);
       }
     } catch (error) {
       this.handleCatch(error);
@@ -562,6 +570,7 @@ export default class extends AbstractView {
   }
 
   async handleRemovePlayer(ev) {
+    console.log("Remove Player");
     ev.preventDefault();
     try {
       const listItem = ev.target.closest(".list-group-item");
@@ -643,6 +652,10 @@ export default class extends AbstractView {
     }
   }
 
+  clearLobbyInterval(ev) {
+    clearInterval(this.tournamentInterval);
+  }
+
   async addEventListeners() {
     const playerInviteTournamentButton = document.querySelector(
       "#invitePlayerTournamentButton",
@@ -685,5 +698,7 @@ export default class extends AbstractView {
     } catch (error) {
       this.handleCatch(error);
     }
+
+    document.addEventListener("beforeunload", this.clearLobbyInterval);
   }
 }

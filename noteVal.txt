@@ -1,4 +1,4 @@
 MOI : deleete user, avatar not working: 404/ this.getErrorlog a update/ update Interval/ check leaveButton tournois/
-VAL: les tournois(match update casse)
+VAL: les tournois(match update casse) 403 au lieu de 401 sur matchmaking/invite/
 DJANGO BRUT TRAD:
 Random deco a check;
