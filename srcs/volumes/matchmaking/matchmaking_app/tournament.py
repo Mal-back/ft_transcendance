@@ -46,13 +46,6 @@ def create_round_matches(tournament:Tournament):
                              tournament=tournament,
                              )
 
-def delete_tournament(id):
-    try:
-        Tournament.objects.get(id=id).delete()
-    except Tournament.DoesNotExists:
-        pass
-    connection.close()
-
 def handle_finished_matches(match:Match, data:dict):
     TournamentUser.objects.filter(user=data['winner']).update(matches_won=F('matches_won') + 1) 
     TournamentUser.objects.filter(user=data['looser']).update(matches_lost=F('matches_lost') + 1) 
@@ -81,10 +74,15 @@ def handle_finished_matches(match:Match, data:dict):
                 pass
             ret = responses['http://history:8443/api/history/tournament/create/']
             tournament.historyId = ret.json()['id']
+            order = tournament.confirmed_players.order_by('-matches_won')
+            thread = threading.Thread(target=update_users_stats, args=(order, tournament.game_type))
+            thread.daemon = True
+            thread.start()
             pk = tournament.id
             def delete_tournament():
                 try:
                     Tournament.objects.get(id=pk).delete()
+                    connection.close()
                 except Tournament.DoesNotExists:
                     pass
             timer = threading.Timer(10, delete_tournament)
@@ -117,3 +115,20 @@ def round_robin_scheduler(players):
 class TournamentInternalError(Exception):
     def __init__(self, message, code=None):
         super().__init__(message)
+
+def update_users_stats(players_list, game_type):
+    winner_points = players_list[0].games_won
+    urls = []
+    for player in players_list:
+        if player.games_won == winner_points:
+            urls.append(f'http://users:8443/api/users/{player.username}/increment/tournaments_{game_type}_won/')
+        else:
+            urls.append(f'http://users:8443/api/users/{player.username}/increment/tournaments_{game_type}_lost/')
+    sender = MicroServiceClient()
+    try :
+        sender.send_requests(urls=urls,
+                             method='patch',
+                             expected_status=[200]) 
+    except (RequestsFailed, InvalidCredentialsException):
+        pass
+    connection.close()
