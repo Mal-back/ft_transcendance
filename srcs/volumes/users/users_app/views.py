@@ -57,17 +57,6 @@ class PublicUserUpdate(generics.UpdateAPIView):
         instance = self.get_object()
         if instance.profilePic != '/media/default_avatars/default_00.jpg':
             new_username = serializer.validated_data['username']
-            try:
-                sender = MicroServiceClient()
-                sender.send_requests(
-                        urls=[f'http://avatars:8443/api/avatars/',],
-                        method='patch',
-                        expected_status=[200],
-                        body={'old_username':f'{instance.username}',
-                              'new_username':f'{new_username}'}
-                        )
-            except (RequestsFailed, InvalidCredentialsException):
-                pass
             old_path = instance.profilePic
             instance.profilePic = old_path.replace(instance.username, new_username)
             instance.save()
@@ -78,20 +67,6 @@ class PublicUserDelete(generics.DestroyAPIView):
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
-
-    def perform_destroy(self, instance):
-        if instance.profilePic != '/media/default_avatars/default_00.jpg':
-            try:
-                sender = MicroServiceClient()
-                sender.send_requests(
-                        urls=[f'http://avatars:8443/api/avatars/',],
-                        method='delete',
-                        expected_status=[204, 304],
-                        body={'username':f'{instance.username}'}
-                        )
-            except (RequestsFailed, InvalidCredentialsException):
-                pass
-        instance.delete()
 
 class PublicUserIncrement(APIView):
     lookup_field = 'username'
