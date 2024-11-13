@@ -162,7 +162,8 @@ class MatchMakingQueueSerializer(serializers.ModelSerializer):
 class TournamentSerializer(serializers.ModelSerializer):
     invited_players = serializers.ListField(
             child=serializers.CharField(),
-            write_only=True
+            write_only=True,
+            required=False
         )
 
     class Meta:

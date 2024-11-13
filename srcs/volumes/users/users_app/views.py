@@ -53,6 +53,15 @@ class PublicUserUpdate(generics.UpdateAPIView):
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
 
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        if instance.profilePic != '/media/default_avatars/default_00.jpg':
+            new_username = serializer.validated_data['username']
+            old_path = instance.profilePic
+            instance.profilePic = old_path.replace(instance.username, new_username)
+            instance.save()
+        serializer.save()
+
 class PublicUserDelete(generics.DestroyAPIView):
     permission_classes = [IsAuth]
     queryset = PublicUser.objects.all()

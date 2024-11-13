@@ -55,12 +55,18 @@ def delete_tournament(id):
 
 def handle_finished_matches(match:Match, data:dict):
     TournamentUser.objects.filter(user=data['winner']).update(matches_won=F('matches_won') + 1) 
-    TournamentUser.objects.filter(user=data['looser']).update(matches_won=F('matches_lost') + 1) 
+    TournamentUser.objects.filter(user=data['looser']).update(matches_lost=F('matches_lost') + 1) 
     tournament = match.tournament
     match.delete()
 
     if not Match.objects.filter(tournament=tournament).exists() :
-        if tournament.current_round + 1 == tournament.confirmed_players.count():
+        players = tournament.confirmed_players.count()
+        is_finished = False
+        if players % 2 == 0 and tournament.current_round + 1 == players:
+            is_finished = True
+        elif players % 2 == 1 and tournament.current_round == players:
+            is_finished = True
+        if is_finished == True:
             tournament.status = 'finished'
             serializer = TournamentToHistorySerializer(tournament)
             try:
@@ -75,9 +81,10 @@ def handle_finished_matches(match:Match, data:dict):
                 pass
             ret = responses['http://history:8443/api/history/tournament/create/']
             tournament.historyId = ret.json()['id']
+            pk = tournament.id
             def delete_tournament():
                 try:
-                    Tournament.objects.get(id=id).delete()
+                    Tournament.objects.get(id=pk).delete()
                 except Tournament.DoesNotExists:
                     pass
             timer = threading.Timer(10, delete_tournament)

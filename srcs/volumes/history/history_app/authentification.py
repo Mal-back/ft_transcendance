@@ -31,5 +31,8 @@ class CustomAuthentication(BaseAuthentication):
         user = clear_token.get('username')
         if user is None:
             return(None, None)
-        user_obj = MatchUser.objects.get(username=user)
+        try:
+            user_obj = MatchUser.objects.get(username=user)
+        except MatchUser.DoesNotExist:
+            raise AuthenticationFailed('Unknown User')
         return(user_obj, token)

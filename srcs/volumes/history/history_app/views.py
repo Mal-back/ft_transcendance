@@ -29,7 +29,7 @@ class MatchUserUpdate(generics.UpdateAPIView):
             user.save()
             Match.objects.filter(winner=old_username).update(winner=new_username)
             Match.objects.filter(looser=old_username).update(looser=new_username)
-            TournamentUser.objects.filter(user=old_username).update(user=new_username)
+            TournamentUser.objects.filter(username=old_username).update(username=new_username)
 
 
         return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)

@@ -7,11 +7,11 @@ class UserIsAuthenticated(BasePermission):
     def has_permission(self, request, view):
         if request.method == 'GET':
             return True
-        elif request.method == 'DELETE':
-            return self.has_permission_for_delete(request, view)
+        elif request.method == 'DELETE' or request.method == 'PATCH':
+            return self.has_permission_for_delete_or_patch(request, view)
         return getattr(request, 'user_username', None) is not None
 
-    def has_permission_for_delete(self, request, view):
+    def has_permission_for_delete_or_patch(self, request, view):
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             print(request.headers)
@@ -29,11 +29,10 @@ class UserIsAuthenticated(BasePermission):
             )
 
             service_name = decoded_token.get('service_name')
-            if service_name != 'users':
+            if service_name != 'users' and service_name != 'auth':
                 return False
 
             return True
 
         except (ValueError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-            return False
-    
+            return False 

@@ -32,7 +32,10 @@ class CustomAuthentication(BaseAuthentication):
         user = clear_token.get('username')
         if user is None:
             return(None, None)
-        user_obj = PublicUser.objects.get(username=user)
+        try:
+            user_obj = PublicUser.objects.get(username=user)
+        except PublicUser.DoesNotExist:
+            raise AuthenticationFailed('Unknown User')
         user_obj.last_seen_online = now()
         user_obj.save()
         return(user_obj, token)

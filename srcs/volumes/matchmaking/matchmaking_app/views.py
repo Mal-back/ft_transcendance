@@ -284,7 +284,10 @@ class MatchMakingJoinQueue(APIView):
 
         serializer = MatchMakingQueueSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user, win_rate=request.user.win_rate)
+            if serializer.validated_data['game_type'] == 'pong':
+                serializer.save(user=request.user, win_rate=request.user.pong_win_rate)
+            else:
+                serializer.save(user=request.user, win_rate=request.user.c4_win_rate)
             return Response({'Ok':'You are in queue'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -344,7 +347,8 @@ class CreateTournament(APIView):
 
         serializer = TournamentSerializer(data=request.data)
         if serializer.is_valid():
-            if request.user.username in serializer.validated_data['invited_players']:
+            invited = serializer.validated_data.get('invited_players')
+            if invited is not None and request.user.username in invited:
                 return Response({'Error': 'You can not play against yourself'}, status=status.HTTP_409_CONFLICT)
             tournament = serializer.save(owner=request.user)
             owner = TournamentUser.objects.create(user=request.user, tournament=tournament)
@@ -484,6 +488,7 @@ class LaunchTournament(APIView):
         if obj.confirmed_players.count() < 3:
             return Response({'Error': 'A tournament should have at least three players'}, status=status.HTTP_409_CONFLICT)
         obj.status = 'in_progress'
+        obj.invited_players.clear()
         obj.save()
         try :
             schedule_rounds(obj)
@@ -537,7 +542,7 @@ class GetTournament(APIView):
         if obj is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
         if obj.status == 'finished':
-            return redirect(f'/api/matchmaking/tournament/{obj.historyId}/', permanent=False)
+            return redirect(f'/api/history/tournament/{obj.historyId}/', permanent=False)
         serializer = TournamentDetailSerializer(obj, context={'request':request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -555,25 +560,10 @@ class DebugCreateFinishedTournament(APIView):
         lui = MatchUser.objects.get(username='lui')
         vl = MatchUser.objects.get(username='vl')
         elle = MatchUser.objects.get(username='elle')
-        tournament = Tournament.objects.create(owner=val, game_type='pong', status='finished')
-        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=0, matches_lost=3)
-        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=1, matches_lost=2)
-        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=2, matches_lost=1)
-        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=3, matches_lost=0)
-        serializer = TournamentToHistorySerializer(tournament)
-        print(serializer.data)
-        try:
-            sender = MicroServiceClient()
-            responses = sender.send_requests(
-                urls = [f'http://history:8443/api/history/tournament/create/'],
-                expected_status=[201],
-                method='post',
-                body=serializer.data
-                )
-        except (RequestsFailed, InvalidCredentialsException):
-            pass
-        ret = responses['http://history:8443/api/history/tournament/create/']
-        print(ret.json()['id'])
-        tournament.delete()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-        # return Response({'ok':'kr'}, status=status.HTTP_200_OK)
+        tournament = Tournament.objects.create(owner=val, game_type='pong', status='in_progress')
+        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=0, matches_lost=0)
+        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=0, matches_lost=0)
+        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=0, matches_lost=0)
+        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=0, matches_lost=0)
+        schedule_rounds(tournament)
+        return Response({'ok':'kr'}, status=status.HTTP_200_OK)
