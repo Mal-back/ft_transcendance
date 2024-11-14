@@ -4,70 +4,73 @@ from .models import PublicUser
 from django.utils.timezone import now
 
 class PublicUserDetailSerializer(serializers.ModelSerializer):
-    total_games = serializers.SerializerMethodField()
-    total_tournaments = serializers.SerializerMethodField()
-    total_single_games = serializers.SerializerMethodField()
-    overall_wins = serializers.SerializerMethodField()
-    overall_losts = serializers.SerializerMethodField()
-    tournament_win_rate = serializers.SerializerMethodField()
-    single_games_win_rate = serializers.SerializerMethodField()
-    tournament_games_win_rate = serializers.SerializerMethodField()
-    overall_win_rate = serializers.SerializerMethodField()
+    total_tournaments_pong = serializers.SerializerMethodField()
+    total_tournaments_c4 = serializers.SerializerMethodField()
+    total_single_games_pong = serializers.SerializerMethodField()
+    total_single_games_c4 = serializers.SerializerMethodField()
+    tournament_pong_win_rate = serializers.SerializerMethodField()
+    tournament_c4_win_rate = serializers.SerializerMethodField()
+    single_games_pong_win_rate = serializers.SerializerMethodField()
+    single_games_c4_win_rate = serializers.SerializerMethodField()
     is_online = serializers.SerializerMethodField()
     is_your_friend = serializers.SerializerMethodField()
     friend_management = serializers.SerializerMethodField()
     class Meta:
         model = PublicUser
         fields =  ['username','profilePic', 'account_creation', 'is_online',
-                   'single_games_won', 'single_games_lost', 'tournament_games_won',
-                   'tournament_games_lost', 'tournaments_won', 'tournaments_lost',
-                   'total_games', 'total_tournaments', 'is_your_friend', 'friend_management',
-                  'total_single_games', 'overall_wins', 'overall_losts',
-                  'tournament_win_rate', 'single_games_win_rate',
-                  'tournament_games_win_rate', 'overall_win_rate',
+                   'single_games_pong_won', 'single_games_pong_lost',
+                   'single_games_c4_won', 'single_games_c4_lost',
+                   'tournaments_pong_won', 'tournaments_pong_lost',
+                   'tournaments_c4_won', 'tournaments_c4_lost',
+                   'total_tournaments_pong', 'total_tournaments_c4',
+                   'total_single_games_pong', 'total_single_games_c4',
+                   'tournament_pong_win_rate', 'tournament_c4_win_rate',
+                   'single_games_pong_win_rate', 'single_games_c4_win_rate',
+                   'is_your_friend', 'friend_management',
                   ]
         
-    def get_total_tournaments(self, obj):
-        return obj.tournaments_won + obj.tournaments_lost
+        
+    def get_total_tournaments_pong(self, obj):
+        return obj.tournaments_pong_won + obj.tournaments_pong_lost
 
-    def get_total_single_games(self, obj):
-        return obj.single_games_won + obj.single_games_lost
 
-    def get_total_games(self, obj):
-        return self.get_total_single_games(obj) + obj.tournament_games_won + obj.tournament_games_lost
+    def get_total_tournaments_c4(self, obj):
+        return obj.tournaments_c4_won + obj.tournaments_c4_lost
 
-    def get_overall_wins(self, obj):
-        return obj.single_games_won + obj.tournament_games_won
 
-    def get_overall_losts(self, obj):
-        return obj.single_games_lost + obj.tournament_games_lost
+    def get_total_single_games_pong(self, obj):
+        return obj.single_games_pong_won + obj.single_games_pong_lost
+    
+    
+    def get_total_single_games_c4(self, obj):
+        return obj.single_games_c4_won + obj.single_games_c4_lost
 
-    def get_tournament_win_rate(self, obj):
-        if obj.tournaments_lost == 0:
-            return 0
-        return obj.tournaments_won / obj.tournaments_lost if obj.tournaments_lost != 0 else 1
 
-    def get_tournament_games_win_rate(self, obj):
-        if obj.tournament_games_won == 0:
-            return 0
-        total_games = obj.tournament_games_lost + obj.tournament_games_won
-        return obj.tournament_games_won / (total_games) if total_games != 0 else 0
+    def get_tournament_pong_win_rate(self, obj):
+        total_tournament_pong = self.get_total_tournaments_pong(obj)
+        return obj.tournaments_pong_won / total_tournament_pong if total_tournament_pong != 0 else 0
 
-    def get_single_games_win_rate(self, obj):
-        if obj.single_games_won == 0:
-            return 0
-        total_games = obj.single_games_won + obj.single_games_lost
-        return obj.single_games_won / obj.single_games_lost if obj.single_games_lost != 0 else 1
 
-    def get_overall_win_rate(self, obj):
-        if self.get_overall_wins(obj) == 0:
-            return 0
-        return self.get_overall_wins(obj) / self.get_overall_losts(obj) if self.get_overall_losts(obj) != 0 else 1
+    def get_tournament_c4_win_rate(self, obj):
+        total_tournament_c4 = self.get_total_tournaments_c4(obj)
+        return obj.tournaments_c4_won / total_tournament_c4 if total_tournament_c4 != 0 else 0
+
+
+    def get_single_games_pong_win_rate(self, obj):
+        total_games_pong = self.get_total_single_games_pong(obj)
+        return obj.single_games_pong_won / total_games_pong if total_games_pong != 0 else 0
+
+
+    def get_single_games_c4_win_rate(self, obj):
+        total_games_c4 = self.get_total_single_games_c4(obj)
+        return obj.single_games_c4_won / total_games_c4 if total_games_c4 != 0 else 0
+
 
     def get_is_online(self, obj):
         if obj.last_seen_online == None or now() - obj.last_seen_online > timedelta(minutes=15):
             return False 
         return True
+
 
     def get_is_your_friend(self, obj):
         request = self.context.get('request')
@@ -83,6 +86,7 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
             return False
         else :
             return None
+
 
     def get_friend_management(self, obj):
         request = self.context.get('request')

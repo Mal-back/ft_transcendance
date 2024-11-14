@@ -175,7 +175,7 @@ export default class extends AbstractView {
             data-bs-toggle="modal"
             data-bs-target="#modal${friendJson.username}"
           >
-            ${this.lang.getTranslation(["button", "show"])}${this.lang.getTranslation(["title", "profile"])}
+            ${this.lang.getTranslation(["button", "show"])} ${this.lang.getTranslation(["title", "profile"])}
           </button>
         </div>
         <button class="btn btn-sm btn-danger ms-auto removeFriend removeElem">
@@ -192,7 +192,7 @@ export default class extends AbstractView {
     const modalStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";
-
+	const status = friendJson.is_online ? `${this.lang.getTranslation(["modal", "title","online"])}` : `${this.lang.getTranslation(["modal", "title","offline"])}`;
     return `
       <div class="modal fade removeElem" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered removeElem">
@@ -205,7 +205,7 @@ export default class extends AbstractView {
               <div class="d-flex flex-column justify-content-center align-items-center removeElem">
                 <div class="removeElem rounded-circle Avatar ${modalStatus} mb-3" style="background-image: url('${friendJson.profilePic}');"></div>
                 <h3 class="removeElem">${friendJson.username}</h3>
-                <p class="black-txt removeElem">${this.lang.getTranslation(["game", "winRate"])}: ${friendJson.single_games_win_rate}</p>
+                <p class="black-txt removeElem">${this.lang.getTranslation(["modal", "title", "status"])} : ${status}</p>
               </div>
             </div>
           </div>

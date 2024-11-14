@@ -18,14 +18,16 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = "None"
 		await self.accept()		
-		log.info("C4RemotePlayerConsumer : Consumer created")
-		log.info("C4RemotePlayerConsumer : Channel_name = " + self.channel_name)
-  
+		self.game_ended = False
   
 	async def disconnect(self, code):
 		log.info("C4RemotePlayerConsumer : Remote player disconnected")
-		if self.player != "None":
+		if self.player != "None" and self.game_ended == False:
 			await self.leave_game()
+		try:
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
+		except:
+			log.info("C4ReotePlayerConsumer : Can not discard channel " + str(self.channel_name) + " from group " + str(self.group_name))
    
    
 	async def init_game(self):
@@ -197,10 +199,8 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 			elif self.player == "player_2":
 				game_instance.player_2_connected = False
 			await game_instance.asave()
-			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except Exception:
 			log.info("C4RemotePlayerConsumer : Problem leaving game " + self.group_name + " for player " + self.username)
-		# await self.pause({"action" : "stop"})
 
 	
 	async def auth(self, game_instance : C4RemoteGame) -> bool:

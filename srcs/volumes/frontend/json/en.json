@@ -128,6 +128,9 @@
   },
   "modal": {
     "title": {
+	  "status" : "Status",
+	  "offline" : "Offline",
+	  "online" : "Online",
       "error": "Error",
       "success": "Success",
       "congrats": "Congratulations",

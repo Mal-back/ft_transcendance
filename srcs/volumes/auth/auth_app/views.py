@@ -9,13 +9,102 @@ from .models import CustomUser
 from .requests_manager import send_delete_requests, send_create_requests, send_update_requests
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
+from django.contrib.auth import authenticate
 # Create your views here.
+
+#######################
+from django.core.mail import send_mail
+from rest_framework_simplejwt.views import TokenObtainPairView
+import random
+import string
+from django.conf import settings
+from datetime import datetime, timedelta
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+
+    def post(self, request, *args, **kwargs):
+      
+        username = request.data.get('username')
+        password = request.data.get('password')
+        if not username or not password:
+            return Response({'detail': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            print("TEST")
+            return super().post(request, *args, **kwargs)
+        print(user.email)
+        if user.two_fa_enabled:
+            otp = self.generate_otp()
+            session_key = f"otp_{user.username}"
+            request.session[session_key] = {
+                'otp': otp,
+                'expiration': datetime.now() + timedelta(minutes=5)
+            }
+            self.send_otp_email(user.email, otp)
+            return Response({
+                'message': 'A 5 minutes one-time authentication code has been sent to your email. Please enter it to complete the login.'
+            }, status=202)
+        return super().post(request, *args, **kwargs)
+
+
+    def send_otp_email(self, email, otp):
+        subject = "Authentication code Transcendance"
+        message = f"Your one-time authentication code is : {otp}"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [email,]
+        try:
+            send_mail(subject, message, from_email, recipient_list)
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
+
+
+    def generate_otp(self):
+        otp = str().join(random.choices(string.digits, k=6))
+        return otp
+        
+
+class OTPValidationView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        otp = request.data.get("otp")
+        if not username or not otp:
+            return Response({"message": "Username and OTP are required."}, status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        session_key = f"otp_{user.username}"
+        otp_data = request.session.get(session_key)
+        if not otp_data:
+            return Response({"message": "OTP has not been generated or has expired."}, status=status.HTTP_400_BAD_REQUEST)
+        stored_otp = otp_data.get('otp')
+        otp_expiration = otp_data.get('expiration')
+        if datetime.now() > otp_expiration:
+            del request.session[session_key]
+            return Response({"message": "OTP has expired. Please request a new OTP."}, status=status.HTTP_400_BAD_REQUEST)
+        if otp == stored_otp:
+            token = MyTokenObtainPairSerializer.get_token(user)
+            access_token = str(token.access_token)
+            refresh_token = str(token)
+            del request.session[session_key]
+            return Response({
+                "message": "OTP verified successfully.",
+                "access": access_token,
+                "refresh": refresh_token
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
+        
+###################################################
+
 
 class UserDetailView(generics.RetrieveAPIView) :
     queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
+
 
 class UserDeleteView(generics.DestroyAPIView) :
     queryset = CustomUser.objects.all()
