@@ -84,7 +84,7 @@ class OTPValidationView(APIView):
             return Response({"message": "OTP has not been generated or has expired."}, status=status.HTTP_400_BAD_REQUEST)
         stored_otp = otp_data.get('otp')
         otp_expiration = otp_data.get('expiration')
-        if datetime.now() > otp_expiration:
+        if datetime.now() > datetime.fromisoformat(otp_expiration):
             del request.session[session_key]
             return Response({"message": "OTP has expired. Please request a new OTP."}, status=status.HTTP_400_BAD_REQUEST)
         if otp == stored_otp:
