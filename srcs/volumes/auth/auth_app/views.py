@@ -18,6 +18,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 import random
 from sendgrid.helpers.mail import Mail, Email, To, Content
 import string
+import sendgrid
 from django.conf import settings
 from datetime import datetime, timedelta
 
@@ -43,6 +44,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             }
             try:
                 self.send_otp_email(user.email, otp)
+                # self.send_email_via_sendgrid(user.email, otp)
             except:
                 return Response({
                 "error": "Can not send mail",
@@ -60,6 +62,29 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         recipient_list = [email,]
         send_mail(subject, message, from_email, recipient_list)
 
+
+    # def send_email_via_sendgrid(self, otp, to_email):
+    #     # Create a SendGrid API client
+    #     sg = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
+    #     subject = "Authentication code Transcendance"
+    #     body = f"Your one-time authentication code is : {otp}"
+    #     # Set up the email components
+    #     from_email = Email(settings.DEFAULT_FROM_EMAIL)  # Replace with your own email (e.g. 'noreply@yourdomain.com')
+    #     to_email = To(to_email)  # Recipient email
+    #     content = Content("text/plain", body)  # Email body content
+        
+    #     # Create the mail object
+    #     mail = Mail(from_email, to_email, subject, content)
+        
+    #     try:
+    #         # Send the email using SendGrid API
+    #         response = sg.send(mail)
+    #         if response.status_code != 202:
+    #             print(f"Failed to send email: {response.status_code}, {response.body}")
+    #         else:
+    #             print(f"Email sent successfully! Status code: {response.status_code}")
+    #     except Exception as e:
+    #         print(f"Error sending email: {e}")
 
     def generate_otp(self):
         otp = str().join(random.choices(string.digits, k=6))
