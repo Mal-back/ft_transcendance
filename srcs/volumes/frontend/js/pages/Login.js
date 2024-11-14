@@ -174,6 +174,7 @@ export default class extends AbstractView {
       console.log("Response: ", response);
       if (await this.handleStatus(response)) {
         const data = await response.json();
+		console.log(data);
         setSessionStorage(data, nameForm);
         navigateTo("/");
         showModal(

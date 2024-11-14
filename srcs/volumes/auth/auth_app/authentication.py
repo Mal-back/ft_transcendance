@@ -9,7 +9,6 @@ class CustomJWTAuth(JWTAuthentication):
             if username is None:
                 raise InvalidToken('Info not found')
             user = CustomUser.objects.get(username=username)
-
             return user
         except CustomUser.DoesNotExist:
             raise InvalidToken('user not found')

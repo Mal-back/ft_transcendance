@@ -22,53 +22,17 @@ from datetime import datetime, timedelta
 
 class CustomTokenObtainPairView(TokenObtainPairView):
 
-
-    # def post(self, request, *args, **kwargs):
-    #     username = request.data.get('username')
-    #     try:
-    #         user = CustomUser.objects.get(username=username)
-    #     except CustomUser.DoesNotExist:
-    #         return Response({'detail': 'User not found'}, status=400)
-    #     if user.two_fa_enabled:
-    #         otp = self.generate_otp()
-    #         session_key = f"otp_{user.username}" 
-    #         request.session[session_key] = {
-    #             'otp': otp,
-    #             'expiration': datetime.now() + timedelta(minutes=5)
-    #         }
-    #         self.send_otp_email(user.email, otp)
-    #         return Response({
-    #             'message': 'A one-time authentication code has been sent to your email. Please enter it to complete the login.'
-    #         }, status=202)
-    #     response = super().post(request, *args, **kwargs)
-    #     print(str(response.data))
-    #     return response
-
-
     def post(self, request, *args, **kwargs):
-        # Get the username and password from the request data
-        
+      
         username = request.data.get('username')
         password = request.data.get('password')
-
-        # Check if both username and password are provided
         if not username or not password:
             return Response({'detail': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Authenticate the user (this checks the password)
         user = authenticate(request, username=username, password=password)
-
-        # If authentication fails, return error (no OTP or token generation)
         if user is None:
             print("TEST")
-            # return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
             return super().post(request, *args, **kwargs)
-
-
-        # Store the user information in the session
-        request.session['authenticated_user'] = user.username  # Or use user.id
-
-        # If the user has 2FA enabled, generate OTP and send it via email
+        print(user.email)
         if user.two_fa_enabled:
             otp = self.generate_otp()
             session_key = f"otp_{user.username}"
@@ -76,15 +40,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 'otp': otp,
                 'expiration': datetime.now() + timedelta(minutes=5)
             }
-
-            # Send OTP to user's email
             self.send_otp_email(user.email, otp)
-
             return Response({
-                'message': 'A one-time authentication code has been sent to your email. Please enter it to complete the login.'
+                'message': 'A 5 minutes one-time authentication code has been sent to your email. Please enter it to complete the login.'
             }, status=202)
-
-        # If 2FA is not enabled, return JWT tokens immediately
         return super().post(request, *args, **kwargs)
 
 
@@ -98,6 +57,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         except Exception as e:
             print(f"Error sending email: {str(e)}")
 
+
     def generate_otp(self):
         otp = str().join(random.choices(string.digits, k=6))
         return otp
@@ -106,41 +66,32 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class OTPValidationView(APIView):
 
     def post(self, request, *args, **kwargs):
-        # Get the username and OTP from the request data
         username = request.data.get("username")
+        password = request.data.get("password")
         otp = request.data.get("otp")
         if not username or not otp:
             return Response({"message": "Username and OTP are required."}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            # Retrieve the user
-            user = CustomUser.objects.get(username=username)
-        except CustomUser.DoesNotExist:
+        user = authenticate(request, username=username, password=password)
+        if user is None:
             return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-        # Generate the session key for this user (same key as used for storing OTP)
         session_key = f"otp_{user.username}"
-        # Check if OTP exists in the session
         otp_data = request.session.get(session_key)
         if not otp_data:
             return Response({"message": "OTP has not been generated or has expired."}, status=status.HTTP_400_BAD_REQUEST)
         stored_otp = otp_data.get('otp')
         otp_expiration = otp_data.get('expiration')
-        # Check if OTP is expired
         if datetime.now() > otp_expiration:
-            # Clear expired OTP from the session
             del request.session[session_key]
             return Response({"message": "OTP has expired. Please request a new OTP."}, status=status.HTTP_400_BAD_REQUEST)
-        # Validate OTP
         if otp == stored_otp:
-            # OTP is correct, so issue the JWT token
-            token = RefreshToken.for_user(user)
+            token = MyTokenObtainPairSerializer.get_token(user)
             access_token = str(token.access_token)
             refresh_token = str(token)
-            # Clear OTP from the session after successful verification
             del request.session[session_key]
             return Response({
                 "message": "OTP verified successfully.",
-                "access_token": access_token,
-                "refresh_token": refresh_token
+                "access": access_token,
+                "refresh": refresh_token
             }, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
@@ -153,6 +104,7 @@ class UserDetailView(generics.RetrieveAPIView) :
     serializer_class = UserRegistrationSerializer
     lookup_field = 'username'
     permission_classes = [IsOwner]
+
 
 class UserDeleteView(generics.DestroyAPIView) :
     queryset = CustomUser.objects.all()
