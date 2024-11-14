@@ -1,8 +1,7 @@
 import Language from "./Language.js";
 
 export function removeSessionStorage() {
-  console.error("removeSessionStorage");
-  console.trace("remove sessionStorage");
+  console.trace("remove sessionStorage trace:");
   sessionStorage.removeItem("accessJWT_transcendence");
   sessionStorage.removeItem("refreshJWT_transcendence");
   sessionStorage.removeItem("username_transcendence");

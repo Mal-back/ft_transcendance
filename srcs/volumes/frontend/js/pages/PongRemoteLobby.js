@@ -466,16 +466,22 @@ export default class extends AbstractView {
       }
       this.clearDynamicEventListeners();
       const ownerDiv = document.querySelector("#ownerDiv");
-      ownerDiv.innerHTML = "";
-      ownerDiv.innerHTML = data.ownerHtml;
+      if (ownerDiv) {
+        ownerDiv.innerHTML = "";
+        ownerDiv.innerHTML = data.ownerHtml;
+      }
       const confirmedPlayers = document.querySelector("#confirmedPlayers");
-      confirmedPlayers.innerHTML = "";
-      confirmedPlayers.innerHTML = data.confirmedHtml;
+      if (confirmedPlayers) {
+        confirmedPlayers.innerHTML = "";
+        confirmedPlayers.innerHTML = data.confirmedHtml;
+      }
       const pendingPlayers = document.querySelector(
         "#pendingTournamentModalContent",
       );
-      pendingPlayers.innerHTML = "";
-      pendingPlayers.innerHTML = data.pendingHtml;
+      if (pendingPlayers) {
+        pendingPlayers.innerHTML = "";
+        pendingPlayers.innerHTML = data.pendingHtml;
+      }
       this.addDynamicEventListeners();
     } catch (error) {
       console.error("intervalFunction: ", error);
@@ -651,14 +657,16 @@ export default class extends AbstractView {
 
   addDynamicEventListeners() {
     const allRemoveButton = document.querySelectorAll(".removePlayer");
-    allRemoveButton.forEach((button) => {
-      button.addEventListener("click", this.handleRemovePlayer);
-    });
+    if (allRemoveButton)
+      allRemoveButton.forEach((button) => {
+        button.addEventListener("click", this.handleRemovePlayer);
+      });
 
     const allCancelButton = document.querySelectorAll(".removePlayer");
-    allCancelButton.forEach((button) => {
-      button.addEventListener("click", this.handleRemovePlayer);
-    });
+    if (allCancelButton)
+      allCancelButton.forEach((button) => {
+        button.addEventListener("click", this.handleRemovePlayer);
+      });
 
     const leave = document.querySelector(".leaveButtonPlayer");
     if (leave) {
