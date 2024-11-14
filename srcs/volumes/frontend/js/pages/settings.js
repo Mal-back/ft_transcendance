@@ -22,7 +22,7 @@ export default class extends AbstractView {
     this.changeProfilePic = this.changeProfilePic.bind(this);
     this.showFileUpload = this.showFileUpload.bind(this);
     this.handleSaveLanguage = this.handleSaveLanguage.bind(this);
-    this.handleConfirm2FA = this.handleConfirm2FA.bnid(this);
+    this.handleConfirm2FA = this.handleConfirm2FA.bind(this);
   }
 
   async loadCss() {

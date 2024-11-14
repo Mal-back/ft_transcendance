@@ -676,7 +676,7 @@ export default class AbstractViews {
         value = data[key];
         console.log("VALUE:", value);
       }
-      if (response.status == 401 || response.status == 403) {
+      if (response.status == 401 || response.status == 403 || response.status == 503) {
         console.error("401/403 error:response:", response);
         removeSessionStorage();
         throw new CustomError(
