@@ -15,6 +15,10 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
     is_online = serializers.SerializerMethodField()
     is_your_friend = serializers.SerializerMethodField()
     friend_management = serializers.SerializerMethodField()
+    c4_matches = serializers.SerializerMethodField()
+    pong_matches = serializers.SerializerMethodField()
+    c4_tournaments = serializers.SerializerMethodField()
+    pong_tournaments = serializers.SerializerMethodField()
     class Meta:
         model = PublicUser
         fields =  ['username','profilePic', 'account_creation', 'is_online',
@@ -26,10 +30,23 @@ class PublicUserDetailSerializer(serializers.ModelSerializer):
                    'total_single_games_pong', 'total_single_games_c4',
                    'tournament_pong_win_rate', 'tournament_c4_win_rate',
                    'single_games_pong_win_rate', 'single_games_c4_win_rate',
-                   'is_your_friend', 'friend_management',
+                   'is_your_friend', 'friend_management', 'c4_matches',
+                   'pong_matches', 'c4_tournaments', 'pong_tournaments',
                   ]
         
         
+    def get_c4_matches(self, obj):
+        return(f'/api/history/match/?username={obj.username}&game_type=c4')
+
+    def get_pong_matches(self, obj):
+        return(f'/api/history/match/?username={obj.username}&game_type=pong')
+
+    def get_c4_tournaments(self, obj):
+        return(f'/api/history/tournament/?username={obj.username}&game_type=c4')
+
+    def get_pong_tournaments(self, obj):
+        return(f'/api/history/tournament/?username={obj.username}&game_type=pong')
+
     def get_total_tournaments_pong(self, obj):
         return obj.tournaments_pong_won + obj.tournaments_pong_lost
 

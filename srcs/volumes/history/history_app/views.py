@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.views import APIView, Response
@@ -67,6 +68,23 @@ class TournamentList(generics.ListAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
 
+    serializer_class = MatchGetSerializer 
+
+    def get_queryset(self):
+        queryset = Tournament.objects.all() 
+
+        user = self.request.query_params.get('username')
+        game_type = self.request.query_params.get('game_type')
+
+        if user and game_type:
+            queryset = queryset.filter(Q(final_ranking__username__username=user) & Q(game_type=game_type)).distinct()
+        elif user:
+            queryset = queryset.filter(final_ranking__username__username=user).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
+        
+        return queryset
+
 class TournamentRetrieve(generics.RetrieveAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
@@ -82,6 +100,12 @@ class MatchList(generics.ListAPIView):
         game_type = self.request.query_params.get('game_type')
 
         if user and game_type:
-            queryset = queryset.filter(winner__username=user, game_type=game_type) | queryset.filter(looser__username=user, game_type=game_type)
+            queryset = queryset.filter(
+                (Q(winner__username=user) | Q(looser__username=user)) & Q(game_type=game_type)
+            ).distinct()
+        elif user:
+            queryset = queryset.filter(Q(winner__username=user) | Q(looser__username=user)).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
         
         return queryset
