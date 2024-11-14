@@ -13,6 +13,7 @@ import PongLocalMenu from "./pages/PongLocalMenu.js";
 import PongRemoteMenu from "./pages/PongRemoteMenu.js";
 import PongLocalLobby from "./pages/PongLocalLobby.js";
 import PongRemoteLobby from "./pages/PongRemoteLobby.js";
+import PongRemoteTournament from "./pages/PongRemoteTournament.js";
 import PongLocalTournament from "./pages/PongLocalTournament.js";
 
 // import Puissance4 Local
@@ -56,6 +57,7 @@ const router = async () => {
     { path: "/pong-remote-menu", view: PongRemoteMenu },
     { path: "/pong-local-lobby", view: PongLocalLobby },
     { path: "/pong-remote-lobby", view: PongRemoteLobby },
+    { path: "/pong-remote-tournament", view: PongRemoteTournament },
     { path: "/pong-local-tournament", view: PongLocalTournament },
 
     //PUISSANCE 4 routes
@@ -102,6 +104,7 @@ const router = async () => {
     await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
+      console.error("error in view", error);
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {

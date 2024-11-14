@@ -1,6 +1,6 @@
 import { closeModal, showModal } from "./Utils.js";
 
-export default class ModalError extends Error {
+export default class CustomError extends Error {
   constructor(modalTitle, modalMessage, redirect) {
     super(modalMessage);
     this.modalTitle = modalTitle;

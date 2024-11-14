@@ -158,7 +158,7 @@ export default class extends AbstractView {
   }
 
   createFriendElement(friendJson) {
-    console.log("Friend:", friendJson)
+    console.log("Friend:", friendJson);
     const friendStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";
@@ -178,7 +178,7 @@ export default class extends AbstractView {
             ${this.lang.getTranslation(["button", "show"])} ${this.lang.getTranslation(["title", "profile"])}
           </button>
         </div>
-        <button class="btn btn-sm btn-danger ms-auto removefriend removeElem">
+        <button class="btn btn-sm btn-danger ms-auto removeFriend removeElem">
           <i class="bi bi-x-circle removeElem"></i> ${this.lang.getTranslation(["button", "remove"])}
         </button>
       </div>
@@ -251,7 +251,7 @@ export default class extends AbstractView {
       await this.removeFriends(friendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("handleRemoveFriends:", error);
@@ -268,7 +268,7 @@ export default class extends AbstractView {
       await this.addFriendRequest(addFriendUsername);
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("handleAddFriend:", error);
@@ -290,7 +290,7 @@ export default class extends AbstractView {
     if (changeUsernameButton) {
       changeUsernameButton.removeEventListener("click", this.handleAddFriend);
     }
-    document.querySelectorAll(".btn-danger").forEach((button) => {
+    document.querySelectorAll(".removeFriend").forEach((button) => {
       button.removeEventListener("click", this.handleRemoveFriends);
     });
   }

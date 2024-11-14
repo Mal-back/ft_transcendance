@@ -1,6 +1,7 @@
 import Language from "./Language.js";
 
 export function removeSessionStorage() {
+  console.trace("remove sessionStorage trace:");
   sessionStorage.removeItem("accessJWT_transcendence");
   sessionStorage.removeItem("refreshJWT_transcendence");
   sessionStorage.removeItem("username_transcendence");
@@ -35,8 +36,10 @@ export function closeModal() {
 }
 
 export function showModal(title, message) {
+  console.trace("showModal: ");
   const modalTitleElement = document.getElementById("alertLabel");
   const errorMessageElement = document.getElementById("alertMessage");
+  console.log("ErrorModalMessage:", message);
   if (title == "Error" || title == "Erreur") {
     modalTitleElement.style.color = "red";
   } else if (title == "Success" || title == "Succes") {
@@ -59,8 +62,12 @@ export function showModal(title, message) {
   };
 }
 
-export function showModalGameResult(winnerUsername, loserUsername, gif = undefined, score = undefined) {
-
+export function showModalGameResult(
+  winnerUsername,
+  loserUsername,
+  gif = undefined,
+  score = undefined,
+) {
   const lang = new Language();
   const winner = document.getElementById("gameWinnerTitle");
   const loser = document.getElementById("gameLoserTitle");
@@ -76,9 +83,7 @@ export function showModalGameResult(winnerUsername, loserUsername, gif = undefin
 
   if (score != undefined) {
     scoreGame.innerText = score;
-  }
-
-  else {
+  } else {
     scoreGame.style.display = "none";
   }
 
