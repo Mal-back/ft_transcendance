@@ -17,19 +17,45 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 import random
 import string
 from django.conf import settings
+from datetime import datetime, timedelta
+
 class CustomTokenObtainPairView(TokenObtainPairView):
 
+
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
         user = CustomUser.objects.get(username=request.data['username'])
-        print("User connected : " + str(user.username))
-        print("User email : " + str(user.email))
-        # otp = self.generate_otp()
-        # print("otp = " + str(otp))
-        # request.session['otp'] = otp
-        # self.send_otp_email(user.email, otp)
-        # response.data['message'] = 'A one-time authentication code has been sent to your email. Please enter it to complete the login.'
+        if user.two_fa_enabled:
+            otp = self.generate_otp()
+            request.session['otp'] = otp
+            request.session['otp_expiration'] = datetime.now() + timedelta(minutes=5)
+            self.send_otp_email(user.email, otp)
+            return Response({
+                'message': 'A one-time authentication code has been sent to your email. Please enter it to complete the login.'
+            }, status=202)
+        response = super().post(request, *args, **kwargs)
+        print(str(response.data))
         return response
+
+
+
+    # def post(self, request, *args, **kwargs):
+        
+    #     response = super().post(request, *args, **kwargs)
+    #     user = CustomUser.objects.get(username=request.data['username'])
+    #     print("User connected : " + str(user.username))
+    #     print("User email : " + str(user.email))
+    #     if user.two_fa_enabled == True:
+    #         if 'access' in response.data:
+    #             del response.data['access']
+    #         if 'refresh' in response.data:
+    #             del response.data['refresh']
+    #         otp = self.generate_otp()
+    #         print("otp = " + str(otp))
+    #         request.session['otp'] = otp
+    #         request.session['otp_expiration'] = datetime.now() + timedelta(minutes=5)
+    #         self.send_otp_email(user.email, otp)
+    #         response.data['message'] = 'A one-time authentication code has been sent to your email. Please enter it to complete the login.'
+    #     return response
 
 
     def send_otp_email(self, email, otp):
@@ -37,14 +63,37 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         message = f"Your one-time authentication code is : {otp}"
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [email,]
-        send_mail(subject, message, from_email, recipient_list)
-
+        try:
+            send_mail(subject, message, from_email, recipient_list)
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
 
     def generate_otp(self):
         otp = str().join(random.choices(string.digits, k=6))
         return otp
         
 
+class OTPValidationView(APIView):
+     def post(self, request, *args, **kwargs):
+        otp = request.data.get("otp")
+        stored_otp = request.session.get('otp')
+        otp_expiration = request.session.get('otp_expiration')
+        if not stored_otp or datetime.now() > otp_expiration:
+            return Response({"message": "OTP has expired. Please request a new OTP."}, status=status.HTTP_400_BAD_REQUEST)
+        if otp == stored_otp:
+            user = CustomUser.objects.get(username=request.data.get('username'))
+            token = MyTokenObtainPairSerializer.get_token(user)
+            access_token = str(token.access_token)
+            refresh_token = str(token)
+            del request.session['otp']
+            del request.session['otp_expiration']
+            return Response({
+                "message": "OTP verified successfully.",
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }, status=status.HTTP_200_OK)
+        return Response({"message": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
+        
 ###################################################
 
 
