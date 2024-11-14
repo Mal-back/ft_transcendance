@@ -22,6 +22,7 @@ export default class extends AbstractView {
     this.changeProfilePic = this.changeProfilePic.bind(this);
     this.showFileUpload = this.showFileUpload.bind(this);
     this.handleSaveLanguage = this.handleSaveLanguage.bind(this);
+    this.handleConfirm2FA = this.handleConfirm2FA.bnid(this);
   }
 
   async loadCss() {
@@ -78,6 +79,15 @@ export default class extends AbstractView {
                     <button type="button" id="password-label" class="btn btn-secondary removeElem" data-bs-toggle="modal"
                         data-bs-target="#handlePassword">
                         ${this.lang.getTranslation(["button", "change"])} ${this.lang.getTranslation(["input", "label", "password"])}
+                    </button>
+                </div>
+
+                <div class="mb-3 removeElem">
+                    <label for="password-label" class="form-label removeElem">Start 2FA:</label>
+                    <br />
+                    <button type="button" id="2fa-label" class="btn btn-secondary removeElem" data-bs-toggle="modal"
+                        data-bs-target="#handle2FA">
+                        Activate 2FA
                     </button>
                 </div>
                 
@@ -224,6 +234,33 @@ export default class extends AbstractView {
         </div>
     </div>
 </div>
+
+<div class="modal fade removeElem" id="handle2FA" tabindex="-1" aria-labelledby="handle2FALabel"
+    aria-hidden="true">
+    <div class="modal-dialog removeElem">
+        <div class="modal-content removeElem">
+            <div class="modal-header removeElem">
+                <h5 class="modal-title removeElem" id="handle2FALabel">
+                    "handle 2FA:"
+                </h5>
+                <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body removeElem">
+                Are you you want to active a 2 factor authentification with this mail : ${await this.getOldMail()}
+            </div>
+            <div class="modal-footer removeElem">
+                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
+                    ${this.lang.getTranslation(["button", "close"])}
+                </button>
+                <button type="button" class="btn btn-success removeElem" id="confirm-2FA">
+                    Confirm 2FA
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="handleEmail" tabindex="-1" aria-labelledby="handleEmailLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -235,12 +272,7 @@ export default class extends AbstractView {
       </div>
       <div class="modal-body">
         <form>
-          <div class="mb-3">
-            <label for="email-old" class="form-label">${this.lang.getTranslation(["input", "label", "old"])} ${this.lang.getTranslation(["input", "label", "email"])}:</label>
-            <input type="email" class="form-control" id="email-old" name="oldMail" value="" />
-            <div id="oldMailError"></div>
-          </div>
-          <div class="mb-3">
+            <div class="mb-3">
             <label for="email-new" class="form-label">${this.lang.getTranslation(["input", "label", "new"])} ${this.lang.getTranslation(["input", "label", "email"])}:</label>
             <input type="email" class="form-control" id="email-new" name="mailChange" value="" />
             <div id="newMailError"></div>
@@ -347,25 +379,14 @@ export default class extends AbstractView {
     }
   }
 
-  async checkoldMail(mailTocheck) {
+  async getOldMail() {
     const username = sessionStorage.getItem("username_transcendence");
     try {
-      const request = await this.makeRequest("/api/auth/" + username, "GET");
+      const request = await this.makeRequest(`/api/auth/${username}`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
-        console.log(
-          "old mail = " + data.email + "oldMail == data.mail :",
-          data.email == mailTocheck,
-        );
-        return data.email == mailTocheck;
-      } else {
-        removeSessionStorage();
-        throw new CustomError(
-          `${this.lang.getTranslation(["modal", "title", "error"])}`,
-          `${this.lang.getTranslation(["modal", "message", "authError"])}`,
-          "/login",
-        );
+        return data.email;
       }
     } catch (error) {
       this.handleCatch(error);
@@ -399,10 +420,10 @@ export default class extends AbstractView {
     }
   }
 
-  async changeMail(oldMail, newMail) {
+  async changeMail(newMail) {
     const username = sessionStorage.getItem("username_transcendence");
     try {
-      await this.checkoldMail(oldMail);
+      // await this.checkoldMail(oldMail);
       const request = await this.makeRequest(
         "/api/auth/update/" + username,
         "PATCH",
@@ -608,18 +629,44 @@ export default class extends AbstractView {
   async handleChangeMail(ev) {
     ev.preventDefault();
     try {
-      const oldMail = document.querySelector("#email-old");
       const newMail = document.querySelector("#email-new");
       const confirmMail = document.querySelector("#email-confirm");
       let isValid = true;
       if (this.validateMail(newMail)) isValid = false;
       if (this.validateConfirmMail(newMail, confirmMail)) isValid = false;
       if (!isValid) return;
-      await this.changeMail(oldMail.value, newMail.value, confirmMail.value);
+      await this.changeMail(newMail.value, confirmMail.value);
     } catch (error) {
       if (error instanceof CustomError) {
         error.showModalCustom();
         navigateTo(error.redirect);
+      }
+    }
+  }
+
+  async handleConfirm2FA(ev) {
+    ev.preventDefault();
+    try {
+      const username = sessionStorage.getItem("username_transcendence");
+      const request = await this.makeRequest(
+        `/api/auth/update/${username}`,
+        "PATCH",
+        {
+          two_fa_enabled: true,
+        },
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        console.log("handleConfirm2FA: data", data);
+        showModal("Account", "2 factor authentification enabled!");
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleConfirm2FA:", error);
       }
     }
   }
@@ -848,6 +895,9 @@ export default class extends AbstractView {
         "click",
         this.handleShowEmailModal.bind(this),
       );
+
+    const confirm2FA = document.querySelector("#confirm-2FA");
+    if (confirm2FA) confirm2FA.addEventListener("click", this.handleConfirm2FA);
   }
 
   handleShowEmailModal(ev) {

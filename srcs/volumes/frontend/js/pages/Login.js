@@ -10,6 +10,8 @@ import AbstractView from "./AbstractViews.js";
 export default class extends AbstractView {
   constructor() {
     super();
+    this.username = null;
+    this.password = null;
     this.handleInputUsername = this.handleInputUsername.bind(this);
     this.handleInputPassword = this.handleInputPassword.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
@@ -49,7 +51,32 @@ export default class extends AbstractView {
                         </div>
                     </div>
                 </div>
-
+                <div class="modal fade" id="handle2FA" tabindex="-1" aria-labelledby="handle2FALabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="handle2FALabel">
+                          2 Factor Authentification
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <div class="mb-3">
+                            <label for="activationCodeId" class="form-label">Activation Code:</label>
+                            <input type="email" class="form-control" id="activationCodeInput name="Activation Code" value="" />
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                          ${this.lang.getTranslation(["button", "close"])}
+                        </button>
+                        <button type="button" class="btn btn-success" id="twoFAConfirm">
+                          Activation Code
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
           `;
   }
 
@@ -158,6 +185,50 @@ export default class extends AbstractView {
     navigateTo("/createUser");
   }
 
+  async twoFactorAuth() {
+    const twoFAModalDiv = document.querySelector("#handle2FA");
+    let modalTwoFa = bootstrap.Modal.getInstance(twoFAModalDiv);
+    if (!modalTwoFa) modalTwoFa = new bootstrap.Modal(twoFAModalDiv);
+    modalTwoFa.show();
+  }
+
+  async handleConfirmTwoFA(ev) {
+    ev.preventDefault();
+    try {
+      if (!this.username || !this.password) {
+        throw new CustomError(
+          "Error",
+          "must do the first part of the 2 factor authentification first",
+          "/login",
+        );
+      }
+      const activationCode = document.querySelector("#activationCodeInput");
+      if (!activationCode.value) return;
+      const request = await this.makeRequest("/api/auth/otp/", "POST", {
+        username: this.username,
+        password: this.password,
+        otp: activationCode.value,
+      });
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        setSessionStorage(data, this.username);
+        navigateTo("/");
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "auth"])}`,
+          `${this.lang.getTranslation(["modal", "message", "welcome"])}, ${this.username}`,
+        );
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleConfirmTwoFA:", error);
+      }
+    }
+  }
+
   async login() {
     console.log("login");
     const loginForm = document.querySelector("#loginForm");
@@ -171,7 +242,7 @@ export default class extends AbstractView {
     try {
       // const usernameURIencoded = encodeURIComponent(nameForm);
       console.log("login before make request");
-      const request = await this.makeRequest("/api/auth/login", "POST", {
+      const request = await this.makeRequest("/api/auth/login/", "POST", {
         username: nameForm,
         password: paswordForm,
       });
@@ -179,6 +250,13 @@ export default class extends AbstractView {
       console.log("Response: ", response);
       if (await this.handleStatus(response)) {
         const data = await response.json();
+        console.log("login: data:", data);
+        if (response.status == 202) {
+          this.username = nameForm;
+          this.password = paswordForm;
+          const twoFa = await this.twoFactorAuth();
+          return;
+        }
         setSessionStorage(data, nameForm);
         navigateTo("/");
         showModal(
@@ -208,6 +286,11 @@ export default class extends AbstractView {
     if (createUser) {
       createUser.addEventListener("click", this.handleCreateUserRedir);
     }
+
+    const twoFAConfirm = document.querySelector("#twoFAConfirm");
+    if (twoFAConfirm) {
+      twoFAConfirm.addEventListener("click", this.handleConfirmTwoFA);
+    }
   }
 
   removeEventListeners() {
@@ -229,6 +312,10 @@ export default class extends AbstractView {
     const createUser = document.querySelector("#createUser");
     if (createUser) {
       createUser.removeEventListener("click", this.handleCreateUserRedir);
+    }
+    const twoFAConfirm = document.querySelector("#twoFAConfirm");
+    if (twoFAConfirm) {
+      twoFAConfirm.removeEventListener("click", this.handleConfirmTwoFA);
     }
   }
 

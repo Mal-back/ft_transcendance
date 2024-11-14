@@ -676,12 +676,8 @@ export default class AbstractViews {
         value = data[key];
         console.log("VALUE:", value);
       }
-      if (response.status == 401) {
-        console.error("401 error:response:", response);
-        console.log(
-          "lang: ",
-          this.lang.getTranslation(["modal", "title", "error"]),
-        );
+      if (response.status == 401 || response.status == 403) {
+        console.error("401/403 error:response:", response);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
