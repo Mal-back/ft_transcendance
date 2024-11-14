@@ -10,6 +10,7 @@ import {
 export default class extends AbstractView {
   constructor() {
     super();
+    this.handleSettingButton = this.handleSettingButton.bind(this);
   }
 
   async loadCss() {
@@ -18,23 +19,6 @@ export default class extends AbstractView {
     this.createPageCss("../css/background-profile.css");
   }
 
-  removeEventListeners() {
-    document.querySelectorAll('[data-link="view"]').forEach((button) => {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.handleClick);
-    });
-  }
-
-  removeCss() {
-    document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
-      e.remove();
-    });
-  }
-  destroy() {
-    this.removeEventListeners();
-    this.removeCss();
-  }
 
   async loadUserData() {
     const username = sessionStorage.getItem("username_transcendence");
@@ -42,21 +26,17 @@ export default class extends AbstractView {
     try {
       const request = await this.makeRequest(`/api/users/${username}`, "GET");
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         const userData = await response.json();
         console.log("userData", userData);
         return userData;
-      } else {
-        const log = await this.getErrorLogfromServer(response);
-        console.debug(log);
-        return null;
       }
+      return null;
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      console.debug("Error: ", error);
-      throw error;
+      this.handleCatch(error);
     }
   }
+
 
   async createMatchElement(data, userData) {
     try {
@@ -69,8 +49,8 @@ export default class extends AbstractView {
         : this.lang.getTranslation(["game", "lost"]).toUpperCase();
       lostWin += "-";
       lostWin = boolWin
-        ? this.lang.getTranslation(["game", "lost"]).toUpperCase()
-        : this.lang.getTranslation(["game", "won"]).toUpperCase();
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
@@ -95,64 +75,139 @@ export default class extends AbstractView {
     </div> 
           `;
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("MatchElement", error);
-        return "";
-      }
+      this.handleCatch(error);
+      return "";
     }
   }
-  async pongMatchHistory(userData) {
+
+
+  async getMatchHistory(userData, gameType) {
     const mainDiv = document.createElement("div");
     try {
       const mainRequest = await this.makeRequest(
-        `/api/history/match/?username=${userData.username}`,
+        `/api/history/match/?username=${userData.username}&game_type=` + gameType,
       );
       const mainResponse = await fetch(mainRequest);
-      if (!mainResponse.ok) {
-        console.error("pongMatchHistory: ", mainResponse);
-        const dataError = await this.getErrorLogfromServer(mainResponse);
-        console.error("pongMatchHistory: ", dataError);
-        return;
-      }
-      console.log("pongMatchHistory: response", mainResponse);
-      const data = await this.getErrorLogfromServer(mainResponse, true);
-      console.log("pongMatchHistory: data", data);
+      if (await this.handleStatus(mainResponse)) {
+        const data = await this.getDatafromRequest(mainResponse);
 
-      let matchesArray = data.results;
-      const matchesHTMLArray = await Promise.all(
-        matchesArray.map((matchData) =>
-          this.createMatchElement(matchData, userData),
-        ),
-      );
-      mainDiv.innerHTML = matchesHTMLArray.join("");
-      let nextPage = data.next;
-      while (nextPage) {
-        const request = await this.makeRequest(nextPage, "GET");
-        const response = await fetch(request);
-        if (response.ok) {
-          const pageData = await response.json();
-          matchesArray = pageData.results;
-          const newMatchHtmlArray = await Promise.all(
-            matchesArray.map((matchData) =>
-              this.createMatchElement(matchData, userData),
-            ),
-          );
-          mainDiv.innerHTML += newMatchHtmlArray.join("");
-          nextPage = pageData.next;
-        } else {
-          const log = await this.getErrorLogfromServer(response);
-          console.error(log);
-          break;
+        let matchesArray = data.results;
+        const matchesHTMLArray = await Promise.all(
+          matchesArray.map((matchData) =>
+            this.createMatchElement(matchData, userData),
+          ),
+        );
+        mainDiv.innerHTML = matchesHTMLArray.join("");
+        let nextPage = data.next;
+        while (nextPage) {
+          const request = await this.makeRequest(nextPage, "GET");
+          const response = await fetch(request);
+          if (await this.handleStatus(response)) {
+            const pageData = await response.json();
+            matchesArray = pageData.results;
+            const newMatchHtmlArray = await Promise.all(
+              matchesArray.map((matchData) =>
+                this.createMatchElement(matchData, userData),
+              ),
+            );
+            mainDiv.innerHTML += newMatchHtmlArray.join("");
+            nextPage = pageData.next;
+          } else {
+            break;
+          }
         }
+        return mainDiv.innerHTML;
       }
-      return mainDiv.innerHTML;
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.error("pongMatchHistory:", error);
-        return "";
+      this.handleCatch(error);
+      return "";
+    }
+  }
+
+
+  async createTournamentElement(data, userData) {
+    try {
+      const boolWin = userData.username == data.winner ? true : false;
+      const opponentName = boolWin ? data.looser : data.winner;
+      const opponentInfo = await this.getUserInfo(opponentName);
+      const color = boolWin ? "bg-dark" : "bg-gray";
+      let lostWin = boolWin
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
+      lostWin += "-";
+      lostWin = boolWin
+        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
+        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
+      return `
+  <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
+    <div class="d-flex justify-content-around align-items-center">
+      <div class="text-center player-container">
+        <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
+        <div class="player-name">
+          <span>${userData.username}</span>
+        </div>
+      </div>
+      <div class="text-center match-info">
+        <h5>${lostWin}</h5> 
+        <h4>${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}</h4>
+        <p id="matchDate">${formateDate(data.played_at)}</p>
+      </div>
+        <div class="text-center player-container">
+          <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
+          <div class="player-name">
+            <span>${opponentName}</span>
+          </div>
+        </div>
+      </div>
+    </div> 
+          `;
+    } catch (error) {
+      this.handleCatch(error);
+      return "";
+    }
+  }
+
+
+  async getTournamentHistory(userData, gameType) {
+    const mainDiv = document.createElement("div");
+    try {
+      const mainRequest = await this.makeRequest(
+        `/api/history/tournament/?username=${userData.username}&game_type=` + gameType,
+      );
+      const mainResponse = await fetch(mainRequest);
+      if (await this.handleStatus(mainResponse)) {
+        const data = await this.getDatafromRequest(mainResponse);
+
+        let tournamentsArray = data.results;
+        const tournamentsHTMLArray = await Promise.all(
+          tournamentsArray.map((tournamentData) =>
+            this.createTournamentElement(tournamentData, userData),
+          ),
+        );
+        mainDiv.innerHTML = tournamentsHTMLArray.join("");
+        let nextPage = data.next;
+        while (nextPage) {
+          const request = await this.makeRequest(nextPage, "GET");
+          const response = await fetch(request);
+          if (await this.handleStatus(response)) {
+            const pageData = await response.json();
+            tournamentsArray = pageData.results;
+            const newTournamentHtmlArray = await Promise.all(
+              tournamentsArray.map((matchData) =>
+                this.createTournamentElement(matchData, userData),
+              ),
+            );
+            mainDiv.innerHTML += newTournamentHtmlArray.join("");
+            nextPage = pageData.next;
+          } else {
+            break;
+          }
+        }
+        return mainDiv.innerHTML;
       }
+    } catch (error) {
+      this.handleCatch(error);
+      return "";
     }
   }
 
@@ -161,23 +216,36 @@ export default class extends AbstractView {
     let userData = null;
     try {
       userData = await this.loadUserData();
-    } catch (error) {
-      throw error;
-    }
-    const battleHistory =
-      this.lang.getTranslation(["game", "battle"]) +
-      " " +
-      this.lang.getTranslation(["game", "history"]);
-    let fillModal = await this.pongMatchHistory(userData);
-    if (!fillModal)
-      fillModal = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
-    const winRatePong = userData.total_games
-      ? `${userData.single_games_win_rate * 100} %`
-      : `${this.lang.getTranslation(["game", "n/a"])}`;
-    const winRateC4 = userData.total_games
-      ? `${userData.single_games_win_rate * 100} %`
-      : `${this.lang.getTranslation(["game", "n/a"])}`;
-    const htmlContent = `
+      const battleHistory =
+        this.lang.getTranslation(["game", "battle"]) +
+        " " +
+        this.lang.getTranslation(["game", "history"]);
+
+      let fillModalMatchPong = await this.getMatchHistory(userData, "pong");
+      if (!fillModalMatchPong)
+        fillModalMatchPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+	  let fillModalMatchC4 = await this.getMatchHistory(userData, "c4");
+      if (!fillModalMatchC4)
+        fillModalMatchC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+	
+      let fillModalTournamentPong = await this.getTournamentHistory(userData, "pong");
+      if (!fillModalTournamentPong)
+        fillModalTournamentPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+	  let fillModalTournamentC4 = await this.getTournamentHistory(userData, "c4");
+      if (!fillModalTournamentC4)
+        fillModalTournamentC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;	  
+
+      const winRatePong = userData.total_single_games_pong
+        ? `${userData.single_games_pong_win_rate * 100} %`
+        : `${this.lang.getTranslation(["game", "n/a"])}`;
+
+      const winRateC4 = userData.total_single_games_c4
+        ? `${userData.single_games_c4_win_rate * 100} %`
+        : `${this.lang.getTranslation(["game", "n/a"])}`;
+
+      const htmlContent = `
 <div class="background">
   <div class="mt-4 text-white d-flex justify-content-center align-items-center">
     <h3>${this.lang.getTranslation(["title", "profile"]).toUpperCase()}</h3>
@@ -261,13 +329,13 @@ export default class extends AbstractView {
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
             <div class="box bg-light history">
-              ${fillModal}
+              ${fillModalMatchPong}
             </div>
           </div>
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
             <div class="box bg-light">
-              <p class="text-center">n/a</p>
+			  <span>N/A</span>
             </div>
           </div>
         </div>
@@ -305,65 +373,13 @@ export default class extends AbstractView {
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
             <div class="box bg-light history">
-              <p class="text-center">n/a</p>
+			${fillModalMatchC4}
             </div>
           </div>
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
             <div class="box bg-light">
-              <div
-                class="bg-dark text-white text-center px-3 py-1 mb-1 rounded"
-              >
-                <div class="d-flex justify-content-around align-items-center">
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>coucouuuuuuuuuuuuuuuu</span>
-                    </div>
-                  </div>
-                  <!-- Match Info -->
-                  <div class="text-center match-info">
-                    <h5>WIN-LOSE</h5>
-                    <h4>1 - 0</h4>
-                    <p id="matchDate">DATE</p>
-                  </div>
-                  <!-- Player 2 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>helloooooooooooo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- match div -->
-              <div
-                class="bg-gray text-white text-center px-3 py-1 mb-1 rounded"
-              >
-                <div class="d-flex justify-content-around align-items-center">
-                  <!-- Player 1 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>coucouuuuuuuuuuuuuuuu</span>
-                    </div>
-                  </div>
-                  <!-- Match Info -->
-                  <div class="text-center match-info">
-                    <h5>WIN-LOSE</h5>
-                    <h4>1 - 0</h4>
-                    <p id="matchDate">DATE</p>
-                  </div>
-                  <!-- Player 2 -->
-                  <div class="text-center player-container">
-                    <div class="player-circle mx-auto mb-2"></div>
-                    <div class="player-name">
-                      <span>helloooooooooooo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <span>N/A</span>
             </div>
           </div>
         </div>
@@ -377,28 +393,32 @@ export default class extends AbstractView {
   </div>
 </div>
 `;
-    return htmlContent;
+      return htmlContent;
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  handleSettingButton(ev) {
+    ev.preventDefault();
+    navigateTo("/settings");
   }
 
   async addEventListeners() {
     const button = document.querySelector("#settingsButton");
     if (button) {
-      button.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        navigateTo("/settings");
-      });
+      button.addEventListener("click", this.handleSettingButton);
     }
   }
 
   removeEventListeners() {
     const button = document.querySelector("#settingsButton");
     if (button) {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.loginEvent);
+      button.removeEventListener("click", this.handleSettingButton)
     }
-    document.querySelectorAll('[data-link="view"]').forEach((button) => {
-      console.info("removing event click on button : " + button.innerText);
-      button.removeEventListener("click", this.handleClick);
-    });
+    // document.querySelectorAll('[data-link="view"]').forEach((button) => {
+    //   console.info("removing event click on button : " + button.innerText);
+    //   button.removeEventListener("click", this.handleClick);
+    // });
   }
 }

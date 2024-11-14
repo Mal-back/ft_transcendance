@@ -71,7 +71,7 @@
         </div>
         <div class="modal-body">
           <div id="divOnGoingGame" style="display: none">
-            <h6>Ongoing game</h6>
+            <h6 id="onGoingGameText">Ongoing game</h6>
             <div class="list-group mb-2">
               <li class="list-group-item">
                 <div class="d-flex align-items-center">
@@ -89,15 +89,14 @@
             </div>
           </div>
           <div>
-            <h6>Invites</h6>
+            <h6 id="invitesModalTextTitle">Invites</h6>
           </div>
           <div class="scroll-notif">
-            <ul id="inviteList" class="list-group">
-            </ul>
+            <ul id="inviteList" class="list-group"></ul>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <button id="invitesModalCloseButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Close
           </button>
         </div>
@@ -147,6 +146,36 @@
           </div>
         </div>
       </div>
+
+      <div class="modal fade" id="gameResultModal" tabindex="-1" aria-labelledby="gameResultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered loading-modal-diag">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title text-center" id="gameResultTitle">Game Result:</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="d-flex align-items-center justify-content-center row">
+                <div class="text-center m-1">
+                  <h5><strong id="gameWinnerTitle">WINNER : <span style="color:red"
+                        id="winnerGameResult"></span></strong></h5>
+                </div>
+                <div class="text-center m-1">
+                  <h6><strong id="scoreGameResult"></strong></h6>
+                </div>
+                <div class="text-center m-1">
+                  <h5><strong id="gameLoserTitle">LOSER : <span style="color:blue" id="loserGameResult"></span></strong>
+                  </h5>
+                </div>
+                <div id="gifGameResult" class="gif rounded-circle">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

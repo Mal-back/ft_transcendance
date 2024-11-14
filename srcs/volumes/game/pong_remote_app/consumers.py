@@ -14,54 +14,23 @@ from django.conf import settings
 
 log = logging.getLogger(__name__)
 
-# ######### WARNING #####
-# # CODE COPIE COLLE POUR DEBUG UTILISATION
-# from functools import wraps
-# from inspect import iscoroutinefunction
-# from logging import getLogger
 
-# from channels.exceptions import AcceptConnection, DenyConnection, StopConsumer, ChannelFull
-
-# logger = getLogger()
-
-# def apply_wrappers(consumer_class):
-# 	for method_name, method in list(consumer_class.__dict__.items()):
-# 		if iscoroutinefunction(method):  # an async method
-# 			# wrap the method with a decorator that propagate exceptions
-# 			setattr(consumer_class, method_name, propagate_exceptions(method))
-# 	return consumer_class
-
-
-# def propagate_exceptions(func):
-# 	async def wrapper(*args, **kwargs):  # we're wrapping an async function
-# 		try:
-# 			return await func(*args, **kwargs)
-# 		except (AcceptConnection, DenyConnection, StopConsumer, ChannelFull):  # these are handled by channels
-# 			raise
-# 		except Exception as exception:  # any other exception
-# 			# avoid logging the same exception multiple times
-# 			if not getattr(exception, "caught", False):
-# 				setattr(exception, "caught", True)
-# 				logger.error(
-# 					"Exception occurred in {}:".format(func.__qualname__),
-# 					exc_info=exception,
-# 				)
-# 			raise  # propagate the exception
-# 	return wraps(func)(wrapper)
-# ####### WARNING #####
-
-# @apply_wrappers
 class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = "None"
+		self.game_ended = False
 		await self.accept()		
 		log.info("PongRemotePlayerConsumer : Remote player connected")
   
   
 	async def disconnect(self, code):
 		log.info("PongRemotePlayerConsumer : Remote Player disconnected")
-		if self.player != "None":
+		if self.player != "None" and self.game_ended != True:
 			await self.leave_game()
+		try:
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
+		except:
+			log.info("PongRemotePlayerConsumer : Can not discard channel " + str(self.channel_name) + " from group " + str(self.group_name))
    
    
 	async def init_game(self):
@@ -254,9 +223,8 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			elif self.player == "player_2":
 				game_instance.player_2_connected = False
 			await game_instance.asave()
-			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except Exception:
-			log.info("PongRemotePlayerConsumer : Problem leaving game " + self.group_name + " for player " + self.username)
+			log.info("PongRemotePlayerConsumer : Player can not leave " + self.group_name + " for player " + self.username)
 		await self.pause({"action" : "stop"})
  
  
@@ -392,27 +360,27 @@ class PongRemoteGameConsumer(SyncConsumer):
 			print("PongRemoteGameConsumer : Error: Can not join thread " + str(game_id))
   
    
-	def clean_game(self, event):
-		game_id = event["game_id"]
-		try:
-			game_instance = PongRemoteGame.objects.get(game_id=game_id)
-			game_instance.delete()
-			print("PongRemoteGameConsumer : Cleaning game " + str(game_id))
-		except:
-			print("PongRemoteGameConsumer : Can not delete game " + str(game_id))
+	# def clean_game(self, event):
+	# 	game_id = event["game_id"]
+	# 	try:
+	# 		game_instance = PongRemoteGame.objects.get(game_id=game_id)
+	# 		game_instance.delete()
+	# 		print("PongRemoteGameConsumer : Cleaning game " + str(game_id))
+	# 	except:
+	# 		print("PongRemoteGameConsumer : Can not delete game " + str(game_id))
 
 
-	def send_result(self, event):
-		url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
-		print("PongRemoteGameConsumer : Sending result to url : " + url)
-		print("PongRemoteGameConsumer : End state = " + str(event["End_state"]))
-		try: 
-			sender = MicroServiceClient()
-			sender.send_requests(
-				urls=[url,],
-				method='post',
-				expected_status=[200],
-				body=event["End_state"],
-			)
-		except RequestsFailed:
-	   	 print("PongRemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])
+	# def send_result(self, event):
+	# 	url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
+	# 	print("PongRemoteGameConsumer : Sending result to url : " + url)
+	# 	print("PongRemoteGameConsumer : End state = " + str(event["End_state"]))
+	# 	try: 
+	# 		sender = MicroServiceClient()
+	# 		sender.send_requests(
+	# 			urls=[url,],
+	# 			method='post',
+	# 			expected_status=[200],
+	# 			body=event["End_state"],
+	# 		)
+	# 	except RequestsFailed:
+	#    	 print("PongRemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])

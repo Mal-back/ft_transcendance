@@ -10,8 +10,14 @@ import CustomError from "../Utils/CustomError.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Pong Lobby");
     // this.handleShowFriendsModal = this.handleShowFriendsModal.bind(this);
+
+    this.acceptedTournamentInvites = [];
+    this.pendingTournamentInvites = [];
+
+    this.handleInvitePlayerTournament =
+      this.handleInvitePlayerTournament.bind(this);
+    this.handleInputUsername = this.handleInputUsername.bind(this);
   }
 
   async loadCss() {
@@ -21,19 +27,26 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    return `
+    try {
+      this.setTitle(
+        `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "lobby"])}`,
+      );
+      const username = sessionStorage.getItem("username_transcendence");
+      let data = await this.checkTournament();
+      if (data == undefined) await this.createTournament();
+      return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-          PONG - REMOTE - TOURNAMENT</h1>
+          ${this.lang.getTranslation(["title", "pong"]).toUpperCase()} - ${this.lang.getTranslation(["title", "remote"]).toUpperCase()} - ${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
         <br>
         <div class="tournament-creation ranking ">
           <div class=" text-center text-white  rounded">
-            <h3 class="form-label text-decoration-underline" id="SelectPlayersTitle">Invite Friend:</h3>
+            <h3 class="form-label text-decoration-underline" id="SelectPlayersTitle">Invite Player</h3>
             <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Friend's username"
+              <input type="text" id="inputInvitePlayerTournament" class="form-control" placeholder="Player's username"
                 aria-label="Recipient's username" aria-describedby="basic-addon2">
               <div class="input-group-append">
-                <button class="btn btn-outline-primary" type="submit">Invite</button>
+                <button id="invitePlayerTournamentButton" class="btn btn-outline-primary" type="submit">Invite</button>
               </div>
             </div>
             <button type="button" class="btn btn-light white-txt btn-lg bg-green custom-button"
@@ -51,7 +64,7 @@ export default class extends AbstractView {
                 <div class="ranking-number gold">1</div>
                 <div class="Avatar status-online me-3"></div>
                 <div class="flex-fill">
-                  <h5 class="mb-0">USERNAME</h5>
+                  <h5 class="mb-0">${username}</h5>
                 </div>
               </div>
             </div>
@@ -94,6 +107,52 @@ export default class extends AbstractView {
         </div>
       </div>
                       `;
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  async checkTournament() {
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/tournament/detail/",
+        "GET",
+      );
+      const response = await fetch(request);
+      if (response.status == 404) return undefined;
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        await fillTournamentInvites(data);
+      }
+      return undefined;
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  async createTournament() {
+    showModal("Tournament", "invite 1 person");
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/tournament/create/",
+        "POST",
+        {
+          game_type: "pong",
+          invited_players: ["moi"],
+        },
+      );
+
+      const response = await fetch(request);
+      console.log("createTournament:response:", response);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        console.log("createTournament:data:", data);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      this.handleCatch(error);
+    }
   }
 
   async getFriendList() {
@@ -187,9 +246,33 @@ export default class extends AbstractView {
     `;
   }
 
+  handleInputUsername(ev) {
+    this.validateUsername(ev.target);
+  }
+
+  handleInvitePlayerTournament(ev) {
+    ev.preventDefault();
+    const inputPlayerUsername = document.querySelector(
+      "#inputInvitePlayerTournament",
+    );
+    if (this.validateUsername(inputPlayerUsername)) return;
+  }
+
   async addEventListeners() {
-    const startTournamentBtn = document.querySelector("#startTournamentBtn");
-    startTournamentBtn.addEventListener("click", this.handleStartTournament);
+    // const startTournamentBtn = document.querySelector("#startTournamentBtn");
+    // startTournamentBtn.addEventListener("click", this.handleStartTournament);
+    const playerInviteTournamentButton = document.querySelector(
+      "#invitePlayerTournamentButton",
+    );
+    playerInviteTournamentButton.addEventListener(
+      "click",
+      this.handleInvitePlayerTournament,
+    );
+
+    const inputPlayerUsername = document.querySelector(
+      "#inputInvitePlayerTournament",
+    );
+    inputPlayerUsername.addEventListener("input", this.handleInputUsername);
 
     const showFriends = document.querySelector("#friend-list");
     showFriends.addEventListener("click", this.handleShowFriendsModal);

@@ -41,6 +41,23 @@ export default class extends AbstractView {
               `;
   }
 
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
+        }
+      } catch (error) {
+        removeSessionStorage();
+        this.handleCatch(error);
+      }
+    }
+  }
+
   handleLocalGameRedirection(ev) {
     ev.preventDefault();
     navigateTo("/pong?connection=local");
@@ -61,12 +78,14 @@ export default class extends AbstractView {
 
   removeEventListeners() {
     const local = document.querySelector("#PongLocalPlayButton");
-    local.removeEventListener("click", this.handleLocalGameRedirection);
+    if (local)
+      local.removeEventListener("click", this.handleLocalGameRedirection);
 
     const tournament = document.querySelector("#PongLocalTournamentButton");
-    tournament.removeEventListener(
-      "click",
-      this.handleLocalTournamentRedirection,
-    );
+    if (tournament)
+      tournament.removeEventListener(
+        "click",
+        this.handleLocalTournamentRedirection,
+      );
   }
 }

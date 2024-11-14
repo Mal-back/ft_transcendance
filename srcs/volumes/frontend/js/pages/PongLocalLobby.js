@@ -23,9 +23,11 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    this.setTitle(`${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}`);
+    this.setTitle(
+      `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}`,
+    );
     return `
-      <div class="background removeElem">
+      <div class="background removeElem"  style="background-image:url('../img/ow.jpg');">
         <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
           ${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "local"])} ${this.lang.getTranslation(["title", "lobby"])}</h1>
         <br>
@@ -68,18 +70,29 @@ export default class extends AbstractView {
             `;
   }
 
-  checkLogin() {
-    return;
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      try {
+        if ((await this.fetchNotifications()) === undefined) {
+          throw new CustomError(
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "authError"])}`,
+          );
+        }
+      } catch (error) {
+        removeSessionStorage();
+        this.handleCatch(error);
+      }
+    }
   }
 
   checkUnique(playerName) {
-    console.log("check unique:");
     let count = 0;
     this.playerInputs.forEach((input) => {
       console.log(`${input.value} vs ${playerName}`);
       if (input.value == playerName) count++;
     });
-    console.log("count = ", count);
     return count == 1;
   }
 
@@ -95,7 +108,6 @@ export default class extends AbstractView {
       errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "unique"])}`;
     }
     if (errorMessage) {
-      console.log("ERROR:", errorMessage);
       errorDiv.textContent = errorMessage;
       errorDiv.style.color = "red";
       errorDiv.style.fontStyle = "italic";
@@ -109,13 +121,15 @@ export default class extends AbstractView {
   }
 
   cleanUpPlayersInput() {
-    this.playerInputs.forEach((input) => {
-      input.value = "";
-      let inputError = document.querySelector(`#${input.id}Error`);
-      inputError.innerText = "";
-      input.removeEventListener("input", this.handleValidatePlayerInput);
-    });
-    this.playerInputs = [];
+    if (this.playerInputs) {
+      this.playerInputs.forEach((input) => {
+        input.value = "";
+        let inputError = document.querySelector(`#${input.id}Error`);
+        inputError.innerText = "";
+        input.removeEventListener("input", this.handleValidatePlayerInput);
+      });
+      this.playerInputs = [];
+    }
   }
 
   handleGeneratePlayers() {
@@ -145,9 +159,7 @@ export default class extends AbstractView {
   }
 
   setPlayersName() {
-    console.log("setsPlayerName:", this.playerInputs);
-
-    const maxRound = this.playerInputs.length;
+    const maxRound = this.playerInputs.length % 2 == 0 ? this.playerInputs.length - 1 : this.playerInputs.length;
     const playerValues = Array.from(this.playerInputs).map(
       (input) => input.value,
     );
@@ -163,26 +175,24 @@ export default class extends AbstractView {
         };
         return acc;
       }, {});
-      console.log(players)
-      return players
-    };
+      console.log(players);
+      return players;
+    }
 
     function teams() {
-      const playerList = Object.values(players()); // Convert the players object to an array of player objects
+      const playerList = Object.values(players());
       const n = playerList.length;
       const mid = Math.floor(n / 2);
 
-      // Split into two halves
       const firstHalf = playerList.slice(0, mid);
       const secondHalf = playerList.slice(mid, n);
 
-      // If odd number of players, add an `undefined` for balancing
       if (n % 2 !== 0) {
         firstHalf.push(undefined);
       }
 
       return [firstHalf, secondHalf];
-    };
+    }
 
     const playersTemp = teams();
     const tournament = {
@@ -191,11 +201,9 @@ export default class extends AbstractView {
       round: {
         current: 0,
         max: maxRound,
-        currentMatch: 0
+        currentMatch: 0,
       },
     };
-    console.log("tournament", tournament);
-    console.log(tournament.PlayerA.length);
     sessionStorage.setItem(
       "tournament_transcendence_local",
       JSON.stringify(tournament),
@@ -208,9 +216,7 @@ export default class extends AbstractView {
     this.playerInputs.forEach((input) => {
       if (this.validatePlayerInput(input)) isValid = false;
     });
-    console.log(`isValid = ${isValid}`);
     if (!isValid) return;
-    console.log("CHECK HERE");
     this.setPlayersName();
     navigateTo("/pong-local-tournament");
   }
@@ -231,12 +237,14 @@ export default class extends AbstractView {
   }
 
   removeEventListeners() {
-    console.log("WHY CALL");
     const generateBtn = document.getElementById("usernameCount");
-    generateBtn.removeEventListener("input", this.handleGeneratePlayers);
-    generateBtn.removeEventListener("change", this.handleGeneratePlayers);
+    if (generateBtn) {
+      generateBtn.removeEventListener("input", this.handleGeneratePlayers);
+      generateBtn.removeEventListener("change", this.handleGeneratePlayers);
+    }
     const startGameBtn = document.querySelector("#startGameBtn");
-    startGameBtn.removeEventListener("click", this.handleStartGame);
+    if (startGameBtn)
+      startGameBtn.removeEventListener("click", this.handleStartGame);
     this.cleanUpPlayersInput();
   }
 }

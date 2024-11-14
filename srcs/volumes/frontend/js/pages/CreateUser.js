@@ -16,7 +16,19 @@ export default class extends AbstractView {
     this.createPageCss("../css/create-user.css");
   }
 
+  async makeUsers() {
+    const user = "user";
+    for (let index = 0; index< 26; index++) {
+      let username = `${user}${index}`
+      await this.submitNewUser(`${username}`, `${username}@google.com`, `${username}`, `${username}`)
+      console.log(`${username} created`);
+    }
+
+  }
+
+
   async getHtml() {
+    // await this.makeUsers();
     this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
     return `
       <div class="background createUser removeElem">
@@ -82,28 +94,16 @@ export default class extends AbstractView {
       });
       const response = await fetch(request);
 
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         showModal(
           `${this.lang.getTranslation(["modal", "title", "accountCreation"])}`,
           `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
         );
+        console.log("");
         navigateTo("/login");
-      } else {
-        const log = await this.getErrorLogfromServer(response);
-        showModal(
-          `${this.lang.getTranslation(["modal", "title", "error"])}`,
-          `${log}`,
-        );
-        console.debug("Server response:", log);
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      console.error("Error in Request:", error);
-      showModal(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        `${this.lang.getTranslation(["modal", "message", "failConnectServer"])}`,
-      );
-      // throw new Error("Redirect to /home, server is dead, good luck");
+      this.handleCatch(error);
     }
   }
 
@@ -206,8 +206,7 @@ export default class extends AbstractView {
         password2Input.value,
       );
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      console.error("Caught in Event Listener:", error);
+      if (error instanceof CustomError) showModal(error.title, error.message);
     }
   }
 

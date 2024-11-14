@@ -9,8 +9,8 @@
     "login": "Login",
     "logout": "Logout",
     "local": "Local",
-    "friends": "Friends",
     "lobby": "Lobby",
+    "matchmaking": "Matchmaking",
     "remote": "Remote",
     "tournament": "Tournament",
     "ranking": "Ranking",
@@ -24,14 +24,17 @@
     "accept": "Accept",
     "refuse": "Refuse",
     "invite": "Invite",
+    "save": "Save",
     "cancel": "Cancel",
+    "return": "Return",
+    "stop": "Stop",
     "help": "Help",
     "giveUp": "Give up",
     "show": "Show",
     "change": "Change",
     "chooseFile": "Choose a File",
     "upload": "Upload",
-    "save": "Save",
+    "set": "Set",
     "handle": "Handle",
     "data": "Data",
     "send": "Send",
@@ -43,20 +46,36 @@
   },
   "user": {
     "you": "You",
+    "is": "is",
+    "your": "Your",
+    "account": "Account",
     "avatar": "Avatar",
     "maiden": "MaidenLess",
-    "pleaseFriend": "Please add Friends"
+    "current": "Current",
+    "pleaseFriend": "Please add Friends",
+    "choose": "Choose your Avatar",
+    "orUpload": "Or Upload your own",
+    "selectAvatar": "Select or Upload your profile Avatar"
   },
   "game": {
     "label": "Game",
     "win": "Win",
+    "wins": "Wins",
     "won": "Won",
     "loss": "Loss",
     "lost": "Lost",
     "play": "Play",
     "next": "Next",
+    "time": "Time Left",
+    "its": "It's",
+    "turn": "'s Turn",
     "match": "Match",
+    "onGoing": "Ongoing",
+    "found": "Found",
+    "loadling": "Loading",
     "inviteMatch": "Invite to a Match",
+    "noInvite": "No Invites",
+    "invites": "Invites",
     "player": "Player",
     "blue": "Blue",
     "red": "Red",
@@ -67,7 +86,10 @@
     "waiting": "waiting for",
     "history": "History",
     "winRate": "Win Rate",
-    "n/a": "n/a"
+    "n/a": "n/a",
+    "result": "Result",
+    "winner": "Winner",
+    "loser": "Loser"
   },
   "homePage": {
     "title": "Welcome to Our Pong!",
@@ -82,7 +104,8 @@
       "confirm": "Confirm",
       "3to10": "3 to 10",
       "language": "Language",
-      "old": "Old"
+      "old": "Old",
+      "new": "New"
     },
     "error": {
       "empty": "is empty",
@@ -105,6 +128,9 @@
   },
   "modal": {
     "title": {
+	  "status" : "Status",
+	  "offline" : "Offline",
+	  "online" : "Online",
       "error": "Error",
       "success": "Success",
       "congrats": "Congratulations",
@@ -121,14 +147,18 @@
       "welcome": "Welcome",
       "notLog": "You're not authentified, please login to access this page",
       "failConnectServer": "Unable to connect to the server, please try again later",
+      "serverLoading": "The server has restarted and need some time to finish initialization, please wait a little and retry",
       "authError": "Authentification error, please re-login",
-      "successChange": "Changed successfully",
+      "successChange": "was changed successfully",
+      "successDeleteAccount": "Your account was successfully deleted, all associated data is being anonymized",
       "alreadyLog": "You are already logged in",
       "accountCreation": "Your new account was successfully created!",
       "failTournament": "Failed to retrieve tournament information",
       "wonTournament": "won the tournament",
       "help": "Space to start the game.<br>Space to pause/unpause the game.<br>W to go up.<br>S to go down.<br>In local game for the Red Player:<br> -ArrowUp to go up.<br> -ArrowDown to go down.",
-      "lostGame": "Better luck next time"
+      "lostGame": "Better luck next time",
+      "addYourself": "You can't add yourself as a friend",
+      "inviteYou": "invites you to a game of"
     }
   }
 }
