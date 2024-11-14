@@ -237,16 +237,6 @@ class UserUpdateView(generics.UpdateAPIView):
             # If the username is changed, make the update
             if old_username != new_username:
                 
-    ##########################            
-                if user.two_fa_enabled:
-                    try:
-                        device = TOTPDevice.objects.get(user=user)
-                        device.user = user  # Update the TOTP device's user field
-                        device.save()
-                    except TOTPDevice.DoesNotExist:
-                        return Response({"message": "2FA device not found for this user."}, status=status.HTTP_400_BAD_REQUEST)
-######################################
-                
                 req_urls = [
                     f'http://matchmaking:8443/api/matchmaking/{old_username}/update/',
                     f'http://users:8443/api/users/{old_username}/update/',
@@ -256,6 +246,15 @@ class UserUpdateView(generics.UpdateAPIView):
                 if send_update_requests(old_username, req_urls, body={'username': new_username, 'old_username': old_username, 'new_username': new_username}) == False:
                     return Response({'Error': 'Unable to update username. Please wait not to be in a game'}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
+    ##########################            
+                if user.two_fa_enabled:
+                    try:
+                        device = TOTPDevice.objects.get(user=user)
+                        device.user = user  # Update the TOTP device's user field
+                        device.save()
+                    except TOTPDevice.DoesNotExist:
+                        return Response({"error": "Could not update 2FA for new username."}, status=status.HTTP_400_BAD_REQUEST)
+######################################
                 token = MyTokenObtainPairSerializer.get_token(user)
                 access_token = str(token.access_token)
                 refresh_token = str(token)
@@ -272,17 +271,20 @@ class UserUpdateView(generics.UpdateAPIView):
             
             if two_fa_enabled and not user.two_fa_enabled:
                 # Enable 2FA
-                device = TOTPDevice.objects.create(user=user, name="Default 2FA Device")
-                device.save()
-
-                # Generate the OTP URI (to be used for QR code generation)
-                otp_uri = device.config_url
-                serializer.save()
-                return Response({
-                    'Ok': 'Update successful',
-                    'otp_uri': otp_uri,  # This URI can be used to generate the QR code in the frontend
-                    'device_id': device.id
-                }, status=status.HTTP_200_OK)
+                try:
+                    device = TOTPDevice.objects.create(user=user, name="Default 2FA Device")
+                    device.save()
+                    # Generate the OTP URI (to be used for QR code generation)
+                    otp_uri = device.config_url
+                    serializer.save()
+                    return Response({
+                        'Ok': 'Update successful',
+                        'otp_uri': otp_uri,  # This URI can be used to generate the QR code in the frontend
+                        'device_id': device.id
+                    }, status=status.HTTP_200_OK)
+                except:
+                    return Response({"error": "Could not update 2FA."}, status=status.HTTP_400_BAD_REQUEST)
+                    
 
             elif not two_fa_enabled and user.two_fa_enabled:
                 # Disable 2FA (delete the TOTP device)
