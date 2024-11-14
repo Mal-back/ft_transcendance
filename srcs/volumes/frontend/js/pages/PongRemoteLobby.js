@@ -313,6 +313,7 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
+      console.log("checkTournament: response:", response);
       if (response.status == 204) {
         return undefined;
       }
@@ -320,8 +321,8 @@ export default class extends AbstractView {
         const data = await this.getDatafromRequest(response);
         if (data.status != "pending") {
           throw new CustomError(
-            "Tournament",
-            "already have an ongoing-tournament",
+            "redirect",
+            "redirect to tournament",
             "/pong-remote-tournament",
           );
         }
@@ -465,18 +466,25 @@ export default class extends AbstractView {
       }
       this.clearDynamicEventListeners();
       const ownerDiv = document.querySelector("#ownerDiv");
-      ownerDiv.innerHTML = "";
-      ownerDiv.innerHTML = data.ownerHtml;
+      if (ownerDiv) {
+        ownerDiv.innerHTML = "";
+        ownerDiv.innerHTML = data.ownerHtml;
+      }
       const confirmedPlayers = document.querySelector("#confirmedPlayers");
-      confirmedPlayers.innerHTML = "";
-      confirmedPlayers.innerHTML = data.confirmedHtml;
+      if (confirmedPlayers) {
+        confirmedPlayers.innerHTML = "";
+        confirmedPlayers.innerHTML = data.confirmedHtml;
+      }
       const pendingPlayers = document.querySelector(
         "#pendingTournamentModalContent",
       );
-      pendingPlayers.innerHTML = "";
-      pendingPlayers.innerHTML = data.pendingHtml;
+      if (pendingPlayers) {
+        pendingPlayers.innerHTML = "";
+        pendingPlayers.innerHTML = data.pendingHtml;
+      }
       this.addDynamicEventListeners();
     } catch (error) {
+      console.error("intervalFunction: ", error);
       return error;
     }
   }
@@ -487,12 +495,23 @@ export default class extends AbstractView {
       const error = await this.intervalFunction();
       if (!error) countError = 0;
       else {
+        if (
+          error instanceof CustomError &&
+          error.modalTitle == "redirect" &&
+          error.message == "redirect to tournament"
+        ) {
+          this.clearLobbyInterval();
+          navigateTo(error.redirect);
+          return;
+        }
         countError++;
-        console.error(`setIntervalTournament: countError = ${countError}`);
+        console.error(
+          `setIntervalTournament: countError = ${countError}`,
+          error,
+        );
       }
       if (countError == 5) {
-        clearInterval(this.tournamentInterval);
-        this.tournamentInterval = null;
+        this.clearLobbyInterval();
         removeSessionStorage();
         if (error instanceof CustomError) {
           error.showModalCustom();
@@ -607,6 +626,7 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         console.log("Success");
+        navigateTo("/pong-remote-tournament");
       }
     } catch (error) {
       if (error instanceof CustomError) {
@@ -637,14 +657,16 @@ export default class extends AbstractView {
 
   addDynamicEventListeners() {
     const allRemoveButton = document.querySelectorAll(".removePlayer");
-    allRemoveButton.forEach((button) => {
-      button.addEventListener("click", this.handleRemovePlayer);
-    });
+    if (allRemoveButton)
+      allRemoveButton.forEach((button) => {
+        button.addEventListener("click", this.handleRemovePlayer);
+      });
 
     const allCancelButton = document.querySelectorAll(".removePlayer");
-    allCancelButton.forEach((button) => {
-      button.addEventListener("click", this.handleRemovePlayer);
-    });
+    if (allCancelButton)
+      allCancelButton.forEach((button) => {
+        button.addEventListener("click", this.handleRemovePlayer);
+      });
 
     const leave = document.querySelector(".leaveButtonPlayer");
     if (leave) {
@@ -654,6 +676,7 @@ export default class extends AbstractView {
 
   clearLobbyInterval(ev) {
     clearInterval(this.tournamentInterval);
+    this.tournamentInterval = null;
   }
 
   async addEventListeners() {
@@ -700,5 +723,57 @@ export default class extends AbstractView {
     }
 
     document.addEventListener("beforeunload", this.clearLobbyInterval);
+  }
+
+  async removeEventListeners() {
+    const playerInviteTournamentButton = document.querySelector(
+      "#invitePlayerTournamentButton",
+    );
+    if (playerInviteTournamentButton)
+      playerInviteTournamentButton.removeEventListener(
+        "click",
+        this.handleInvitePlayerTournament,
+      );
+
+    const pending = document.querySelector("#pending");
+    if (pending)
+      pending.removeEventListener("click", this.handleShowPendingButton);
+
+    const inputPlayerUsername = document.querySelector(
+      "#inputInvitePlayerTournament",
+    );
+    if (inputPlayerUsername)
+      inputPlayerUsername.removeEventListener(
+        "input",
+        this.handleInputUsername,
+      );
+
+    const showFriends = document.querySelector("#friend-list");
+    if (showFriends)
+      showFriends.removeEventListener("click", this.handleShowFriendsModal);
+
+    const friendList = document.getElementById("friend-list");
+    if (friendList)
+      friendList.removeEventListener("click", async () => {
+        const friendListContent = await this.getFriendList();
+        document.getElementById("friendListModalContent").innerHTML =
+          friendListContent;
+        // Show the modal after setting the content
+        const friendListModal = new bootstrap.Modal(
+          document.getElementById("friendListModal"),
+        );
+        friendListModal.show();
+      });
+
+    const startTournamentBtn = document.querySelector("#startTournamentBtn");
+    if (startTournamentBtn)
+      startTournamentBtn.removeEventListener(
+        "click",
+        this.handleStartTournament,
+      );
+
+    this.clearDynamicEventListeners();
+    this.clearLobbyInterval();
+    document.removeEventListener("beforeunload", this.clearLobbyInterval);
   }
 }

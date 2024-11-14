@@ -11,8 +11,11 @@ export default class extends AbstractView {
   constructor() {
     super();
     this.users = [];
+    this.rank = 1;
     this.nextPage = undefined;
     this.previousPage = undefined;
+    this.handleNextPage = this.handleNextPage.bind(this);
+    this.handlePreviousPage = this.handlePreviousPage.bind(this);
   }
 
   async loadCss() {
@@ -29,7 +32,6 @@ export default class extends AbstractView {
       this.setTitle(`${this.lang.getTranslation(["title", "ranking"])}`);
       this.users = await this.getAllUsers();
       const modalsBattleHistory = await this.getAllHistoryModals();
-      // const pages = await this.getPagination(data);
       // const ranking = await this.getRanking(data);
       const html_content = `
 <div class="removeElem background ">
@@ -89,36 +91,14 @@ export default class extends AbstractView {
     <div class="removeElem d-flex flex-column justify-content-center align-items-center">
         <nav aria-label="...">
             <ul class="removeElem pagination">
-                <li class="removeElem page-item disabled">
-                    <a class="removeElem page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                <li class="removeElem page-item disabled" id="disablePrev">
+                    <a class="removeElem page-link" tabindex="-1" aria-disabled="true" id="previousPageBtn">Previous</a>
                 </li>
-                <li class="removeElem page-item">
-                    <a class="removeElem page-link" href="#">Next</a>
+                <li class="removeElem page-item" id="disableNext">
+                    <a class="removeElem page-link" id="nextPageBtn">Next</a>
                 </li>
             </ul>
         </nav>
-
-        <div class="removeElem dropdown-center">
-            <button class="removeElem btn btn-secondary dropdown-toggle" type="button" id="changeRankingButton"
-                data-bs-toggle="dropdown" aria-expanded="false">Change Ranking</button>
-            <ul class="removeElem dropdown-menu " aria-labelledby="changeRankingButtonLabel">
-                <li>
-                    <a class="removeElem dropdown-item" id="changeByUsername">Username</a>
-                </li>
-                <li>
-                    <a class="removeElem dropdown-item" id="changeByGamesC4Won">Games C4 Won</a>
-                </li>
-                <li>
-                    <a class="removeElem dropdown-item" id="changeByGamesPongWon">Games Pong Won</a>
-                </li>
-                <li>
-                    <a class="removeElem dropdown-item" id="changeByTournamentsC4Won">Tournaments C4 Won</a>
-                </li>
-                <li>
-                    <a class="removeElem dropdown-item" id="changeByTournamentsPongWon">Tournaments Pong Won</a>
-                </li>
-            </ul>
-        </div>
     </div>
 </div>
 <div id="modalsRanking" class="removeElem"></div>
@@ -161,6 +141,23 @@ export default class extends AbstractView {
     return ranking
   }
 
+  async toggleButtons() {
+    const prev = document.getElementById("disablePrev");
+    if (!this.previousPage) {
+      prev.classList.add("disabled");
+    }
+    else {
+      prev.classList.remove("disabled")
+    }
+    const next = document.getElementById("disableNext");
+    if (!this.nextPage) {
+      next.classList.add("disabled");
+    }
+    else {
+      next.classList.remove("disabled")
+    }
+  }
+
   async getAllUserData(players) {
     for (let rank = 0; rank < players.length; rank++) {
       const username = players[rank].username
@@ -168,10 +165,13 @@ export default class extends AbstractView {
       console.log(user_info)
     }
   }
+  async getNextUsers() {
 
-  async getAllUsers(type = "username") {
+  }
+
+  async getUsers(url) {
     try {
-      let request = await this.makeRequest("/api/users/");
+      let request = await this.makeRequest(url);
       let response = await fetch(request);
       let data = null;
       if (await this.handleStatus(response))
@@ -182,84 +182,70 @@ export default class extends AbstractView {
       console.log("data", data)
       let playersArray = data.results;
       console.log("players", playersArray);
-      for (let i = 0; i < 2; i++) {
-        request = await this.makeRequest(data.next);
-        response = await fetch(request);
-        data = null;
-        if (await this.handleStatus(response))
-          data = await this.getDatafromRequest(response);
-        if (data == null) {
-          throw new Error(`fail to get info on ${user}`);
-        }
-        playersArray.push(...data.results);
-        console.log("data", data);
-      }
+      this.previousPage = data.previous;
+      this.nextPage = data.next;
       await this.getAllUserData(playersArray)
     } catch (error) {
       this.handleCatch(error);
     }
   }
 
-  async getAllHistoryModals(type = "username") { }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  async addEventListeners() {
-    const changeByUsername = document.querySelector("#changeByUsername");
-    changeByUsername.addEventListener("click", this.changeRanking("username"));
-
-    const changeByGamesC4Won = document.querySelector("#changeByGamesC4Won");
-    changeByGamesC4Won.addEventListener("click", this.changeRanking("username"));
-
-    const changeByGamesPongWon = document.querySelector("#changeByGamesPongWon");
-    changeByGamesPongWon.addEventListener("click", this.changeRanking("username"));
-
-    const changeByTournamentsC4Won = document.querySelector("#changeByTournamentsC4Won");
-    changeByTournamentsC4Won.addEventListener("click", this.changeRanking("username"));
-
-    const changeByTournamentsPongWon = document.querySelector("#changeByTournamentsPongWon");
-    changeByTournamentsPongWon.addEventListener("click", this.changeRanking("username"));
+  async getAllUsers() {
+    try {
+      let request = await this.makeRequest("/api/users/?order_by=username");
+      let response = await fetch(request);
+      let data = null;
+      if (await this.handleStatus(response))
+        data = await this.getDatafromRequest(response);
+      if (data == null) {
+        throw new Error(`fail to get info on ${user}`);
+      }
+      console.log("data", data)
+      let playersArray = data.results;
+      console.log("players", playersArray);
+      this.previousPage = data.previous;
+      this.nextPage = data.next;
+      await this.getAllUserData(playersArray)
+    } catch (error) {
+      this.handleCatch(error);
+    }
   }
 
-  changeRanking() { }
+  async getAllHistoryModals() { }
+
+  async handleNextPage() {
+    console.log("next!")
+    if (this.nextPage) {
+      await this.getUsers(this.nextPage)
+    }
+    else return
+    await this.toggleButtons()
+  }
+
+  async handlePreviousPage() {
+    console.log("previous!")
+    if (this.previousPage) {
+      await this.getUsers(this.previousPage)
+    }
+    else return
+    await this.toggleButtons()
+  }
+
+  async addEventListeners() {
+    const previousButton = document.querySelector("#previousPageBtn");
+    previousButton.addEventListener("click", this.handlePreviousPage)
+
+    const nextButton = document.querySelector("#nextPageBtn");
+    nextButton.addEventListener("click", this.handleNextPage)
+  }
 
   removeEventListeners() {
-    const changeByUsername = document.querySelector("#changeByUsername");
-    if (changeByUsername)
-      changeByUsername.removeEventListener("click", this.changeRanking("username"));
+    const previousButton = document.querySelector("#previousPageBtn");
+    if (previousButton)
+      previousButton.removeEventListener("click", this.handlePreviousPage)
 
-    const changeByGamesC4Won = document.querySelector("#changeByGamesC4Won");
-    if (changeByGamesC4Won)
-      changeByGamesC4Won.removeEventListener("click", this.changeRanking("username"));
-
-    const changeByGamesPongWon = document.querySelector("#changeByGamesPongWon");
-    if (changeByGamesPongWon)
-      changeByGamesPongWon.removeEventListener("click", this.changeRanking("username"));
-
-    const changeByTournamentsC4Won = document.querySelector("#changeByTournamentsC4Won");
-    if (changeByTournamentsC4Won)
-      changeByTournamentsC4Won.removeEventListener("click", this.changeRanking("username"));
-
-    const changeByTournamentsPongWon = document.querySelector("#changeByTournamentsPongWon");
-    if (changeByTournamentsPongWon)
-      changeByTournamentsPongWon.removeEventListener("click", this.changeRanking("username"));
+    const nextButton = document.querySelector("#nextPageBtn");
+    if (nextButton)
+      nextButton.removeEventListener("click", this.handleNextPage)
   }
 }

@@ -11,6 +11,9 @@ export default class extends AbstractView {
   constructor() {
     super();
     this.refreshInterval = null;
+    this.isFinished = false;
+    this.handleStartNextRound = this.handleStartNextRound.bind(this);
+    this.clearTournamentInterval = this.clearTournamentInterval.bind(this);
   }
   async loadCss() {
     this.createPageCss("../css/game-menu-buttons.css");
@@ -26,31 +29,32 @@ export default class extends AbstractView {
     this.setTitle(
       `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}`,
     );
-    let listPlayer = null;
+    let html_loaded;
     try {
-      listPlayer = await this.actualizeTournament();
+      html_loaded = await this.actualizeTournament();
+      if (html_loaded == undefined) {
+        throw new CustomError(
+          "Tournament",
+          "No current Tournament",
+          "/"
+        )
+      }
     } catch (error) {
       this.handleCatch(error);
     }
-    if (!listPlayer) {
-      throw new CustomError(
-        `${this.lang.getTranslation(["modal", "title", "error"])}`,
-        `No tournament found, go create one!`,
-        `/pong-remote-lobby`,
-      );
-    }
+    const title = this.getTitle()
     return `
     <div class="background" style="background-image:url('../img/ow.jpg');">
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-        ${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>
+        ${title}
       <br>
-      <div class="tournament-creation list-group ranking">
-      ${listPlayer}
+      <div class="tournament-creation list-group ranking" id="playersTournament">
+      ${html_loaded.players}
       </div>
       <div class="d-flex align-items-center justify-content-center mt-2">
-        <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" data-bs-toggle="modal"
-              data-bs-target="#next-game-modal">${this.lang.getTranslation(["game", "next"])} ${this.lang.getTranslation(["game", "match"])}</button>
-        <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-2" data-bs-toggle="modal"
+        <button id="nextRoundBtn" type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" style="display: none;">
+          Next Round</button>
+        <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-2" data-bs-toggle="modal" style="display: ${this.isFinished ? "none" : "block"}"
               data-bs-target="#current-round-modal">${this.lang.getTranslation(["game", "next"])} ${this.lang.getTranslation(["game", "match"])}</button>
       </div>
     </div>
@@ -59,7 +63,7 @@ export default class extends AbstractView {
       <div class="modal-dialog modal-dialog-centered loading-modal-diag">
           <div class="modal-content">
               <div class="modal-body next-battle-modal-body text-center">
-                ${"NextMatch"}
+                ${"N"}
               </div>
               <div class="modal-footer justify-content-center">
                   <button id="startBattle" type="button" class="btn btn-secondary">${this.lang.getTranslation(["game", "start"])} ${this.lang.getTranslation(["game", "battle"])}</button>
@@ -71,15 +75,20 @@ export default class extends AbstractView {
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered loading-modal-diag">
           <div class="modal-content">
-              <div class="modal-header">Round 1</div>
-              <div class="modal-body next-battle-modal-body text-center">
-                ${"NextMatch"}
+              <div class="modal-header" id="roundTitle">${html_loaded.roundTitle}</div>
+              <div class="modal-body next-battle-modal-body text-center" id="roundBody">
+                ${html_loaded.round}
               </div>
           </div>
       </div>
     </div>
 
         `;
+  }
+
+  getTitle() {
+    const title = this.isFinished ? `Tournament is over!`:`${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>`
+    return title
   }
 
   async getRankDivPlayer(player, rank) {
@@ -99,10 +108,10 @@ export default class extends AbstractView {
         <div>
           <div class="list-group-item d-flex align-items-center justify-content-between mb-2 rounded w-100">
             <div class="d-flex align-items-center">
-              <div class="ranking-number ${color}">${rank}</div>
+              <div class="ranking-number ${color}">${rank} ${(this.isFinished && rank == 1) ? '<i class="bi bi-trophy"></i>' : ""}</div>
               <div class="Avatar status-online me-3" style="background-image: url(${playerAvatar.profilePic})"></div>
               <div class="flex-fill">
-                <h5 class="mb-0">${player.username}</h5>
+                <h5 class="mb-0">${player.username} ${(this.isFinished && rank == 1) ? `Winner `: '' }</h5>
               </div>
             </div>
             <div class="score">
@@ -132,6 +141,30 @@ export default class extends AbstractView {
     }
   }
 
+  getRoundDiv(round) {
+    let html = "Matches: ";
+    console.log(round);
+    round.forEach((element) => {
+      console.log(element);
+      html += `${element[0]} vs ${element[1]}<br>`;
+    });
+    return html;
+  }
+
+  updateNextRound(urlNextRound) {
+    console.log("OWNER");
+    try {
+      const nextRoundBtn = document.querySelector("#nextRoundBtn");
+      if (urlNextRound == null) {
+        nextRoundBtn.style.dispay = "none";
+      } else {
+        console.log("BLOCK");
+        nextRoundBtn.style.display = "block";
+        nextRoundBtn.dataset.redirectUrl = `${urlNextRound}`;
+      }
+    } catch (error) {}
+  }
+
   async actualizeTournament() {
     try {
       const request = await this.makeRequest(
@@ -142,13 +175,128 @@ export default class extends AbstractView {
       if (await this.handleStatus(response)) {
         let data = await this.getDatafromRequest(response);
         console.log("data:", data);
+        if (data.final_ranking) {
+          this.isFinished = true;
+          const players = await this.createPlayersDiv(data.final_ranking)
+          return {players, roundTitle: '', round: ''};
+        }
         if (response.status == 204 || data.status != "in_progress")
           return undefined;
         const players = await this.createPlayersDiv(data.players_order);
-        return players;
+        const roundTitle = ` Round ${data.round_number}:`;
+        console.log("data.round_schedule = ", data.rounds_schedule);
+        const round = this.getRoundDiv(
+          data.rounds_schedule[data.round_number - 1],
+        );
+        if (data.player_type == "Owner")
+          this.updateNextRound(data.launch_next_round);
+        return { players, roundTitle, round };
       }
     } catch (error) {
       this.handleCatch(error);
     }
+  }
+
+  async refreshTournament() {
+    try {
+      const data = await this.actualizeTournament();
+      if (this.isFinished) {
+        const titleDiv = document.querySelector("#GameTitle");
+        if (titleDiv) {
+          titleDiv.innerText = '';
+          titleDiv.innerText = this.getTitle();
+        }
+        this.clearTournamentInterval();
+      }
+      const playersDiv = document.querySelector("#playersTournament");
+      console.log("playersDiv:", playersDiv);
+      console.log("Interval: ", this.refreshInterval);
+      if (playersDiv){
+      playersDiv.innerHTML = "";
+      playersDiv.innerHTML = data.players;
+      }
+
+      const roundTitle = document.querySelector("#roundTitle");
+      if (roundTitle) {
+      roundTitle.innerText = "";
+      roundTitle.innerText = data.roundTitle;
+      }
+
+      const roundBody = document.querySelector("#roundBody");
+      if (roundBody) {
+      roundBody.innerText = "";
+      roundBody.innerText = data.round;
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  clearTournamentInterval(ev) {
+    clearInterval(this.refreshInterval);
+    this.refreshInterval = null;
+  }
+
+  async setUpdateTournament() {
+    if (this.refreshInterval ) return;
+    let countError = 0;
+    this.refreshInterval = setInterval(async () => {
+      const error = await this.refreshTournament();
+      if (!error) countError = 0;
+      else {
+        console.error("setUpdateTournament:error", error);
+        console.error("countError", countError);
+
+        countError++;
+      }
+      if (countError == 5) {
+        this.clearTournamentInterval();
+        removeSessionStorage();
+        if (error instanceof CustomError) {
+          error.showModalCustom();
+          navigateTo(error.redirect);
+        } else {
+          navigateTo("/")
+          console.error("startNotificationPolling: ", error);
+        }
+      }
+    }, 1000);
+  }
+
+  async handleStartNextRound(ev) {
+    ev.preventDefault();
+    try {
+      const request = await this.makeRequest(
+        `${ev.target.dataset.redirectUrl}`,
+        "PATCH",
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      }
+    }
+  }
+
+  async addEventListeners() {
+    const nextRoundBtn = document.querySelector("#nextRoundBtn");
+    nextRoundBtn.addEventListener("click", this.handleStartNextRound);
+
+    try {
+      if (this.isFinished == false) await this.setUpdateTournament();
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  removeEventListeners() {
+    const nextRoundBtn = document.querySelector("#nextRoundBtn");
+    if (nextRoundBtn)
+      nextRoundBtn.removeEventListener("click", this.handleStartNextRound);
+
+    this.clearTournamentInterval();
   }
 }

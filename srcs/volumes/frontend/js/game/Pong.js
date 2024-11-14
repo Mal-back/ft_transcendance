@@ -189,7 +189,6 @@ export default class Pong {
     let gif = "../img/ts/taylor-swift-cookie.gif";
     const username = sessionStorage.getItem("username_transcendence");
     if (this.mode == "local") {
-      console.log("HERE !!! =>", data)
       if (data.winner == "player_1") {
         winner = this.player1.username;
         loser = this.player2.username;

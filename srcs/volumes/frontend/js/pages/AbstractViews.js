@@ -488,7 +488,7 @@ export default class AbstractViews {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        console.log("Invites: ", data);
+        // console.log("Invites: ", data);
         if (response.status == 204) {
           onGoingGame.style.display = "none";
           return 0;
@@ -530,7 +530,7 @@ export default class AbstractViews {
     if (!AbstractViews.pollingInterval) {
       AbstractViews.pollingInterval = setInterval(async () => {
         const error = await this.fetchNotifications();
-        console.log("startNotificationPolling: error: ", error);
+        // console.log("startNotificationPolling: error: ", error);
         if (!error) errorCount = 0;
         if (error instanceof CustomError) {
           errorCount++;
@@ -646,9 +646,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -676,12 +676,8 @@ export default class AbstractViews {
         value = data[key];
         console.log("VALUE:", value);
       }
-      if (response.status == 401) {
-        console.error("401 error:response:", response);
-        console.log(
-          "lang: ",
-          this.lang.getTranslation(["modal", "title", "error"]),
-        );
+      if (response.status == 401 || response.status == 403 || response.status == 503) {
+        console.error("401/403 error:response:", response);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,

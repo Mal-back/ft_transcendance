@@ -45,6 +45,7 @@ export default class Connect4 {
     this.handleUnloadPage = this.handleUnloadPage.bind(this);
     this.handleStartGame = this.handleStartGame.bind(this);
     this.setBackground = this.setBackground.bind(this);
+	this.handleGiveUp = this.handleGiveUp.bind(this);
     this.showTimer = this.showTimer.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
@@ -161,10 +162,11 @@ export default class Connect4 {
   // handleHelp(ev) {
   //   //nothing yet
   // }
-  //
-  // handleGiveUp(ev) {
-  //   //nothing yet
-  // }
+
+  handleGiveUp(ev) {
+    ev.preventDefault();
+    this.webSocket.send(JSON.stringify({ type: "surrend" }));
+  }
 
   printMessage(data) {
     console.log(this.currentPlayer, this.player1, this.player2);
@@ -313,21 +315,23 @@ export default class Connect4 {
       this.webSocket.send(JSON.stringify({ type: "start_game" }));
       this.gameStart = true;
       document.getElementById("startBtn").style = `display : none;`;
-      document.getElementById("giveUpBtn").style = `display : inline;`;
+	  if (this.mode != "local") {
+      	document.getElementById("giveUpBtn").style = `display : inline;`;
+	  }
       // console.log("SENT START");
     }
   }
+
   addC4Event() {
-    this.webSocket.addEventListener("open", this.handleWebSocketOpen);
-    this.webSocket.addEventListener("close", this.handleWebSocketClose);
-    this.webSocket.addEventListener("error", this.handleWebSocketError);
-    this.webSocket.addEventListener("message", this.handleWebSocketMessage);
+	if (this.webSocket) {
+		this.webSocket.addEventListener("open", this.handleWebSocketOpen);
+		this.webSocket.addEventListener("close", this.handleWebSocketClose);
+		this.webSocket.addEventListener("error", this.handleWebSocketError);
+		this.webSocket.addEventListener("message", this.handleWebSocketMessage);
+	}
     document
       .querySelector("#startBtn")
       .addEventListener("click", this.handleStartGame);
-    document
-      .querySelector("#helpBtn")
-      .addEventListener("click", this.handleHelp);
     document
       .querySelector("#giveUpBtn")
       .addEventListener("click", this.handleGiveUp);
@@ -338,6 +342,7 @@ export default class Connect4 {
       cell.addEventListener("click", () =>
         this.sendPlayerMovement(this.currentPlayer.name, col),
       );
+	
     });
   }
 
@@ -353,11 +358,10 @@ export default class Connect4 {
         "message",
         this.handleWebSocketMessage,
       );
+	  this.webSocket = null;
     }
     const local = document.querySelector("#startBtn");
     if (local) local.addEventListener("click", this.handleStartGame);
-    const helpBtn = document.querySelector("#helpBtn");
-    if (helpBtn) helpBtn.removeEventListener("click", this.handleHelp);
     const giveUpBtn = document.querySelector("#giveUpBtn");
     if (giveUpBtn) giveUpBtn.removeEventListener("click", this.handleGiveUp);
     document.removeEventListener("beforeunload", this.handleUnloadPage);

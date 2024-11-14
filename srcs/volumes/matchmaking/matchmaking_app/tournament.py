@@ -135,6 +135,6 @@ def update_users_stats(players_list, game_type):
         sender.send_requests(urls=urls,
                              method='patch',
                              expected_status=[200]) 
-    except (RequestsFailed, InvalidCredentialsException):
-        pass
+    except (RequestsFailed, InvalidCredentialsException) as e:
+        print(str(e))
     connection.close()

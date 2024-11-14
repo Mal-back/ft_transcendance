@@ -147,7 +147,6 @@ export default class extends AbstractView {
                     </div>
                 </div>
                 <div class="m-3">
-                        <button id="helpBtn" type="button" class="btn btn-secondary">${this.lang.getTranslation(["button", "help"]).toUpperCase()}</button>
                         <button id="giveUpBtn" type="button" class="btn btn-danger" style="display: none;">${this.lang.getTranslation(["button", "giveUp"]).toUpperCase()}</button>
                         <button id="startBtn" type="button" class="removeElem btn btn-success">${this.lang.getTranslation(["button", "start"]).toUpperCase()}</button>
                         <button id="returnBtn" type="button" class="removeElem btn btn-success" style="display: none;">${this.lang.getTranslation(["button", "return"])}</button>
@@ -173,7 +172,10 @@ export default class extends AbstractView {
       if (connection != "local") {
         webScoketURL = `wss://${getIpPortAdress()}/api/game/c4-remote/join/`;
         auth_token = await this.getToken();
-      }
+      } else {
+		const giveUpButton = document.querySelector("#giveUpBtn");
+        if (giveUpButton) giveUpButton.style.display = "none";
+	  }
       this.connect4.initC4(
         "ongoing-game",
         webScoketURL,
@@ -274,24 +276,12 @@ export default class extends AbstractView {
     }
   }
 
-  handleHelpButton(ev) {
-    ev.preventDefault();
-    showModal(
-      `${this.lang.getTranslation(["button", "help"])}`,
-      `${this.lang.getTranslation(["modal", "message", "help"])}`,
-    );
-  }
 
   async addEventListeners() {
-    const helpButton = document.querySelector("#helpBtn");
-    if (helpButton) helpButton.addEventListener("click", this.handleHelpButton);
     this.connect4.addC4Event();
   }
 
   removeEventListeners() {
     if (this.connect4) this.connect4.removeC4Event();
-    const helpButton = document.querySelector("#helpBtn");
-    if (helpButton)
-      helpButton.removeEventListener("click", this.handleHelpButton);
   }
 }
