@@ -9,6 +9,7 @@ from .models import CustomUser
 from .requests_manager import send_delete_requests, send_create_requests, send_update_requests
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
+from .trad import translate
 # Create your views here.
 
 class UserDetailView(generics.RetrieveAPIView) :
@@ -29,8 +30,10 @@ class UserDeleteView(generics.DestroyAPIView) :
                     f'http://history:8443/api/history/user/delete/{instance.username}/',
                     'http://avatars:8443/api/avatars/',
                    ]
+        lang = self.request.headers.get('lang')
         if send_delete_requests(urls=req_url, body={'username': instance.username}) != True:
-            return Response({'Error': 'Unable to update username. Please wait not to be in a game'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "update_username_error_in_game")
+            return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
         instance.delete()
 
 
@@ -61,7 +64,10 @@ class UserUpdateView(generics.UpdateAPIView):
         user = self.get_object()
         self.check_object_permissions(request, user)
         old_username = user.username
-        serializer = UserRegistrationSerializer(user, data=request.data, partial=True)
+        serializer = UserRegistrationSerializer(user, data=request.data, partial=True, context={'request': request})
+        lang = request.headers.get('lang')
+        message = translate(lang, "update_success")
+
         if serializer.is_valid():
             new_username = serializer.validated_data.get('username', old_username)
             if old_username != new_username:
@@ -71,22 +77,24 @@ class UserUpdateView(generics.UpdateAPIView):
                             'http://avatars:8443/api/avatars/',
                             ]
                 if send_update_requests(old_username, req_urls, body={'username':new_username, 'old_username':old_username, 'new_username': new_username}) == False:
-                    return Response({'Error': 'Unable to update username. Please wait not to be in a game'}, status=status.HTTP_400_BAD_REQUEST)
+                    message = translate(lang, "update_username_error_in_game")
+                    return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
                 token = MyTokenObtainPairSerializer.get_token(user)
                 access_token = str(token.access_token)
                 refresh_token = str(token)
                 response_data = {
-                        'OK':'update successefull',
+                        'OK':message,
                         'new username':user.username,
                         'access': access_token,
                         'refresh': refresh_token, 
                         }
                 return Response(response_data, status=status.HTTP_200_OK)
             serializer.save()
-            return Response({'Ok':'Update Successefull'}, status=status.HTTP_200_OK)
+            return Response({'Ok':message}, status=status.HTTP_200_OK)
         else:
-            return Response({'Error': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "invalid_data_error")
+            return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordUpdateView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
@@ -98,7 +106,7 @@ class ServiceJWTObtainPair(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, *args, **kwargs):
         print('I ve beeen reached')
-        serializer = ServiceObtainTokenSerializer(data=request.data)
+        serializer = ServiceObtainTokenSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

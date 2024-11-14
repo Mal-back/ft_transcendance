@@ -12,6 +12,7 @@ from .single_match_to_history import end_single_match
 from .matchmaking_queue import get_opponent, YouHaveNoOpps
 from .match_utils import check_user_restrictions
 from .tournament import schedule_rounds, handle_finished_matches, TournamentInternalError, debug_export_result
+from .trad import translate
 
 # Create your views here.
 
@@ -30,7 +31,7 @@ class MatchUserUpdate(generics.UpdateAPIView):
         user = self.get_object()
         old_username = kwargs.get('username')
         new_username = request.data.get('username')
-        conflict = check_user_restrictions(user)
+        conflict = check_user_restrictions(user,request)
         if conflict:
             return conflict
 
@@ -40,7 +41,9 @@ class MatchUserUpdate(generics.UpdateAPIView):
             Match.objects.filter(player1=old_username).update(player1=new_username)
             Match.objects.filter(player2=old_username).update(player2=new_username)
 
-        return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)
+        lang = request.headers.get('lang')
+        message = translate(lang, "update_success")
+        return Response({'OK': message}, status=status.HTTP_200_OK)
 
 class MatchUserDelete(generics.DestroyAPIView):
     queryset = MatchUser.objects.all()
@@ -50,7 +53,7 @@ class MatchUserDelete(generics.DestroyAPIView):
 
     def perform_destroy(self, instance):
         username = instance.username
-        conflict = check_user_restrictions(instance)
+        conflict = check_user_restrictions(instance,self.request)
         if conflict:
             return conflict
 
@@ -63,16 +66,19 @@ class MatchCreate(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        conflict = check_user_restrictions(request.user)
+        conflict = check_user_restrictions(request.user,request)
         if conflict:
             return conflict
-
+        
+        lang = request.headers.get('lang')
         serializer = MatchSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             if serializer.validated_data['player2'].username == request.user.username:
-                return Response({'Error': 'You can not play against yourself'}, status=status.HTTP_409_CONFLICT)
+                message = translate(lang, "self_play_error")
+                return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
             if Match.objects.filter(player1=serializer.validated_data['player2'], player2=request.user).exists():
-                return Response({'Error': 'You can not create a reverse invite'}, status=status.HTTP_409_CONFLICT)
+                message = translate(lang, "reverse_invite_error")
+                return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
             serializer.save(player1=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -168,12 +174,13 @@ class MatchAcceptInvite(generics.UpdateAPIView):
         match = self.get_object()
         self.check_object_permissions(request, match)
 
-        conflict = check_user_restrictions(request.user)
+        conflict = check_user_restrictions(request.user,request)
         if conflict:
             return conflict
 
         match.status = 'accepted'
         match.save()
+        lang = request.headers.get('lang')
         try:
             sender = MicroServiceClient()
             ret = sender.send_requests(
@@ -192,9 +199,11 @@ class MatchAcceptInvite(generics.UpdateAPIView):
             match.status = 'in_progress'
             match.matchId = matchId
             match.save()
-            return Response({'Ok': 'Match Created', 'MatchId': f'{matchId}'}, status=status.HTTP_201_CREATED)
+            message = translate(lang, "match_creation_success")
+            return Response({'Ok': message, 'MatchId': f'{matchId}'}, status=status.HTTP_201_CREATED)
         except (RequestsFailed, InvalidCredentialsException):
-            return Response({'Error': 'Request failed'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            message = translate(lang, "request_failure")
+            return Response({'Error': message}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 class MatchDeclineInvite(generics.UpdateAPIView):
     queryset = Match.objects.all()
@@ -204,11 +213,14 @@ class MatchDeclineInvite(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         match = self.get_object()
         self.check_object_permissions(request, match)
+        lang = request.headers.get('lang')
         if match.status != 'pending':
-            return Response({'Error':'You can\'t decline this match'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "decline_match_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         match.status = 'declined'
         match.delete()
-        return Response({'OK':'Match Declined'}, status=status.HTTP_200_OK)
+        message = translate(lang, "decline_match_success")
+        return Response({'OK':message}, status=status.HTTP_200_OK)
 
 class MatchDeleteInvite(APIView):
     queryset = Match.objects.all()
@@ -217,15 +229,19 @@ class MatchDeleteInvite(APIView):
 
     def delete(self, request, *args, **kwargs):
         match_pk = self.kwargs.get('pk')
+        lang = request.headers.get('lang')
         if match_pk is None:
-            return Response({'Error':'No Pk'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "pk_error")
+            return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
         try :
             match = Match.objects.get(id=match_pk)
         except Match.DoesNotExist:
-            return Response({'Error':'Unexisting Match'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "unexisting_match_error")
+            return Response({'Error':message}, status=status.HTTP_409_CONFLICT)
         self.check_object_permissions(request, match)
         if match.status != 'pending':
-            return Response({'Error':'You can\'t cancel this match'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "cancel_match_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         match.status = 'cancelled'
         match.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -252,13 +268,15 @@ class HandleMatchResult(APIView):
     def post(self, request, *args, **kwargs):
         serializer = MatchResultSerializer(data=request.data)
         match = self.get_object(kwargs['matchId'])
+        lang = request.headers.get('lang')
+        message = translate(lang, "match_update_success")
         if serializer.is_valid():
             if match.tournament is None :
                 end_single_match(match, serializer.validated_data)
-                return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
+                return Response({'OK':message}, status=status.HTTP_200_OK)
             else :
                 handle_finished_matches(match, serializer.validated_data)
-                return Response({'OK':'Match Updated'}, status=status.HTTP_200_OK)
+                return Response({'OK':message}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
@@ -272,23 +290,27 @@ class DebugSetGameAsFinished(APIView):
         match = Match.objects.get(id=id)
         match.status = 'finished'
         match.save()
-        return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
+        lang = request.headers.get('lang')
+        message = translate(lang, "match_finish_success")
+        return Response({'OK':message}, status=status.HTTP_200_OK)
 
 class MatchMakingJoinQueue(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        conflict = check_user_restrictions(request.user)
+        conflict = check_user_restrictions(request.user,request)
         if conflict:
             return conflict
 
+        lang = request.headers.get('lang')
         serializer = MatchMakingQueueSerializer(data=request.data)
         if serializer.is_valid():
             if serializer.validated_data['game_type'] == 'pong':
                 serializer.save(user=request.user, win_rate=request.user.pong_win_rate)
             else:
                 serializer.save(user=request.user, win_rate=request.user.c4_win_rate)
-            return Response({'Ok':'You are in queue'}, status=status.HTTP_201_CREATED)
+            message = translate(lang, "in_queue")
+            return Response({'Ok': message}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MatchMakingRequestMatch(APIView):
@@ -304,7 +326,8 @@ class MatchMakingRequestMatch(APIView):
         try :
             queueUser = InQueueUser.objects.get(user=request.user.username)
         except InQueueUser.DoesNotExist :
-            return Response({'Error': 'You\'re not in the queue'}, status=status.HTTP_409_CONFLICT)
+            message = translate(request.headers.get('lang'),"not_in_queue")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         try:
             new_match = get_opponent(queueUser)
             serializer = AcceptedMatchSerializer(new_match)
@@ -319,7 +342,8 @@ class MatchMakingLeaveQueue(APIView):
         try :
             queueUser = InQueueUser.objects.get(user=request.user.username)
         except InQueueUser.DoesNotExist :
-            return Response({'Error': 'You\'re not in the queue'}, status=status.HTTP_409_CONFLICT)
+            message = translate(request.headers.get('lang'),"not_in_queue")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         queueUser.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -341,7 +365,7 @@ class CreateTournament(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        conflict = check_user_restrictions(request.user)
+        conflict = check_user_restrictions(request.user,request)
         if conflict:
             return conflict
 
@@ -349,7 +373,8 @@ class CreateTournament(APIView):
         if serializer.is_valid():
             invited = serializer.validated_data.get('invited_players')
             if invited is not None and request.user.username in invited:
-                return Response({'Error': 'You can not play against yourself'}, status=status.HTTP_409_CONFLICT)
+                message = translate(request.headers.get('lang'),"self_play_error")
+                return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
             tournament = serializer.save(owner=request.user)
             owner = TournamentUser.objects.create(user=request.user, tournament=tournament)
             tournament.confirmed_players.add(owner)
@@ -365,15 +390,18 @@ class AcceptTournamentInvite(generics.UpdateAPIView):
         username = self.request.user.username
         tournament = self.get_object()
         self.check_object_permissions(request, tournament)
-        conflict = check_user_restrictions(request.user)
+        conflict = check_user_restrictions(request.user,request)
         if conflict:
             return conflict
 
+        lang = request.headers.get('lang')
         if tournament.status != 'pending':
-            return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "tournament_already_started_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         TournamentUser.objects.create(user=request.user, tournament=tournament)
         tournament.invited_players.remove(request.user)
-        return Response({'OK':'You accept the tournament'}, status=status.HTTP_200_OK)
+        message = translate(lang, "accept_tournament_invite_success")
+        return Response({'OK':message}, status=status.HTTP_200_OK)
 
 class DeclineTournamentInvite(generics.UpdateAPIView):
     queryset = Tournament.objects.all()
@@ -384,10 +412,13 @@ class DeclineTournamentInvite(generics.UpdateAPIView):
         user = self.request.user
         tournament = self.get_object()
         self.check_object_permissions(request, tournament)
+        lang = request.headers.get('lang')
         if tournament.status != 'pending':
-            return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "tournament_already_started_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         tournament.invited_players.remove(user)
-        return Response({'Ok':'You refuse invite'}, status=status.HTTP_200_OK)
+        message = translate(lang, "invite_refused_success")
+        return Response({'Ok': message}, status=status.HTTP_200_OK)
 
 class LeaveTournament(generics.UpdateAPIView):
     queryset = Tournament.objects.all()
@@ -397,16 +428,21 @@ class LeaveTournament(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         tournament = self.get_object()
         self.check_object_permissions(request, tournament)
+        lang = request.headers.get('lang')
         try:
             player = tournament.confirmed_players.get(user=request.user)
         except TournamentUser.DoesNotExist:
-            return Response({'Error':'You\'re not in the tournament'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "not_in_tournament_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         if tournament.owner == request.user:
-            return Response({'Error':'You\'re the owner of the tournament'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "tournament_owner")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         if tournament.status != 'pending':
-            return Response({'Error':'Tournament already started'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "tournament_already_started_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         player.delete()
-        return Response({'Ok':'You left tournament'}, status=status.HTTP_200_OK)
+        message = translate(lang, "tournament_left_success")
+        return Response({'Ok': message}, status=status.HTTP_200_OK)
 
 class AddInvitedPlayers(APIView):
     permission_classes = [IsAuthenticated]
@@ -426,7 +462,8 @@ class AddInvitedPlayers(APIView):
         serializer = TournamentAddPlayersSerializer(data=request.data, instance=obj, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return Response({'OK':'Players List updated'}, status=status.HTTP_200_OK)
+            message = translate(request.headers.get('lang'),"player_list_update_success")
+            return Response({'OK': message}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
 
 class RemoveInvitedPlayers(APIView):
@@ -447,7 +484,8 @@ class RemoveInvitedPlayers(APIView):
         serializer = TournamentRemovePlayersSerializer(data=request.data, instance=obj, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return Response({'OK':'Players List updated'}, status=status.HTTP_200_OK)
+            message = translate(request.headers.get('lang'),"player_list_update_success")
+            return Response({'OK': message}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
 
 class DeleteTournament(APIView):
@@ -458,7 +496,8 @@ class DeleteTournament(APIView):
         if obj is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
         if obj.status != 'pending':
-            return Response({'Error': 'Tournament already started'}, status=status.HTTP_409_CONFLICT)
+            message = translate(request.headers.get('lang'),"tournament_already_started_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -486,7 +525,8 @@ class LaunchTournament(APIView):
         if obj is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
         if obj.confirmed_players.count() < 3:
-            return Response({'Error': 'A tournament should have at least three players'}, status=status.HTTP_409_CONFLICT)
+            message = translate(request.headers.get('lang'),"tournament_at_least_3_players_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         obj.status = 'in_progress'
         obj.invited_players.clear()
         obj.save()
@@ -494,8 +534,10 @@ class LaunchTournament(APIView):
             schedule_rounds(obj)
         except TournamentInternalError:
             obj.delete()
-            return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        return Response({'OK':'Tournament started'}, status=status.HTTP_200_OK)
+            message = translate(request.headers.get('lang'),"tournament_not_available_error")
+            return Response({'Error': message}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        message = translate(request.headers.get('lang'),"tournament_started")
+        return Response({'OK': message}, status=status.HTTP_200_OK)
 
 class LaunchNextRound(APIView):
     permission_classes = [IsAuthenticated]
@@ -512,20 +554,26 @@ class LaunchNextRound(APIView):
         obj = self.get_object()
         if obj is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
+        lang = request.headers.get('lang')
         if Match.objects.filter(tournament=obj).exists() :
-            return Response({'Error':'Round is not finished'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang,"round_not_finished_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         elif obj.status == 'pending':
-            return Response({'Error':'Tournament did not start'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang,"tournament_did_not_start_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         elif obj.status == 'finished':
-            return Response({'Error':'Tournament already finished'}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang,"tournament_already_finished_error")
+            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
         obj.current_round += 1
         obj.save()
         try :
             schedule_rounds(obj)
         except TournamentInternalError:
             obj.delete()
-            return Response({'Error':'Tournament are not available at the moment'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        return Response({'OK':'Next round started'}, status=status.HTTP_200_OK)
+            message = translate(lang,"tournament_not_available_error")
+            return Response({'Error': message}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        message = translate(lang,"tournament_next_round_success")
+        return Response({'OK': message}, status=status.HTTP_200_OK)
 
 class GetTournament(APIView):
     def get_object(self):
@@ -552,7 +600,8 @@ class DebugSetTournamentAsFinished(APIView):
         id = self.kwargs.get('pk')
         tournament = Tournament.objects.get(id=id)
         tournament.delete()
-        return Response({'OK':'Match set as finished'}, status=status.HTTP_200_OK)
+        message = translate(request.headers.get('lang'), "match_finish_success")
+        return Response({'OK': message}, status=status.HTTP_200_OK)
 
 class DebugCreateFinishedTournament(APIView):
     def get(self, request, *args, **kwargs):

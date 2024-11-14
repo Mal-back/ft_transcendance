@@ -52,10 +52,13 @@ clean_docker:
 
 clean : clean_migration clean_docker
 
+
+prune : down clean
+	echo "y" | docker system prune -a
 # clean :
 # 	docker stop $$(docker ps -qa);\
 # 	docker rm $$(docker ps -qa);\
 # 	docker rmi -f $$(docker images -qa);\
 # 	docker volume rm $$(docker volume ls -q);\
 
-.Phony : all down clean env compose
+.Phony : all down clean env compose fclean

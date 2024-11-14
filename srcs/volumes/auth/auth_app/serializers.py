@@ -8,6 +8,7 @@ import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.utils.timezone import now
+from .trad import translate
 
 class UserRegistrationSerializer(serializers.ModelSerializer) :
     password2 = serializers.CharField(max_length=128, write_only=True, style={'input_type': 'password'}, required=True)
@@ -29,10 +30,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
 
     def validate_email(self, value):
         if CustomUser.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Email is already taken.Already have an account ? Sign in")
+            lang = self.context.get('request').headers.get('lang')
+            message = translate(lang, "email_taken_error")
+            raise serializers.ValidationError(message)
         return value
 
     def validate_username(self, value):
+        lang = self.context.get('request').headers.get('lang')
         forbidden_usernames = [
                 'create',
                 'update',
@@ -45,17 +49,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
                 'admin',
                 ]
         if value.lower() in forbidden_usernames:
-            raise ValidationError('Forbidden user name')
+            message = translate(lang, "forbidden_username_error")
+            raise ValidationError(message)
         if 'israel' in value.lower():
-            raise ValidationError("You can't choose a non-existing country as username. Free Palestine !")
+            message = translate(lang, "free_palestine")
+            raise ValidationError(message)
         for char in value:
             if char not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_':
-                raise ValidationError('Username should only contain letters, numbers, "-", "_" and "."')
+                message = translate(lang, "invalid_characters_in_username_error")
+                raise ValidationError(message)
         return value
 
     def validate(self, data):
         if data.get('password') != data.get('password2') :
-            raise ValidationError('Both passwords doesn\'t match')
+            lang = self.context.get('request').headers.get('lang')
+            message = translate(lang, "password_mismatch_error")
+            raise ValidationError(message)
         return data
 
     def create(self, validated_data):
@@ -75,18 +84,24 @@ class PasswordModficationSerializer(serializers.Serializer):
 
     def validate_password(self, value):
         user = self.context['request'].user
+        lang = self.context['request'].headers.get('lang')
         if not user.check_password(value):
-            raise serializers.ValidationError('Old password is incorrect')
+            message = translate(lang,"old_password_incorrect_error")
+            raise serializers.ValidationError(message)
         return value
     def validate(self, data):
         new1 = data.get('new_password')
         new2 = data.get('new_password2')
+        lang = self.context['request'].headers.get('lang')
         if new1 != new2 :
-            raise serializers.ValidationError("Passwords dont't match")
+            message = translate(lang, "password_mismatch_error")
+            raise serializers.ValidationError(message)
         elif new1 is None:
-            raise serializers.ValidationError("Missign fields")
+            message = translate(lang, "missing_fields_error")
+            raise serializers.ValidationError(message)
         elif new1 == '':
-            raise serializers.ValidationError("Can't save an empty password")
+            message = translate(lang, "empty_password_error")
+            raise serializers.ValidationError(message)
         return data
     def update(self, instance, validated_data):
         instance.set_password(validated_data['new_password'])
@@ -129,13 +144,15 @@ class ServiceObtainTokenSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         password = attrs.get('password')
         serviceName = attrs.get('serviceName')
+        lang = self.context.get('request').headers.get('lang')
+        message = translate(lang, "invalid_credentials_error")
         try :
             service = Service.objects.get(serviceName=serviceName)
         except Service.DoesNotExist:
-            raise ValidationError('Invalid Credentials')
+            raise ValidationError(message)
 
         if not check_password(password, service.password) :
-            raise ValidationError('Invalid Credentials')
+            raise ValidationError(message)
 
         token = createServiceToken(service)
         return {'token': token}

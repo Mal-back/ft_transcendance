@@ -1,27 +1,33 @@
 from rest_framework import serializers
 from PIL import Image
+from .trad import translate
 
 class UserAvatarSerializer(serializers.Serializer):
     avatar = serializers.ImageField(required=True)
     image_type = serializers.CharField(read_only=True)
 
     def validate_avatar(self, value):
+        request = self.context.get('request')
+        lang = request.headers.get('lang')
         cur = value.tell()
         try :
             img = Image.open(value)
             img.verify()
         except (IOError, SyntaxError):
-            raise serializers.ValidationError('Invalid image. Please uplaod a valid image')
+            message = translate(lang,"invalid_image_error")
+            raise serializers.ValidationError(message)
 
         if img.format not in ['JPEG', 'PNG', 'JPG']:
-            raise serializers.ValidationError('Only JPG, JPEG or PNG iamges are allowed')
+            message = translate(lang, "image_format_error")
+            raise serializers.ValidationError(message)
 
         self.context['image_type'] = img.format.lower() 
 
         value.seek(0)
 
         if value.size > 5 * 1024 * 1024 :
-            raise serializers.ValidationError('Image size should not exceed 5mb.')
+            message = translate(lang, "image_size_error")
+            raise serializers.ValidationError(message)
 
         value.seek(cur)
 

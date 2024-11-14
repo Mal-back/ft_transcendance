@@ -3,6 +3,7 @@ from django.forms import ValidationError
 from django.utils import choices
 from rest_framework import serializers
 from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
+from .trad import translate
 
 class MatchUserSerializer(serializers.ModelSerializer):
     class Meta :
@@ -15,7 +16,9 @@ class MatchSerializer(serializers.ModelSerializer):
         fields = ['player2', 'game_type',]
         def validate_player2(self, value):            
             if not MatchUser.objects.filter(username=value).exists():
-                raise ValidationError('Invited Player does not exists')
+                lang = request.headers.get('lang')
+                message = translate(lang, "invited_player_error")
+                raise ValidationError(message)
             return value
 
 class PendingInviteSerializer(serializers.ModelSerializer):
@@ -171,13 +174,17 @@ class TournamentSerializer(serializers.ModelSerializer):
         fields = ['invited_players', 'game_type']
 
     def validate_invited_players(self, value):
+        request = self.context.get('request')
+        lang = request.headers.get('lang')
         if len(value) != len(set(value)):
-            raise serializers.ValidationError('Duplicates are not allowed')
+            message = translate(lang, "invite_duplicates_error")
+            raise serializers.ValidationError(message)
 
         for user in value:
             q = MatchUser.objects.filter(username=user)
             if not q.exists():
-                raise serializers.ValidationError(f"Invalid username: {user}")
+                message = translate(lang, "invalid_username_error", [user])
+                raise serializers.ValidationError(message)
         
         return value
 
@@ -207,18 +214,22 @@ class TournamentAddPlayersSerializer(serializers.ModelSerializer):
         existing_invites = set(self.instance.invited_players.values_list('username', flat=True))
         confirmed = set(self.instance.confirmed_players.values_list('user__username', flat=True))
         existing_usernames = existing_invites | confirmed
+        lang = request.headers.get('lang')
 
         new_users = []
         for username in value:
             if username == owner.username:
-                raise serializers.ValidationError("You can't invite yourself.")
+                message = translate(lang, "invite_self_error")
+                raise serializers.ValidationError(message)
             try:
                 user = MatchUser.objects.get(username=username)
                 if username in existing_usernames:
-                    raise serializers.ValidationError(f'User {username} is already invited')
+                    message = translate(lang, "user", [username, "already_invited"])
+                    raise serializers.ValidationError(message)
                 new_users.append(user)
             except MatchUser.DoesNotExist:
-                raise serializers.ValidationError(f'User {username} does not exist')
+                message = translate(lang, "user", [username, "does_not_exist"])
+                raise serializers.ValidationError(message)
 
         return new_users
 
@@ -242,15 +253,18 @@ class TournamentRemovePlayersSerializer(serializers.ModelSerializer):
         confirmed = set(self.instance.confirmed_players.values_list('user__username', flat=True))
         existing_usernames = existing_invites | confirmed
         users_to_remove = []
-
+        request = self.context.get('request')
+        lang = request.headers.get('lang')
         for username in value:
             if username not in existing_usernames:
-                raise serializers.ValidationError(f'User {username} is not part of the tournament.')
+                message = translate(lang, "user",[username, "not_part_of_tournament"])
+                raise serializers.ValidationError(message)
             try:
                 user = MatchUser.objects.get(username=username)
                 users_to_remove.append(user)
             except MatchUser.DoesNotExist:
-                raise serializers.ValidationError(f'User {username} does not exist')
+                message = translate(lang, "user",[username, "does_not_exist"])
+                raise serializers.ValidationError(message)
 
         return users_to_remove
 

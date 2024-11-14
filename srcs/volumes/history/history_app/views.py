@@ -5,6 +5,7 @@ from rest_framework.views import APIView, Response
 from .models import Match, MatchUser, Tournament, TournamentUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
 from .permissions import IsAuth, IsMatchMaking
+from .trad import translate
 
 # Create your views here.
 
@@ -31,8 +32,9 @@ class MatchUserUpdate(generics.UpdateAPIView):
             Match.objects.filter(looser=old_username).update(looser=new_username)
             TournamentUser.objects.filter(username=old_username).update(username=new_username)
 
-
-        return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)
+        lang = request.headers.get('lang')
+        message = translate(lang, "update_success")
+        return Response({'OK':message}, status=status.HTTP_200_OK)
 
 class MatchUserDelete(generics.DestroyAPIView):
     queryset = MatchUser.objects.all()
