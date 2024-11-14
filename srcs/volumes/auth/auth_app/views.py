@@ -38,9 +38,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             session_key = f"otp_{user.username}"
             request.session[session_key] = {
                 'otp': otp,
-                'expiration': datetime.now() + timedelta(minutes=5)
+                'expiration': str(datetime.now() + timedelta(minutes=5))
             }
-            self.send_otp_email(user.email, otp)
+            try:
+                self.send_otp_email(user.email, otp)
+            except:
+                return Response({
+                "error": "Can not send mail",
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
             return Response({
                 'message': 'A 5 minutes one-time authentication code has been sent to your email. Please enter it to complete the login.'
             }, status=202)
@@ -52,10 +57,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         message = f"Your one-time authentication code is : {otp}"
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [email,]
-        try:
-            send_mail(subject, message, from_email, recipient_list)
-        except Exception as e:
-            print(f"Error sending email: {str(e)}")
+        send_mail(subject, message, from_email, recipient_list)
 
 
     def generate_otp(self):
