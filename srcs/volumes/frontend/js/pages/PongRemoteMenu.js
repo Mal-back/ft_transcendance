@@ -167,7 +167,7 @@ export default class extends AbstractView {
       }
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("PongRemoteMenu:handleMatchRemote:", error);
@@ -285,7 +285,7 @@ export default class extends AbstractView {
       if ((await this.joinMatchmakingQueue()) == false) return;
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else console.error("startNotificationPolling: ", error);
       return;
@@ -298,7 +298,7 @@ export default class extends AbstractView {
           clearInterval(this.matchMakingInterval);
           this.matchMakingInterval = null;
           if (error instanceof CustomError) {
-            showModal(error.title, error.message);
+            error.showModalCustom();
             navigateTo(error.redirect);
           } else console.error("handleShowMatchmakingModal: ", error);
         }
@@ -336,7 +336,7 @@ export default class extends AbstractView {
       await this.leaveMatchmakingQueue();
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("handleStopMatchmaking:", error);

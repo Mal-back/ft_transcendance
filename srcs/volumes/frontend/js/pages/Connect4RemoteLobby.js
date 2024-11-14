@@ -22,7 +22,6 @@ export default class extends AbstractView {
     this.createPageCss("../css/ranking-remote-hp.css");
     this.createPageCss("../css/tournament-remote.css");
     this.createPageCss("../css/remote-button-tournment.css");
-
   }
 
   async getHtml() {
@@ -111,24 +110,14 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      if (!response.ok) {
-        showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          await this.getErrorLogfromServer(response),
-        );
-        return;
-      }
-      data = await response.json();
-      if (data.count === 0) {
-        return "<p class='text-center'>No friends found.</p>";
+      if (await this.handleStatus(response)) {
+        data = await this.getDatafromRequest(response);
+        if (data.count === 0) {
+          return "<p class='text-center'>No friends found.</p>";
+        }
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-        console.error("error", error);
-        return;
-      }
+      this.handleCatch(error);
     }
 
     // Generate the friend list HTML
@@ -143,25 +132,19 @@ export default class extends AbstractView {
       try {
         const request = await this.makeRequest(nextPage, "GET", null);
         const response = await fetch(request);
-        if (response.ok) {
-          const pageData = await response.json();
+        if (await this.handleStatus(response)) {
+          const pageData = await this.getDatafromRequest(response);
           friendsArray = pageData.results;
           friendsHtml += friendsArray
             .map((friendJson) => this.createFriendElement(friendJson))
             .join("");
           nextPage = pageData.next;
         } else {
-          const log = await this.getErrorLogfromServer(response);
-          console.log(log);
-          showModal(this.lang.getTranslation(["modal", "error"]), log);
           break;
         }
       } catch (error) {
-        if (error instanceof CustomError) throw error;
-        else {
-          console.error("Error fetching next page:", error);
-          break;
-        }
+        this.handleCatch(error);
+        break;
       }
     }
 

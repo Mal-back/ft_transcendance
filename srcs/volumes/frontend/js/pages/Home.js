@@ -7,9 +7,8 @@ export default class extends AbstractView {
     super();
   }
 
-  async loadCss() {
-    this.createPageCss("../css/home.css");
-  }
+  async loadCss() {}
+
   async getHtml() {
     this.setTitle(this.lang.getTranslation(["title", "home"]));
     return `
@@ -26,20 +25,20 @@ export default class extends AbstractView {
   }
 
   async checkLogin() {
-    const username = sessionStorage.getItem("username_transcendence");
-    if (username) {
-      try {
-        if ((await this.fetchNotifications()) === undefined) {
+    try {
+      const username = sessionStorage.getItem("username_transcendence");
+      if (username) {
+        const error = await this.fetchNotifications();
+        if (error instanceof CustomError) {
           throw new CustomError(
             `${this.lang.getTranslation(["modal", "title", "error"])}`,
             `${this.lang.getTranslation(["modal", "message", "authError"])}`,
           );
         }
-      } catch (error) {
-        console.log("FAIL");
-        removeSessionStorage();
-        this.handleCatch(error);
       }
+    } catch (error) {
+      removeSessionStorage();
+      this.handleCatch(error);
     }
   }
 }

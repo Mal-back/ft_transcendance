@@ -31,7 +31,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     this.setTitle(
-      `${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["title", "remote"])}`,
+      `${this.lang.getTranslation(["title", "c4"])} ${this.lang.getTranslation(["title", "remote"])}`,
     );
     return `
       <div class="background removeElem">
@@ -155,7 +155,7 @@ export default class extends AbstractView {
         "POST",
         { player2: opponent.value, game_type: "c4" },
       );
-       const response = await fetch(request);
+      const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
         const modalInviteMatchId = document.getElementById("inviteC4Modal");
@@ -167,7 +167,7 @@ export default class extends AbstractView {
       }
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("PongRemoteMenu:handleMatchRemote:", error);
@@ -252,7 +252,7 @@ export default class extends AbstractView {
       const request = await this.makeRequest(
         `/api/matchmaking/matchmaking/join/`,
         "POST",
-        { game_type: "pong" },
+        { game_type: "c4" },
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
@@ -285,7 +285,7 @@ export default class extends AbstractView {
       if ((await this.joinMatchmakingQueue()) == false) return;
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else console.error("startNotificationPolling: ", error);
       return;
@@ -298,7 +298,7 @@ export default class extends AbstractView {
           clearInterval(this.matchMakingInterval);
           this.matchMakingInterval = null;
           if (error instanceof CustomError) {
-            showModal(error.title, error.message);
+            error.showModalCustom();
             navigateTo(error.redirect);
           } else console.error("handleShowMatchmakingModal: ", error);
         }
@@ -336,7 +336,7 @@ export default class extends AbstractView {
       await this.leaveMatchmakingQueue();
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       } else {
         console.error("handleStopMatchmaking:", error);
@@ -350,7 +350,7 @@ export default class extends AbstractView {
       "transcendence_game_id",
       ev.currentTarget.dataset.gameId,
     );
-    navigateTo("/pong?connection=remote");
+    navigateTo("/c4?connection=remote");
   }
 
   async addEventListeners() {
@@ -370,9 +370,7 @@ export default class extends AbstractView {
     const inviteButton = document.querySelector("#inviteButton");
     inviteButton.addEventListener("click", this.handleMatchRemote);
 
-        const matchmakingModalShow = document.querySelector(
-      "#C4MatchmakingButton",
-    );
+    const matchmakingModalShow = document.querySelector("#C4MatchmakingButton");
     if (matchmakingModalShow) {
       matchmakingModalShow.addEventListener(
         "click",
@@ -411,9 +409,7 @@ export default class extends AbstractView {
     if (inviteButton)
       inviteButton.removeEventListener("click", this.handleMatchRemote);
 
-    const matchmakingModalShow = document.querySelector(
-      "#C4MatchmakingButton",
-    );
+    const matchmakingModalShow = document.querySelector("#C4MatchmakingButton");
     if (matchmakingModalShow)
       matchmakingModalShow.removeEventListener(
         "click",
@@ -425,6 +421,5 @@ export default class extends AbstractView {
       joinButtonMatchFound.removeEventListener("click", this.redirectToGame);
 
     // document.removeEventListener("beforeunload", this.handleUnloadQueue);
-
   }
 }

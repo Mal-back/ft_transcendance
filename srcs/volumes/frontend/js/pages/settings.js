@@ -490,7 +490,7 @@ export default class extends AbstractView {
       await this.changeUsername();
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       }
     }
@@ -599,7 +599,7 @@ export default class extends AbstractView {
       );
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       }
     }
@@ -618,7 +618,7 @@ export default class extends AbstractView {
       await this.changeMail(oldMail.value, newMail.value, confirmMail.value);
     } catch (error) {
       if (error instanceof CustomError) {
-        showModal(error.title, error.message);
+        error.showModalCustom();
         navigateTo(error.redirect);
       }
     }
@@ -665,27 +665,16 @@ export default class extends AbstractView {
         true,
       );
       const response = await fetch(request);
-      if (response.ok) {
-        console.log("RESPONSE OK:", response);
-        const data = await response.json();
-        console.log("DATA: ", data);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
         showModal(
           this.lang.getTranslation(["modal", "title", "success"]),
           `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["user", "avatar"])} ${this.lang.getTranslation(["modal", "message", "changeSuccess"])} `,
         );
         navigateTo("/settings");
-      } else {
-        console.log("RESPONSE FAIL:", response);
-        const data = await this.getErrorLogfromServer(response);
-        showModal(this.lang.getTranslation(["modal", "error"]), data);
-        console.log("DATA: ", data);
       }
     } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        console.log("Error", error);
-        showModal("ERROR", error.message);
-      }
+      this.handleCatch(error);
     }
   }
 
@@ -731,26 +720,15 @@ export default class extends AbstractView {
         { profile_pic: `${chosenImageUrl}` },
       );
       const response = await fetch(request);
-      if (response.ok) {
+      if (await this.handleStatus(response)) {
         showModal(
           this.lang.getTranslation(["modal", "success"]),
           this.lang.getTranslation(["settings", "Background", "changeSuccess"]),
         );
         navigateTo("/settings");
-      } else {
-        console.log("Request", request);
-        console.log("Response:", response);
-        const dataError = this.getErrorLogfromServer(response);
-        console.log("dataError", dataError);
-        showModal(this.lang.getTranslation(["modal", "error"]), dataError);
       }
-    } catch (error) {
-      if (error instanceof CustomError) throw error;
-      else {
-        showModal(this.lang.getTranslation(["modal", "error"]), error.message);
-        console.error("ChangeProfilePic: ", error);
-      }
-    }
+    } catch (error) {}
+    this.handleCatch(error);
   }
 
   showFileUpload(ev) {

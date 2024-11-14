@@ -90,6 +90,7 @@ export default class extends AbstractView {
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
         const data = await this.getDatafromRequest(mainResponse);
+        console.log("matchHistory: data:", data);
 
         let matchesArray = data.results;
         const matchesHTMLArray = await Promise.all(
