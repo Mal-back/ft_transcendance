@@ -35,6 +35,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         print(user.email)
         if user.two_fa_enabled:
             otp = self.generate_otp()
+            print("OTP: " + otp)
             session_key = f"otp_{user.username}"
             request.session[session_key] = {
                 'otp': otp,
@@ -57,6 +58,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         message = f"Your one-time authentication code is : {otp}"
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [email,]
+        print("subject" + subject + "message" + message + "from_email" + from_email + "recipient_list" + recipient_list)
         send_mail(subject, message, from_email, recipient_list)
 
 
