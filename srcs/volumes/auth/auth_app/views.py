@@ -89,7 +89,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         # Check if 2FA is enabled
         if user.two_fa_enabled:
-
             # User has 2FA enabled, return a 202 status and prompt for OTP verification
             return Response({
                 'message': '2FA is enabled. Please enter the OTP from your Google Authenticator app.'
@@ -238,6 +237,17 @@ class UserUpdateView(generics.UpdateAPIView):
             
             # If the username is changed, make the update
             if old_username != new_username:
+                
+    ##########################            
+                if user.two_fa_enabled:
+                    try:
+                        device = TOTPDevice.objects.get(user=user)
+                        device.user = user  # Update the TOTP device's user field
+                        device.save()
+                    except TOTPDevice.DoesNotExist:
+                        return Response({"message": "2FA device not found for this user."}, status=status.HTTP_400_BAD_REQUEST)
+######################################
+                
                 req_urls = [
                     f'http://matchmaking:8443/api/matchmaking/{old_username}/update/',
                     f'http://users:8443/api/users/{old_username}/update/',
@@ -268,7 +278,7 @@ class UserUpdateView(generics.UpdateAPIView):
 
                 # Generate the OTP URI (to be used for QR code generation)
                 otp_uri = device.config_url
-
+                serializer.save()
                 return Response({
                     'Ok': 'Update successful',
                     'otp_uri': otp_uri,  # This URI can be used to generate the QR code in the frontend
@@ -282,7 +292,7 @@ class UserUpdateView(generics.UpdateAPIView):
                     device.delete()
                 except TOTPDevice.DoesNotExist:
                     pass  # If no device exists, simply continue
-
+                serializer.save()
                 return Response({
                     'message': '2FA disabled successfully.'
                 }, status=status.HTTP_200_OK)
