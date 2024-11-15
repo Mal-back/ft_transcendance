@@ -1,0 +1,22 @@
+{
+  "title": {
+    "home": "Menu",
+    "pong": "Pong",
+    "c4": "Conecta 4",
+    "profile": "Profile",
+    "friends": "Friends",
+    "settings": "Settings",
+    "login": "Login",
+    "logout": "Logout",
+    "local": "Local",
+    "lobby": "Lobby",
+    "matchmaking": "Matchmaking",
+    "remote": "Remote",
+    "tournament": "Tournament",
+    "ranking": "Ranking",
+    "notif": "Notifications",
+    "createUser": "Create User",
+    "createProfile": "Create new Profile",
+    "mode": "Mode"
+  }
+}
