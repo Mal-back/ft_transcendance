@@ -15,9 +15,13 @@
     -webkit-text-stroke: 1px black;
 }
 
+.b-trophy {
+    -webkit-text-stroke: 1px black;
+}
+
 .gold {
     color: gold;
-    background-color: white;
+    background-color: gold;
 }
 
 .silver {

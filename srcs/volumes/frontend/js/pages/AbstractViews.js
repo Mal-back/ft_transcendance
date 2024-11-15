@@ -165,6 +165,9 @@ export default class AbstractViews {
   }
 
   populatesInvites() {
+    console.log(
+      `POP: AbstractViews.length: ${AbstractViews.invitesArray.length}`,
+    );
     const inviteList = document.getElementById("inviteList");
     inviteList.innerHTML = "";
 
@@ -172,6 +175,7 @@ export default class AbstractViews {
       !AbstractViews.invitesArray.length &&
       !AbstractViews.invitesTournament.length
     ) {
+      console.log("INVITES is empty");
       inviteList.innerHTML = ``;
       return;
     }
@@ -480,17 +484,30 @@ export default class AbstractViews {
     }
   }
 
+  clearInvites() {
+    const onGoingGame = document.querySelector("#divOnGoingGame");
+    onGoingGame.style.display = "none";
+    AbstractViews.invitesArray = [];
+    AbstractViews.invitesTournament = [];
+    const inviteList = document.getElementById("inviteList");
+    inviteList.innerHTML = "";
+  }
+
   async fetchMainInvites() {
     try {
       const onGoingGame = document.querySelector("#divOnGoingGame");
       let boolGame = 0;
       const request = await this.makeRequest("api/matchmaking/invites", "GET");
       const response = await fetch(request);
+      if (response.status == 403) {
+        const data = await this.getDatafromRequest(response);
+        throw new CustomError("Error", this.JSONtoModal(data), "/");
+      }
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
         // console.log("Invites: ", data);
         if (response.status == 204) {
-          onGoingGame.style.display = "none";
+          this.clearInvites();
           return 0;
         }
         boolGame = await this.updateOnGoingMatch(data.on_going_match);
@@ -505,8 +522,9 @@ export default class AbstractViews {
         if (boolGame == 0) onGoingGame.style.display = "none";
         else onGoingGame.style.display = "block";
         return count;
+      } else {
+        onGoingGame.style.display = "none";
       }
-      onGoingGame.style.display = "none";
     } catch (error) {
       this.handleCatch(error);
     }
@@ -536,7 +554,7 @@ export default class AbstractViews {
           errorCount++;
           console.error(`startNotificationPolling: errorCount = ${errorCount}`);
         }
-        if (errorCount == 5) {
+        if (errorCount == 10) {
           clearInterval(AbstractViews.pollingInterval);
           AbstractViews.pollingInterval = null;
           removeSessionStorage();
@@ -676,8 +694,8 @@ export default class AbstractViews {
         value = data[key];
         console.log("VALUE:", value);
       }
-      if (response.status == 401 || response.status == 403 || response.status == 503) {
-        console.error("401/403 error:response:", response);
+      if (response.status == 401) {
+        console.error("401 error:response:", response);
         removeSessionStorage();
         throw new CustomError(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
