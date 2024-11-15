@@ -33,16 +33,12 @@ export default class extends AbstractView {
     try {
       html_loaded = await this.actualizeTournament();
       if (html_loaded == undefined) {
-        throw new CustomError(
-          "Tournament",
-          "No current Tournament",
-          "/"
-        )
+        throw new CustomError("Tournament", "No current Tournament", "/");
       }
     } catch (error) {
       this.handleCatch(error);
     }
-    const title = this.getTitle()
+    const title = this.getTitle();
     return `
     <div class="background" style="background-image:url('../img/ow.jpg');">
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -87,8 +83,10 @@ export default class extends AbstractView {
   }
 
   getTitle() {
-    const title = this.isFinished ? `Tournament is over!`:`${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>`
-    return title
+    const title = this.isFinished
+      ? `Tournament is over!`
+      : `${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>`;
+    return title;
   }
 
   async getRankDivPlayer(player, rank) {
@@ -108,10 +106,13 @@ export default class extends AbstractView {
         <div>
           <div class="list-group-item d-flex align-items-center justify-content-between mb-2 rounded w-100">
             <div class="d-flex align-items-center">
-              <div class="ranking-number ${color}">${rank} ${(this.isFinished && rank == 1) ? '<i class="bi bi-trophy"></i>' : ""}</div>
+              <div class="ranking-number ${color}">${rank} </div>
               <div class="Avatar status-online me-3" style="background-image: url(${playerAvatar.profilePic})"></div>
               <div class="flex-fill">
                 <h5 class="mb-0">${player.username}</h5>
+              </div>
+              <div class="${color} ms-3">
+                ${this.isFinished && rank <= 3 ? '<i class="bi bi-trophy"></i>' : ""}
               </div>
             </div>
             <div class="score">
@@ -172,13 +173,18 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
+      console.log("TOURNAMENT:", response);
+      if (response.status == 403) {
+        const data = await this.getDatafromRequest(response);
+        throw new CustomError("Error", this.JSONtoModal(data), "/");
+      }
       if (await this.handleStatus(response)) {
         let data = await this.getDatafromRequest(response);
         console.log("data:", data);
         if (data.final_ranking) {
           this.isFinished = true;
-          const players = await this.createPlayersDiv(data.final_ranking)
-          return {players, roundTitle: '', round: ''};
+          const players = await this.createPlayersDiv(data.final_ranking);
+          return { players, roundTitle: "", round: "" };
         }
         if (response.status == 204 || data.status != "in_progress")
           return undefined;
@@ -203,7 +209,7 @@ export default class extends AbstractView {
       if (this.isFinished) {
         const titleDiv = document.querySelector("#GameTitle");
         if (titleDiv) {
-          titleDiv.innerText = '';
+          titleDiv.innerText = "";
           titleDiv.innerText = this.getTitle();
         }
         this.clearTournamentInterval();
@@ -211,21 +217,21 @@ export default class extends AbstractView {
       const playersDiv = document.querySelector("#playersTournament");
       console.log("playersDiv:", playersDiv);
       console.log("Interval: ", this.refreshInterval);
-      if (playersDiv){
-      playersDiv.innerHTML = "";
-      playersDiv.innerHTML = data.players;
+      if (playersDiv) {
+        playersDiv.innerHTML = "";
+        playersDiv.innerHTML = data.players;
       }
 
       const roundTitle = document.querySelector("#roundTitle");
       if (roundTitle) {
-      roundTitle.innerText = "";
-      roundTitle.innerText = data.roundTitle;
+        roundTitle.innerText = "";
+        roundTitle.innerText = data.roundTitle;
       }
 
       const roundBody = document.querySelector("#roundBody");
       if (roundBody) {
-      roundBody.innerText = "";
-      roundBody.innerText = data.round;
+        roundBody.innerText = "";
+        roundBody.innerText = data.round;
       }
     } catch (error) {
       return error;
@@ -238,7 +244,7 @@ export default class extends AbstractView {
   }
 
   async setUpdateTournament() {
-    if (this.refreshInterval ) return;
+    if (this.refreshInterval) return;
     let countError = 0;
     this.refreshInterval = setInterval(async () => {
       const error = await this.refreshTournament();
@@ -256,7 +262,7 @@ export default class extends AbstractView {
           error.showModalCustom();
           navigateTo(error.redirect);
         } else {
-          navigateTo("/")
+          navigateTo("/");
           console.error("startNotificationPolling: ", error);
         }
       }

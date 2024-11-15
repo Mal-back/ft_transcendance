@@ -23,6 +23,10 @@ export default class extends AbstractView {
     this.handleStartTournament = this.handleStartTournament.bind(this);
     this.handleRemovePlayer = this.handleRemovePlayer.bind(this);
     this.clearLobbyInterval = this.clearLobbyInterval.bind(this);
+    this.handleLeavePlayer = this.handleLeavePlayer.bind(this);
+    this.handleCancelTournament = this.handleCancelTournament.bind(this);
+    this.handleFriendList = this.handleFriendList.bind(this);
+    this.handleInviteFriend = this.handleInviteFriend.bind(this);
   }
 
   async loadCss() {
@@ -84,8 +88,14 @@ export default class extends AbstractView {
         <div class="d-flex align-items-center justify-content-center mt-2">
           <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
             style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px; display: ${this.owner ? "block" : "none"};"
-            id="startTournamentBtn">Start
-            Tournament</button>
+            id="startTournamentBtn">
+              Start Tournament
+          </button>
+          <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button"
+            style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px; display: ${this.owner ? "block" : "none"};"
+            id="cancelTournamentBtn">
+              Cancel Tournament
+          </button>
         </div>
       </div>
       <div class="modal fade" id="friendListModal" tabindex="-1" aria-labelledby="friendListModalLabel" aria-hidden="true">
@@ -152,7 +162,7 @@ export default class extends AbstractView {
       const data = await this.getUserInfo(dataPlayer.username);
       const playerAvatar = `background-image: url('${data.profilePic}');`;
       let cancelButton = this.owner
-        ? `<button class="btn btn-sm btn-danger ms-auto cancellPlayer"><i class="bi bi-x-circle"></i>
+        ? `<button class="btn btn-sm btn-danger ms-auto cancelPlayer"><i class="bi bi-x-circle"></i>
       Cancel</button>`
         : ``;
       return `
@@ -173,7 +183,7 @@ export default class extends AbstractView {
     }
   }
 
-  async createPlayerDivConfirmed(dataPlayer) {
+  async createPlayerDivConfirmed(dataPlayer, leaveUrl, owner) {
     try {
       const data = await this.getUserInfo(dataPlayer.username);
       const playerAvatar = `background-image: url('${data.profilePic}');`;
@@ -183,8 +193,8 @@ export default class extends AbstractView {
       Remove</button>`
         : ``;
       if (this.owner == false && username == dataPlayer.username)
-        removeButton = `<button class="btn btn-sm btn-danger ms-auto leaveButtonPlayer"><i class="bi bi-x-circle"></i>
-      Cancel</button>`;
+        removeButton = `<button class="btn btn-sm btn-danger ms-auto leavePlayer" data-leaveUrl="${leaveUrl}" data-owner="${owner}"><i class="bi bi-x-circle"></i>
+      Leave</button>`;
       return `
 <div>
   <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
@@ -233,18 +243,25 @@ export default class extends AbstractView {
     }
   }
 
-  async fillConfirmedPlayers(confirmed_players_profiles, owner) {
+  async fillConfirmedPlayers(confirmed_players_profiles, leaveUrl, owner) {
     console.log(
       "fillConfirmedPlayers:confirmed_players_profiles",
       confirmed_players_profiles,
     );
     if (!confirmed_players_profiles || confirmed_players_profiles.length === 0)
       return;
+    const split = owner.split("/");
+    const ownerUsername = split[3] || null;
+
     try {
       const playerDivs = await Promise.all(
         confirmed_players_profiles.map(async (player) => {
           if (owner != player.profile)
-            return await this.createPlayerDivConfirmed(player);
+            return await this.createPlayerDivConfirmed(
+              player,
+              leaveUrl,
+              ownerUsername,
+            );
         }),
       );
       const allPlayerDivsHTML = `${playerDivs.join("")}`;
@@ -291,6 +308,7 @@ export default class extends AbstractView {
       const owner = await this.fillOwnerTournament(data);
       const confirmed = await this.fillConfirmedPlayers(
         data.confirmed_players_profiles,
+        data.leave_tournament,
         data.owner_profile,
       );
       const pending = await this.fillPendingPlayers(
@@ -316,6 +334,10 @@ export default class extends AbstractView {
       console.log("checkTournament: response:", response);
       if (response.status == 204) {
         return undefined;
+      }
+      if (response.status == 403) {
+        const data = await this.getDatafromRequest(response);
+        throw new CustomError("Error", this.JSONtoModal(data), "/");
       }
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
@@ -364,12 +386,17 @@ export default class extends AbstractView {
 
       const response = await fetch(request);
       console.log("createTournament:response:", response);
-      if (await this.handleStatus(response)) {
-        const data = await this.getDatafromRequest(response);
+      const data = await this.getDatafromRequest(response);
+      if (response.ok) {
         console.log("createTournament:data:", data);
         return true;
+      } else {
+        throw new CustomError(
+          "Error",
+          this.JSONtoModal(data),
+          "/pong-remote-menu",
+        );
       }
-      return false;
     } catch (error) {
       this.handleCatch(error);
     }
@@ -395,13 +422,11 @@ export default class extends AbstractView {
       this.handleCatch(error);
     }
 
-    // Generate the friend list HTML
     let friendsArray = data.results;
     const friendsHtml = friendsArray
       .map((friendJson) => this.createFriendElement(friendJson))
       .join("");
 
-    // Paginate if there are additional pages of friends
     let nextPage = data.next;
     while (nextPage) {
       try {
@@ -432,8 +457,7 @@ export default class extends AbstractView {
       : "status-offline";
     const friendAvatarUrl = friendJson.profilePic
       ? `url('${friendJson.profilePic}')`
-      : "url('/path/to/default-avatar.jpg')"; // fallback image
-
+      : "url('/path/to/default-avatar.jpg')";
     return `
       <div class="list-group-item d-flex align-items-center mb-3 rounded">
         <div class="rounded-circle Avatar ${friendStatus} me-3" 
@@ -443,7 +467,7 @@ export default class extends AbstractView {
         <div class="flex-fill">
           <h5 class="mb-0">${friendJson.username}</h5>
         </div>
-        <button class="btn btn-sm btn-primary ms-auto invitefriend">
+        <button class="btn btn-sm btn-primary ms-auto inviteFriend" data-username=${friendJson.username}>
           <i class="bi bi-person-plus"></i> ${this.lang.getTranslation(["Friends", "inviteButton"])}
         </button>
       </div>
@@ -495,12 +519,10 @@ export default class extends AbstractView {
       const error = await this.intervalFunction();
       if (!error) countError = 0;
       else {
-        if (
-          error instanceof CustomError &&
-          error.modalTitle == "redirect" &&
-          error.message == "redirect to tournament"
-        ) {
+        console.error("Interval return error:", error);
+        if (error instanceof CustomError && error.modalTitle != "Error") {
           this.clearLobbyInterval();
+          error.showModalCustom();
           navigateTo(error.redirect);
           return;
         }
@@ -638,6 +660,54 @@ export default class extends AbstractView {
     }
   }
 
+  async handleLeavePlayer(ev) {
+    ev.preventDefault();
+    try {
+      const request = await this.makeRequest(
+        ev.target.dataset.leaveurl,
+        "PATCH",
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        showModal(
+          "Tournament",
+          `You left ${ev.target.dataset.owner}'s tournament`,
+        );
+        navigateTo("/");
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleLeavePlayer:", error);
+      }
+    }
+  }
+
+  async handleCancelTournament(ev) {
+    ev.preventDefault();
+    try {
+      const request = await this.makeRequest(
+        "/api/matchmaking/tournament/delete/",
+        "DELETE",
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        this.clearLobbyInterval();
+        showModal("Tournament", "Tournament canceled");
+        navigateTo("/pong-remote-menu");
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleCancelTournament", error);
+      }
+    }
+  }
+
   clearDynamicEventListeners() {
     const allRemoveButton = document.querySelectorAll(".removePlayer");
     allRemoveButton.forEach((button) => {
@@ -649,7 +719,7 @@ export default class extends AbstractView {
       button.removeEventListener("click", this.handleRemovePlayer);
     });
 
-    const leave = document.querySelector(".leaveButtonPlayer");
+    const leave = document.querySelector(".leavePlayer");
     if (leave) {
       leave.removeEventListener("click", this.handleLeavePlayer);
     }
@@ -662,13 +732,13 @@ export default class extends AbstractView {
         button.addEventListener("click", this.handleRemovePlayer);
       });
 
-    const allCancelButton = document.querySelectorAll(".removePlayer");
+    const allCancelButton = document.querySelectorAll(".cancelPlayer");
     if (allCancelButton)
       allCancelButton.forEach((button) => {
         button.addEventListener("click", this.handleRemovePlayer);
       });
 
-    const leave = document.querySelector(".leaveButtonPlayer");
+    const leave = document.querySelector(".leavePlayer");
     if (leave) {
       leave.addEventListener("click", this.handleLeavePlayer);
     }
@@ -677,6 +747,45 @@ export default class extends AbstractView {
   clearLobbyInterval(ev) {
     clearInterval(this.tournamentInterval);
     this.tournamentInterval = null;
+  }
+
+  async handleInviteFriend(ev) {
+    ev.preventDefault();
+    try {
+      const username = ev.target.dataset.username;
+      await this.invitePlayerTournament(username);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleInviteFriend", error);
+      }
+    }
+  }
+
+  async handleFriendList(ev) {
+    const inviteFriendButtonRemove = document.querySelectorAll(".inviteFriend");
+    if (inviteFriendButtonRemove)
+      inviteFriendButtonRemove.forEach((button) => {
+        button.removeEventListener("click", this.handleInviteFriend);
+      });
+    const friendListContent = await this.getFriendList();
+    document.getElementById("friendListModalContent").innerHTML =
+      friendListContent;
+    let friendListModal = bootstrap.Modal.getInstance(
+      document.getElementById("friendListModal"),
+    );
+    if (!friendListModal)
+      friendListModal = new bootstrap.Modal(
+        document.getElementById("friendListModal"),
+      );
+    friendListModal.show();
+    const inviteFriendButton = document.querySelectorAll(".inviteFriend");
+    if (inviteFriendButton)
+      inviteFriendButton.forEach((button) => {
+        button.addEventListener("click", this.handleInviteFriend);
+      });
   }
 
   async addEventListeners() {
@@ -699,18 +808,8 @@ export default class extends AbstractView {
     const showFriends = document.querySelector("#friend-list");
     showFriends.addEventListener("click", this.handleShowFriendsModal);
 
-    document
-      .getElementById("friend-list")
-      .addEventListener("click", async () => {
-        const friendListContent = await this.getFriendList();
-        document.getElementById("friendListModalContent").innerHTML =
-          friendListContent;
-        // Show the modal after setting the content
-        const friendListModal = new bootstrap.Modal(
-          document.getElementById("friendListModal"),
-        );
-        friendListModal.show();
-      });
+    const friendList = document.getElementById("friend-list");
+    if (friendList) friendList.addEventListener("click", this.handleFriendList);
 
     const startTournamentBtn = document.querySelector("#startTournamentBtn");
     startTournamentBtn.addEventListener("click", this.handleStartTournament);
@@ -720,6 +819,13 @@ export default class extends AbstractView {
       await this.setIntervalTournament();
     } catch (error) {
       this.handleCatch(error);
+    }
+    const cancelTournamentBtn = document.querySelector("#cancelTournamentBtn");
+    if (cancelTournamentBtn) {
+      cancelTournamentBtn.addEventListener(
+        "click",
+        this.handleCancelTournament,
+      );
     }
 
     document.addEventListener("beforeunload", this.clearLobbyInterval);
@@ -752,25 +858,16 @@ export default class extends AbstractView {
     if (showFriends)
       showFriends.removeEventListener("click", this.handleShowFriendsModal);
 
-    const friendList = document.getElementById("friend-list");
-    if (friendList)
-      friendList.removeEventListener("click", async () => {
-        const friendListContent = await this.getFriendList();
-        document.getElementById("friendListModalContent").innerHTML =
-          friendListContent;
-        // Show the modal after setting the content
-        const friendListModal = new bootstrap.Modal(
-          document.getElementById("friendListModal"),
-        );
-        friendListModal.show();
-      });
-
     const startTournamentBtn = document.querySelector("#startTournamentBtn");
     if (startTournamentBtn)
       startTournamentBtn.removeEventListener(
         "click",
         this.handleStartTournament,
       );
+
+    const friendList = document.getElementById("friend-list");
+    if (friendList)
+      friendList.removeEventListener("click", this.handleFriendList);
 
     this.clearDynamicEventListeners();
     this.clearLobbyInterval();
