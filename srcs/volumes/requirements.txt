@@ -42,3 +42,6 @@ txaio==23.1.1
 typing_extensions==4.12.2
 urllib3==2.2.2
 zope.interface==7.1.0
+sendgrid==6.9.1
+pyotp==2.7.0
+django-otp==1.2.3

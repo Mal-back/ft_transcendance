@@ -302,8 +302,8 @@ After a player sent "start" to the game, the other player has a limited time to 
 			"game" : "pong"
 			"winner" : username,
 			"looser" : username,
-			"score_winner" : value,
-			"score_looser" : value,
+			"winner_points" : value,
+			"looser_points" : value,
 		}
 
 	Where : 

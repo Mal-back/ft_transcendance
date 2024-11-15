@@ -304,8 +304,6 @@ class PongRemoteEngine(threading.Thread):
           "winner_points" : winner_points,
           "looser_points" : looser_points,
         }
-        self.send_result(data)
-        self.clean_game()
         try:
             async_to_sync(self.channel_layer.group_send)(self.game_id, {
                 "type" : "send.end.state",
@@ -313,6 +311,8 @@ class PongRemoteEngine(threading.Thread):
             })
         except Exception:
             print("PongRemoteEngine : Can not send end state to group channel " + self.game_id)
+        self.send_result(data)
+        self.clean_game()
         # try:
         #     async_to_sync(self.channel_layer.send)("pong_remote_engine", {
         #         "type" : "send.result",

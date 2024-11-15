@@ -15,7 +15,7 @@ def getToken() :
             'username' : username,
             'password' : password
             }
-    response = requests.post('http://localhost:8080/api/auth/login', payload)
+    response = requests.post('http://localhost:8080/api/auth/login/', payload)
     if response.status_code == 200:
         print("Login Successefull")
         print(response.json())

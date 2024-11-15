@@ -188,15 +188,17 @@ export default class Pong {
     let score = "";
     let gif = "../img/ts/taylor-swift-cookie.gif";
     const username = sessionStorage.getItem("username_transcendence");
-    if (this.mode == "local") {
-      winner =
-        data.winner == "player_1"
-          ? this.player1.username
-          : this.player2.username;
-      loser =
-        data.looser == "player_1"
-          ? this.player1.username
-          : this.player2.username;
+    if (this.connection == "local") {
+        console.log("PONGLOCAL: player1:", this.player1.username);
+        console.log("PONGLOCAL: player2:", this.player2.username);
+      if (data.winner == "player_1") {
+        winner = this.player1.username;
+        loser = this.player2.username;
+      }
+      else {
+        winner = this.player2.username;
+        loser = this.player1.username;
+      }
       score =
         data.winner == "player_1"
           ? `${data.score_1} - ${data.score_2}`

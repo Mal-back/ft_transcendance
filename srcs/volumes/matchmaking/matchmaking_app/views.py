@@ -11,7 +11,7 @@ from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCrede
 from .single_match_to_history import end_single_match
 from .matchmaking_queue import get_opponent, YouHaveNoOpps
 from .match_utils import check_user_restrictions
-from .tournament import schedule_rounds, handle_finished_matches, TournamentInternalError
+from .tournament import schedule_rounds, handle_finished_matches, TournamentInternalError, debug_export_result
 
 # Create your views here.
 
@@ -561,9 +561,9 @@ class DebugCreateFinishedTournament(APIView):
         vl = MatchUser.objects.get(username='vl')
         elle = MatchUser.objects.get(username='elle')
         tournament = Tournament.objects.create(owner=val, game_type='pong', status='in_progress')
-        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=0, matches_lost=0)
-        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=0, matches_lost=0)
-        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=0, matches_lost=0)
-        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=0, matches_lost=0)
-        schedule_rounds(tournament)
+        TournamentUser.objects.create(user=val, tournament=tournament, matches_won=3, matches_lost=0)
+        TournamentUser.objects.create(user=lui, tournament=tournament, matches_won=3, matches_lost=1)
+        TournamentUser.objects.create(user=vl, tournament=tournament, matches_won=1, matches_lost=2)
+        TournamentUser.objects.create(user=elle, tournament=tournament, matches_won=3, matches_lost=3)
+        debug_export_result(tournament)
         return Response({'ok':'kr'}, status=status.HTTP_200_OK)

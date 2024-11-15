@@ -18,14 +18,19 @@ log = logging.getLogger(__name__)
 class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = "None"
+		self.game_ended = False
 		await self.accept()		
 		log.info("PongRemotePlayerConsumer : Remote player connected")
   
   
 	async def disconnect(self, code):
 		log.info("PongRemotePlayerConsumer : Remote Player disconnected")
-		if self.player != "None":
+		if self.player != "None" and self.game_ended != True:
 			await self.leave_game()
+		try:
+			await self.channel_layer.group_discard(self.group_name, self.channel_name)
+		except:
+			log.info("PongRemotePlayerConsumer : Can not discard channel " + str(self.channel_name) + " from group " + str(self.group_name))
    
    
 	async def init_game(self):
@@ -218,9 +223,8 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 			elif self.player == "player_2":
 				game_instance.player_2_connected = False
 			await game_instance.asave()
-			await self.channel_layer.group_discard(self.group_name, self.channel_name)
 		except Exception:
-			log.info("PongRemotePlayerConsumer : Problem leaving game " + self.group_name + " for player " + self.username)
+			log.info("PongRemotePlayerConsumer : Player can not leave " + self.group_name + " for player " + self.username)
 		await self.pause({"action" : "stop"})
  
  

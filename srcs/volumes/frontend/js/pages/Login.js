@@ -16,6 +16,7 @@ export default class extends AbstractView {
     this.handleInputPassword = this.handleInputPassword.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleCreateUserRedir = this.handleCreateUserRedir.bind(this);
+	this.handleConfirmTwoFA = this.handleConfirmTwoFA.bind(this);
   }
 
   async getHtml() {
@@ -63,7 +64,7 @@ export default class extends AbstractView {
                       <div class="modal-body">
                           <div class="mb-3">
                             <label for="activationCodeId" class="form-label">Activation Code:</label>
-                            <input type="email" class="form-control" id="activationCodeInput name="Activation Code" value="" />
+                            <input type="email" class="form-control" id="activationCodeInput" name="Activation Code" value="" />
                           </div>
                       </div>
                       <div class="modal-footer">
