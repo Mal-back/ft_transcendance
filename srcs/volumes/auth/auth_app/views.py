@@ -10,6 +10,8 @@ from .requests_manager import send_delete_requests, send_create_requests, send_u
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 from django.contrib.auth import authenticate
+from django.core.mail import send_mail
+from django.http import JsonResponse
 # Create your views here.
 
 #######################
@@ -323,3 +325,8 @@ class MicroServiceError(APIException):
     status_code = 500
     default_detail = 'An error happend between microservice interaction. Please try again later'
     default_code = 'MicroService error'
+
+class DumpPersonnalData(APIView):
+    def get(self, request, *args, **kwargs):
+        ...
+
