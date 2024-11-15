@@ -1,4 +1,22 @@
-MOI : deleete user, avatar not working: 404/ this.getErrorlog a update/ update Interval/ check leaveButton tournois/
-VAL: les tournois(match update casse) 403 au lieu de 401 sur matchmaking/invite/
-DJANGO BRUT TRAD:
-Random deco a check;
+A faire cote Front:
+ - boutton telechargement data RGPD
+ - RGPD boutton explications
+ - RGPD pop up creation compte
+ 
+ - Check traductions (surtout tournoi)
+ - Tournoi lobby + tournament pour C4
+ - invite Friend tournoi ?
+ - invite friend challenge game ? (si vous etes motive dans la page friends)
+ - page Ranking
+ - virer les log de debug si tout est ok
+ - virer mail si back remove mail
+ - rajouter esp.json et options espagnol dans headBar
+ - modal current round
+
+- merge toutes les branches (front  xav : 2fa-front + tournament_local_front)
+ -TOUT TESTER (dans plusieurs langues)
+
+ cote Back:
+ - bug tournoi delete pour les confirmed player
+ - mail ?
+ - RGPD dl
