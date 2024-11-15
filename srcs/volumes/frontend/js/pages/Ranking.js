@@ -10,8 +10,7 @@ import {
 export default class extends AbstractView {
   constructor() {
     super();
-    this.users = [];
-    this.rank = 1;
+    this.rank = 0;
     this.nextPage = undefined;
     this.previousPage = undefined;
     this.handleNextPage = this.handleNextPage.bind(this);
@@ -30,7 +29,14 @@ export default class extends AbstractView {
   async getHtml() {
     try {
       this.setTitle(`${this.lang.getTranslation(["title", "ranking"])}`);
-      this.users = await this.getAllUsers();
+      const users = await this.getAllUsers();
+      console.log("START =>", users)
+      const html = this.getHTMLallUsers(users);
+      const request = await this.makeRequest(users[1].pong_matches);
+      const response = await fetch(request)
+      const data = await this.getDatafromRequest(response);
+      console.log("here", data)
+      console.log("ENDHTML =>", html);
       const modalsBattleHistory = await this.getAllHistoryModals();
       // const ranking = await this.getRanking(data);
       const html_content = `
@@ -69,21 +75,7 @@ export default class extends AbstractView {
         </div>
     </div>
     <div id="rankingUsers" class="removeElem tournament-creation list-group ranking" style="max-height: 40vh;">
-        <--{this.getRankingUsers()-->
-        <div class="removeElem list-group-item d-flex align-items-center justify-content-between rounded w-100">
-            <div class="removeElem d-flex align-items-center">
-                <div class="removeElem ranking-number gold">1</div>
-                <div class="removeElem Avatar status-online me-3"></div>
-                <div class="removeElem flex-fill">
-                    <h5 class="removeElem mb-0">USERNAMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</h5>
-                </div>
-            </div>
-            <div class="removeElem score">
-                <span>Played : 2</span>
-                <br>
-                <span>WR: 50%</span>
-            </div>
-        </div>
+        ${html}
     </div>
 
     <br>
@@ -109,7 +101,7 @@ export default class extends AbstractView {
     }
   }
 
-  getHTMLforUser(rank, username, avatar, gamesPlayed, winrate, status) {
+  getHTMLforUser(rank, username, avatar, gamesPlayed, status) {
     let color = "black"
     if (rank == 1) color = "gold"
     else if (rank == 2) color = "silver"
@@ -118,30 +110,19 @@ export default class extends AbstractView {
     <div class="removeElem list-group-item d-flex align-items-center justify-content-between rounded w-100">
         <div class="removeElem d-flex align-items-center">
             <div class="removeElem ranking-number ${color}">${rank}</div>
-            <div class="removeElem Avatar ${status} me-3" style="${avatar}"></div>
+            <div class="removeElem Avatar ${status} me-3" style="background-image: url(${avatar});"></div>
             <div class="removeElem flex-fill">
-                <h5 class="removeElem mb-0">${username}</h5>
+                <h5 class="removeElem username mb-0">${username}</h5>
             </div>
         </div>
         <div class="removeElem score">
             <span>Played : ${gamesPlayed}</span>
-            <br>
-            <span>WR: ${winrate}%</span>
         </div>
     </div>
     `
   }
 
-  async getRankingUsers() {
-    let ranking = ""
-    for (let index = 0; index < this.users.length(); index++) {
-      const user = this.users[index]
-      ranking += this.getHTMLforUser(user.rank, user.username, user.avatar, user.gamesPlayed, user.winrate, user.status);
-    }
-    return ranking
-  }
-
-  async toggleButtons() {
+  toggleButtons() {
     const prev = document.getElementById("disablePrev");
     if (!this.previousPage) {
       prev.classList.add("disabled");
@@ -159,11 +140,14 @@ export default class extends AbstractView {
   }
 
   async getAllUserData(players) {
+    let data = [];
     for (let rank = 0; rank < players.length; rank++) {
       const username = players[rank].username
       const user_info = await this.getUserInfo(username)
-      console.log(user_info)
+      data.push(user_info)
     }
+    console.log("All users =>", data);
+    return data
   }
   async getNextUsers() {
 
@@ -184,7 +168,7 @@ export default class extends AbstractView {
       console.log("players", playersArray);
       this.previousPage = data.previous;
       this.nextPage = data.next;
-      await this.getAllUserData(playersArray)
+      return await this.getAllUserData(playersArray)
     } catch (error) {
       this.handleCatch(error);
     }
@@ -205,7 +189,7 @@ export default class extends AbstractView {
       console.log("players", playersArray);
       this.previousPage = data.previous;
       this.nextPage = data.next;
-      await this.getAllUserData(playersArray)
+      return await this.getAllUserData(playersArray)
     } catch (error) {
       this.handleCatch(error);
     }
@@ -213,22 +197,68 @@ export default class extends AbstractView {
 
   async getAllHistoryModals() { }
 
+  getHTMLallUsers(data) {
+    let usersHTML = "";
+    for (let index = 0; index < data.length; index++) {
+      const userRank = index + 1 + (this.rank * 10);
+      const username = data[index].username;
+      const avatar = data[index].profilePic;
+      const total = data[index].total_single_games_c4 + data[index].total_single_games_pong + data[index].total_tournaments_c4 + data[index].total_tournaments_pong;
+      const status = data[index].is_online ? "status-online" : "status-offline";
+      if (username == "user1")
+        console.log(status, data.is_online)
+      const html = this.getHTMLforUser(userRank, username, avatar, total, status)
+      usersHTML += html;
+    }
+    return usersHTML;
+  }
+
   async handleNextPage() {
     console.log("next!")
     if (this.nextPage) {
-      await this.getUsers(this.nextPage)
+      try {
+        this.rank += 1;
+        const data = await this.getUsers(this.nextPage)
+        const html = this.getHTMLallUsers(data);
+        console.log("ENDHTML =>", html);
+        let ranking = document.getElementById("rankingUsers");
+        ranking.innerHTML = "";
+        ranking.innerHTML = html;
+      } catch (error) {
+        if (error instanceof CustomError) {
+          error.showModalCustom();
+          navigateTo(error.redirect);
+        } else {
+          console.error("handleNextPage", error);
+        }
+      }
     }
     else return
-    await this.toggleButtons()
+    this.toggleButtons()
   }
 
   async handlePreviousPage() {
     console.log("previous!")
     if (this.previousPage) {
-      await this.getUsers(this.previousPage)
+      try {
+        this.rank -= 1;
+        const data = await this.getUsers(this.previousPage);
+        const html = this.getHTMLallUsers(data);
+        console.log("ENDHTML =>", html);
+        let ranking = document.getElementById("rankingUsers");
+        ranking.innerHTML = "";
+        ranking.innerHTML = html;
+      } catch (error) {
+        if (error instanceof CustomError) {
+          error.showModalCustom();
+          navigateTo(error.redirect);
+        } else {
+          console.error("handlePrevousPage", error);
+        }
+      }
     }
     else return
-    await this.toggleButtons()
+    this.toggleButtons()
   }
 
   async addEventListeners() {
