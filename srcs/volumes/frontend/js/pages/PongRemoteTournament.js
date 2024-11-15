@@ -111,7 +111,7 @@ export default class extends AbstractView {
               <div class="ranking-number ${color}">${rank} ${(this.isFinished && rank == 1) ? '<i class="bi bi-trophy"></i>' : ""}</div>
               <div class="Avatar status-online me-3" style="background-image: url(${playerAvatar.profilePic})"></div>
               <div class="flex-fill">
-                <h5 class="mb-0">${player.username} ${(this.isFinished && rank == 1) ? `Winner `: '' }</h5>
+                <h5 class="mb-0">${player.username}</h5>
               </div>
             </div>
             <div class="score">
