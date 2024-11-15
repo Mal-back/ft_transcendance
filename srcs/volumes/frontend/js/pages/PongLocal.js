@@ -78,6 +78,9 @@ export default class extends AbstractView {
       if (!connection) {
         connection = "local";
       }
+      if (!mode) {
+        mode ='simple'
+      }
       let webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-local/join/`;
       if (connection != "local") {
         webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-remote/join/`;
