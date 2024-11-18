@@ -505,7 +505,7 @@ export default class AbstractViews {
       }
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        console.log("Invites: ", data);
+        // console.log("Invites: ", data);
         if (response.status == 204) {
           this.clearInvites();
           return 0;
@@ -548,7 +548,7 @@ export default class AbstractViews {
     if (!AbstractViews.pollingInterval) {
       AbstractViews.pollingInterval = setInterval(async () => {
         const error = await this.fetchNotifications();
-        console.log("startNotificationPolling: error: ", error);
+        // console.log("startNotificationPolling: error: ", error);
         if (!error) errorCount = 0;
         if (error instanceof CustomError) {
           errorCount++;
@@ -664,9 +664,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
-  async addEventListeners() {}
+  async addEventListeners() { }
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();

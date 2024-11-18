@@ -16,7 +16,7 @@ export default class extends AbstractView {
     this.handleInputPassword = this.handleInputPassword.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleCreateUserRedir = this.handleCreateUserRedir.bind(this);
-	this.handleConfirmTwoFA = this.handleConfirmTwoFA.bind(this);
+    this.handleConfirmTwoFA = this.handleConfirmTwoFA.bind(this);
   }
 
   async getHtml() {

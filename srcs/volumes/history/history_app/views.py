@@ -1,10 +1,12 @@
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.views import APIView, Response
 from .models import Match, MatchUser, Tournament, TournamentUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
 from .permissions import IsAuth, IsMatchMaking
+from .trad import translate
 
 # Create your views here.
 
@@ -31,8 +33,9 @@ class MatchUserUpdate(generics.UpdateAPIView):
             Match.objects.filter(looser=old_username).update(looser=new_username)
             TournamentUser.objects.filter(username=old_username).update(username=new_username)
 
-
-        return Response({'OK':'Update Successefull'}, status=status.HTTP_200_OK)
+        lang = request.headers.get('lang')
+        message = translate(lang, "update_success")
+        return Response({'OK':message}, status=status.HTTP_200_OK)
 
 class MatchUserDelete(generics.DestroyAPIView):
     queryset = MatchUser.objects.all()
@@ -67,6 +70,23 @@ class TournamentList(generics.ListAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
 
+    serializer_class = MatchGetSerializer 
+
+    def get_queryset(self):
+        queryset = Tournament.objects.all() 
+
+        user = self.request.query_params.get('username')
+        game_type = self.request.query_params.get('game_type')
+
+        if user and game_type:
+            queryset = queryset.filter(Q(final_ranking__username__username=user) & Q(game_type=game_type)).distinct()
+        elif user:
+            queryset = queryset.filter(final_ranking__username__username=user).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
+        
+        return queryset
+
 class TournamentRetrieve(generics.RetrieveAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
@@ -82,6 +102,12 @@ class MatchList(generics.ListAPIView):
         game_type = self.request.query_params.get('game_type')
 
         if user and game_type:
-            queryset = queryset.filter(winner__username=user, game_type=game_type) | queryset.filter(looser__username=user, game_type=game_type)
+            queryset = queryset.filter(
+                (Q(winner__username=user) | Q(looser__username=user)) & Q(game_type=game_type)
+            ).distinct()
+        elif user:
+            queryset = queryset.filter(Q(winner__username=user) | Q(looser__username=user)).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
         
         return queryset

@@ -6,6 +6,7 @@ from .serializers import UserAvatarSerializer
 import os
 from django.conf import settings
 from ms_client.ms_client import MicroServiceClient, RequestsFailed
+from .trad import translate
 
 # Create your views here
 
@@ -16,14 +17,16 @@ class AvatarView(APIView):
         return Response(links, status=200)
 
     def post(self, request, *args, **kwargs):
-        serializer = UserAvatarSerializer(data=request.data)
+        serializer = UserAvatarSerializer(data=request.data, context={'request': request})
+        lang = request.headers.get('lang')
         if serializer.is_valid():
             data = serializer.save()
             reset_avatar(request.user_username)
             try :
                 save_image(request.user_username, data)
             except Exception as e:
-                return Response({'error':'Could not save the new avatar. Please try again later'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+                message = translate(lang, "new_avatar_update_error")
+                return Response({'error':message}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
             try :
                 img_type = data['image_type']
                 sender = MicroServiceClient()
@@ -33,9 +36,11 @@ class AvatarView(APIView):
                         expected_status=[200],
                         body={'avatar_path':f'/media/users_avatars/{request.user_username}.{img_type}'},
                         )
-                return Response({'status':'new avatar successefully updated'}, status=201)
+                message = translate(lang, "new_avatar_update_success")
+                return Response({'status':message}, status=201)
             except RequestsFailed:
-                return Response({'error': 'Could not upload new avatar. please try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                message = translate(lang, "image_upload_error")
+                return Response({'error': message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=400)
 
     def patch(self, request, *args, **kwargs):
@@ -46,8 +51,10 @@ class AvatarView(APIView):
         return Response(status=status.HTTP_304_NOT_MODIFIED)
 
     def delete(self, request, *args, **kwargs):
+        lang = request.headers.get('lang')
         if reset_avatar(request.data.get('username')) == True:
-            return Response({'OK' : 'Successefully reset the avatar'}, status=status.HTTP_204_NO_CONTENT)
+            message = translate(lang, "reset_avatar_success")
+            return Response({'OK' : message}, status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_304_NOT_MODIFIED)
 
 def save_image(username:str, validated_data) -> bool:

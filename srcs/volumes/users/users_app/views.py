@@ -10,6 +10,7 @@ from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
 from .permissions import IsAuth, IsOwner, IsAvatarManager, IsMatchmaking
 from .authentification import CustomAuthentication
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
+from .trad import translate
 
 # Create your views here.
 
@@ -74,10 +75,12 @@ class PublicUserIncrement(APIView):
     lookup_field = 'username'
     permission_classes = [IsMatchmaking]
     def patch(self, request, username, lookupfield):
+        lang = request.headers.get('lang')
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "user_does_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
 
         allowedFields = {
                 'single_games_pong_won' : 'single_games_pong_won',
@@ -90,11 +93,13 @@ class PublicUserIncrement(APIView):
                 'tournaments_c4_lost' : 'tournaments_c4_lost',
                 }
         if lookupfield not in allowedFields:
-            return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "field_not_found_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
 
         current_value = getattr(user, lookupfield, None)
         if current_value is None:
-            return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "field_not_found_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
 
         setattr(user, lookupfield, current_value + 1)
         user.save()
@@ -105,25 +110,30 @@ class PublicUserAddFriend(APIView):
     lookup_field = 'username'
     permission_classes = [IsOwner]
     def patch(self, request, username, friendusername):
+        lang = request.headers.get('lang')
         if username == friendusername:
             return Response(status=status.HTTP_304_NOT_MODIFIED)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "user_does_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         cur_friends = getattr(user, 'friends', None)
         try:
             new_friend = PublicUser.objects.get(username=friendusername)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'New friend does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "new_friend_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         if user.friends.filter(username=friendusername).exists():
             return Response(status=status.HTTP_304_NOT_MODIFIED)
         if cur_friends is None:
-            return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "field_not_found_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         user.friends.add(new_friend)
         user.save()
 
-        return Response({'OK' : 'Successefully add the user as friend'}, status=status.HTTP_200_OK)
+        message = translate(lang, "added_friend_success")
+        return Response({'OK' : message}, status=status.HTTP_200_OK)
 
 class PublicUserListFriends(generics.ListAPIView):
     serializer_class = PublicUserListSerializer
@@ -144,50 +154,61 @@ class PublicUserRemoveFriend(APIView):
     permission_classes = [IsOwner]
     lookup_field = 'username'
     def delete(self,request, username, friendusername):
+        lang = request.headers.get('lang')
         if username == friendusername:
             return Response(status=status.HTTP_304_NOT_MODIFIED)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "user_does_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         self.check_object_permissions(request, user)
         cur_friends = getattr(user, 'friends', None)
         try:
             delete_friend = PublicUser.objects.get(username=friendusername)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'New friend does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "new_friend_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         if not user.friends.filter(username=friendusername).exists():
             return Response(status=status.HTTP_304_NOT_MODIFIED)
         if cur_friends is None:
-            return Response({'error': 'field not found'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "field_not_found_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         user.friends.remove(delete_friend)
         user.save()
 
-        return Response({'OK' : 'Successefully delete the user from friend list'}, status=status.HTTP_200_OK)        
+        message = translate(lang, "delete_friend_success")
+        return Response({'OK' : message}, status=status.HTTP_200_OK)        
 
 class PublicUserUpdateAvatar(APIView):
     permission_classes = [IsAvatarManager]
     lookup_field = 'username'
     def patch(self, request, username):
+        lang = request.headers.get('lang')
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "user_does_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         path = request.data.get('avatar_path')
         if path is None:
-            return Response({'error': 'Invalid body'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "invalid_body_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         user.profilePic = path
         user.save()
-        return Response({'OK': 'Successefully update the avatar'}, status=status.HTTP_200_OK)
+        message = translate(lang, "new_avatar_update_success")
+        return Response({'OK': message}, status=status.HTTP_200_OK)
 
 class PublicUserSetDefaultAvatar(APIView):
     permission_classes = [IsOwner]
     lookup_field = 'username'
     def patch(self, request, username):
+        lang = request.headers.get('lang')
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "user_does_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         self.check_object_permissions(request, user)
         path = '/media/default_avatars/default_00.jpg'
         try:
@@ -199,20 +220,25 @@ class PublicUserSetDefaultAvatar(APIView):
                     body={'username':f'{user.username}'}
                     )
         except (RequestsFailed, InvalidCredentialsException):
-            return Response({'error': 'Could not update avatar. Plz try again later'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            message = translate(lang, "update_avatar_error")
+            return Response({'error': message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user.profilePic = path
         user.save()
-        return Response({'OK':'Successefully reset the avatar'}, status=status.HTTP_200_OK)
+        message = translate(lang, "reset_avatar_success")
+        return Response({'OK': message}, status=status.HTTP_200_OK)
 
 class PublicUserSetLastSeenOnline(APIView):
     lookup_field = 'username'
     permission_classes = [IsMatchmaking]
 
     def patch(self, request, username):
+        lang = request.headers.get('lang')
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
-            return Response({'error': 'user does not exists'}, status=status.HTTP_400_BAD_REQUEST)
+            message = translate(lang, "user_does_not_exist_error")
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
         user.last_seen_online = now()
         user.save()
-        return Response({'OK': 'Actualize last log time'}, status=status.HTTP_200_OK)
+        message = translate(lang, "log_time_update_success")
+        return Response({'OK': message}, status=status.HTTP_200_OK)

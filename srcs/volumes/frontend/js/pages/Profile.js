@@ -226,17 +226,17 @@ export default class extends AbstractView {
       if (!fillModalMatchPong)
         fillModalMatchPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
 
-	  let fillModalMatchC4 = await this.getMatchHistory(userData, "c4");
+      let fillModalMatchC4 = await this.getMatchHistory(userData, "c4");
       if (!fillModalMatchC4)
         fillModalMatchC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
-	
+
       let fillModalTournamentPong = await this.getTournamentHistory(userData, "pong");
       if (!fillModalTournamentPong)
         fillModalTournamentPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
 
-	  let fillModalTournamentC4 = await this.getTournamentHistory(userData, "c4");
+      let fillModalTournamentC4 = await this.getTournamentHistory(userData, "c4");
       if (!fillModalTournamentC4)
-        fillModalTournamentC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;	  
+        fillModalTournamentC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
 
       const winRatePong = userData.total_single_games_pong
         ? `${userData.single_games_pong_win_rate * 100} %`

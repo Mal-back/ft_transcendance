@@ -2,6 +2,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
 from .models import CustomUser
+from .trad import translate
 
 class CustomJWTAuth(JWTAuthentication):
     def get_user(self, validated_token):
