@@ -79,7 +79,7 @@ export default class extends AbstractView {
         connection = "local";
       }
       if (!mode) {
-        mode ='simple'
+        mode = 'simple'
       }
       let webScoketURL = `wss://${getIpPortAdress()}/api/game/pong-local/join/`;
       if (connection != "local") {
@@ -97,6 +97,7 @@ export default class extends AbstractView {
         "scoreId",
         auth_token,
       );
+      if (mode == "tournament") this.pong.setBackground();
       if (mode == "tournament" && connection == "local") {
         console.log("tournament mode");
         const tournament = sessionStorage.getItem(
@@ -110,7 +111,6 @@ export default class extends AbstractView {
           );
           return;
         }
-        this.pong.setBackground();
         const parsedTournament = JSON.parse(tournament);
         if (
           !parsedTournament.round ||

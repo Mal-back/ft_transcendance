@@ -24,6 +24,7 @@ import Connect4RemoteMenu from "./pages/Connect4RemoteMenu.js";
 import Connect4LocalLobby from "./pages/Connect4LocalLobby.js";
 import Connect4RemoteLobby from "./pages/Connect4RemoteLobby.js";
 import Connect4LocalTournament from "./pages/Connect4LocalTournament.js";
+import Connect4RemoteTournament from "./pages/Connect4RemoteTournament.js";
 import AbstractViews from "./pages/AbstractViews.js";
 import CustomError from "./Utils/CustomError.js";
 import { showModal } from "./Utils/Utils.js";
@@ -67,6 +68,7 @@ const router = async () => {
     { path: "/c4-remote-menu", view: Connect4RemoteMenu },
     { path: "/c4-local-lobby", view: Connect4LocalLobby },
     { path: "/c4-remote-lobby", view: Connect4RemoteLobby },
+    { path: "/c4-remote-tournament", view: Connect4RemoteTournament },
     { path: "/c4-local-tournament", view: Connect4LocalTournament },
   ];
 

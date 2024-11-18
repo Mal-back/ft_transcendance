@@ -583,7 +583,7 @@ export default class extends AbstractView {
                     </div>
                     <div class="col-6">
                         <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-                        <div class="box bg-light">
+                        <div class="box bg-light history">
                             ${remoteTournamentsC4}
                         </div>
                     </div>
@@ -622,7 +622,7 @@ export default class extends AbstractView {
                     </div>
                     <div class="col-6">
                         <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-                        <div class="box bg-light">
+                        <div class="box bg-light history">
                             <!-- match div -->
                             ${remoteTournamentsPong}
                         </div>
