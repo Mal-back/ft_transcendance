@@ -175,6 +175,7 @@ class TournamentSerializer(serializers.ModelSerializer):
 
     def validate_invited_players(self, value):
         request = self.context.get('request')
+        print("HERE MATE",request)
         lang = request.headers.get('lang')
         if len(value) != len(set(value)):
             message = translate(lang, "invite_duplicates_error")

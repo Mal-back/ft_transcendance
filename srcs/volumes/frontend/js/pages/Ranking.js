@@ -241,17 +241,8 @@ export default class extends AbstractView {
 
   async createTournamentElement(data, userData) {
     try {
-      const boolWin = userData.username == data.winner ? true : false;
-      const opponentName = boolWin ? data.looser : data.winner;
-      const opponentInfo = await this.getUserInfo(opponentName);
-      const color = boolWin ? "bg-dark" : "bg-gray";
+      const color = "bg-midnightblue";
       let lostWin = boolWin
-        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
-        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
-      lostWin += "-";
-      lostWin = boolWin
-        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
-        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
@@ -288,7 +279,7 @@ export default class extends AbstractView {
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
         const data = await this.getDatafromRequest(mainResponse);
-        console.log("matchHistory: data:", data);
+        // console.log("matchHistory: data:", data);
 
         let matchesArray = data.results;
         const matchesHTMLArray = await Promise.all(
@@ -323,58 +314,69 @@ export default class extends AbstractView {
     }
   }
 
+
+  async getTournamentHistory(user, endpoint) {
+    const mainDiv = document.createElement("div");
+    try {
+      const mainRequest = await this.makeRequest(endpoint);
+      const mainResponse = await fetch(mainRequest);
+      if (await this.handleStatus(mainResponse)) {
+        const data = await this.getDatafromRequest(mainResponse);
+
+        let matchesArray = data.results;
+        const matchesHTMLArray = await Promise.all(
+          matchesArray.map((matchData) =>
+            this.createTournamentElement(matchData, user),
+          ),
+        );
+        mainDiv.innerHTML = matchesHTMLArray.join("");
+        let nextPage = data.next;
+        while (nextPage) {
+          const request = await this.makeRequest(nextPage, "GET");
+          const response = await fetch(request);
+          if (await this.handleStatus(response)) {
+            const pageData = await response.json();
+            matchesArray = pageData.results;
+            const newMatchHtmlArray = await Promise.all(
+              matchesArray.map((matchData) =>
+                this.createTournamentElement(matchData, user),
+              ),
+            );
+            mainDiv.innerHTML += newMatchHtmlArray.join("");
+            nextPage = pageData.next;
+          } else {
+            break;
+          }
+        }
+        return mainDiv.innerHTML;
+      }
+    } catch (error) {
+      this.handleCatch(error);
+      return "";
+    }
+  }
+
   async getAllHistoryModals(users) {
     try {
       const battleHistory =
         this.lang.getTranslation(["game", "battle"]) +
         " " +
         this.lang.getTranslation(["game", "history"]);
+      const testUser = users[1];
+      console.log("HERE =>", testUser)
+      const mainRequest = await this.makeRequest(testUser.pong_tournaments);
+      const mainResponse = await fetch(mainRequest);
+      if (await this.handleStatus(mainResponse)) {
+        const data = await this.getDatafromRequest(mainResponse);
+        console.log("matchHistory: data:", data);
+      }
       for (let index = 0; index < users.length; index++) {
         const user = users[index];
         const fillModalMatchPong = this.getMatchHistory(user, user.pong_matches);
         const fillModalMatchC4 = this.getMatchHistory(user, user.c4_matches);
         const fillModalTournamentPong = "";
         const fillModalTournamentC4 = "";
-        const modalPong = `
-        <div class="modal fade" id="${user.username}-pongBattleHistoryModal" tabindex="-1" aria-labelledby="${user.username}-pongBattleHistoryModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="${user.username}-pongBattleHistoryModal">
-                  ${this.lang.getTranslation(["title", "pong"])} ${battleHistory}
-                </h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body overflow-auto" style="max-height: 70vh">
-                <div class="row justify-content-center align-items-start">
-                  <div class="col-6">
-                    <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
-                    <div class="box bg-light history">
-                      ${fillModalMatchPong}
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-                    <div class="box bg-light">        
-			                <span>N/A</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                  ${this.lang.getTranslation(["button", "close"])}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        `;
+        const modalPong = ``;
         const modalC4 = ``;
       }
 
@@ -463,4 +465,77 @@ export default class extends AbstractView {
     if (nextButton)
       nextButton.removeEventListener("click", this.handleNextPage)
   }
+
+  getModalC4(username, remoteBattlesC4, remoteTournamentsC4) {
+    return `
+<div class="modal fade" id="connect4BattleHistoryModal${username}" tabindex="-1"
+    aria-labelledby="connect4BattleHistoryModal${username}Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Connect4 Battle History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                <div class="row justify-content-center align-items-start">
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">Remote Battles :</h5>
+                        <div class="box bg-light history">
+                            ${remoteBattlesC4}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">Remote Tournaments :</h5>
+                        <div class="box bg-light">
+                            <!-- match div -->
+                            ${remoteTournamentsC4}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+    `
+  }
+
+  getModalPong(username, remoteBattlesPong, remoteTournamentsPong) {
+    return `
+<div class="modal fade" id="pongBattleHistoryModal${username}" tabindex="-1"
+    aria-labelledby="pongBattleHistoryModal${username}Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">${""} ${""}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                <div class="row justify-content-center align-items-start">
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">${""} :</h5>
+                        <div class="box bg-light history">
+                            ${remoteBattlesPong}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">${""} :</h5>
+                        <div class="box bg-light">
+                            <!-- match div -->
+                            ${remoteTournamentsPong}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+    `
+  }
+
 }

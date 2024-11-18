@@ -369,7 +369,7 @@ class CreateTournament(APIView):
         if conflict:
             return conflict
 
-        serializer = TournamentSerializer(data=request.data)
+        serializer = TournamentSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             invited = serializer.validated_data.get('invited_players')
             if invited is not None and request.user.username in invited:
