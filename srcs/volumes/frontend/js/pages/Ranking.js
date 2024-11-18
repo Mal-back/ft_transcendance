@@ -15,6 +15,7 @@ export default class extends AbstractView {
     this.previousPage = undefined;
     this.handleNextPage = this.handleNextPage.bind(this);
     this.handlePreviousPage = this.handlePreviousPage.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
   async loadCss() {
@@ -22,24 +23,14 @@ export default class extends AbstractView {
     this.createPageCss("../css/game-menu-buttons.css");
     this.createPageCss("../css/margin.css");
     this.createPageCss("../css/ranking/global-ranking-remote.css");
-    const currentUrl = window.location.href;
-    console.log("current url =>", currentUrl);
   }
 
   async getHtml() {
     try {
       this.setTitle(`${this.lang.getTranslation(["title", "ranking"])}`);
       const users = await this.getAllUsers();
-      console.log("START =>", users)
-      const html = this.getHTMLallUsers(users);
-      const modals = await this.getAllHistoryModals(users);
-      // const request = await this.makeRequest(users[1].pong_matches);
-      // const response = await fetch(request)
-      // const data = await this.getDatafromRequest(response);
-      // console.log("here", data)
-      // console.log("ENDHTML =>", html);
-      const modalsBattleHistory = await this.getAllHistoryModals();
-      // const ranking = await this.getRanking(data);
+      const [html, modalhtml] = this.getHTMLallUsers(users);
+      const modalsBattleHistory = await this.getAllHistoryModals(users);
       const html_content = `
 <div class="removeElem background ">
     <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -49,10 +40,10 @@ export default class extends AbstractView {
         <div class="removeElem  text-center text-white  rounded">
             <h4 class="removeElem form-label text-decoration-underline" id="SelectPlayersTitle">Search Player:</h4>
             <div class="removeElem input-group mb-3">
-                <input type="search" class="removeElem form-control" placeholder="Search"
+                <input id="searchPlayerInput" type="search" class="removeElem form-control" placeholder="Search"
                     aria-label="Recipient's username" aria-describedby="basic-addon2">
                 <div class="removeElem input-group-append">
-                    <button class="removeElem btn btn-outline-primary" type="submit"><i
+                    <button id="searchPlayerButton" class="removeElem btn btn-outline-primary" type="submit"><i
                             class="removeElem bi bi-search"></i></button>
                 </div>
             </div>
@@ -64,14 +55,14 @@ export default class extends AbstractView {
         <div class="removeElem list-group-item d-flex align-items-center justify-content-between rounded w-100">
             <div class="removeElem d-flex align-items-center">
                 <div class="removeElem ranking-number-fake">
-                    RANK
+                    ${this.lang.getTranslation(["title", "rank"]).toUpperCase()}
                 </div>
                 <div class="removeElem Avatar-Fake me-3"></div>
                 <div class="removeElem flex-fill">
-                    <h5 class="removeElem mb-0">USERNAME</h5>
+                    <h5 class="removeElem mb-0">${this.lang.getTranslation(["input", "label", "username"]).toUpperCase()}</h5>
                 </div>
             </div>
-            <div class="removeElem score">WIN RATE
+            <div class="removeElem score">${this.lang.getTranslation(["title", "gamesPlayed"])}
             </div>
         </div>
     </div>
@@ -94,7 +85,7 @@ export default class extends AbstractView {
         </nav>
     </div>
 </div>
-<div id="modalsRanking" class="removeElem"></div>
+<div id="modalsRanking" class="removeElem">${modalhtml}${modalsBattleHistory}</div>
               `;
       return html_content;
     } catch (error) {
@@ -113,11 +104,12 @@ export default class extends AbstractView {
             <div class="removeElem ranking-number ${color}">${rank}</div>
             <div class="removeElem Avatar ${status} me-3" style="background-image: url(${avatar});"></div>
             <div class="removeElem flex-fill">
-                <h5 class="removeElem username mb-0">${username}</h5>
+                <h5 class="removeElem username mb-0" data-bs-toggle="modal"
+                    data-bs-target="#${username}History">${username}</h5>
             </div>
         </div>
         <div class="removeElem score">
-            <span>Played : ${gamesPlayed}</span>
+            <span>${this.lang.getTranslation(["title", "played"])} : ${gamesPlayed}</span>
         </div>
     </div>
     `
@@ -149,9 +141,6 @@ export default class extends AbstractView {
     }
     console.log("All users =>", data);
     return data
-  }
-  async getNextUsers() {
-
   }
 
   async getUsers(url) {
@@ -241,37 +230,26 @@ export default class extends AbstractView {
 
   async createTournamentElement(data, userData) {
     try {
-      const boolWin = userData.username == data.winner ? true : false;
-      const opponentName = boolWin ? data.looser : data.winner;
-      const opponentInfo = await this.getUserInfo(opponentName);
-      const color = boolWin ? "bg-dark" : "bg-gray";
-      let lostWin = boolWin
-        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
-        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
-      lostWin += "-";
-      lostWin = boolWin
-        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
-        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
+      const color = "bg-midnightblue";
+      const rank = data.final_ranking.findIndex(user => user.username === userData.username) + 1;
+      console.log("getRank =>", data.final_ranking)
+      const total_ranks = data.final_ranking.length;
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
-      <div class="text-center player-container">
-        <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
+      <div class="text-center player-container mt-1">
+        <div class="player-circle mx-auto mb-2" style="background-image: url('${userData.profilePic}')"></div>
         <div class="player-name">
           <span>${userData.username}</span>
         </div>
       </div>
-      <div class="text-center match-info">
-        <h5>${lostWin}</h5> 
-        <h4>${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}</h4>
-        <p id="matchDate">${formateDate(data.played_at)}</p>
+      <div class="text-center match-info mt-1">
+          <h4 style="margin-bottom: 0;">${this.lang.getTranslation(["title", "rank"]).toUpperCase()}: ${rank} / ${total_ranks}</h4>
+          <button class="btn text-decoration-none text-white color text-decoration-underline"
+            style="cursor: text; user-select: text; border: none; background: none;">
+            ${formateDate(data.played_at)}
+          </button>
       </div>
-        <div class="text-center player-container">
-          <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
-          <div class="player-name">
-            <span>${opponentName}</span>
-          </div>
-        </div>
       </div>
     </div> 
           `;
@@ -288,7 +266,7 @@ export default class extends AbstractView {
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
         const data = await this.getDatafromRequest(mainResponse);
-        console.log("matchHistory: data:", data);
+        // console.log("matchHistory: data:", data);
 
         let matchesArray = data.results;
         const matchesHTMLArray = await Promise.all(
@@ -323,69 +301,121 @@ export default class extends AbstractView {
     }
   }
 
+
+  async getTournamentHistory(user, endpoint) {
+    const mainDiv = document.createElement("div");
+    try {
+      const mainRequest = await this.makeRequest(endpoint);
+      const mainResponse = await fetch(mainRequest);
+      if (await this.handleStatus(mainResponse)) {
+        const data = await this.getDatafromRequest(mainResponse);
+
+        let matchesArray = data.results;
+        const matchesHTMLArray = await Promise.all(
+          matchesArray.map((matchData) =>
+            this.createTournamentElement(matchData, user),
+          ),
+        );
+        mainDiv.innerHTML = matchesHTMLArray.join("");
+        let nextPage = data.next;
+        while (nextPage) {
+          const request = await this.makeRequest(nextPage, "GET");
+          const response = await fetch(request);
+          if (await this.handleStatus(response)) {
+            const pageData = await response.json();
+            matchesArray = pageData.results;
+            const newMatchHtmlArray = await Promise.all(
+              matchesArray.map((matchData) =>
+                this.createTournamentElement(matchData, user),
+              ),
+            );
+            mainDiv.innerHTML += newMatchHtmlArray.join("");
+            nextPage = pageData.next;
+          } else {
+            break;
+          }
+        }
+        return mainDiv.innerHTML;
+      }
+    } catch (error) {
+      this.handleCatch(error);
+      return "";
+    }
+  }
+
   async getAllHistoryModals(users) {
     try {
-      const battleHistory =
-        this.lang.getTranslation(["game", "battle"]) +
-        " " +
-        this.lang.getTranslation(["game", "history"]);
+      let history = "";
       for (let index = 0; index < users.length; index++) {
         const user = users[index];
-        const fillModalMatchPong = this.getMatchHistory(user, user.pong_matches);
-        const fillModalMatchC4 = this.getMatchHistory(user, user.c4_matches);
-        const fillModalTournamentPong = "";
-        const fillModalTournamentC4 = "";
-        const modalPong = `
-        <div class="modal fade" id="${user.username}-pongBattleHistoryModal" tabindex="-1" aria-labelledby="${user.username}-pongBattleHistoryModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="${user.username}-pongBattleHistoryModal">
-                  ${this.lang.getTranslation(["title", "pong"])} ${battleHistory}
-                </h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body overflow-auto" style="max-height: 70vh">
-                <div class="row justify-content-center align-items-start">
-                  <div class="col-6">
-                    <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
-                    <div class="box bg-light history">
-                      ${fillModalMatchPong}
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-                    <div class="box bg-light">        
-			                <span>N/A</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                  ${this.lang.getTranslation(["button", "close"])}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        `;
-        const modalC4 = ``;
+        let fillModalMatchPong = await this.getMatchHistory(user, user.pong_matches);
+        if (!fillModalMatchPong)
+          fillModalMatchPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+        let fillModalMatchC4 = await this.getMatchHistory(user, user.c4_matches);
+        if (!fillModalMatchC4)
+          fillModalMatchC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+        let fillModalTournamentPong = await this.getTournamentHistory(user, user.pong_tournaments);
+        if (!fillModalTournamentPong)
+          fillModalTournamentPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+        let fillModalTournamentC4 = await this.getTournamentHistory(user, user.c4_tournaments);
+        if (!fillModalTournamentC4)
+          fillModalTournamentC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
+
+        const modalPong = this.getModalPong(user.username, fillModalMatchPong, fillModalTournamentPong);
+        const modalC4 = this.getModalC4(user.username, fillModalMatchC4, fillModalTournamentC4);
+        history += modalPong + modalC4;
       }
-
+      return history
     } catch (error) {
-
+      this.handleCatch(error);
     }
 
   }
 
+  getUserChooseHistoryModal(username) {
+    const battleHistory =
+      this.lang.getTranslation(["game", "battle"]) +
+      " " +
+      this.lang.getTranslation(["game", "history"]);
+    return `
+    <div class="modal fade" id="${username}History" tabindex="-1" aria-labelledby="${username}HistoryLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="${username}HistoryLabel">${battleHistory}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex justify-content-center">
+                    <!-- Buttons without data-bs-toggle and data-bs-target -->
+                    <button type="button" class="btn btn-danger white-txt"
+                    data-bs-toggle="modal"
+                    data-bs-target="#pongBattleHistoryModal${username}"
+                        style="margin-right: 3px;">
+                        ${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["game", "history"])}
+                    </button>
+                    <button type="button" class="btn btn-secondary white-txt" 
+                    data-bs-toggle="modal"
+                    data-bs-target="#connect4BattleHistoryModal${username}">
+                        ${this.lang.getTranslation(["title", "c4"])} ${this.lang.getTranslation(["game", "history"])}
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+  }
+
   getHTMLallUsers(data) {
     let usersHTML = "";
+    let usersModal = "";
     for (let index = 0; index < data.length; index++) {
       const userRank = index + 1 + (this.rank * 10);
       const username = data[index].username;
@@ -394,8 +424,10 @@ export default class extends AbstractView {
       const status = data[index].is_online ? "status-online" : "status-offline";
       const html = this.getHTMLforUser(userRank, username, avatar, total, status)
       usersHTML += html;
+      const htmlModal = this.getUserChooseHistoryModal(username);
+      usersModal += htmlModal;
     }
-    return usersHTML;
+    return [usersHTML, usersModal];
   }
 
   async handleNextPage() {
@@ -404,11 +436,15 @@ export default class extends AbstractView {
       try {
         this.rank += 1;
         const data = await this.getUsers(this.nextPage)
-        const html = this.getHTMLallUsers(data);
+        const [html, modalhtml] = this.getHTMLallUsers(data);
+        const history = await this.getAllHistoryModals(data);
         console.log("ENDHTML =>", html);
         let ranking = document.getElementById("rankingUsers");
         ranking.innerHTML = "";
         ranking.innerHTML = html;
+        let modals = document.getElementById("modalsRanking");
+        modals.innerHTML = "";
+        modals.innerHTML = modalhtml + history;
       } catch (error) {
         if (error instanceof CustomError) {
           error.showModalCustom();
@@ -428,11 +464,15 @@ export default class extends AbstractView {
       try {
         this.rank -= 1;
         const data = await this.getUsers(this.previousPage);
-        const html = this.getHTMLallUsers(data);
+        const [html, modalhtml] = this.getHTMLallUsers(data);
+        const history = await this.getAllHistoryModals(data);
         console.log("ENDHTML =>", html);
         let ranking = document.getElementById("rankingUsers");
         ranking.innerHTML = "";
         ranking.innerHTML = html;
+        let modals = document.getElementById("modalsRanking");
+        modals.innerHTML = "";
+        modals.innerHTML = modalhtml + history;
       } catch (error) {
         if (error instanceof CustomError) {
           error.showModalCustom();
@@ -446,12 +486,33 @@ export default class extends AbstractView {
     this.toggleButtons()
   }
 
+  async handleSearch() {
+    const input = document.getElementById("searchPlayerInput")
+    const name_to_find = input.value.trim();
+    console.log("SEARCH =>", name_to_find)
+    try {
+      const user_info = await this.getUserInfo(name_to_find)
+      console.log(user_info)
+    } catch (error) {
+      console.log("HERE IT IS")
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handlePrevousPage", error);
+      }
+    }
+  }
+
   async addEventListeners() {
     const previousButton = document.querySelector("#previousPageBtn");
     previousButton.addEventListener("click", this.handlePreviousPage)
 
     const nextButton = document.querySelector("#nextPageBtn");
     nextButton.addEventListener("click", this.handleNextPage)
+
+    const searchButton = document.querySelector("#searchPlayerButton");
+    searchButton.addEventListener("click", this.handleSearch);
   }
 
   removeEventListeners() {
@@ -462,5 +523,90 @@ export default class extends AbstractView {
     const nextButton = document.querySelector("#nextPageBtn");
     if (nextButton)
       nextButton.removeEventListener("click", this.handleNextPage)
+
+    const searchButton = document.querySelector("#searchPlayerButton");
+    if (searchButton)
+      searchButton.removeEventListener("click", this.handleSearch);
+
   }
+
+  getModalC4(username, remoteBattlesC4, remoteTournamentsC4) {
+    const battleHistory =
+      this.lang.getTranslation(["game", "battle"]) +
+      " " +
+      this.lang.getTranslation(["game", "history"]);
+    return `
+<div class="modal fade" id="connect4BattleHistoryModal${username}" tabindex="-1"
+    aria-labelledby="connect4BattleHistoryModal${username}Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">${this.lang.getTranslation(["title", "c4"])} ${battleHistory}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                <div class="row justify-content-center align-items-start">
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
+                        <div class="box bg-light history">
+                            ${remoteBattlesC4}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
+                        <div class="box bg-light">
+                            ${remoteTournamentsC4}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+    `
+  }
+
+  getModalPong(username, remoteBattlesPong, remoteTournamentsPong) {
+    const battleHistory =
+      this.lang.getTranslation(["game", "battle"]) +
+      " " +
+      this.lang.getTranslation(["game", "history"]);
+    return `
+<div class="modal fade" id="pongBattleHistoryModal${username}" tabindex="-1"
+    aria-labelledby="pongBattleHistoryModal${username}Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">${this.lang.getTranslation(["title", "pong"])} ${battleHistory}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                <div class="row justify-content-center align-items-start">
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
+                        <div class="box bg-light history">
+                            ${remoteBattlesPong}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
+                        <div class="box bg-light">
+                            <!-- match div -->
+                            ${remoteTournamentsPong}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+    `
+  }
+
 }

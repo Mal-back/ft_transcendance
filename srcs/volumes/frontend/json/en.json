@@ -17,7 +17,10 @@
     "notif": "Notifications",
     "createUser": "Create User",
     "createProfile": "Create new Profile",
-    "mode": "Mode"
+    "mode": "Mode",
+    "rank": "Rank",
+    "played": "Played",
+    "gamesPlayed": "Games Played"
   },
   "button": {
     "close": "Close",
@@ -128,9 +131,9 @@
   },
   "modal": {
     "title": {
-	  "status" : "Status",
-	  "offline" : "Offline",
-	  "online" : "Online",
+      "status": "Status",
+      "offline": "Offline",
+      "online": "Online",
       "error": "Error",
       "success": "Success",
       "congrats": "Congratulations",

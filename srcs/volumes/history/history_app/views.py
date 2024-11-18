@@ -59,7 +59,7 @@ class TournamentCreate(APIView):
     permission_classes = [IsMatchMaking]
 
     def post(self, request, *args, **kwargs):
-        serializer = TournamentSerializer(data=request.data)
+        serializer = TournamentSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             obj = serializer.save()
             print(obj.id)
@@ -70,7 +70,7 @@ class TournamentList(generics.ListAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
 
-    serializer_class = MatchGetSerializer 
+    # serializer_class = MatchGetSerializer 
 
     def get_queryset(self):
         queryset = Tournament.objects.all() 
