@@ -6,6 +6,7 @@ import {
   showModal,
 } from "../Utils/Utils.js";
 import CustomError from "../Utils/CustomError.js";
+// import QRCode from "qrcodejs";
 
 export default class extends AbstractView {
   constructor() {
@@ -260,7 +261,6 @@ export default class extends AbstractView {
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="handleEmail" tabindex="-1" aria-labelledby="handleEmailLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -292,6 +292,20 @@ export default class extends AbstractView {
           ${this.lang.getTranslation(["input", "label", "confirm"])}
         </button>
       </div>
+    </div>
+</div>
+</div>
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrModalLabel">Scan this QR Code</h5>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <!-- QR Code will be generated here -->
+                <div id="qrcode"></div>
+            </div>
+        </div>
     </div>
 </div>
 `;
@@ -644,6 +658,27 @@ export default class extends AbstractView {
     }
   }
 
+  showQrCodeModal(otp_uri) {
+    document.getElementById("qrcode").innerHTML = "";
+
+    new QRCode(document.getElementById("qrcode"), {
+      text: otp_uri,
+      width: 200,
+      height: 200,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H,
+    });
+    const handle2FAModal = document.querySelector("#handle2FA");
+    const handle2FA = bootstrap.Modal.getInstance(handle2FAModal);
+    handle2FA.hide();
+
+    const qrCodeModalDiv = document.querySelector("#qrModal");
+    let qrCodeModal = bootstrap.Modal.getInstance(qrCodeModalDiv);
+    if (!qrCodeModal) qrCodeModal = new bootstrap.Modal(qrCodeModalDiv);
+    qrCodeModal.show();
+  }
+
   async handleConfirm2FA(ev) {
     ev.preventDefault();
     try {
@@ -659,7 +694,7 @@ export default class extends AbstractView {
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
         console.log("handleConfirm2FA: data", data);
-        showModal("Account", "2 factor authentification enabled!");
+        this.showQrCodeModal(data.otp_uri);
       }
     } catch (error) {
       if (error instanceof CustomError) {

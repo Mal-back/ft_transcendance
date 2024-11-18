@@ -89,6 +89,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         # Check if 2FA is enabled
         if user.two_fa_enabled:
+            # User has 2FA enabled, return a 202 status and prompt for OTP verification
             return Response({
                 'message': '2FA is enabled. Please enter the OTP from your Google Authenticator app.'
             }, status=status.HTTP_202_ACCEPTED)
