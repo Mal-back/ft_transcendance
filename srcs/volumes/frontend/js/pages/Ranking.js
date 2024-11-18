@@ -506,10 +506,22 @@ export default class extends AbstractView {
     ev.preventDefault(); const input = document.getElementById("searchPlayerInput")
     const name_to_find = input.value.trim();
     try {
-      await this.searchUser(name_to_find)
-      const modal = document.getElementById(`${name_to_find}History`);
-      const myModal = new bootstrap.Modal(modal);
-      myModal.show();
+      const user = await this.searchUser(name_to_find)
+      const modalTry = document.getElementById(`${name_to_find}History`);
+      if (modalTry) {
+        const myModal = new bootstrap.Modal(modalTry);
+        myModal.show();
+      }
+      else {
+        // console.log("idiot")
+        const [, modalhtml] = this.getHTMLallUsers([user]);
+        const modalsBattleHistory = await this.getAllHistoryModals([user]);
+        let modals = document.getElementById("modalsRanking");
+        modals.innerHTML += modalhtml + modalsBattleHistory;
+        const modal = document.getElementById(`${name_to_find}History`);
+        const myModal = new bootstrap.Modal(modal);
+        myModal.show();
+      }
     } catch (error) {
       if (error instanceof CustomError) {
         error.showModalCustom();
