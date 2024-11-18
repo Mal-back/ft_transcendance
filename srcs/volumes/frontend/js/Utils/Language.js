@@ -50,6 +50,7 @@ export default class Language {
     menuConnect4.innerHTML = `<i class="bi bi-controller"></i> ${this.getTranslation(["title", "c4"])}`;
     document.getElementById("menuProfile").innerHTML =
       `<i class="bi bi-person"></i> ${this.getTranslation(["title", "profile"])}`;
+    document.getElementById("menuRanking").innerHTML = `<i class="bi bi-trophy"></i> ${this.getTranslation(["title", "ranking"])}`
     document.getElementById("menuFriends").innerHTML =
       `<i class="bi bi-person-heart"></i> ${this.getTranslation(["title", "friends"])}`;
     const loginOverlay = document.querySelector("#overlayLogin");

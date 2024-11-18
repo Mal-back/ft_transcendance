@@ -118,7 +118,8 @@
       "match": "does not match",
       "unique": "is already taken",
       "valid": "is not a valid",
-      "incorrect": "Incorrect"
+      "incorrect": "Incorrect",
+      "unknown": "does not exist"
     },
     "preview": {
       "opponent": "Enter opponent's username",
