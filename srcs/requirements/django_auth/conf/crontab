@@ -1,0 +1,2 @@
+# Run a script every minute
+0 * * * * python3 manage.py delete_old_accounts
