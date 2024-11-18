@@ -46,10 +46,10 @@ export default class extends AbstractView {
       );
       const username = sessionStorage.getItem("username_transcendence");
       let data = await this.checkTournament();
-      if (data == undefined) {
-        await this.createTournament();
-        data = await this.checkTournament();
-      }
+      // if (data == undefined) {
+      //   await this.createTournament();
+      //   data = await this.checkTournament();
+      // }
       return `
       <div class="background ">
         <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
