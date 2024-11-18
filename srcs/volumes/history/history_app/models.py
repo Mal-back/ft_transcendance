@@ -21,6 +21,7 @@ class TournamentUser(models.Model):
 class Tournament(models.Model):
     game_type = models.TextField(choices=[('pong', 'Pong'),
                                            ('c4', 'Connect four')])
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Match(models.Model):
     winner = models.ForeignKey('MatchUser',

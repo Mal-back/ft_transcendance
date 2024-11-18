@@ -374,6 +374,8 @@ class CreateTournament(APIView):
             invited = serializer.validated_data.get('invited_players')
             if invited is not None and request.user.username in invited:
                 message = translate(request.headers.get('lang'),"self_play_error")
+                print(invited)
+                print(request.user.username)
                 return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
             tournament = serializer.save(owner=request.user)
             owner = TournamentUser.objects.create(user=request.user, tournament=tournament)
