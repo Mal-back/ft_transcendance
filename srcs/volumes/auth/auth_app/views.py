@@ -143,15 +143,6 @@ class UserUpdateView(generics.UpdateAPIView):
                     message = translate(lang, "update_username_error_in_game")
                     return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
-    ##########################            
-                # if user.two_fa_enabled:
-                #     try:
-                #         device = TOTPDevice.objects.get(user=user)
-                #         device.user = user  
-                #         device.save()
-                #     except TOTPDevice.DoesNotExist:
-                #         return Response({"error": "Could not update 2FA for new username."}, status=status.HTTP_400_BAD_REQUEST)
-######################################
                 token = MyTokenObtainPairSerializer.get_token(user)
                 access_token = str(token.access_token)
                 refresh_token = str(token)
