@@ -109,3 +109,47 @@ class MatchList(generics.ListAPIView):
             queryset = queryset.filter(game_type=game_type)
         
         return queryset
+
+class RetrieveAll(APIView):
+
+    def get(self, request, *args, **kwargs):
+        matches = self.get_match_queryset()
+        tournaments = self.get_tournament_queryset()
+
+        match_serializer = MatchGetSerializer(instance=matches, many=True, context={'request': request})
+        tournament_serializer = TournamentSerializer(instance=matches, many=True, context={'request': request})
+
+        return Response({'matches_data': match_serializer.data, 'tournaments_data':tournament_serializer.data}, status=status.HTTP_200_OK)
+
+    def get_tournament_queryset(self):
+        queryset = Tournament.objects.all() 
+
+        user = self.request.query_params.get('username')
+        game_type = self.request.query_params.get('game_type')
+
+        if user and game_type:
+            queryset = queryset.filter(Q(final_ranking__username__username=user) & Q(game_type=game_type)).distinct()
+        elif user:
+            queryset = queryset.filter(final_ranking__username__username=user).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
+        
+        return queryset
+
+    def get_match_queryset(self):
+        queryset = Match.objects.all() 
+
+        user = self.request.query_params.get('username')
+        game_type = self.request.query_params.get('game_type')
+
+        if user and game_type:
+            queryset = queryset.filter(
+                (Q(winner__username=user) | Q(looser__username=user)) & Q(game_type=game_type)
+            ).distinct()
+        elif user:
+            queryset = queryset.filter(Q(winner__username=user) | Q(looser__username=user)).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
+        
+        return queryset
+

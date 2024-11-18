@@ -9,6 +9,13 @@ class MatchUserSerializer(serializers.ModelSerializer):
         model = MatchUser
         fields = ['username']
 
+class MatchUserDetailSerializer(serializers.ModelSerializer):
+    class Meta :
+        model = MatchUser
+        fields = ['username', 'pong_match_won', 'pong_match_lost',
+                  'c4_match_won', 'c4_match_lost', 'pong_win_rate',
+                  'c4_win_rate']
+
 class MatchSerializer(serializers.ModelSerializer):
     class Meta :
         model = Match

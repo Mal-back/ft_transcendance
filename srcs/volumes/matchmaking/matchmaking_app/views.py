@@ -5,7 +5,7 @@ from requests import delete
 from rest_framework import generics, response, status
 from rest_framework.views import APIView, Response
 from .models import MatchUser, Match, InQueueUser, Tournament, TournamentUser
-from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer, InviteSerializer, TournamentDetailSerializer, TournamentConciseSerializer, TournamentToHistorySerializer
+from .serializers import MatchUserSerializer, MatchSerializer, MatchResultSerializer, PendingInviteSerializer, SentInviteSerializer, AcceptedMatchSerializer, MatchMakingQueueSerializer, TournamentSerializer, TournamentAddPlayersSerializer, TournamentRemovePlayersSerializer, InviteSerializer, TournamentDetailSerializer, TournamentConciseSerializer, TournamentToHistorySerializer, MatchUserDetailSerializer
 from .permissions import IsAuth, IsOwner, IsAuthenticated, IsInvitedPlayer, IsGame, IsInitiatingPlayer, IsInvitedPlayerTournament, IsConfirmedPlayerTournament
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .single_match_to_history import end_single_match
@@ -19,6 +19,12 @@ class MatchUserCreate(generics.CreateAPIView):
     queryset = MatchUser.objects.all()
     serializer_class = MatchUserSerializer 
     permission_classes = [IsAuth]
+
+class MatchUserGetDetail(generics.RetrieveAPIView):
+    queryset = MatchUser.objects.all()
+    serializer_class = MatchUserDetailSerializer 
+    permission_classes = [IsAuth]
+    lookup_field = 'username'
 
 class MatchUserUpdate(generics.UpdateAPIView):
     queryset = MatchUser.objects.all()
