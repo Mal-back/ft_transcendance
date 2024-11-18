@@ -37,7 +37,7 @@ class TournamentSerializer(serializers.ModelSerializer):
     final_ranking = TournamentUserSerializer(many=True)
     class Meta:
         model = Tournament
-        fields = ['game_type', 'final_ranking']
+        fields = ['game_type', 'final_ranking', 'played_at']
 
     def create(self, validated_data):
         final_ranking = validated_data.pop('final_ranking')
