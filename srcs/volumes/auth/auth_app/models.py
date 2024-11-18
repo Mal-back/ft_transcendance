@@ -6,15 +6,19 @@ import pyotp
 # Create your models here.
 
 class CustomUser(AbstractUser):
-   two_fa_enabled = models.BooleanField(default=False)
+    two_fa_enabled = models.BooleanField(default=False)
 #    otp_secret = models.CharField(max_length=32, blank=True, null=True)
-   last_log = models.DateTimeField(default=now)
+    last_log = models.DateTimeField(default=now)
 
-   def generate_otp_secret(self):
+    @property
+    def is_authenticated(self):
+        return True
+
+    def generate_otp_secret(self):
         self.otp_secret = pyotp.random_base32()
         self.save()
 
-   def get_totp(self):
+    def get_totp(self):
         totp = pyotp.TOTP(self.otp_secret)
         return totp.now()
 

@@ -14,11 +14,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
     email = serializers.EmailField(required=True)
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password', 'password2', 'is_active', 'two_fa_enabled']
+        fields = ['username', 'email', 'password', 'password2', 'two_fa_enabled']
         extra_kwargs = {
                     'password': {'write_only': True, 'style': {'input_type': 'password'}},
                     'password2': {'write_only': True, 'style': {'input_type': 'password'}},
-                    'is_active': {'read_only' : True},
                 }
 
     def __init__(self, *args, **kwargs):
