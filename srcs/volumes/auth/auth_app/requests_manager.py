@@ -41,6 +41,7 @@ def send_get_requests(urls:dict, headers={}):
     for serviceName, url in urls.items():
         response = requests.get(url, headers=headers)
         data.update({serviceName:response.json()})
+    return data
 
 def send_delete_requests(urls:list, body={}, headers={}) -> bool :
     token = getToken()  
