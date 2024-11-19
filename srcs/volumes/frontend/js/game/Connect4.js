@@ -9,7 +9,8 @@ export default class Connect4 {
     this.cols = 7;
     this.context = null;
     this.webSocket = null;
-    this.mode = "local";
+    this.connection = "local";
+    this.mode = "simple";
     this.pingInterval = null;
     this.timeout = null;
     this.redirectURL = null;
@@ -53,10 +54,12 @@ export default class Connect4 {
   initC4(
     canvas = "ongoing-game",
     websocket = `wss://${getIpPortAdress()}/api/game/c4-local/join/`,
-    mode = "local",
+    connection = "local",
+    mode = "simple",
     token = null,
   ) {
     this.mode = mode;
+    this.connection = connection;
     this.token = token;
     this.redirectURL = this.setRedirecturl();
     document.getElementById("User1").innerHTML =
@@ -115,7 +118,7 @@ export default class Connect4 {
 
   getUsername() {
     this.setUsernameCallBack(
-      this.mode,
+      this.connection,
       this.player1.username,
       this.player2.username,
     );
@@ -123,7 +126,7 @@ export default class Connect4 {
 
   handleWebSocketOpen(ev) {
     console.log("WEBSOCKET IS OPEN: mode = ", this.mode);
-    if (this.mode == "remote") {
+    if (this.connection == "remote") {
       let uuid = sessionStorage.getItem("transcendence_game_id");
 
       const body = {
@@ -262,7 +265,7 @@ export default class Connect4 {
         if (this.tournament) {
           this.handleTournamentData(data);
         }
-        if (this.mode != "local") {
+        if (this.connection != "local") {
           const gif = data.winner == sessionStorage.getItem("username_transcendence") ? "../img/ts/taylor-swift-win.gif" : "../img/ts/taylor-swift-cookie.gif";
           showModalGameResult(data.winner, data.looser, gif);
         }
@@ -271,6 +274,7 @@ export default class Connect4 {
           const loser = this.player1.player == data.looser ? this.player1.username : this.player2.username;
           showModalGameResult(winner, loser, "../img/ts/taylor-swift-cookie.gif");
         }
+        console.log("WILL BE REDIRECTED THERE =>", this.redirectURL)
         navigateTo(this.redirectURL);
         return;
       }
@@ -309,7 +313,7 @@ export default class Connect4 {
       this.webSocket.send(JSON.stringify({ type: "start_game" }));
       this.gameStart = true;
       document.getElementById("startBtn").style = `display : none;`;
-      if (this.mode != "local") {
+      if (this.connection != "local") {
         document.getElementById("giveUpBtn").style = `display : inline;`;
       }
       // console.log("SENT START");
@@ -376,7 +380,7 @@ export default class Connect4 {
     this.player2.piece = data.player_2_piece;
     this.player1.player = data.player_1_username;
     this.player2.player = data.player_2_username;
-    if (this.mode !== "local") {
+    if (this.connection !== "local") {
       this.player1.username = data.player_1_username;
       this.player2.username = data.player_2_username;
     }
@@ -387,6 +391,8 @@ export default class Connect4 {
     this.currentPlayer = this.player1.player === data.starting_player ? this.player1 : this.player2;
 
     document.getElementById("Turn").innerHTML = `<h3>${this.lang.getTranslation(["game", "its"])} ${this.currentPlayer.span}${this.currentPlayer.username}</span>${this.lang.getTranslation(["game", "turn"])}!</h3>`;
+    if (this.connection == "remote")
+      this.setUsername(data.player_1.username, data.player_2.username);
     this.getUsername()
   }
 

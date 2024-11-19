@@ -815,7 +815,7 @@ export default class AbstractViews {
     }
     try {
       const myHeaders = this.makeHeaders(accessToken, true);
-      const request = new Request("/api/auth/refresh", {
+      const request = new Request("/api/auth/refresh/", {
         method: "POST",
         headers: myHeaders,
         body: JSON.stringify({

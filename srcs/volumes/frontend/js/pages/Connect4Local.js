@@ -185,6 +185,7 @@ export default class extends AbstractView {
         "ongoing-game",
         webScoketURL,
         connection,
+        mode,
         auth_token,
       );
       if (mode == "tournament") this.connect4.setBackground();
@@ -195,8 +196,8 @@ export default class extends AbstractView {
         if (!tournament) {
           navigateTo("/c4-local-lobby");
           showModal(
-            "Error",
-            "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
           );
           return;
         }
