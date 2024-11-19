@@ -128,37 +128,26 @@ export default class extends AbstractView {
 
   async createTournamentElement(data, userData) {
     try {
-      const boolWin = userData.username == data.winner ? true : false;
-      const opponentName = boolWin ? data.looser : data.winner;
-      const opponentInfo = await this.getUserInfo(opponentName);
-      const color = boolWin ? "bg-dark" : "bg-gray";
-      let lostWin = boolWin
-        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
-        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
-      lostWin += "-";
-      lostWin = boolWin
-        ? this.lang.getTranslation(["game", "won"]).toUpperCase()
-        : this.lang.getTranslation(["game", "lost"]).toUpperCase();
+      const color = "bg-midnightblue";
+      const rank = data.final_ranking.findIndex(user => user.username === userData.username) + 1;
+      console.log("getRank =>", data.final_ranking)
+      const total_ranks = data.final_ranking.length;
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
-      <div class="text-center player-container">
-        <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
+      <div class="text-center player-container mt-1">
+        <div class="player-circle mx-auto mb-2" style="background-image: url('${userData.profilePic}')"></div>
         <div class="player-name">
           <span>${userData.username}</span>
         </div>
       </div>
-      <div class="text-center match-info">
-        <h5>${lostWin}</h5> 
-        <h4>${boolWin ? data.winner_points : data.looser_points} - ${boolWin ? data.looser_points : data.winner_points}</h4>
-        <p id="matchDate">${formateDate(data.played_at)}</p>
+      <div class="text-center match-info mt-1">
+          <h4 style="margin-bottom: 0;">${this.lang.getTranslation(["title", "rank"]).toUpperCase()}: ${rank} / ${total_ranks}</h4>
+          <button class="btn text-decoration-none text-white color text-decoration-underline"
+            style="cursor: text; user-select: text; border: none; background: none;">
+            ${formateDate(data.played_at)}
+          </button>
       </div>
-        <div class="text-center player-container">
-          <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
-          <div class="player-name">
-            <span>${opponentName}</span>
-          </div>
-        </div>
       </div>
     </div> 
           `;
@@ -335,8 +324,8 @@ export default class extends AbstractView {
           </div>
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-            <div class="box bg-light">
-			  <span>N/A</span>
+            <div class="box bg-light history">
+            ${fillModalTournamentPong}
             </div>
           </div>
         </div>
@@ -379,8 +368,8 @@ export default class extends AbstractView {
           </div>
           <div class="col-6">
             <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-            <div class="box bg-light">
-              <span>N/A</span>
+            <div class="box bg-light history">
+            ${fillModalTournamentC4}
             </div>
           </div>
         </div>

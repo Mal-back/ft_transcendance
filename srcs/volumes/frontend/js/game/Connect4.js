@@ -9,7 +9,8 @@ export default class Connect4 {
     this.cols = 7;
     this.context = null;
     this.webSocket = null;
-    this.mode = "local";
+    this.connection = "local";
+    this.mode = "simple";
     this.pingInterval = null;
     this.timeout = null;
     this.redirectURL = null;
@@ -45,7 +46,7 @@ export default class Connect4 {
     this.handleUnloadPage = this.handleUnloadPage.bind(this);
     this.handleStartGame = this.handleStartGame.bind(this);
     this.setBackground = this.setBackground.bind(this);
-	this.handleGiveUp = this.handleGiveUp.bind(this);
+    this.handleGiveUp = this.handleGiveUp.bind(this);
     this.showTimer = this.showTimer.bind(this);
     this.setUsernameCallBack = setUsernameCallBack;
   }
@@ -53,10 +54,12 @@ export default class Connect4 {
   initC4(
     canvas = "ongoing-game",
     websocket = `wss://${getIpPortAdress()}/api/game/c4-local/join/`,
-    mode = "local",
+    connection = "local",
+    mode = "simple",
     token = null,
   ) {
     this.mode = mode;
+    this.connection = connection;
     this.token = token;
     this.redirectURL = this.setRedirecturl();
     document.getElementById("User1").innerHTML =
@@ -82,17 +85,11 @@ export default class Connect4 {
   }
 
   setRedirecturl() {
-    if (this.tournament) {
-      return "/c4-local-tournament";
-    }
-    switch (this.mode) {
-      case "remote": {
-        return "/c4-remote-menu";
-      }
-      default: {
-        return "/c4-local-menu";
-      }
-    }
+    let url = "/c4-";
+    url += this.connection == "local" ? "local-" : "remote-";
+    url += this.mode == "simple" ? "menu" : "tournament";
+    console.log(`url = ${url}`);
+    return url;
   }
 
   setToken(authToken) {
@@ -121,7 +118,7 @@ export default class Connect4 {
 
   getUsername() {
     this.setUsernameCallBack(
-      this.mode,
+      this.connection,
       this.player1.username,
       this.player2.username,
     );
@@ -129,7 +126,7 @@ export default class Connect4 {
 
   handleWebSocketOpen(ev) {
     console.log("WEBSOCKET IS OPEN: mode = ", this.mode);
-    if (this.mode == "remote") {
+    if (this.connection == "remote") {
       let uuid = sessionStorage.getItem("transcendence_game_id");
 
       const body = {
@@ -268,8 +265,7 @@ export default class Connect4 {
         if (this.tournament) {
           this.handleTournamentData(data);
         }
-        navigateTo(this.redirectURL);
-        if (this.mode != "local") {
+        if (this.connection != "local") {
           const gif = data.winner == sessionStorage.getItem("username_transcendence") ? "../img/ts/taylor-swift-win.gif" : "../img/ts/taylor-swift-cookie.gif";
           showModalGameResult(data.winner, data.looser, gif);
         }
@@ -278,6 +274,8 @@ export default class Connect4 {
           const loser = this.player1.player == data.looser ? this.player1.username : this.player2.username;
           showModalGameResult(winner, loser, "../img/ts/taylor-swift-cookie.gif");
         }
+        console.log("WILL BE REDIRECTED THERE =>", this.redirectURL)
+        navigateTo(this.redirectURL);
         return;
       }
       default: {
@@ -315,20 +313,20 @@ export default class Connect4 {
       this.webSocket.send(JSON.stringify({ type: "start_game" }));
       this.gameStart = true;
       document.getElementById("startBtn").style = `display : none;`;
-	  if (this.mode != "local") {
-      	document.getElementById("giveUpBtn").style = `display : inline;`;
-	  }
+      if (this.connection != "local") {
+        document.getElementById("giveUpBtn").style = `display : inline;`;
+      }
       // console.log("SENT START");
     }
   }
 
   addC4Event() {
-	if (this.webSocket) {
-		this.webSocket.addEventListener("open", this.handleWebSocketOpen);
-		this.webSocket.addEventListener("close", this.handleWebSocketClose);
-		this.webSocket.addEventListener("error", this.handleWebSocketError);
-		this.webSocket.addEventListener("message", this.handleWebSocketMessage);
-	}
+    if (this.webSocket) {
+      this.webSocket.addEventListener("open", this.handleWebSocketOpen);
+      this.webSocket.addEventListener("close", this.handleWebSocketClose);
+      this.webSocket.addEventListener("error", this.handleWebSocketError);
+      this.webSocket.addEventListener("message", this.handleWebSocketMessage);
+    }
     document
       .querySelector("#startBtn")
       .addEventListener("click", this.handleStartGame);
@@ -342,7 +340,7 @@ export default class Connect4 {
       cell.addEventListener("click", () =>
         this.sendPlayerMovement(this.currentPlayer.name, col),
       );
-	
+
     });
   }
 
@@ -358,7 +356,7 @@ export default class Connect4 {
         "message",
         this.handleWebSocketMessage,
       );
-	  this.webSocket = null;
+      this.webSocket = null;
     }
     const local = document.querySelector("#startBtn");
     if (local) local.addEventListener("click", this.handleStartGame);
@@ -382,7 +380,7 @@ export default class Connect4 {
     this.player2.piece = data.player_2_piece;
     this.player1.player = data.player_1_username;
     this.player2.player = data.player_2_username;
-    if (this.mode !== "local") {
+    if (this.connection !== "local") {
       this.player1.username = data.player_1_username;
       this.player2.username = data.player_2_username;
     }
@@ -393,6 +391,8 @@ export default class Connect4 {
     this.currentPlayer = this.player1.player === data.starting_player ? this.player1 : this.player2;
 
     document.getElementById("Turn").innerHTML = `<h3>${this.lang.getTranslation(["game", "its"])} ${this.currentPlayer.span}${this.currentPlayer.username}</span>${this.lang.getTranslation(["game", "turn"])}!</h3>`;
+    if (this.connection == "remote")
+      this.setUsername(data.player_1.username, data.player_2.username);
     this.getUsername()
   }
 

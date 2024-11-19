@@ -17,7 +17,10 @@
     "notif": "Notifications",
     "createUser": "Créer un utilisateur",
     "createProfile": "Créer un nouveau profil",
-    "mode": "Mode"
+    "mode": "Mode",
+    "rank": "Rang",
+    "played": "Jouées",
+    "gamesPlayed": "Parties Jouées"
   },
   "button": {
     "close": "Fermer",
@@ -113,7 +116,8 @@
       "match": "ne correspond pas",
       "unique": "est déjà pris",
       "valid": "n'est pas valide",
-      "incorrect": "Incorrect"
+      "incorrect": "Incorrect",
+      "unknown": "n'existe pas"
     },
     "preview": {
       "opponent": "Entrez le nom d'utilisateur de l'adversaire",
@@ -126,9 +130,9 @@
   },
   "modal": {
     "title": {
-	  "status" : "Statut",
-	  "offline" : "Hors ligne",
-	  "online" : "En ligne",
+      "status": "Statut",
+      "offline": "Hors ligne",
+      "online": "En ligne",
       "error": "Erreur",
       "success": "Succès",
       "congrats": "Félicitations",

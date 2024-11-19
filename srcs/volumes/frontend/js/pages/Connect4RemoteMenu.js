@@ -20,9 +20,9 @@ export default class extends AbstractView {
     this.handleInputOpponent = this.handleInputOpponent.bind(this);
     this.handleShowMatchmakingModal =
       this.handleShowMatchmakingModal.bind(this);
-    // this.handleUnloadQueue = this.handleUnloadQueue.bind(this);
-    this.redirectToGame = this.redirectToGame.bind(this);
     this.handleStopMatchmaking = this.handleStopMatchmaking.bind(this);
+    this.handleUnloadQueue = this.handleUnloadQueue.bind(this);
+    this.redirectToGame = this.redirectToGame.bind(this);
   }
 
   async loadCss() {
@@ -40,13 +40,13 @@ export default class extends AbstractView {
             ${this.lang.getTranslation(["title", "c4"]).toUpperCase()} - ${this.lang.getTranslation(["title", "remote"]).toUpperCase()}</h1>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
-            id="Connect4RemotePlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
+            id="C4RemotePlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-maroon custom-button" data-bs-toggle="modal" data-bs-target="#loading-modal"
             id="C4MatchmakingButton">${this.lang.getTranslation(["title", "matchmaking"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
-            id="Connect4RemoteTournamentButton">${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</button>
+            id="C4RemoteTournamentButton">${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</button>
           <br>
         </div>
       </div>
@@ -54,7 +54,7 @@ export default class extends AbstractView {
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="inviteModalLabel">${this.lang.getTranslation(["game", "inviteMatch"])}</h5>
+              <h5 class="modal-title" id="inviteModalLabel">${this.lang.getTranslation(["game", "inviteMatch"])}:</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -110,7 +110,7 @@ export default class extends AbstractView {
         </div>
       </div>
   </div>
-              `;
+            `;
   }
 
   handleRemoteTournamentRedirection(ev) {
@@ -170,7 +170,7 @@ export default class extends AbstractView {
         error.showModalCustom();
         navigateTo(error.redirect);
       } else {
-        console.error("PongRemoteMenu:handleMatchRemote:", error);
+        console.error("C4RemoteMenu:handleMatchRemote:", error);
       }
     }
   }
@@ -344,6 +344,21 @@ export default class extends AbstractView {
     }
   }
 
+  handleUnloadQueue(ev) {
+    if (this.matchMakingInterval) {
+      clearInterval(this.matchMakingInterval);
+      this.matchMakingInterval = null;
+    }
+    const myHeaders = new Headers();
+    const authToken = sessionStorage.getItem("accessJWT_transcendence");
+    myHeaders.append("Authorization", "Bearer" + authToken);
+    fetch("api/matchmaking/leave/", {
+      method: `delete`,
+      headers: myHeaders,
+      keepalive: true,
+    });
+  }
+
   redirectToGame(ev) {
     ev.preventDefault();
     sessionStorage.setItem(
@@ -354,11 +369,9 @@ export default class extends AbstractView {
   }
 
   async addEventListeners() {
-    const playButton = document.querySelector("#Connect4RemotePlayButton");
+    const playButton = document.querySelector("#C4RemotePlayButton");
     playButton.addEventListener("click", this.handleShowInviteModal);
-    const tournament = document.querySelector(
-      "#Connect4RemoteTournamentButton",
-    );
+    const tournament = document.querySelector("#C4RemoteTournamentButton");
     tournament.addEventListener(
       "click",
       this.handleRemoteTournamentRedirection,
@@ -370,7 +383,9 @@ export default class extends AbstractView {
     const inviteButton = document.querySelector("#inviteButton");
     inviteButton.addEventListener("click", this.handleMatchRemote);
 
-    const matchmakingModalShow = document.querySelector("#C4MatchmakingButton");
+    const matchmakingModalShow = document.querySelector(
+      "#C4MatchmakingButton",
+    );
     if (matchmakingModalShow) {
       matchmakingModalShow.addEventListener(
         "click",
@@ -386,16 +401,14 @@ export default class extends AbstractView {
     const joinButtonMatchFound = document.querySelector("#matchFoundJoin");
     joinButtonMatchFound.addEventListener("click", this.redirectToGame);
 
-    // document.addEventListener("beforeunload", this.handleUnloadQueue);
+    document.addEventListener("beforeunload", this.handleUnloadQueue);
   }
 
   removeEventListeners() {
-    const remote = document.querySelector("#Connect4RemotePlayButton");
+    const remote = document.querySelector("#C4RemotePlayButton");
     if (remote) remote.removeEventListener("click", this.handleShowInviteModal);
 
-    const tournament = document.querySelector(
-      "#Connect4RemoteTournamentButton",
-    );
+    const tournament = document.querySelector("#C4RemoteTournamentButton");
     if (tournament)
       tournament.removeEventListener(
         "click",
@@ -409,7 +422,9 @@ export default class extends AbstractView {
     if (inviteButton)
       inviteButton.removeEventListener("click", this.handleMatchRemote);
 
-    const matchmakingModalShow = document.querySelector("#C4MatchmakingButton");
+    const matchmakingModalShow = document.querySelector(
+      "#C4MatchmakingButton",
+    );
     if (matchmakingModalShow)
       matchmakingModalShow.removeEventListener(
         "click",
@@ -420,6 +435,19 @@ export default class extends AbstractView {
     if (joinButtonMatchFound)
       joinButtonMatchFound.removeEventListener("click", this.redirectToGame);
 
-    // document.removeEventListener("beforeunload", this.handleUnloadQueue);
+    document.removeEventListener("beforeunload", this.handleUnloadQueue);
+  }
+
+  destroy() {
+    console.log("Destroy");
+    if (this.matchMakingInterval) {
+      clearInterval(this.matchMakingInterval);
+      this.matchMakingInterval = null;
+    }
+    this.removeInviteEventListeners();
+    this.removeEventListeners();
+    this.cleanModal();
+    this.removeCss();
+    this.removeElem();
   }
 }

@@ -38,6 +38,7 @@ export default class extends AbstractView {
     } catch (error) {
       this.handleCatch(error);
     }
+    console.log("BODY =>", html_loaded.roundTitle, html_loaded.round)
     const title = this.getTitle();
     return `
     <div class="background" style="background-image:url('../img/ow.jpg');">
@@ -143,12 +144,13 @@ export default class extends AbstractView {
   }
 
   getRoundDiv(round) {
-    let html = "Matches: ";
+    let html = `<div><h5 class="text-decoration-underline" style="margin-bottom:0;">Matches: </h5></div><div class="tournament-creation list-group ranking">`;
     console.log(round);
     round.forEach((element) => {
       console.log(element);
-      html += `${element[0]} vs ${element[1]}<br>`;
+      html += `<div><span style="color:blue;">${element[0]}</span> vs <span style="color:red;">${element[1]}</span></div>`;
     });
+    html += `</div>`
     return html;
   }
 
@@ -163,7 +165,7 @@ export default class extends AbstractView {
         nextRoundBtn.style.display = "block";
         nextRoundBtn.dataset.redirectUrl = `${urlNextRound}`;
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async actualizeTournament() {
@@ -184,7 +186,7 @@ export default class extends AbstractView {
         if (data.final_ranking) {
           this.isFinished = true;
           const players = await this.createPlayersDiv(data.final_ranking);
-          return { players, roundTitle: "", round: "" };
+          return { players, roundTitle: "Finished", round: "<h5>The tournament is over</h5>" };
         }
         if (response.status == 204 || data.status != "in_progress")
           return undefined;
@@ -224,14 +226,14 @@ export default class extends AbstractView {
 
       const roundTitle = document.querySelector("#roundTitle");
       if (roundTitle) {
-        roundTitle.innerText = "";
-        roundTitle.innerText = data.roundTitle;
+        roundTitle.innerHTML = "";
+        roundTitle.innerHTML = data.roundTitle;
       }
 
       const roundBody = document.querySelector("#roundBody");
       if (roundBody) {
-        roundBody.innerText = "";
-        roundBody.innerText = data.round;
+        roundBody.innerHTML = "";
+        roundBody.innerHTML = data.round;
       }
     } catch (error) {
       return error;

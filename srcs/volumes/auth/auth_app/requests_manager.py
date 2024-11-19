@@ -34,6 +34,14 @@ def send_create_requests(urls:list, body={}, headers={}) -> bool:
         return False
     return True
 
+def send_get_requests(urls:dict, headers={}):
+    token = getToken()  
+    headers.update({'Authorization': f'Bearer {token}'})
+    data = {}
+    for serviceName, url in urls.items():
+        response = requests.get(url, headers=headers)
+        data.update({serviceName:response.json()})
+
 def send_delete_requests(urls:list, body={}, headers={}) -> bool :
     token = getToken()  
     headers.update({'Authorization': f'Bearer {token}'})

@@ -113,11 +113,12 @@ export default class extends AbstractView {
              `;
     }
     return `
-  <strong role="text">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
-  <br>
+  <div><h5 class="text-decoration-underline" >Matches: </h5></div>
+  <div>
+  <strong class="me-3" role="text" style="color:red;">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
   <strong role="text">VS</strong>
-  <br>
-  <strong role="text">${this.tournament.PlayerB[this.tournament.round.currentMatch].name}</strong>
+  <strong class="ms-3" role="text" style="color:blue;">${this.tournament.PlayerB[this.tournament.round.currentMatch].name}</strong>
+  </div>
           `;
   }
 
@@ -235,7 +236,7 @@ export default class extends AbstractView {
       throw new CustomError(
         `${this.lang.getTranslation(["modal", "title", "error"])}`,
         `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
-        "/pong-local-lobby",
+        "/c4-local-lobby",
       );
     }
     this.updateRank();

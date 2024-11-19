@@ -4,13 +4,15 @@ from rest_framework import generics, status
 from rest_framework.response import Serializer
 from rest_framework.views import APIView, Response, csrf_exempt
 from .serializers import UserRegistrationSerializer, ServiceObtainTokenSerializer, MyTokenObtainPairSerializer, PasswordModficationSerializer
-from .permissions import IsOwner
+from .permissions import IsOwner, IsAuthenticated
 from .models import CustomUser
-from .requests_manager import send_delete_requests, send_create_requests, send_update_requests
+from .requests_manager import send_delete_requests, send_create_requests, send_update_requests, send_get_requests
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 from django.contrib.auth import authenticate
 from .trad import translate
+from django.core.mail import send_mail
+from django.http import JsonResponse
 # Create your views here.
 
 #######################
@@ -207,3 +209,25 @@ class MicroServiceError(APIException):
     status_code = 500
     default_detail = 'An error happend between microservice interaction. Please try again later'
     default_code = 'MicroService error'
+
+class DumpPersonnalData(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        # req_urls = {
+        #         'matchmaking_data' : f'http://matchmaking:8443/api/matchmaking/{request.user.username}/',
+        #         'users_data' : f'http://users:8443/api/users/{request.user.username}/update/',
+        #         'history_data': f'http://history:8443/api/history/?user={request.user.username}',
+        #     }
+        # data = send_get_requests(req_urls)
+        serializer = UserRegistrationSerializer
+        # data.update({'auth_data': serializer.data})
+        data = {'auth_data': serializer.data}
+
+        subject = "Your personnal datas"
+        message = data
+        from_email = "no-reply@transcendance.com"  # Same as EMAIL_HOST_USER
+        recipient_list = [request.user.email]
+
+        send_mail(subject, message, from_email, recipient_list)
+        return Response({'Ok':'kr'}, status=status.HTTP_200_OK)
+

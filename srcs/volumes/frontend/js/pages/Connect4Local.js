@@ -167,34 +167,40 @@ export default class extends AbstractView {
       let auth_token = null;
       let mode = params.get("mode");
       let connection = params.get("connection");
-      if (!connection) connection = "local";
+      if (!connection) {
+        connection = "local";
+      }
+      if (!mode) {
+        mode = 'simple'
+      }
       let webScoketURL = `wss://${getIpPortAdress()}/api/game/c4-local/join/`;
       if (connection != "local") {
         webScoketURL = `wss://${getIpPortAdress()}/api/game/c4-remote/join/`;
         auth_token = await this.getToken();
       } else {
-		const giveUpButton = document.querySelector("#giveUpBtn");
+        const giveUpButton = document.querySelector("#giveUpBtn");
         if (giveUpButton) giveUpButton.style.display = "none";
-	  }
+      }
       this.connect4.initC4(
         "ongoing-game",
         webScoketURL,
         connection,
+        mode,
         auth_token,
       );
-      if (mode == "tournament") {
+      if (mode == "tournament") this.connect4.setBackground();
+      if (mode == "tournament" && connection == "local") {
         const tournament = sessionStorage.getItem(
           "tournament_transcendence_local",
         );
         if (!tournament) {
           navigateTo("/c4-local-lobby");
           showModal(
-            "Error",
-            "could not retrieve your tournament information, please start a new tournament, sorry for the inconvenience",
+            `${this.lang.getTranslation(["modal", "title", "error"])}`,
+            `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
           );
           return;
         }
-        this.connect4.setBackground();
         const parsedTournament = JSON.parse(tournament);
         if (
           !parsedTournament.round ||

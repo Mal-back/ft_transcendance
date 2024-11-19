@@ -24,6 +24,7 @@ export default class extends AbstractView {
     this.showFileUpload = this.showFileUpload.bind(this);
     this.handleSaveLanguage = this.handleSaveLanguage.bind(this);
     this.handleConfirm2FA = this.handleConfirm2FA.bind(this);
+    this.handleDownloadData = this.handleDownloadData.bind(this);
   }
 
   async loadCss() {
@@ -173,7 +174,7 @@ export default class extends AbstractView {
             <div class="modal-body removeElem">
                 <form class="removeElem">
                     <div class="mb-3 removeElem">
-                        <button type="button" class="btn btn-success removeElem">
+                        <button id="sendDataBtn" type="button" class="btn btn-success removeElem">
                             ${this.lang.getTranslation(["button", "send"])} ${this.lang.getTranslation(["button", "data"])}
                         </button>
                     </div>
@@ -308,6 +309,19 @@ export default class extends AbstractView {
         </div>
     </div>
 </div>
+<div class="modal fade" id="downloadDataModal" tabindex="-1" aria-labelledby="downloadDataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="downloadDataModalLabel">Click here to download your data</h5>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <div id="downloadDataButton"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 `;
     // const previous = `<input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">`;
     return htmlContent;
@@ -849,6 +863,55 @@ export default class extends AbstractView {
     }
   }
 
+  createDownloadButton(data) {
+    console.log("COUCOU");
+    const jsonBlob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+
+    const downloadLink = document.createElement("a");
+    const url = URL.createObjectURL(jsonBlob); // Generate a Blob URL
+    console.log("URL =", url);
+    downloadLink.href = url;
+    downloadLink.download = "data.json"; // Name of the downloaded file
+
+    // Step 4: Append link to body, click it, and remove it
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(url);
+  }
+
+  async handleDownloadData(ev) {
+    ev.preventDefault();
+    try {
+      console.log("COUCOU");
+      const username = sessionStorage.getItem("username_transcendence");
+      const request = await this.makeRequest(`/api/auth/${username}`);
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        this.createDownloadButton(data);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleDownloadData", error);
+      }
+    }
+  }
+
+  handleShowModalData(ev) {
+    ev.preventDefault();
+    const downloadDataModalDiv = document.querySelector("#downloadDataModal");
+    let downloadDataModal = bootstrap.Modal.getInstance(downloadDataModalDiv);
+    if (!downloadDataModal)
+      downloadDataModal = new bootstrap.Modal(downloadDataModalDiv);
+    downloadDataModal.show();
+  }
+
   async addEventListeners() {
     const usernameInput = document.querySelector("#username-settings");
     if (usernameInput)
@@ -901,6 +964,11 @@ export default class extends AbstractView {
     const saveLanguage = document.querySelector("#saveLanguageButton");
     if (saveLanguage)
       saveLanguage.addEventListener("click", this.handleSaveLanguage);
+
+    const sendDataBtn = document.querySelector("#sendDataBtn");
+    if (sendDataBtn) {
+      sendDataBtn.addEventListener("click", this.handleShowModalData);
+    }
 
     const deleteAccountButton = document.querySelector(
       "#confirmDeleteAccountBtn",
@@ -995,28 +1063,3 @@ export default class extends AbstractView {
     }
   }
 }
-// const confirmButton = document.getElementById('confirm-profile-background-btn');
-// if (confirmButton) {
-//     confirmButton.addEventListener('click', () => {
-//         if (this.selectedBackground) { // Use 'this.selectedBackground'
-//             document.getElementById('currentProfileBackground').style.backgroundImage = `url(${ this.selectedBackground })`;
-//             // Close the modal properly using Bootstrap's modal instance
-//             const modalInstance = bootstrap.Modal.getInstance(document.getElementById('changeProfileBackground'));
-//             modalInstance.hide();
-//         }
-//     });
-// }
-// const uploadInput = document.getElementById('uploadProfileBackground');
-// if (uploadInput) {
-//     uploadInput.addEventListener('change', (event) => {
-//         let file = event.target.files[0];
-//         if (file) {
-//             let reader = new FileReader();
-//             reader.onload = (e) => {
-//                 this.selectedBackground = e.target.result; // Use 'this.selectedBackground'
-//                 document.getElementById('currentProfileBackgroundPreview').style.backgroundImage = `url(${ this.selectedBackground })`;
-//             };
-//             reader.readAsDataURL(file);
-//         }
-//     });
-// }
