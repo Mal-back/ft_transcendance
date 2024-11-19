@@ -210,6 +210,13 @@ document.querySelector("#headerFrench").addEventListener("click", (ev) => {
   navigateTo(currentUrl.toString());
 });
 
+document.querySelector("#headerSpanish").addEventListener("click", (ev) => {
+  ev.preventDefault();
+  sessionStorage.setItem("transcendence_language", "es");
+  const currentUrl = new URL(window.location.href);
+  navigateTo(currentUrl.toString());
+});
+
 document.addEventListener("keydown", (ev) => {
   const modal = document.querySelector("#alertModal");
   if (modal.classList.contains("show")) {
