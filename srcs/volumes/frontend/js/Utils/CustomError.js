@@ -5,6 +5,7 @@ export default class CustomError extends Error {
     super(modalMessage);
     this.modalTitle = modalTitle;
     this.redirect = redirect;
+    // this.modalMessage = modalMessage;
     // Error.captureStackTrace(this, this.constructor);
   }
 

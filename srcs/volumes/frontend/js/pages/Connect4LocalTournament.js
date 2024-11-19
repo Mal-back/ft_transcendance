@@ -235,7 +235,7 @@ export default class extends AbstractView {
       throw new CustomError(
         `${this.lang.getTranslation(["modal", "title", "error"])}`,
         `${this.lang.getTranslation(["modal", "message", "failTournament"])}`,
-        "/pong-local-lobby",
+        "/c4-local-lobby",
       );
     }
     this.updateRank();

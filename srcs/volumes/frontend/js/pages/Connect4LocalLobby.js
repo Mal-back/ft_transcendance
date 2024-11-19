@@ -102,9 +102,9 @@ export default class extends AbstractView {
     let errorMessage = "";
     errorDiv.innerHTML = "";
     if (target.value.trim() === "") {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "empty"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
     } else if (!this.sanitizeInput(target.value)) {
-      errorMessage = `${this.lang.getTranslation(["input", "username", "invalid"])}`;
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
     } else if (!this.checkUnique(target.value)) {
       errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "unique"])}`;
     }
@@ -122,13 +122,15 @@ export default class extends AbstractView {
   }
 
   cleanUpPlayersInput() {
-    this.playerInputs.forEach((input) => {
-      input.value = "";
-      let inputError = document.querySelector(`#${input.id}Error`);
-      inputError.innerText = "";
-      input.removeEventListener("input", this.handleValidatePlayerInput);
-    });
-    this.playerInputs = [];
+    if (this.playerInputs) {
+      this.playerInputs.forEach((input) => {
+        input.value = "";
+        let inputError = document.querySelector(`#${input.id}Error`);
+        inputError.innerText = "";
+        input.removeEventListener("input", this.handleValidatePlayerInput);
+      });
+      this.playerInputs = [];
+    }
   }
 
   handleGeneratePlayers() {

@@ -486,20 +486,49 @@ export default class extends AbstractView {
     this.toggleButtons()
   }
 
-  async handleSearch() {
-    const input = document.getElementById("searchPlayerInput")
+  async searchUser(username) {
+    const request = await this.makeRequest(`/api/users/${username}/`, "GET");
+    const response = await fetch(request);
+    let data = null;
+    if (await this.handleStatus(response))
+      data = await this.getDatafromRequest(response);
+    if (data == null) {
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${username} ${this.lang.getTranslation(["input", "error", "unknown"])}`,
+        "/rankings",
+      );
+    }
+    return data
+  }
+
+  async handleSearch(ev) {
+    ev.preventDefault(); const input = document.getElementById("searchPlayerInput")
     const name_to_find = input.value.trim();
-    console.log("SEARCH =>", name_to_find)
     try {
-      const user_info = await this.getUserInfo(name_to_find)
-      console.log(user_info)
+      const user = await this.searchUser(name_to_find)
+      const modalTry = document.getElementById(`${name_to_find}History`);
+      if (modalTry) {
+        const myModal = new bootstrap.Modal(modalTry);
+        myModal.show();
+      }
+      else {
+        // console.log("idiot")
+        const [, modalhtml] = this.getHTMLallUsers([user]);
+        const modalsBattleHistory = await this.getAllHistoryModals([user]);
+        let modals = document.getElementById("modalsRanking");
+        modals.innerHTML += modalhtml + modalsBattleHistory;
+        const modal = document.getElementById(`${name_to_find}History`);
+        const myModal = new bootstrap.Modal(modal);
+        myModal.show();
+      }
     } catch (error) {
-      console.log("HERE IT IS")
       if (error instanceof CustomError) {
         error.showModalCustom();
-        navigateTo(error.redirect);
+        if (error.message !== `${name_to_find} ${this.lang.getTranslation(["input", "error", "unknown"])}`)
+          navigateTo(error.redirect)
       } else {
-        console.error("handlePrevousPage", error);
+        console.error("handleSearch", error);
       }
     }
   }
@@ -554,7 +583,7 @@ export default class extends AbstractView {
                     </div>
                     <div class="col-6">
                         <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-                        <div class="box bg-light">
+                        <div class="box bg-light history">
                             ${remoteTournamentsC4}
                         </div>
                     </div>
@@ -593,7 +622,7 @@ export default class extends AbstractView {
                     </div>
                     <div class="col-6">
                         <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
-                        <div class="box bg-light">
+                        <div class="box bg-light history">
                             <!-- match div -->
                             ${remoteTournamentsPong}
                         </div>
