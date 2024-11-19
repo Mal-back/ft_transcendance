@@ -143,12 +143,13 @@ export default class extends AbstractView {
   }
 
   getRoundDiv(round) {
-    let html = "Matches: ";
+    let html = `<div><h5 class="text-decoration-underline" style="margin-bottom:0;">Matches: </h5></div><div class="tournament-creation list-group ranking">`;
     console.log(round);
     round.forEach((element) => {
       console.log(element);
-      html += `${element[0]} vs ${element[1]}<br>`;
+      html += `<div><span style="color:blue;">${element[0]}</span> vs <span style="color:red;">${element[1]}</span></div>`;
     });
+    html += `</div>`
     return html;
   }
 
@@ -163,7 +164,7 @@ export default class extends AbstractView {
         nextRoundBtn.style.display = "block";
         nextRoundBtn.dataset.redirectUrl = `${urlNextRound}`;
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async actualizeTournament() {
@@ -224,14 +225,14 @@ export default class extends AbstractView {
 
       const roundTitle = document.querySelector("#roundTitle");
       if (roundTitle) {
-        roundTitle.innerText = "";
-        roundTitle.innerText = data.roundTitle;
+        roundTitle.innerHTML = "";
+        roundTitle.innerHTML = data.roundTitle;
       }
 
       const roundBody = document.querySelector("#roundBody");
       if (roundBody) {
-        roundBody.innerText = "";
-        roundBody.innerText = data.round;
+        roundBody.innerHTML = "";
+        roundBody.innerHTML = data.round;
       }
     } catch (error) {
       return error;

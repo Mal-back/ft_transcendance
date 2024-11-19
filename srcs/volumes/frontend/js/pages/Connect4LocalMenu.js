@@ -61,7 +61,7 @@ export default class extends AbstractView {
 
   handleLocalGameRedirection(ev) {
     ev.preventDefault();
-    navigateTo("/c4?connection=local");
+    navigateTo("/c4?connection=local&mode=simple");
   }
 
   handleLocalTournamentRedirection(ev) {
