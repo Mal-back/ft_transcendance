@@ -204,7 +204,7 @@ export default class extends AbstractView {
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
     <div class="d-flex justify-content-around align-items-center">
       <div class="text-center player-container">
-        <div class="player-circle mx-auto mb-2" style="background-image: url('${opponentInfo.profilePic}')"></div>
+        <div class="player-circle mx-auto mb-2" style="background-image: url('${userData.profilePic}')"></div>
         <div class="player-name">
           <span>${userData.username}</span>
         </div>
