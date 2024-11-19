@@ -46,6 +46,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
                 'increment',
                 'add',
                 'admin',
+                'deleted_account'
                 ]
         if value.lower() in forbidden_usernames:
             message = translate(lang, "forbidden_username_error")

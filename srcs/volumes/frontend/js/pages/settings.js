@@ -321,6 +321,27 @@ export default class extends AbstractView {
         </div>
     </div>
 </div>
+<div class="modal fade" id="confirmDeleteAccountModal" tabindex="-1" aria-labelledby="confirmDeleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteAccountModalLabel">Confirm Account Deletion</h5>
+            </div>
+            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                <div><h4>Are you sure?</h4></div>
+                <br>
+                <div>
+                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
+                    No
+                </button>
+                <button id="confirmDeleteAccountBtn" type="button" class="btn btn-success removeElem">
+                    Yes
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 `;
     // const previous = `<input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">`;
@@ -823,7 +844,7 @@ export default class extends AbstractView {
         );
         navigateTo("/settings");
       }
-    } catch (error) {}
+    } catch (error) { }
     this.handleCatch(error);
   }
 

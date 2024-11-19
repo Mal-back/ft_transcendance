@@ -113,6 +113,8 @@ class PublicUserAddFriend(APIView):
         lang = request.headers.get('lang')
         if username == friendusername:
             return Response(status=status.HTTP_304_NOT_MODIFIED)
+        if friendusername == 'deleted_account':
+            return Response({'Error':'Cannot add delted_account as friend'}, status=status.HTTP_409_CONFLICT)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:
