@@ -1,4 +1,15 @@
 {
+  "tournament": {
+    "invite_player" : "Invite Player",
+    "pending_invites" : "Pending Invites",
+    "players" : "Players",
+    "start_tournament" : "Start Tournament",
+    "cancel_tournament" : "Cancel Tournament",
+    "friends_list" : "Friends List",
+    "no_friends" : "No Friends Found",
+    "left_tournament" : "You left the tournament",
+    "kicked" : "Sorry, you were kicked"
+  },
   "title": {
     "home": "Home",
     "pong": "Pong",
@@ -20,7 +31,13 @@
     "mode": "Mode",
     "rank": "Rank",
     "played": "Played",
-    "gamesPlayed": "Games Played"
+    "gamesPlayed": "Games Played",
+    "rankedGame" : "Ranked Game",
+    "tournamentGame" : "Tournament Game",
+    "2fa" : "Two Factor Authentication",
+    "remoteBattle" : "Remote Battle",
+    "remoteTournament" : "Remote Tournament"
+
   },
   "button": {
     "close": "Close",
@@ -45,7 +62,9 @@
     "all": "all",
     "join": "Join",
     "addFriend": "Add Friend",
-    "remove": "Remove"
+    "remove": "Remove",
+    "leave" : "Leave",
+    "activate2fa" : "Activate 2FA"
   },
   "user": {
     "you": "You",
@@ -92,7 +111,12 @@
     "n/a": "n/a",
     "result": "Result",
     "winner": "Winner",
-    "loser": "Loser"
+    "loser": "Loser",
+    "game_paused" : "Game is paused",
+    "waiting_players" : "Waiting for all players to be ready",
+    "gameHistory" : "Game history",
+    "nextMatch" : "Next Match"
+
   },
   "homePage": {
     "title": "Welcome to Our Pong!",
@@ -162,7 +186,9 @@
       "help": "Space to start the game.<br>Space to pause/unpause the game.<br>W to go up.<br>S to go down.<br>In local game for the Red Player:<br> -ArrowUp to go up.<br> -ArrowDown to go down.",
       "lostGame": "Better luck next time",
       "addYourself": "You can't add yourself as a friend",
-      "inviteYou": "invites you to a game of"
+      "inviteYou": "invites you to a game",
+      "inviteYouTournament": "invites you to a tournament"
+
     }
   }
 }

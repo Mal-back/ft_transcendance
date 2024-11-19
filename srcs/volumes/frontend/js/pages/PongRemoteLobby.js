@@ -57,12 +57,12 @@ export default class extends AbstractView {
         <br>
         <div class="tournament-creation ranking" id="inviteTournamentOwner" style="display: ${this.owner ? "block" : "none"};">
           <div class=" text-center text-white  rounded">
-            <h3 class="form-label text-decoration-underline" id="SelectPlayersTitle">Invite Player</h3>
+            <h3 class="form-label text-decoration-underline" id="SelectPlayersTitle">${this.lang.getTranslation(["tournament", "invite_player"])}</h3>
             <div class="input-group">
-              <input type="text" id="inputInvitePlayerTournament" class="form-control" placeholder="Player's username"
+              <input type="text" id="inputInvitePlayerTournament" class="form-control" placeholder="${this.lang.getTranslation(["input", "label", "username"])}"
                 aria-label="Recipient's username" aria-describedby="basic-addon2">
               <div class="input-group-append">
-                <button id="invitePlayerTournamentButton" class="btn btn-outline-primary" type="submit">Invite</button>
+                <button id="invitePlayerTournamentButton" class="btn btn-outline-primary" type="submit">${this.lang.getTranslation(["button", "invite"])}</button>
               </div>
             </div>
               <div id="usernameError" class="removeElem mt-1"></div>
@@ -70,15 +70,15 @@ export default class extends AbstractView {
           <div class="d-flex align-items-center justify-content-center">
             <button type="button" class="btn btn-light white-txt btn-lg bg-green custom-button mt-3"
               style="max-height: 6vh; min-height: 50px; margin-bottom: 0px;"
-                id="friend-list">Friends</button>
+                id="friend-list">${this.lang.getTranslation(["title", "friends"])}</button>
             <button type="button" class="btn btn-light white-txt btn-lg bg-blue custom-button mt-3 ms-1"
               style="max-height: 6vh; min-height: 50px; margin-bottom: 0px;"
-                id="pending">Pending Invites</button>
+                id="pending">${this.lang.getTranslation(["tournament", "pending_invites"])}</button>
           </div>
         </div>
         <br>
         <h3 class="form-label text-center text-white text-decoration-underline" id="SelectPlayersTitle">
-          Players:</h3>
+          ${this.lang.getTranslation(["tournament", "players"])}:</h3>
         <div class="tournament-creation list-group ranking" style="margin-bottom: 0px;">
           <div id="ownerDiv">
             ${data ? data.ownerHtml : ""}
@@ -91,12 +91,12 @@ export default class extends AbstractView {
           <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button"
             style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px; display: ${this.owner ? "block" : "none"};"
             id="startTournamentBtn">
-              Start Tournament
+            ${this.lang.getTranslation(["tournament", "start_tournament"])}
           </button>
           <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-1"
             style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px; display: ${this.owner ? "block" : "none"};"
             id="cancelTournamentBtn">
-              Cancel Tournament
+            ${this.lang.getTranslation(["tournament", "cancel_tournament"])}
           </button>
         </div>
       </div>
@@ -104,13 +104,13 @@ export default class extends AbstractView {
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="friendListModalLabel">Friends List</h5>
+              <h5 class="modal-title" id="friendListModalLabel">${this.lang.getTranslation(["tournament", "friends_list"])}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="friendListModalContent" style="max-height: 400px; overflow-y: auto;">
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "close"])}</button>
             </div>
           </div>
         </div>
@@ -119,14 +119,14 @@ export default class extends AbstractView {
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="pendingTournamentModalLabel">Pending Invites</h5>
+              <h5 class="modal-title" id="pendingTournamentModalLabel">${this.lang.getTranslation(["tournament", "pending_invites"])}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="pendingTournamentModalContent" style="max-height: 400px; overflow-y: auto;">
             ${data ? data.pendingHtml : ""}
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "close"])}</button>
             </div>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default class extends AbstractView {
       const playerAvatar = `background-image: url('${data.profilePic}');`;
       let cancelButton = this.owner
         ? `<button class="btn btn-sm btn-danger ms-auto cancelPlayer"><i class="bi bi-x-circle"></i>
-      Cancel</button>`
+      ${this.lang.getTranslation(["button", "cancel"])}</button>`
         : ``;
       return `
 <div>
@@ -192,11 +192,11 @@ export default class extends AbstractView {
       const username = sessionStorage.getItem("username_transcendence");
       let removeButton = this.owner
         ? `<button class="btn btn-sm btn-danger ms-auto removePlayer"><i class="bi bi-x-circle"></i>
-      Remove</button>`
+      ${this.lang.getTranslation(["button", "remove"])}</button>`
         : ``;
       if (this.owner == false && username == dataPlayer.username)
         removeButton = `<button class="btn btn-sm btn-danger ms-auto leavePlayer" data-leaveUrl="${leaveUrl}" data-owner="${owner}"><i class="bi bi-x-circle"></i>
-      Leave</button>`;
+      ${this.lang.getTranslation(["button", "leave"])}</button>`;
       return `
 <div>
   <div class="list-group-item d-flex align-items-center justify-content-between mb-3 rounded w-100">
@@ -417,7 +417,7 @@ export default class extends AbstractView {
       if (await this.handleStatus(response)) {
         data = await this.getDatafromRequest(response);
         if (data.count === 0) {
-          return "<p class='text-center'>No friends found.</p>";
+          return "<p class='text-center'>" + this.lang.getTranslation(["tournament", "no_friends"])  + "</p>";
         }
       }
     } catch (error) {
@@ -470,7 +470,7 @@ export default class extends AbstractView {
           <h5 class="mb-0">${friendJson.username}</h5>
         </div>
         <button class="btn btn-sm btn-primary ms-auto inviteFriend" data-username=${friendJson.username}>
-          <i class="bi bi-person-plus"></i> ${this.lang.getTranslation(["Friends", "inviteButton"])}
+          <i class="bi bi-person-plus"></i> ${this.lang.getTranslation(["button", "invite"])}
         </button>
       </div>
     `;
@@ -485,8 +485,8 @@ export default class extends AbstractView {
       const data = await this.checkTournament();
       if (data == undefined) {
         throw new CustomError(
-          "Tournament",
-          "Sorry, you were kicked! 🤡",
+          this.lang.getTranslation(["title", "tournament"]),
+          this.lang.getTranslation(["tournament", "kicked"]),
           "/pong-remote-menu",
         );
       }
@@ -672,8 +672,8 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         showModal(
-          "Tournament",
-          `You left ${ev.target.dataset.owner}'s tournament`,
+          this.lang.getTranslation(["title","tournament"]),
+          this.lang.getTranslation(["tournament","left_tournament"]),
         );
         navigateTo("/");
       }

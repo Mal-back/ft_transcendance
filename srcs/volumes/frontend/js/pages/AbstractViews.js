@@ -220,7 +220,9 @@ export default class AbstractViews {
       opponentInviteId.innerText = "";
       opponentInviteId.innerHTML = `${opponent}`;
       const ongoing = document.querySelector("#onGoingGameText");
-      ongoing.innerText = `Current ${data.is_tournament_match ? "Tournament" : "Ranked"} Game:`;
+      // const translations = this.lang.getTranslation(["title.tournament", "title.rankedGame"]);
+      // ongoing.innerText = `${data.is_tournament_match ? translations["title.tournament"] : translations["title.rank"]} :`;
+      ongoing.innerText = `${data.is_tournament_match ? this.lang.getTranslation(["title", "tournamentGame"]) : this.lang.getTranslation(["title", "rankedGame"])} :`;
       const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
@@ -357,7 +359,7 @@ export default class AbstractViews {
           gameType: item.game_type,
           acceptInviteUrl: item.accept_invite,
           declineInviteUrl: item.decline_invite,
-          message: `${item.owner_name} Invites you to a ${item.game_type} tournament`,
+          message: `${item.game_type} : ${item.owner_name} ${this.lang.getTranslation(["modal","message", "inviteYouTournament"])}`,
         };
         AbstractViews.invitesTournament.push(invite);
       }
@@ -390,7 +392,7 @@ export default class AbstractViews {
           declineInviteUrl: item.decline_invite,
           opponentAvatar: opponent.profilePic,
           opponentStatus: opponent.is_online,
-          message: `${opponentName} ${this.lang.getTranslation(["modal", "message", "inviteYou"])} ${item.game_type}`,
+          message: `${item.game_type} : ${opponentName} ${this.lang.getTranslation(["modal", "message", "inviteYou"])}`,
         };
         console.log("invite", invite);
         AbstractViews.invitesArray.push(invite);

@@ -76,12 +76,12 @@ export default class Language {
     const gameResultTitle = gameResultModal.querySelector("#gameResultTitle");
     const gameWinnerTitle = gameResultModal.querySelector("#gameWinnerTitle");
     const gameLoserTitle = gameResultModal.querySelector("#gameLoserTitle");
-    gameResultTitle.innerText = `${this.getTranslation(["game", "label"])} ${this.getTranslation(["game", "result"])}:`;
+    gameResultTitle.innerText = `${this.getTranslation(["game", "result"])}:`;
     gameWinnerTitle.innerText = `${this.getTranslation(["game", "winner"])} : `;
     gameLoserTitle.innerText = `${this.getTranslation(["game", "loser"])} : `;
 
     const inviteModalLabel = document.getElementById("inviteModalLabel");
-    inviteModalLabel.innerText = `${this.getTranslation(["game", "label"])} ${this.getTranslation(["game", "invites"])}`;
+    inviteModalLabel.innerText = `${this.getTranslation(["game", "invites"])}`;
     const onGoingGameText = document.getElementById("onGoingGameText");
     onGoingGameText.innerText = `${this.getTranslation(["game", "onGoing"])} ${this.getTranslation(["game", "label"])}:`;
     const onGoingGameButton = document.querySelector("#buttonOnGoingGame");

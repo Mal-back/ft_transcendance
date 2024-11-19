@@ -85,11 +85,11 @@ export default class extends AbstractView {
                 </div>
 
                 <div class="mb-3 removeElem">
-                    <label for="password-label" class="form-label removeElem">Start 2FA:</label>
+                    <label for="password-label" class="form-label removeElem">${this.lang.getTranslation(["title", "2fa"])}:</label>
                     <br />
                     <button type="button" id="2fa-label" class="btn btn-secondary removeElem" data-bs-toggle="modal"
                         data-bs-target="#handle2FA">
-                        Activate 2FA
+                        ${this.lang.getTranslation(["button", "activate2fa"])}
                     </button>
                 </div>
                 

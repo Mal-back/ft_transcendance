@@ -207,9 +207,7 @@ export default class extends AbstractView {
     try {
       userData = await this.loadUserData();
       const battleHistory =
-        this.lang.getTranslation(["game", "battle"]) +
-        " " +
-        this.lang.getTranslation(["game", "history"]);
+        this.lang.getTranslation(["game", "gameHistory"]);
 
       let fillModalMatchPong = await this.getMatchHistory(userData, "pong");
       if (!fillModalMatchPong)
@@ -258,7 +256,7 @@ export default class extends AbstractView {
           ${this.lang.getTranslation(["game", "winRate"])} ${this.lang.getTranslation(["title", "pong"])}:<span id="winRatePong"> ${winRatePong}</span>
         </p>
         <p class="black-txt">
-          ${this.lang.getTranslation(["title", "pong"])} ${battleHistory}:
+          ${this.lang.getTranslation(["title", "pong"])} : ${battleHistory}:
           <span
             ><button
               class="text-decoration-none text-primary color"
@@ -275,7 +273,7 @@ export default class extends AbstractView {
           ${this.lang.getTranslation(["game", "winRate"])} ${this.lang.getTranslation(["title", "c4"])}: <span id="winRateConnect4">${winRateC4}</span>
         </p>
         <p class="black-txt">
-          ${this.lang.getTranslation(["title", "c4"])} ${battleHistory}:
+          ${this.lang.getTranslation(["title", "c4"])} : ${battleHistory}:
           <span
             ><button
               class="text-decoration-none text-primary color"
@@ -305,7 +303,7 @@ export default class extends AbstractView {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="pongBattleHistoryModal">
-          ${this.lang.getTranslation(["title", "pong"])} ${battleHistory}
+          ${this.lang.getTranslation(["title", "pong"])} : ${battleHistory}
         </h5>
         <button
           type="button"
@@ -317,13 +315,13 @@ export default class extends AbstractView {
       <div class="modal-body overflow-auto" style="max-height: 70vh">
         <div class="row justify-content-center align-items-start">
           <div class="col-6">
-            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteBattle"])} :</h5>
             <div class="box bg-light history">
               ${fillModalMatchPong}
             </div>
           </div>
           <div class="col-6">
-            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteTournament"])} :</h5>
             <div class="box bg-light history">
             ${fillModalTournamentPong}
             </div>
@@ -349,7 +347,7 @@ export default class extends AbstractView {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="connect4BattleHistoryModal">
-          ${this.lang.getTranslation(["title", "c4"])} ${battleHistory}
+          ${this.lang.getTranslation(["title", "c4"])} : ${battleHistory}
         </h5>
         <button
           type="button"

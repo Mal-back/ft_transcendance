@@ -1,4 +1,15 @@
 {
+  "tournament": {
+    "invite_player" : "Inviter un Joueur",
+    "pending_invites" : "Invitations en cours",
+    "players" : "Joueurs",
+    "start_tournament" : "Commencer le tournoi",
+    "cancel_tournament" : "Annuler le tournoi",
+    "friends_list" : "Liste d'amis",
+    "no_friends" : "Aucun Amis Trouvé",
+    "left_tournament" : "Vous avez quitté le tournoi",
+    "kicked" : "Desolé, vous avez été exclu"
+  },
   "title": {
     "home": "Accueil",
     "pong": "Pong",
@@ -11,7 +22,7 @@
     "local": "Local",
     "lobby": "Salon",
     "matchmaking": "Matchmaking",
-    "remote": "À distance",
+    "remote": "En ligne",
     "tournament": "Tournoi",
     "ranking": "Classement",
     "notif": "Notifications",
@@ -20,7 +31,13 @@
     "mode": "Mode",
     "rank": "Rang",
     "played": "Jouées",
-    "gamesPlayed": "Parties Jouées"
+    "gamesPlayed": "Parties Jouées",
+    "rankedGame" : "Partie classée",
+    "tournamentGame" : "Partie de tournoi",
+    "2fa" : "Authentification à deux facteurs",
+    "remoteBattle" : "Parties en ligne",
+    "remoteTournament" : "Tournois en ligne"
+
   },
   "button": {
     "close": "Fermer",
@@ -45,7 +62,9 @@
     "all": "tout",
     "join": "Rejoindre",
     "addFriend": "Ajouter un ami",
-    "remove": "Retirer"
+    "remove": "Retirer",
+    "leave" : "Quitter",
+    "activate2fa" : "Activer le 2FA"
   },
   "user": {
     "you": "Vous",
@@ -65,6 +84,7 @@
     "win": "Victoire",
     "wins": "Victoires",
     "won": "Gagné",
+    "invites": "Invitations",
     "loss": "Défaite",
     "lost": "Perdu",
     "play": "Jouer",
@@ -90,7 +110,11 @@
     "n/a": "n/a",
     "result": "Résultat",
     "winner": "Vainqueur",
-    "loser": "Perdant"
+    "loser": "Perdant",
+    "game_paused" : "Jeu en pause",
+    "waiting_players" : "En attente des joueurs",
+    "gameHistory" : "Historique de parties",
+    "nextMatch" : "Prochain match"
   },
   "homePage": {
     "title": "Bienvenue sur notre Pong !",
@@ -159,7 +183,9 @@
       "wonTournament": "a remporté le tournoi",
       "help": "Espace pour démarrer le jeu.<br>Espace pour mettre en pause/reprendre le jeu.<br>W pour monter.<br>S pour descendre.<br>Dans un jeu local pour le joueur Rouge :<br> -FlècheHaut pour monter.<br> -FlècheBas pour descendre.",
       "lostGame": "Bonne chance la prochaine fois",
-      "addYourself": "Vous ne pouvez pas vous ajouter en tant qu'ami"
+      "addYourself": "Vous ne pouvez pas vous ajouter en tant qu'ami",
+      "inviteYou": "vous a invité à une partie",
+      "inviteYouTournament": "vous a invité à un tournoi"
     }
   }
 }

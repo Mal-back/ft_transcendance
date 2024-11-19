@@ -244,13 +244,13 @@ export default class Pong {
           this.gamePause = false;
         }
         if (data.action == "stop") {
-          this.printMessage("Game is paused", "white");
+          this.printMessage(this.lang.getTranslation(["game", "game_paused"]), "white");
           this.gamePause = true;
         }
         break;
       }
       case "wait": {
-        this.printMessage("Waiting for your opponent");
+        this.printMessage(this.lang.getTranslation(["game", "waiting_players"]));
         break;
       }
       case "end_state": {

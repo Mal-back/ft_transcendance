@@ -52,7 +52,7 @@ export default class extends AbstractView {
         <button id="nextRoundBtn" type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" style="display: none;">
           Next Round</button>
         <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-2" data-bs-toggle="modal" style="display: ${this.isFinished ? "none" : "block"}"
-              data-bs-target="#current-round-modal">${this.lang.getTranslation(["game", "next"])} ${this.lang.getTranslation(["game", "match"])}</button>
+              data-bs-target="#current-round-modal">${this.lang.getTranslation(["game", "nextMatch"])}</button>
       </div>
     </div>
     <div class="modal fade" id="next-game-modal" tabindex="-1" aria-labelledby="next-game-modalLabel"
