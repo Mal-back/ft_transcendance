@@ -38,6 +38,7 @@ export default class extends AbstractView {
     } catch (error) {
       this.handleCatch(error);
     }
+    console.log("BODY =>", html_loaded.roundTitle, html_loaded.round)
     const title = this.getTitle();
     return `
     <div class="background" style="background-image:url('../img/ow.jpg');">
@@ -185,7 +186,7 @@ export default class extends AbstractView {
         if (data.final_ranking) {
           this.isFinished = true;
           const players = await this.createPlayersDiv(data.final_ranking);
-          return { players, roundTitle: "", round: "" };
+          return { players, roundTitle: "Finished", round: "<h5>The tournament is over</h5>" };
         }
         if (response.status == 204 || data.status != "in_progress")
           return undefined;

@@ -66,6 +66,8 @@ export default class extends AbstractView {
               </div>
             </div>
               <div id="usernameError" class="removeElem mt-1"></div>
+          </div>
+          <div class="d-flex align-items-center justify-content-center">
             <button type="button" class="btn btn-light white-txt btn-lg bg-green custom-button mt-3"
               style="max-height: 6vh; min-height: 50px; margin-bottom: 0px;"
                 id="friend-list">Friends</button>
@@ -91,7 +93,7 @@ export default class extends AbstractView {
             id="startTournamentBtn">
               Start Tournament
           </button>
-          <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button"
+          <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-1"
             style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px; display: ${this.owner ? "block" : "none"};"
             id="cancelTournamentBtn">
               Cancel Tournament

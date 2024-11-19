@@ -66,6 +66,8 @@ export default class extends AbstractView {
               </div>
             </div>
               <div id="usernameError" class="removeElem mt-1"></div>
+          </div>
+          <div class="d-flex align-items-center justify-content-center">
             <button type="button" class="btn btn-light white-txt btn-lg bg-green custom-button mt-3"
               style="max-height: 6vh; min-height: 50px; margin-bottom: 0px;"
                 id="friend-list">Friends</button>
@@ -91,7 +93,7 @@ export default class extends AbstractView {
             id="startTournamentBtn">
               Start Tournament
           </button>
-          <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button"
+          <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-1"
             style="max-height: 6vh; min-height: 50px; margin-bottom: 0; margin-top: 10px; display: ${this.owner ? "block" : "none"};"
             id="cancelTournamentBtn">
               Cancel Tournament
@@ -223,7 +225,7 @@ export default class extends AbstractView {
           const startBtn = document.querySelector("#startTournamentBtn");
           startBtn.style.display = `block`;
         }
-      } catch (error) {}
+      } catch (error) { }
 
       let OwnerButton = `<button class="btn btn-sm btn-warning ms-auto"><i class="bi bi-trophy"></i></button>`;
       return `
@@ -366,8 +368,8 @@ export default class extends AbstractView {
         {
           game_type: "pong",
           invited_players: [
-            // "user2",
-            // "user3",
+            "user2",
+            "user3",
             // "user4",
             // "user5",
             // "user6",
