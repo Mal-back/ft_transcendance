@@ -348,6 +348,20 @@ export default class extends AbstractView {
       let history = "";
       for (let index = 0; index < users.length; index++) {
         const user = users[index];
+        if (user.username == "user0") {
+          console.log("DATA USER1", user)
+          console.log("WR single games =>", user.single_games_c4_win_rate * 100, user.single_games_pong_win_rate * 100)
+        }
+
+        let singleGamesC4 = user.single_games_c4_win_rate * 100;
+        let singleGamesPong = user.single_games_pong_win_rate * 100;
+        let tournamentGamesC4 = user.tournament_c4_win_rate * 100;
+        let tournamentGamesPong = user.tournament_pong_win_rate * 100;
+        if (user.total_single_games_c4 == 0) singleGamesC4 = undefined
+        if (user.total_single_games_pong == 0) singleGamesPong = undefined
+        if (user.total_tournaments_c4 == 0) tournamentGamesC4 = undefined
+        if (user.total_tournaments_pong == 0) tournamentGamesPong = undefined
+
         let fillModalMatchPong = await this.getMatchHistory(user, user.pong_matches);
         if (!fillModalMatchPong)
           fillModalMatchPong = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
@@ -364,8 +378,8 @@ export default class extends AbstractView {
         if (!fillModalTournamentC4)
           fillModalTournamentC4 = `<p class="text-center">${this.lang.getTranslation(["game", "n/a"])}</p>`;
 
-        const modalPong = this.getModalPong(user.username, fillModalMatchPong, fillModalTournamentPong);
-        const modalC4 = this.getModalC4(user.username, fillModalMatchC4, fillModalTournamentC4);
+        const modalPong = this.getModalPong(user.username, fillModalMatchPong, fillModalTournamentPong, singleGamesPong, tournamentGamesPong);
+        const modalC4 = this.getModalC4(user.username, fillModalMatchC4, fillModalTournamentC4, singleGamesC4, tournamentGamesC4);
         history += modalPong + modalC4;
       }
       return history
@@ -424,6 +438,8 @@ export default class extends AbstractView {
       const status = data[index].is_online ? "status-online" : "status-offline";
       const html = this.getHTMLforUser(userRank, username, avatar, total, status)
       usersHTML += html;
+      if (username == "user1")
+        console.log("What's inside?", data[index])
       const htmlModal = this.getUserChooseHistoryModal(username);
       usersModal += htmlModal;
     }
@@ -438,13 +454,13 @@ export default class extends AbstractView {
         const data = await this.getUsers(this.nextPage)
         const [html, modalhtml] = this.getHTMLallUsers(data);
         const history = await this.getAllHistoryModals(data);
-        console.log("ENDHTML =>", html);
         let ranking = document.getElementById("rankingUsers");
         ranking.innerHTML = "";
         ranking.innerHTML = html;
         let modals = document.getElementById("modalsRanking");
         modals.innerHTML = "";
         modals.innerHTML = modalhtml + history;
+        // console.log("ENDHTML =>", history);
       } catch (error) {
         if (error instanceof CustomError) {
           error.showModalCustom();
@@ -466,7 +482,7 @@ export default class extends AbstractView {
         const data = await this.getUsers(this.previousPage);
         const [html, modalhtml] = this.getHTMLallUsers(data);
         const history = await this.getAllHistoryModals(data);
-        console.log("ENDHTML =>", html);
+        // console.log("ENDHTML =>", html);
         let ranking = document.getElementById("rankingUsers");
         ranking.innerHTML = "";
         ranking.innerHTML = html;
@@ -559,7 +575,9 @@ export default class extends AbstractView {
 
   }
 
-  getModalC4(username, remoteBattlesC4, remoteTournamentsC4) {
+  getModalC4(username, remoteBattlesC4, remoteTournamentsC4, rmBattles, rmTournaments) {
+    const singleGames = rmBattles !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmBattles}%</div>` : ""
+    const tournamentGames = rmTournaments !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmTournaments}%</div>` : ""
     const battleHistory =
       this.lang.getTranslation(["game", "battle"]) +
       " " +
@@ -573,7 +591,7 @@ export default class extends AbstractView {
                 <h5 class="modal-title">${this.lang.getTranslation(["title", "c4"])} ${battleHistory}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+            <div class="modal-body overflow-auto" style="max-height: 60vh;">
                 <div class="row justify-content-center align-items-start">
                     <div class="col-6">
                         <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
@@ -588,6 +606,14 @@ export default class extends AbstractView {
                         </div>
                     </div>
                 </div>
+                <div class="row justify-content-center align-items-start">
+                    <div class="col-6">
+                      ${singleGames}
+                    </div>
+                    <div class="col-6">
+                      ${tournamentGames}
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -598,7 +624,9 @@ export default class extends AbstractView {
     `
   }
 
-  getModalPong(username, remoteBattlesPong, remoteTournamentsPong) {
+  getModalPong(username, remoteBattlesPong, remoteTournamentsPong, rmBattles, rmTournaments) {
+    const singleGames = rmBattles !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmBattles}%</div>` : ""
+    const tournamentGames = rmTournaments !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmTournaments}%</div>` : ""
     const battleHistory =
       this.lang.getTranslation(["game", "battle"]) +
       " " +
@@ -626,6 +654,14 @@ export default class extends AbstractView {
                             <!-- match div -->
                             ${remoteTournamentsPong}
                         </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center align-items-start">
+                    <div class="col-6">
+                      ${singleGames}
+                    </div>
+                    <div class="col-6">
+                      ${tournamentGames}
                     </div>
                 </div>
             </div>
