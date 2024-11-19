@@ -18,7 +18,12 @@
 }
 
 .player-name {
-  max-width: 100px;
+  max-width: 100%;
+}
+
+.player-container {
+  flex: 1;
+  max-width: 30%;
 }
 
 .content {

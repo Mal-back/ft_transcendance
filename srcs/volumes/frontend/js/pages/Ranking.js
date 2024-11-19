@@ -136,6 +136,7 @@ export default class extends AbstractView {
     let data = [];
     for (let rank = 0; rank < players.length; rank++) {
       const username = players[rank].username
+      if (username == "deleted_account") continue;
       const user_info = await this.getUserInfo(username)
       data.push(user_info)
     }
