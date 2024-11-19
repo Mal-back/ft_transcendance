@@ -113,7 +113,8 @@
     "loser": "Perdant",
     "game_paused" : "Jeu en pause",
     "waiting_players" : "En attente des joueurs",
-    "gameHistory" : "Historique de parties"
+    "gameHistory" : "Historique de parties",
+    "nextMatch" : "Prochain match"
   },
   "homePage": {
     "title": "Bienvenue sur notre Pong !",

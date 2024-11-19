@@ -57,7 +57,7 @@ export default class extends AbstractView {
       </div>
       <div class="d-flex align-items-center justify-content-center mt-2">
         <button type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" data-bs-toggle="modal"
-              data-bs-target="#next-game-modal">${this.lang.getTranslation(["game", "next"])} ${this.lang.getTranslation(["game", "match"])}</button>
+              data-bs-target="#next-game-modal">${this.lang.getTranslation(["game", "nextMatch"])}</button>
       </div>
     </div>
     <div class="modal fade" id="next-game-modal" tabindex="-1" aria-labelledby="next-game-modalLabel"
@@ -113,7 +113,7 @@ export default class extends AbstractView {
              `;
     }
     return `
-  <div><h5 class="text-decoration-underline" >Matches: </h5></div>
+  <div><h5 class="text-decoration-underline" >${this.lang.getTranslation(["game", "nextMatch"])}: </h5></div>
   <div>
   <strong class="me-3" role="text" style="color:red;">${this.tournament.PlayerA[this.tournament.round.currentMatch].name}</strong>
   <strong role="text">VS</strong>

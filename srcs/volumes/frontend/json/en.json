@@ -114,7 +114,8 @@
     "loser": "Loser",
     "game_paused" : "Game is paused",
     "waiting_players" : "Waiting for all players to be ready",
-    "gameHistory" : "Game history"
+    "gameHistory" : "Game history",
+    "nextMatch" : "Next Match"
 
   },
   "homePage": {
