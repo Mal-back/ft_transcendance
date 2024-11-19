@@ -81,7 +81,7 @@ export default class Language {
     gameLoserTitle.innerText = `${this.getTranslation(["game", "loser"])} : `;
 
     const inviteModalLabel = document.getElementById("inviteModalLabel");
-    inviteModalLabel.innerText = `${this.getTranslation(["game", "label"])} ${this.getTranslation(["game", "invites"])}`;
+    inviteModalLabel.innerText = `${this.getTranslation(["game", "invites"])}`;
     const onGoingGameText = document.getElementById("onGoingGameText");
     onGoingGameText.innerText = `${this.getTranslation(["game", "onGoing"])} ${this.getTranslation(["game", "label"])}:`;
     const onGoingGameButton = document.querySelector("#buttonOnGoingGame");
