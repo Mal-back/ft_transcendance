@@ -42,6 +42,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
                 'increment',
                 'add',
                 'admin',
+                'deleted_account'
                 ]
         if value.lower() in forbidden_usernames:
             raise ValidationError('Forbidden user name')
