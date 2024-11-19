@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -11,6 +12,8 @@ class CustomJWTAuth(JWTAuthentication):
                 raise InvalidToken('Info not found')
             try:
                 user = CustomUser.objects.get(username=username)
+                user.last_log = now()
+                user.save()
                 return user
             except CustomUser.DoesNotExist:
                 raise AuthenticationFailed('Unknown User')
