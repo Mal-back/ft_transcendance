@@ -391,8 +391,10 @@ export default class Connect4 {
     this.currentPlayer = this.player1.player === data.starting_player ? this.player1 : this.player2;
 
     document.getElementById("Turn").innerHTML = `<h3>${this.lang.getTranslation(["game", "its"])} ${this.currentPlayer.span}${this.currentPlayer.username}</span>${this.lang.getTranslation(["game", "turn"])}!</h3>`;
-    if (this.connection == "remote")
-      this.setUsername(data.player_1.username, data.player_2.username);
+    if (this.connection == "remote") {
+      console.log("P1", data)
+      this.setUsername(data.player_1_username, data.player_2_username);
+    }
     this.getUsername()
   }
 
