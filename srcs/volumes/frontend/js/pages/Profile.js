@@ -359,13 +359,13 @@ export default class extends AbstractView {
       <div class="modal-body overflow-auto" style="max-height: 70vh">
         <div class="row justify-content-center align-items-start">
           <div class="col-6">
-            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteBattle"])} :</h5>
             <div class="box bg-light history">
 			${fillModalMatchC4}
             </div>
           </div>
           <div class="col-6">
-            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
+            <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteTournament"])} :</h5>
             <div class="box bg-light history">
             ${fillModalTournamentC4}
             </div>

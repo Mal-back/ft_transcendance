@@ -21,7 +21,7 @@ export default class extends AbstractView {
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
     if (refreshToken) {
       try {
-        const request = await this.makeRequest("/api/auth/logout", "POST", {
+        const request = await this.makeRequest("/api/auth/logout/", "POST", {
           refresh: refreshToken,
         });
         const response = await fetch(request);
