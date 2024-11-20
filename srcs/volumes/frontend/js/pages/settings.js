@@ -716,51 +716,116 @@ export default class extends AbstractView {
     qrCodeModal.show();
   }
 
-  async handleConfirm2FA(ev) {
-    ev.preventDefault();
-    try {
-      const username = sessionStorage.getItem("username_transcendence");
-      const request = await this.makeRequest(
-        `/api/auth/update/${username}`,
-        "PATCH",
-        {
-          two_fa_enabled: true,
-        },
-      );
-      const response = await fetch(request);
-      if (await this.handleStatus(response)) {
-        const data = await this.getDatafromRequest(response);
-        console.log("handleConfirm2FA: data", data);
-        this.showQrCodeModal(data.otp_uri);
-      }
-    } catch (error) {
-      if (error instanceof CustomError) {
-        error.showModalCustom();
-        navigateTo(error.redirect);
-      } else {
-        console.error("handleConfirm2FA:", error);
-      }
+//   async handleConfirm2FA(ev) {
+//     ev.preventDefault();
+//     try {
+//       const username = sessionStorage.getItem("username_transcendence");
+//       const request = await this.makeRequest(
+//         `/api/auth/update/${username}`,
+//         "PATCH",
+//         {
+//           two_fa_enabled: true,
+//         },
+//       );
+//       const response = await fetch(request);
+//       if (await this.handleStatus(response)) {
+//         const data = await this.getDatafromRequest(response);
+//         console.log("handleConfirm2FA: data", data);
+//         this.showQrCodeModal(data.otp_uri);
+//       }
+//       const current2fa = await this.is2faActivated();
+//       console.log("Updated current2fa = " + current2fa);
+//       this.update2faButton(current2fa);
+//       this.update2faModal(current2fa);
+//     } catch (error) {
+//       if (error instanceof CustomError) {
+//         error.showModalCustom();
+//         navigateTo(error.redirect);
+//       } else {
+//         console.error("handleConfirm2FA:", error);
+//       }
+//     }
+//   }
+
+    async handleConfirm2FA(ev) {
+        ev.preventDefault();
+        try {
+                        // Step 1: Check the current 2FA state
+            const current2fa = await this.is2faActivated();
+            console.log("Current 2FA state:", current2fa);
+
+            // Step 2: Prepare the request to toggle the 2FA state (activate or deactivate)
+            const username = sessionStorage.getItem("username_transcendence");
+            const request = await this.makeRequest(
+                `/api/auth/update/${username}`,
+                "PATCH",
+                {
+                    two_fa_enabled: !current2fa, // Toggle the state of 2FA
+                }
+            );
+
+            const response = await fetch(request);
+            if (await this.handleStatus(response)) {
+                const data = await this.getDatafromRequest(response);
+                console.log("handleConfirm2FA: data", data);
+                // Step 4: Hide the 2FA modal first, before updating UI
+                const handle2FAModal = document.querySelector("#handle2FA");
+                const handle2FA = bootstrap.Modal.getInstance(handle2FAModal);
+                await handle2FA.hide(); // Hide the modal
+                // Step 3: If 2FA is being activated, show the QR code modal
+                if (!current2fa) {
+                    this.showQrCodeModal(data.otp_uri);
+                }
+
+                // Step 5: Update the UI (button and modal) to reflect the new state
+                const updated2fa = !current2fa;
+                console.log("Updated 2FA state:", updated2fa);
+
+                // Update the button text and modal content based on the new 2FA state
+                this.update2faButton(updated2fa);
+                this.update2faModal(updated2fa);
+            }
+        }catch (error) {
+            if (error instanceof CustomError) {
+                error.showModalCustom();
+                navigateTo(error.redirect);
+            } else {
+                console.error("handleConfirm2FA:", error);
+            }
+        }
     }
-    await this.getHtml();
-    // await this.update2faButtonText()
-  }
 
-  async update2faButtonText() {
-    const current2fa = await this.is2faActivated(); // Fetch updated 2FA status
-    const button = document.getElementById('2fa-label');
-    
-    button.innerHTML = current2fa 
-        ? this.lang.getTranslation(["button", "deactivate2fa"]) 
-        : this.lang.getTranslation(["button", "activate2fa"]);
-}
+    async update2faButton(current2fa) {
+        const button = document.getElementById("2fa-label");
+        if (button) {
+            button.textContent = current2fa
+                ? this.lang.getTranslation(["button", "deactivate2fa"])
+                : this.lang.getTranslation(["button", "activate2fa"]);
+        }
+    }
 
-  handleInputMail(ev) {
-    ev.preventDefault();
-    const newMail = document.querySelector("#email-new");
-    const confirmMail = document.querySelector("#email-confirm");
-    this.validateMail(newMail);
-    this.validateConfirmMail(newMail, confirmMail);
-  }
+    async update2faModal(current2fa) {
+        const modalBody = document.querySelector("#handle2FA .modal-body");
+        if (modalBody) {
+            modalBody.innerHTML = current2fa
+                ? this.lang.getTranslation(["modal", "message", "2faDeactivationInfo"])
+                : this.lang.getTranslation(["modal", "message", "2faActivationInfo"]);
+        }
+        const confirmButton = document.querySelector("#handle2FA #confirm-2FA");
+        if (confirmButton) {
+            confirmButton.textContent = current2fa
+                ? this.lang.getTranslation(["button", "deactivate2fa"])
+                : this.lang.getTranslation(["button", "activate2fa"]);
+        }
+    }
+
+    handleInputMail(ev) {
+        ev.preventDefault();
+        const newMail = document.querySelector("#email-new");
+        const confirmMail = document.querySelector("#email-confirm");
+        this.validateMail(newMail);
+        this.validateConfirmMail(newMail, confirmMail);
+    }
   // const formData = new FormData();
   //     formData.append('image', file); // Append the file to the form data
   //
