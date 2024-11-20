@@ -28,7 +28,7 @@ def is_ms(request, ms):
 
 class IsAuth(permissions.BasePermission):
     def has_permission(self, request, view):
-        return is_ms(request, 'ms')
+        return is_ms(request, 'auth')
 
 class IsMatchMaking(permissions.BasePermission):
     def has_permission(self, request, view):

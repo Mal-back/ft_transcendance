@@ -21,3 +21,5 @@ class Command(BaseCommand):
             password = microservice['password']
             
             Service.objects.get_or_create(serviceName=serviceName, defaults={'password': make_password(password)})
+
+        Token.objects.get_or_create(serviceName='auth', defaults={'token':createServiceToken(Service.objects.get(serviceName='auth'))})
