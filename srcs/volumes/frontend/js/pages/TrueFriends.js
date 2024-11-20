@@ -37,6 +37,13 @@ export default class extends AbstractView {
         );
         return;
       }
+      if (username == "deleted_account") {
+        showModal(
+          this.lang.getTranslation(["modal", "title", "error"]),
+          this.lang.getTranslation(["modal", "message", "addYourself"]),
+        );
+        return;
+      }
       const request = await this.makeRequest(
         `/api/users/${username}/friend/add/${friendname}/`,
         "PATCH",
@@ -88,16 +95,16 @@ export default class extends AbstractView {
 					  <form id="addFriendForm" class="removeElem">
 						  <div class="mb-3 removeElem">
 							  <label for="friendUsername" class="form-label removeElem">${this.lang.getTranslation(
-                  ["input", "preview", "username"],
-                )}</label>
+      ["input", "preview", "username"],
+    )}</label>
 							  <input type="text" class="form-control removeElem" name="friendRequest" id="friendUsername" required>
 						  </div>
 					  </form>
 				  </div>
 				  <div class="modal-footer removeElem">
 					  <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">${this.lang.getTranslation(
-              ["button", "close"],
-            )}</button>
+      ["button", "close"],
+    )}</button>
 					  <button type="submit" class="btn btn-primary removeElem" form="addFriendForm"
 						  id="addFriendRequest">${this.lang.getTranslation(["button", "addFriend"])}</button>
 				  </div>
@@ -192,7 +199,7 @@ export default class extends AbstractView {
     const modalStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";
-	const status = friendJson.is_online ? `${this.lang.getTranslation(["modal", "title","online"])}` : `${this.lang.getTranslation(["modal", "title","offline"])}`;
+    const status = friendJson.is_online ? `${this.lang.getTranslation(["modal", "title", "online"])}` : `${this.lang.getTranslation(["modal", "title", "offline"])}`;
     return `
       <div class="modal fade removeElem" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered removeElem">
