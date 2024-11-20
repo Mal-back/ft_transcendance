@@ -41,15 +41,15 @@ export default class extends AbstractView {
         <div id="usernameTemplates" class="mt-4 mv-80 removeElem">
           <div id="usernameScroll" class="mt-2 removeElem">
             <div class="username-input removeElem" id="username1-input"><label for="username1">${this.lang.getTranslation(["game", "player"])} 1:</label>
-              <input type="text" id="username1" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 1">
+              <input name="username1" type="text" id="username1" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 1">
               <div id="username1Error" class="removeElem"></div>
             </div>
             <div class="username-input removeElem" id="username2-input"><label for="username2">${this.lang.getTranslation(["game", "player"])} 2:</label>
-              <input type="text" id="username2" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 2">
+              <input name="username2" type="text" id="username2" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 2">
               <div id="username2Error" class="removeElem"></div>
             </div>
             <div class="username-input removeElem" id="username3-input"><label for="username3">${this.lang.getTranslation(["game", "player"])} 3:</label>
-              <input type="text" id="username3" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 3">
+              <input name="username3" type="text" id="username3" class="form-control removeElem" placeholder="${this.lang.getTranslation(["game", "player"])} 3">
               <div id="username3Error" class="removeElem"></div>
             </div>
           </div>
@@ -63,7 +63,7 @@ export default class extends AbstractView {
 
   createPlayerDiv(count) {
     return `
-    <div id="username${count}-input" class="username-input removeElem"><label for="username${count}">${this.lang.getTranslation(["game", "player"])} ${count}:</label><input type="text"
+    <div id="username${count}-input" class="username-input removeElem"><label for="username${count}">${this.lang.getTranslation(["game", "player"])} ${count}:</label><input name="username${count}" type="text"
       id="username${count}" class="removeElem form-control" placeholder="${this.lang.getTranslation(["game", "player"])} ${count}">
       <div id="username${count}Error" class="removeElem"></div>
     </div>

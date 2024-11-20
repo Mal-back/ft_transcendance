@@ -63,7 +63,7 @@ export default class extends AbstractView {
                       </div>
                       <div class="modal-body">
                           <div class="mb-3">
-                            <label for="activationCodeId" class="form-label">Activation Code:</label>
+                            <label for="activationCodeInput" class="form-label">Activation Code:</label>
                             <input type="email" class="form-control" id="activationCodeInput" name="Activation Code" value="" />
                           </div>
                       </div>

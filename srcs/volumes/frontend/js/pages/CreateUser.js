@@ -41,25 +41,25 @@ export default class extends AbstractView {
                 <form id="createUser" class="removeElem">
                     <div class="form-group removeElem">
                         <label class="removeElem" for="Username">${this.lang.getTranslation(["input", "label", "username"])}:</label>
-                        <input class="form-control" name="Username removeElem" id="Username" type="text">
+                        <input class="form-control removeElem" name="UsernameUser" id="Username" type="text">
                         <div id="usernameError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
                         <label class="removeElem" for="Mail">${this.lang.getTranslation(["input", "label", "email"])}:</label>
-                        <input class="form-control removeElem" name="Mail" id="Mail" type="text">
+                        <input class="form-control removeElem" name="MailUser" id="Mail" type="text">
                         <div id="mailError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
                         <label class="removeElem" for="Password">${this.lang.getTranslation(["input", "label", "password"])}:</label>
-                        <input class="form-control removeElem" name="Password" id="Password" type="password" autocomplete="off">
+                        <input class="form-control removeElem" name="PasswordUser" id="Password" type="password" autocomplete="off">
                         <div id="passwordError" class="removeElem"></div>
                     </div>
                     <br>
                     <div class="form-group removeElem">
                         <label class="removeElem" for="Password-2">${this.lang.getTranslation(["input", "label", "confirm"])} ${this.lang.getTranslation(["input", "label", "password"])}:</label>
-                        <input class="form-control removeElem" name="Password-2" id="Password-2" type="password" autocomplete="off">
+                        <input class="form-control removeElem" name="Password-2User" id="Password-2" type="password" autocomplete="off">
                         <div id="password2Error" class="removeElem"></div>
                     </div>
                     <br>

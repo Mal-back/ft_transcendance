@@ -1,14 +1,14 @@
 {
   "tournament": {
-    "invite_player" : "Invite Player",
-    "pending_invites" : "Pending Invites",
-    "players" : "Players",
-    "start_tournament" : "Start Tournament",
-    "cancel_tournament" : "Cancel Tournament",
-    "friends_list" : "Friends List",
-    "no_friends" : "No Friends Found",
-    "left_tournament" : "You left the tournament",
-    "kicked" : "Sorry, you were kicked"
+    "invite_player": "Invite Player",
+    "pending_invites": "Pending Invites",
+    "players": "Players",
+    "start_tournament": "Start Tournament",
+    "cancel_tournament": "Cancel Tournament",
+    "friends_list": "Friends List",
+    "no_friends": "No Friends Found",
+    "left_tournament": "You left the tournament",
+    "kicked": "Sorry, you were kicked"
   },
   "title": {
     "home": "Home",
@@ -32,12 +32,11 @@
     "rank": "Rank",
     "played": "Played",
     "gamesPlayed": "Games Played",
-    "rankedGame" : "Ranked Game",
-    "tournamentGame" : "Tournament Game",
-    "2fa" : "Two Factor Authentication",
-    "remoteBattle" : "Remote Battle",
-    "remoteTournament" : "Remote Tournament"
-
+    "rankedGame": "Ranked Game",
+    "tournamentGame": "Tournament Game",
+    "2fa": "Two Factor Authentication",
+    "remoteBattle": "Remote Battle",
+    "remoteTournament": "Remote Tournament"
   },
   "button": {
     "close": "Close",
@@ -63,8 +62,8 @@
     "join": "Join",
     "addFriend": "Add Friend",
     "remove": "Remove",
-    "leave" : "Leave",
-    "activate2fa" : "Activate 2FA"
+    "leave": "Leave",
+    "activate2fa": "Activate 2FA"
   },
   "user": {
     "you": "You",
@@ -112,11 +111,10 @@
     "result": "Result",
     "winner": "Winner",
     "loser": "Loser",
-    "game_paused" : "Game is paused",
-    "waiting_players" : "Waiting for all players to be ready",
-    "gameHistory" : "Game history",
-    "nextMatch" : "Next Match"
-
+    "game_paused": "Game is paused",
+    "waiting_players": "Waiting for all players to be ready",
+    "gameHistory": "Game history",
+    "nextMatch": "Next Match"
   },
   "homePage": {
     "title": "Welcome to Our Pong!",
@@ -187,8 +185,8 @@
       "lostGame": "Better luck next time",
       "addYourself": "You can't add yourself as a friend",
       "inviteYou": "invites you to a game",
-      "inviteYouTournament": "invites you to a tournament"
-
+      "inviteYouTournament": "invites you to a tournament",
+      "user_does_not_exist": "This user does not exist"
     }
   }
 }

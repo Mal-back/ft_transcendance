@@ -37,10 +37,10 @@ export default class extends AbstractView {
         );
         return;
       }
-      if (username == "deleted_account") {
+      else if (username == "deleted_account") {
         showModal(
           this.lang.getTranslation(["modal", "title", "error"]),
-          this.lang.getTranslation(["modal", "message", "addYourself"]),
+          this.lang.getTranslation(["modal", "message", "user_does_not_exist"]),
         );
         return;
       }

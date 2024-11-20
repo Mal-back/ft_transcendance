@@ -66,7 +66,7 @@ export default class extends AbstractView {
                 </div>
                 <!-- MAIL HANDLER -->
                 <div class="mb-3 removeElem">
-                    <label for="email" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "email"])}:</label>
+                    <label for="emailModalButton" class="form-label removeElem">${this.lang.getTranslation(["input", "label", "email"])}:</label>
                     <br />
                     <button type="button" id="emailModalButton" class="btn btn-secondary removeElem"
                         >

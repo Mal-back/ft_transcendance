@@ -522,6 +522,13 @@ export default class extends AbstractView {
   async handleSearch(ev) {
     ev.preventDefault(); const input = document.getElementById("searchPlayerInput")
     const name_to_find = input.value.trim();
+    if (name_to_find == "deleted_account") {
+      showModal(
+        this.lang.getTranslation(["modal", "title", "error"]),
+        this.lang.getTranslation(["modal", "message", "user_does_not_exist"]),
+      );
+      return;
+    }
     try {
       const user = await this.searchUser(name_to_find)
       const modalTry = document.getElementById(`${name_to_find}History`);
