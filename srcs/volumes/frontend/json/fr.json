@@ -188,7 +188,8 @@
       "inviteYou": "vous a invité à une partie",
       "inviteYouTournament": "vous a invité à un tournoi",
 	  "2faActivationInfo" : "Un QR Code va êre créé, vous devez l'entrer sur votre application d'authentification. Attention : Si vous voulez désactiver le 2FA, vous devez d'abord le désactiver dans les paramètres de votre compte Transcendance avant de l'enlever de votre application d'authentification.",
-	  "2faDeactivationInfo" : " Êtes-vous sûr de vouloir désactiver le 2FA ? Vous pourrez le réactiver plus tard, n'oubliez pas de le supprimer dans votre application d'authentification."
+	  "2faDeactivationInfo" : " Êtes-vous sûr de vouloir désactiver le 2FA ? Vous pourrez le réactiver plus tard, n'oubliez pas de le supprimer dans votre application d'authentification.",
+	  "scanQR" : "Scannez ce QR code"
 	}
   }
 }

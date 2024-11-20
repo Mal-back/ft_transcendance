@@ -302,7 +302,7 @@ export default class extends AbstractView {
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="qrModalLabel">Scan this QR Code</h5>
+                <h5 class="modal-title" id="qrModalLabel">${this.lang.getTranslation(["modal", "message", "scanQR"])} :</h5>
             </div>
             <div class="modal-body d-flex justify-content-center">
                 <!-- QR Code will be generated here -->
@@ -750,38 +750,27 @@ export default class extends AbstractView {
     async handleConfirm2FA(ev) {
         ev.preventDefault();
         try {
-                        // Step 1: Check the current 2FA state
             const current2fa = await this.is2faActivated();
             console.log("Current 2FA state:", current2fa);
-
-            // Step 2: Prepare the request to toggle the 2FA state (activate or deactivate)
             const username = sessionStorage.getItem("username_transcendence");
             const request = await this.makeRequest(
                 `/api/auth/update/${username}`,
                 "PATCH",
                 {
-                    two_fa_enabled: !current2fa, // Toggle the state of 2FA
+                    two_fa_enabled: !current2fa, 
                 }
             );
-
             const response = await fetch(request);
             if (await this.handleStatus(response)) {
                 const data = await this.getDatafromRequest(response);
                 console.log("handleConfirm2FA: data", data);
-                // Step 4: Hide the 2FA modal first, before updating UI
                 const handle2FAModal = document.querySelector("#handle2FA");
                 const handle2FA = bootstrap.Modal.getInstance(handle2FAModal);
-                await handle2FA.hide(); // Hide the modal
-                // Step 3: If 2FA is being activated, show the QR code modal
+                handle2FA.hide();
                 if (!current2fa) {
                     this.showQrCodeModal(data.otp_uri);
                 }
-
-                // Step 5: Update the UI (button and modal) to reflect the new state
                 const updated2fa = !current2fa;
-                console.log("Updated 2FA state:", updated2fa);
-
-                // Update the button text and modal content based on the new 2FA state
                 this.update2faButton(updated2fa);
                 this.update2faModal(updated2fa);
             }
