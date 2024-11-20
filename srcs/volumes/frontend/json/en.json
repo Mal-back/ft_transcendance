@@ -187,7 +187,8 @@
       "lostGame": "Better luck next time",
       "addYourself": "You can't add yourself as a friend",
       "inviteYou": "invites you to a game",
-      "inviteYouTournament": "invites you to a tournament"
+      "inviteYouTournament": "invites you to a tournament",
+	  "2faInfo" : "A QR Code will be created, you need to scan it in your authentication application. Warning : If you want to unable 2FA, you need to disactive it in your account settings before removing it from your authentication application"
 
     }
   }
