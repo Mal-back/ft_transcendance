@@ -2,6 +2,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import render
 from rest_framework import generics, status
+from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView, Response
 from .models import Match, MatchUser, Tournament, TournamentUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
@@ -85,6 +86,12 @@ class TournamentList(generics.ListAPIView):
         
         return queryset
 
+    def list(self, request, *args, **kwargs):
+        user = request.query_params.get('username')
+        if user == 'deleted_account':
+            raise NotFound
+        return super().list(request, *args, **kwargs)
+
 class TournamentRetrieve(generics.RetrieveAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
@@ -110,7 +117,14 @@ class MatchList(generics.ListAPIView):
         
         return queryset
 
+    def list(self, request, *args, **kwargs):
+        user = request.query_params.get('username')
+        if user == 'deleted_account':
+            raise NotFound
+        return super().list(request, *args, **kwargs)
+
 class RetrieveAll(APIView):
+    permission_classes = [IsAuth]
 
     def get(self, request, *args, **kwargs):
         matches = self.get_match_queryset()

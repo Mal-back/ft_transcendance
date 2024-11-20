@@ -14,7 +14,7 @@ from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCrede
 # Create your views here.
 
 class PublicUserList(generics.ListAPIView):
-    queryset = PublicUser.objects.all()
+    queryset = PublicUser.objects.all().exclude(username='deleted_account')
     serializer_class = PublicUserListSerializer
     lookup_field = 'username'
 
@@ -51,7 +51,7 @@ class PublicUserCreate(generics.CreateAPIView) :
 
 class PublicUserUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuth]
-    queryset = PublicUser.objects.all()
+    queryset = PublicUser.objects.all().exclude(username='deleted_account')
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
 
@@ -66,7 +66,7 @@ class PublicUserUpdate(generics.UpdateAPIView):
 
 class PublicUserDelete(generics.DestroyAPIView):
     permission_classes = [IsAuth]
-    queryset = PublicUser.objects.all()
+    queryset = PublicUser.objects.all().exclude(username='deleted_account')
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
 
