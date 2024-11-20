@@ -165,7 +165,8 @@
       "inviteGames": "Invitations aux jeux",
       "invite": "Invitations",
       "auth": "Authentification",
-      "accountCreation": "Création de compte"
+      "accountCreation": "Création de compte",
+	  "activationCode" : "Code d'activation"
     },
     "message": {
       "over": "est terminé",

@@ -57,13 +57,13 @@ export default class extends AbstractView {
                     <div class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title" id="handle2FALabel">
-                          2 Factor Authentification
+						${this.lang.getTranslation(["title", "2fa"])}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
                           <div class="mb-3">
-                            <label for="activationCodeId" class="form-label">Activation Code:</label>
+                            <label for="activationCodeId" class="form-label">${this.lang.getTranslation(["modal", "title", "activationCode"])} :</label>
                             <input type="email" class="form-control" id="activationCodeInput" name="Activation Code" value="" />
                           </div>
                       </div>
@@ -72,7 +72,7 @@ export default class extends AbstractView {
                           ${this.lang.getTranslation(["button", "close"])}
                         </button>
                         <button type="button" class="btn btn-success" id="twoFAConfirm">
-                          Activation Code
+						${this.lang.getTranslation(["title", "login"])}
                         </button>
                       </div>
                     </div>
@@ -266,6 +266,7 @@ export default class extends AbstractView {
         );
       }
     } catch (error) {
+		console.log("TTESSTTT");
       this.handleCatch(error);
     }
   }

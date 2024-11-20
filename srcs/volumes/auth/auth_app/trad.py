@@ -71,7 +71,14 @@ trad = {
         "pk_error": "No pk",
         "invited_player_error": "Invited player does not exist",
         "header_info_error":"Invalid header info",
-        "token_expired" : "Token Expired"
+        "token_expired" : "Token Expired",
+        "invalid_otp" : "Invalid code",
+        "valid_otp" : "Code verified successfully",
+        "no_2fa" : "No 2FA device set up for this user",
+        "invalid_credentials" : "Invalid credientials",
+        "username_otp_required" : "Username and otp are required",
+        "2fa_is_activated" :  "2FA is enabled. Please enter the code from your authentication application",
+        "error_2fa_update" : "Error updating two factor authentication"
     },
 
     "fr": 
@@ -146,7 +153,14 @@ trad = {
         "pk_error": "Aucune pk",
         "invited_player_error": "Le joueur invité n'existe pas",
         "header_info_error": "Info header invalide",
-        "token_expired" : "Token Expiré"
+        "token_expired" : "Token Expiré",
+        "invalid_otp" : "Code invalide",
+        "valid_otp" : "Code verifié avec succès",
+        "no_2fa" : "Pas de serice 2FA pour cet utilisateur",
+        "invalid_credentials" : "Identifiants invalides",
+        "username_otp_required" : "Le nom d'utilisateur et le code d'activation sont requis",
+        "2fa_is_activated" :  "Le 2FA est activé. Veuillez entrer le code de votre application d'authentification",
+        "error_2fa_update" : "Erreur survenue durant la mise à jour de l'authentification à deux facteur"
     },
 
     "es": 
@@ -221,7 +235,14 @@ trad = {
         "pk_error": "No pk",
         "invited_player_error": "Jugador invitado no existe",
         "header_info_error":"Inválido Cabecera info",
-        "token_expired" : "Identificador Vencido"
+        "token_expired" : "Identificador Vencido",
+        "invalid_otp" : "Código inválido",
+        "valid_otp" : "Código verificado con éxito",
+        "no_2fa" : "No se ha configurado ningún dispositivo 2FA para este usuario",
+        "invalid_credentials" : "Credenciales inválidas",
+        "username_otp_required" : "Se requiere nombre de usuario y código de autenticación",
+        "2fa_is_activated" :  "La autenticación en dos pasos (2FA) está habilitada. Por favor, ingrese el código de su aplicación de autenticación.",
+        "error_2fa_update" : "Error al actualizar la autenticación de dos factores"
     }
 
 }
