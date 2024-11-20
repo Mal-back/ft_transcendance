@@ -14,7 +14,7 @@ class CustomAuthentication(BaseAuthentication):
         authHeader = request.headers.get('Authorization')
 
         if not authHeader:
-            return None
+            raise AuthenticationFailed('You should be authenticated')
 
         try :
             tokenType, token = authHeader.split()

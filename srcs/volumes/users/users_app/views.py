@@ -7,13 +7,14 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
-from .permissions import IsAuth, IsOwner, IsAvatarManager, IsMatchmaking
+from .permissions import IsAuth, IsOwner, IsAvatarManager, IsMatchmaking, IsAuthOrAuthenticated
 from .authentification import CustomAuthentication
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 
 # Create your views here.
 
 class PublicUserList(generics.ListAPIView):
+    permission_classes = [IsAuthOrAuthenticated]
     queryset = PublicUser.objects.all().exclude(username='deleted_account')
     serializer_class = PublicUserListSerializer
     lookup_field = 'username'
@@ -39,6 +40,7 @@ class PublicUserList(generics.ListAPIView):
         return queryset
 
 class PublicUserRetrieveDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthOrAuthenticated]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'

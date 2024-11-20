@@ -6,7 +6,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView, Response
 from .models import Match, MatchUser, Tournament, TournamentUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
-from .permissions import IsAuth, IsMatchMaking
+from .permissions import IsAuth, IsMatchMaking, IsAuthOrAuthenticated
 
 # Create your views here.
 
@@ -68,7 +68,7 @@ class TournamentCreate(APIView):
 class TournamentList(generics.ListAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
-
+    permission_classes = [IsAuthOrAuthenticated]
     serializer_class = MatchGetSerializer 
 
     def get_queryset(self):
