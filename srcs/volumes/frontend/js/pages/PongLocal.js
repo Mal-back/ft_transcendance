@@ -141,7 +141,7 @@ export default class extends AbstractView {
     let ret = [];
     try {
       const requestUser1 = await this.makeRequest(
-        `api/users/${player_1Username}`,
+        `api/users/${player_1Username}/`,
         "GET",
       );
       const responseUser1 = await fetch(requestUser1);
@@ -150,7 +150,7 @@ export default class extends AbstractView {
         ret.push(data.profilePic);
       }
       const requestUser2 = await this.makeRequest(
-        `api/users/${player_2Username}`,
+        `api/users/${player_2Username}/`,
         "GET",
       );
       const responseUser2 = await fetch(requestUser2);

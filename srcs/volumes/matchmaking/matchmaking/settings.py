@@ -152,7 +152,7 @@ SIMPLE_JWT = {
 MS_CLIENT_SETTINGS = {
         'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
         'SERVICE_NAME':'matchmaking',
-        'SERVICE_SECRET':'acab1314',
+        'SERVICE_SECRET':os.getenv('MATCHMAKING_PASSWORD'),
         }
 
 # Internationalization

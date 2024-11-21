@@ -223,7 +223,7 @@ export default class AbstractViews {
       // const translations = this.lang.getTranslation(["title.tournament", "title.rankedGame"]);
       // ongoing.innerText = `${data.is_tournament_match ? translations["title.tournament"] : translations["title.rank"]} :`;
       ongoing.innerText = `${data.is_tournament_match ? this.lang.getTranslation(["title", "tournamentGame"]) : this.lang.getTranslation(["title", "rankedGame"])} :`;
-      const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
+      const request = await this.makeRequest(`/api/users/${opponent}/`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
@@ -359,7 +359,7 @@ export default class AbstractViews {
           gameType: item.game_type,
           acceptInviteUrl: item.accept_invite,
           declineInviteUrl: item.decline_invite,
-          message: `${item.game_type} : ${item.owner_name} ${this.lang.getTranslation(["modal","message", "inviteYouTournament"])}`,
+          message: `${item.game_type} : ${item.owner_name} ${this.lang.getTranslation(["modal", "message", "inviteYouTournament"])}`,
         };
         AbstractViews.invitesTournament.push(invite);
       }
@@ -499,7 +499,7 @@ export default class AbstractViews {
     try {
       const onGoingGame = document.querySelector("#divOnGoingGame");
       let boolGame = 0;
-      const request = await this.makeRequest("api/matchmaking/invites", "GET");
+      const request = await this.makeRequest("api/matchmaking/invites/", "GET");
       const response = await fetch(request);
       if (response.status == 403) {
         const data = await this.getDatafromRequest(response);

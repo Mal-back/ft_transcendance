@@ -205,7 +205,7 @@ export default class extends AbstractView {
       }
       const activationCode = document.querySelector("#activationCodeInput");
       if (!activationCode.value) return;
-      const request = await this.makeRequest("/api/auth/otp", "POST", {
+      const request = await this.makeRequest("/api/auth/otp/", "POST", {
         username: this.username,
         password: this.password,
         otp: activationCode.value,
@@ -243,7 +243,7 @@ export default class extends AbstractView {
     try {
       // const usernameURIencoded = encodeURIComponent(nameForm);
       console.log("login before make request");
-      const request = await this.makeRequest("/api/auth/login", "POST", {
+      const request = await this.makeRequest("/api/auth/login/", "POST", {
         username: nameForm,
         password: paswordForm,
       });
