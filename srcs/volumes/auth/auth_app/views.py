@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate
 from .trad import translate
 from django.core.mail import send_mail
 from django.http import JsonResponse
+import json
 # Create your views here.
 
 #######################
@@ -201,7 +202,6 @@ class PasswordUpdateView(generics.UpdateAPIView):
 class ServiceJWTObtainPair(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request, *args, **kwargs):
-        print('I ve beeen reached')
         serializer = ServiceObtainTokenSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
@@ -216,18 +216,17 @@ class MicroServiceError(APIException):
 class DumpPersonnalData(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        # req_urls = {
-        #         'matchmaking_data' : f'http://matchmaking:8443/api/matchmaking/{request.user.username}/',
-        #         'users_data' : f'http://users:8443/api/users/{request.user.username}/update/',
-        #         'history_data': f'http://history:8443/api/history/?user={request.user.username}',
-        #     }
-        # data = send_get_requests(req_urls)
-        serializer = UserRegistrationSerializer
-        # data.update({'auth_data': serializer.data})
-        data = {'auth_data': serializer.data}
+        req_urls = {
+                'matchmaking_data' : f'http://matchmaking:8443/api/matchmaking/{request.user.username}/',
+                'users_data' : f'http://users:8443/api/users/{request.user.username}/',
+                'history_data': f'http://history:8443/api/history/?username={request.user.username}',
+            }
+        data = send_get_requests(req_urls)
+        serializer = UserRegistrationSerializer(instance=request.user)
+        data.update({'auth_data': serializer.data})
 
         subject = "Your personnal datas"
-        message = data
+        message = json.dumps(data)
         from_email = "no-reply@transcendance.com"  # Same as EMAIL_HOST_USER
         recipient_list = [request.user.email]
 

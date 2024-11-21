@@ -152,7 +152,7 @@ SIMPLE_JWT = {
 MS_CLIENT_SETTINGS = {
         'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
         'SERVICE_NAME':'history',
-        'SERVICE_SECRET':'acab1316',
+        'SERVICE_SECRET':os.getenv('HISTORY_PASSWORD'),
         }
 
 

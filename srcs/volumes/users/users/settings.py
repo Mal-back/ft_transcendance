@@ -154,7 +154,7 @@ SIMPLE_JWT = {
 MS_CLIENT_SETTINGS = {
         'AUTH_URL':'http://auth:8443/api/auth/internal/auth/',
         'SERVICE_NAME':'users',
-        'SERVICE_SECRET':'acab1313',
+        'SERVICE_SECRET':os.getenv('USERS_PASSWORD'),
         }
 
 # Internationalization

@@ -341,7 +341,7 @@ export default class extends AbstractView {
   async getCurrentAvatar() {
     try {
       const username = sessionStorage.getItem("username_transcendence");
-      const request = await this.makeRequest(`api/users/${username}`, "GET");
+      const request = await this.makeRequest(`api/users/${username}/`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
@@ -357,7 +357,7 @@ export default class extends AbstractView {
   async is2faActivated() {
     try {
         const username = sessionStorage.getItem("username_transcendence");
-        const request = await this.makeRequest(`api/auth/${username}`, "GET");
+        const request = await this.makeRequest(`api/auth/${username}/`, "GET");
         const response = await fetch(request);
         if (await this.handleStatus(response)) {
           const data = await response.json();
@@ -408,7 +408,7 @@ export default class extends AbstractView {
     }
     try {
       const request = await this.makeRequest(
-        "/api/auth/update/" + username,
+        "/api/auth/update/" + username + "/",
         "PATCH",
         {
           username: newUsername,
@@ -433,7 +433,7 @@ export default class extends AbstractView {
   async getOldMail() {
     const username = sessionStorage.getItem("username_transcendence");
     try {
-      const request = await this.makeRequest(`/api/auth/${username}`, "GET");
+      const request = await this.makeRequest(`/api/auth/${username}/`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
@@ -448,7 +448,7 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     try {
       const request = await this.makeRequest(
-        "/api/auth/password/" + username,
+        "/api/auth/password/" + username + "/",
         "PATCH",
         {
           password: oldPassword,
@@ -476,7 +476,7 @@ export default class extends AbstractView {
     try {
       // await this.checkoldMail(oldMail);
       const request = await this.makeRequest(
-        "/api/auth/update/" + username,
+        "/api/auth/update/" + username + "/",
         "PATCH",
         {
           email: newMail,
@@ -754,7 +754,7 @@ export default class extends AbstractView {
             console.log("Current 2FA state:", current2fa);
             const username = sessionStorage.getItem("username_transcendence");
             const request = await this.makeRequest(
-                `/api/auth/update/${username}`,
+                `/api/auth/update/${username}/`,
                 "PATCH",
                 {
                     two_fa_enabled: !current2fa, 

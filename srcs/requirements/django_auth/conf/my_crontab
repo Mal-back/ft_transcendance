@@ -1,0 +1,4 @@
+PATH=/usr/local/bin:/usr/bin:/bin:/path/to/virtualenv/bin
+PYTHONPATH=/code
+* * * * * bash /wrapper.sh 
+

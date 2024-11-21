@@ -2,11 +2,12 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import render
 from rest_framework import generics, status
+from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView, Response
 from .models import Match, MatchUser, Tournament, TournamentUser
 from .serializers import MatchUserSerializer, MatchSerializer, MatchGetSerializer, TournamentSerializer
-from .permissions import IsAuth, IsMatchMaking
 from .trad import translate
+from .permissions import IsAuth, IsMatchMaking, IsAuthOrAuthenticated
 
 # Create your views here.
 
@@ -69,8 +70,8 @@ class TournamentCreate(APIView):
 class TournamentList(generics.ListAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
-
-    # serializer_class = MatchGetSerializer 
+    permission_classes = [IsAuthOrAuthenticated]
+    serializer_class = MatchGetSerializer 
 
     def get_queryset(self):
         queryset = Tournament.objects.all() 
@@ -86,6 +87,12 @@ class TournamentList(generics.ListAPIView):
             queryset = queryset.filter(game_type=game_type)
         
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        user = request.query_params.get('username')
+        if user == 'deleted_account':
+            raise NotFound
+        return super().list(request, *args, **kwargs)
 
 class TournamentRetrieve(generics.RetrieveAPIView):
     serializer_class = TournamentSerializer 
@@ -111,3 +118,54 @@ class MatchList(generics.ListAPIView):
             queryset = queryset.filter(game_type=game_type)
         
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        user = request.query_params.get('username')
+        if user == 'deleted_account':
+            raise NotFound
+        return super().list(request, *args, **kwargs)
+
+class RetrieveAll(APIView):
+    permission_classes = [IsAuth]
+
+    def get(self, request, *args, **kwargs):
+        matches = self.get_match_queryset()
+        tournaments = self.get_tournament_queryset()
+
+        match_serializer = MatchGetSerializer(instance=matches, many=True, context={'request': request})
+        tournament_serializer = TournamentSerializer(instance=matches, many=True, context={'request': request})
+
+        return Response({'matches_data': match_serializer.data, 'tournaments_data':tournament_serializer.data}, status=status.HTTP_200_OK)
+
+    def get_tournament_queryset(self):
+        queryset = Tournament.objects.all() 
+
+        user = self.request.query_params.get('username')
+        game_type = self.request.query_params.get('game_type')
+
+        if user and game_type:
+            queryset = queryset.filter(Q(final_ranking__username__username=user) & Q(game_type=game_type)).distinct()
+        elif user:
+            queryset = queryset.filter(final_ranking__username__username=user).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
+        
+        return queryset
+
+    def get_match_queryset(self):
+        queryset = Match.objects.all() 
+
+        user = self.request.query_params.get('username')
+        game_type = self.request.query_params.get('game_type')
+
+        if user and game_type:
+            queryset = queryset.filter(
+                (Q(winner__username=user) | Q(looser__username=user)) & Q(game_type=game_type)
+            ).distinct()
+        elif user:
+            queryset = queryset.filter(Q(winner__username=user) | Q(looser__username=user)).distinct()
+        elif game_type:
+            queryset = queryset.filter(game_type=game_type)
+        
+        return queryset
+

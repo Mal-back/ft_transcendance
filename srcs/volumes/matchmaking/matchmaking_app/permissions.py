@@ -3,67 +3,37 @@ from rest_framework import permissions
 import jwt
 from django.conf import settings
 
+def is_ms(request, ms):
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return False
+
+    try:
+        token_type, token = auth_header.split()
+        if token_type != 'Bearer':
+            return False
+
+        decoded_token = jwt.decode(
+            token,
+            settings.SIMPLE_JWT['VERIFYING_KEY'],
+            algorithms=[settings.SIMPLE_JWT['ALGORITHM']]
+        )
+
+        service_name = decoded_token.get('service_name')
+        if service_name != ms:
+            return False
+        return True
+
+    except (ValueError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return False
+
 class IsAuth(permissions.BasePermission):
     def has_permission(self, request, view):
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
-            return False  # No authorization header means permission denied
-
-        try:
-            token_type, token = auth_header.split()
-            if token_type != 'Bearer':
-                return False  # Invalid token type
-
-            # Decode the JWT token
-            decoded_token = jwt.decode(
-                token,
-                settings.SIMPLE_JWT['VERIFYING_KEY'],
-                algorithms=[settings.SIMPLE_JWT['ALGORITHM']]
-            )
-
-            # Check if the service_name is "Auth"
-            service_name = decoded_token.get('service_name')
-            if service_name != 'auth':
-                return False  # Service name does not match
-
-            return True  # Service name matches "Auth"
-
-        except (ValueError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-            return False  # Invalid token or error during decoding
+        return is_ms(request, 'auth')
 
 class IsGame(permissions.BasePermission):
     def has_permission(self, request, view):
-        print('cc')
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
-            print('header')
-            return False  # No authorization header means permission denied
-
-        try:
-            token_type, token = auth_header.split()
-            if token_type != 'Bearer':
-                print('Bearer')
-                return False  # Invalid token type
-
-            # Decode the JWT token
-            decoded_token = jwt.decode(
-                token,
-                settings.SIMPLE_JWT['VERIFYING_KEY'],
-                algorithms=[settings.SIMPLE_JWT['ALGORITHM']]
-            )
-
-            # Check if the service_name is "Auth"
-            service_name = decoded_token.get('service_name')
-            if service_name != 'game':
-                print(service_name)
-                return False  # Service name does not match
-
-            print('ok')
-            return True  # Service name matches "Auth"
-
-        except (ValueError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-            print('token')
-            return False  # Invalid token or error during decoding
+        return is_ms(request, 'game')
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -89,4 +59,3 @@ class IsConfirmedPlayerTournament(permissions.BasePermission):
 class IsAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated
-

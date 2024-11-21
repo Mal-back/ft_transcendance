@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.views import APIView, Response
 from .models import PublicUser
 from .serializers import PublicUserDetailSerializer, PublicUserListSerializer
-from .permissions import IsAuth, IsOwner, IsAvatarManager, IsMatchmaking
+from .permissions import IsAuth, IsOwner, IsAvatarManager, IsMatchmaking, IsAuthOrAuthenticated
 from .authentification import CustomAuthentication
 from ms_client.ms_client import MicroServiceClient, RequestsFailed, InvalidCredentialsException
 from .trad import translate
@@ -15,7 +15,8 @@ from .trad import translate
 # Create your views here.
 
 class PublicUserList(generics.ListAPIView):
-    queryset = PublicUser.objects.all()
+    permission_classes = [IsAuthOrAuthenticated]
+    queryset = PublicUser.objects.all().exclude(username='deleted_account')
     serializer_class = PublicUserListSerializer
     lookup_field = 'username'
 
@@ -40,6 +41,7 @@ class PublicUserList(generics.ListAPIView):
         return queryset
 
 class PublicUserRetrieveDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthOrAuthenticated]
     queryset = PublicUser.objects.all()
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
@@ -52,7 +54,7 @@ class PublicUserCreate(generics.CreateAPIView) :
 
 class PublicUserUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuth]
-    queryset = PublicUser.objects.all()
+    queryset = PublicUser.objects.all().exclude(username='deleted_account')
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
 
@@ -67,7 +69,7 @@ class PublicUserUpdate(generics.UpdateAPIView):
 
 class PublicUserDelete(generics.DestroyAPIView):
     permission_classes = [IsAuth]
-    queryset = PublicUser.objects.all()
+    queryset = PublicUser.objects.all().exclude(username='deleted_account')
     serializer_class = PublicUserDetailSerializer
     lookup_field = 'username'
 
@@ -113,6 +115,8 @@ class PublicUserAddFriend(APIView):
         lang = request.headers.get('lang')
         if username == friendusername:
             return Response(status=status.HTTP_304_NOT_MODIFIED)
+        if friendusername == 'deleted_account':
+            return Response({'Error':'Cannot add delted_account as friend'}, status=status.HTTP_409_CONFLICT)
         try:
             user = PublicUser.objects.get(username=username)
         except PublicUser.DoesNotExist:

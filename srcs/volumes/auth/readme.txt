@@ -38,6 +38,8 @@ Done :
 	'reset/done/'. When reset is done
 	WARNING : The e-mail server is not setup so the e mails are simply logs in the console of the django auth docker for the moment
 
+- 'dump_data/': Dump users data by e-mail. Permission : must be authenticated. Method : Get
+
 - 'internal/auth' : Used only by other microservices to fetch their token. Frontend should not use this endpoint. Allowed Method: Post. Expected payload: serviceName, password
 
 Need to do : 

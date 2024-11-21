@@ -15,7 +15,7 @@ def getToken() :
             'username' : username,
             'password' : password
             }
-    response = requests.post('http://localhost:8080/api/auth/login', payload)
+    response = requests.post('http://localhost:8080/api/auth/login/', payload)
     if response.status_code == 200:
         print("Login Successefull")
         print(response.json())
@@ -30,7 +30,7 @@ def refreshToken(headers):
     body = {
             'refresh' : refresh
             }
-    response = requests.post(f'http://localhost:8080/api/auth/refresh', headers=headers, data=body)
+    response = requests.post(f'http://localhost:8080/api/auth/refresh/', headers=headers, data=body)
     if response.status_code != 200 :
         print(response.status_code)
         print(response.text)
