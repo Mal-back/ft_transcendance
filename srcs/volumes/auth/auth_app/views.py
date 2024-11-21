@@ -32,44 +32,47 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 class CustomTokenObtainPairView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
+        lang = self.request.headers.get('lang')
         username = request.data.get('username')
         password = request.data.get('password')
         if not username or not password:
             return Response({'detail': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(request, username=username, password=password)
         if user is None:
-            return super().post(request, *args, **kwargs)
+            response = super().post(request, *args, **kwargs)
+            return response
         if user.two_fa_enabled:
             return Response({
-                'message': '2FA is enabled. Please enter the OTP from your Google Authenticator app.'
+                'message': translate(lang, "2fa_is_activated")
             }, status=status.HTTP_202_ACCEPTED)
         return super().post(request, *args, **kwargs)
     
 class OTPValidationView(APIView):
 
     def post(self, request, *args, **kwargs):
+        lang = self.request.headers.get('lang')
         username = request.data.get("username")
         password = request.data.get("password")
         otp = request.data.get("otp")
         if not username or not otp:
-            return Response({"message": "Username and OTP are required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": translate(lang, "username_otp_required")}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(request, username=username, password=password)
         if user is None:
-            return Response({"message": "Invalid credentials."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": translate(lang, "invalid_credentials")}, status=status.HTTP_401_UNAUTHORIZED)
         try:
             device = TOTPDevice.objects.get(user=user)
         except TOTPDevice.DoesNotExist:
-            return Response({"message": "No 2FA device set up for this user."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": translate(lang, "no_2fa")}, status=status.HTTP_400_BAD_REQUEST)
         if device.verify_token(otp):
             token = MyTokenObtainPairSerializer.get_token(user)
             access_token = str(token.access_token)
             refresh_token = str(token)
             return Response({
-                "message": "OTP verified successfully.",
+                "message": translate(lang, "valid_otp"),
                 "access": access_token,
                 "refresh": refresh_token
             }, status=status.HTTP_200_OK)
-        return Response({"message": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": translate(lang, "invalid_otp")}, status=status.HTTP_400_BAD_REQUEST)
 ###################################################
 
 
@@ -165,24 +168,24 @@ class UserUpdateView(generics.UpdateAPIView):
                     otp_uri = device.config_url
                     serializer.save()
                     return Response({
-                        'Ok': 'Update successful',
+                        'Ok': translate(lang, "update_success"),
                         'otp_uri': otp_uri,
                         'device_id': device.id
                     }, status=status.HTTP_200_OK)
                 except:
-                    return Response({"error": "Could not update 2FA."}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error": translate(lang, "error_2fa_update")}, status=status.HTTP_400_BAD_REQUEST)
             elif not two_fa_enabled and user.two_fa_enabled:
                 try:
                     device = TOTPDevice.objects.get(user=user)
                     device.delete()
                 except TOTPDevice.DoesNotExist:
-                    pass
+                    return Response({"error": translate(lang, "error_2fa_update")}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
                 return Response({
-                    'message': '2FA disabled successfully.'
+                    'Ok': translate(lang, "update_success")
                 }, status=status.HTTP_200_OK)
             serializer.save()
-            return Response({'Ok': 'Update successful'}, status=status.HTTP_200_OK)
+            return Response({'Ok': translate(lang, "update_success")}, status=status.HTTP_200_OK)
 
         else:
             message = translate(lang, "invalid_data_error")

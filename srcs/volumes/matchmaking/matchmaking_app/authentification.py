@@ -16,7 +16,7 @@ class CustomAuthentication(BaseAuthentication):
         lang = request.headers.get('lang')
 
         if not authHeader:
-            return None
+            raise AuthenticationFailed('You should be authenticated')
 
         try :
             tokenType, token = authHeader.split()

@@ -13,7 +13,7 @@ class Command(BaseCommand):
     
     def handle(self, *args, **kwargs):
         cutoff = now() - relativedelta(years=3)
-        old_users = CustomUser.objects.filter(last_log__lt=cutoff)
+        old_users = CustomUser.objects.filter(last_log__lt=cutoff).exlude(username='deleted_account')
         print('Checking for old accounts')
 
         for user in old_users:

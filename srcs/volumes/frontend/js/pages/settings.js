@@ -36,6 +36,8 @@ export default class extends AbstractView {
   async getHtml() {
     this.setTitle(`${this.lang.getTranslation(["title", "settings"])}`);
     const currentAvatar = await this.getCurrentAvatar();
+    const current2fa = await this.is2faActivated();
+    console.log("current2fa = " + current2fa);
     const defaultAvatar = await this.getDefaultAvatar(currentAvatar);
     const htmlContent = `
 <div class="background removeElem">
@@ -89,7 +91,7 @@ export default class extends AbstractView {
                     <br />
                     <button type="button" id="2fa-label" class="btn btn-secondary removeElem" data-bs-toggle="modal"
                         data-bs-target="#handle2FA">
-                        ${this.lang.getTranslation(["button", "activate2fa"])}
+                         ${current2fa == true ? this.lang.getTranslation(["button", "deactivate2fa"]) : this.lang.getTranslation(["button", "activate2fa"])}
                     </button>
                 </div>
                 
@@ -243,20 +245,20 @@ export default class extends AbstractView {
         <div class="modal-content removeElem">
             <div class="modal-header removeElem">
                 <h5 class="modal-title removeElem" id="handle2FALabel">
-                    "handle 2FA:"
+                    ${this.lang.getTranslation(["title", "2fa"])}
                 </h5>
                 <button type="button" class="btn-close removeElem" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body removeElem">
-                Are you you want to active a 2 factor authentification with this mail : ${await this.getOldMail()}
+                 ${current2fa == true ? this.lang.getTranslation(["modal", "message", "2faDeactivationInfo"]) : this.lang.getTranslation(["modal", "message", "2faActivationInfo"])}
             </div>
             <div class="modal-footer removeElem">
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
                     ${this.lang.getTranslation(["button", "close"])}
                 </button>
                 <button type="button" class="btn btn-success removeElem" id="confirm-2FA">
-                    Confirm 2FA
+                ${current2fa == true ? this.lang.getTranslation(["button", "deactivate2fa"]) : this.lang.getTranslation(["button", "activate2fa"])}
                 </button>
             </div>
         </div>
@@ -300,7 +302,7 @@ export default class extends AbstractView {
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="qrModalLabel">Scan this QR Code</h5>
+                <h5 class="modal-title" id="qrModalLabel">${this.lang.getTranslation(["modal", "message", "scanQR"])} :</h5>
             </div>
             <div class="modal-body d-flex justify-content-center">
                 <!-- QR Code will be generated here -->
@@ -360,7 +362,7 @@ export default class extends AbstractView {
   async getCurrentAvatar() {
     try {
       const username = sessionStorage.getItem("username_transcendence");
-      const request = await this.makeRequest(`api/users/${username}`, "GET");
+      const request = await this.makeRequest(`api/users/${username}/`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
@@ -371,6 +373,27 @@ export default class extends AbstractView {
       this.handleCatch(error);
       return "";
     }
+  }
+
+  async is2faActivated() {
+    try {
+        const username = sessionStorage.getItem("username_transcendence");
+        const request = await this.makeRequest(`api/auth/${username}/`, "GET");
+        const response = await fetch(request);
+        if (await this.handleStatus(response)) {
+          const data = await response.json();
+          console.log("data.two_fa_enabled = " + data.two_fa_enabled);
+          if (data.two_fa_enabled == false){
+            return false;
+          }
+          else {
+            return true;
+          }
+        }
+      } catch (error) {
+        this.handleCatch(error);
+        return false;
+      }
   }
 
   async getDefaultAvatar(currentAvatar) {
@@ -406,7 +429,7 @@ export default class extends AbstractView {
     }
     try {
       const request = await this.makeRequest(
-        "/api/auth/update/" + username,
+        "/api/auth/update/" + username + "/",
         "PATCH",
         {
           username: newUsername,
@@ -431,7 +454,7 @@ export default class extends AbstractView {
   async getOldMail() {
     const username = sessionStorage.getItem("username_transcendence");
     try {
-      const request = await this.makeRequest(`/api/auth/${username}`, "GET");
+      const request = await this.makeRequest(`/api/auth/${username}/`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
@@ -446,7 +469,7 @@ export default class extends AbstractView {
     const username = sessionStorage.getItem("username_transcendence");
     try {
       const request = await this.makeRequest(
-        "/api/auth/password/" + username,
+        "/api/auth/password/" + username + "/",
         "PATCH",
         {
           password: oldPassword,
@@ -474,7 +497,7 @@ export default class extends AbstractView {
     try {
       // await this.checkoldMail(oldMail);
       const request = await this.makeRequest(
-        "/api/auth/update/" + username,
+        "/api/auth/update/" + username + "/",
         "PATCH",
         {
           email: newMail,
@@ -714,40 +737,105 @@ export default class extends AbstractView {
     qrCodeModal.show();
   }
 
-  async handleConfirm2FA(ev) {
-    ev.preventDefault();
-    try {
-      const username = sessionStorage.getItem("username_transcendence");
-      const request = await this.makeRequest(
-        `/api/auth/update/${username}`,
-        "PATCH",
-        {
-          two_fa_enabled: true,
-        },
-      );
-      const response = await fetch(request);
-      if (await this.handleStatus(response)) {
-        const data = await this.getDatafromRequest(response);
-        console.log("handleConfirm2FA: data", data);
-        this.showQrCodeModal(data.otp_uri);
-      }
-    } catch (error) {
-      if (error instanceof CustomError) {
-        error.showModalCustom();
-        navigateTo(error.redirect);
-      } else {
-        console.error("handleConfirm2FA:", error);
-      }
-    }
-  }
+//   async handleConfirm2FA(ev) {
+//     ev.preventDefault();
+//     try {
+//       const username = sessionStorage.getItem("username_transcendence");
+//       const request = await this.makeRequest(
+//         `/api/auth/update/${username}`,
+//         "PATCH",
+//         {
+//           two_fa_enabled: true,
+//         },
+//       );
+//       const response = await fetch(request);
+//       if (await this.handleStatus(response)) {
+//         const data = await this.getDatafromRequest(response);
+//         console.log("handleConfirm2FA: data", data);
+//         this.showQrCodeModal(data.otp_uri);
+//       }
+//       const current2fa = await this.is2faActivated();
+//       console.log("Updated current2fa = " + current2fa);
+//       this.update2faButton(current2fa);
+//       this.update2faModal(current2fa);
+//     } catch (error) {
+//       if (error instanceof CustomError) {
+//         error.showModalCustom();
+//         navigateTo(error.redirect);
+//       } else {
+//         console.error("handleConfirm2FA:", error);
+//       }
+//     }
+//   }
 
-  handleInputMail(ev) {
-    ev.preventDefault();
-    const newMail = document.querySelector("#email-new");
-    const confirmMail = document.querySelector("#email-confirm");
-    this.validateMail(newMail);
-    this.validateConfirmMail(newMail, confirmMail);
-  }
+    async handleConfirm2FA(ev) {
+        ev.preventDefault();
+        try {
+            const current2fa = await this.is2faActivated();
+            console.log("Current 2FA state:", current2fa);
+            const username = sessionStorage.getItem("username_transcendence");
+            const request = await this.makeRequest(
+                `/api/auth/update/${username}/`,
+                "PATCH",
+                {
+                    two_fa_enabled: !current2fa, 
+                }
+            );
+            const response = await fetch(request);
+            if (await this.handleStatus(response)) {
+                const data = await this.getDatafromRequest(response);
+                console.log("handleConfirm2FA: data", data);
+                const handle2FAModal = document.querySelector("#handle2FA");
+                const handle2FA = bootstrap.Modal.getInstance(handle2FAModal);
+                handle2FA.hide();
+                if (!current2fa) {
+                    this.showQrCodeModal(data.otp_uri);
+                }
+                const updated2fa = !current2fa;
+                this.update2faButton(updated2fa);
+                this.update2faModal(updated2fa);
+            }
+        }catch (error) {
+            if (error instanceof CustomError) {
+                error.showModalCustom();
+                navigateTo(error.redirect);
+            } else {
+                console.error("handleConfirm2FA:", error);
+            }
+        }
+    }
+
+    async update2faButton(current2fa) {
+        const button = document.getElementById("2fa-label");
+        if (button) {
+            button.textContent = current2fa
+                ? this.lang.getTranslation(["button", "deactivate2fa"])
+                : this.lang.getTranslation(["button", "activate2fa"]);
+        }
+    }
+
+    async update2faModal(current2fa) {
+        const modalBody = document.querySelector("#handle2FA .modal-body");
+        if (modalBody) {
+            modalBody.innerHTML = current2fa
+                ? this.lang.getTranslation(["modal", "message", "2faDeactivationInfo"])
+                : this.lang.getTranslation(["modal", "message", "2faActivationInfo"]);
+        }
+        const confirmButton = document.querySelector("#handle2FA #confirm-2FA");
+        if (confirmButton) {
+            confirmButton.textContent = current2fa
+                ? this.lang.getTranslation(["button", "deactivate2fa"])
+                : this.lang.getTranslation(["button", "activate2fa"]);
+        }
+    }
+
+    handleInputMail(ev) {
+        ev.preventDefault();
+        const newMail = document.querySelector("#email-new");
+        const confirmMail = document.querySelector("#email-confirm");
+        this.validateMail(newMail);
+        this.validateConfirmMail(newMail, confirmMail);
+    }
   // const formData = new FormData();
   //     formData.append('image', file); // Append the file to the form data
   //

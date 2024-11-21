@@ -60,6 +60,20 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
                 raise ValidationError(message)
         return value
 
+    def validate_password(self, value):
+        # if len(value) < 8:
+        #     raise ValidationError('Password should be 8 characters minimum')
+        # if not any(char.isdigit() for char in value):
+        #     raise ValidationError('Password should contain at least 1 digit')
+        # if not any(char.islower() for char in value):
+        #     raise ValidationError('Password should contain at least 1 lowercase letter')
+        # if not any(char.isupper() for char in value):
+        #     raise ValidationError('Password should contain at least 1 uppercase letter')
+        # if not any(not char.isalnum() for char in value):
+        #     raise ValidationError('Password should contain at least 1 symbol')
+        return value
+
+
     def validate(self, data):
         if data.get('password') != data.get('password2') :
             lang = self.context.get('request').headers.get('lang')

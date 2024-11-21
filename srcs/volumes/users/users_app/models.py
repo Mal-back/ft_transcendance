@@ -16,3 +16,7 @@ class PublicUser(models.Model):
     tournaments_pong_lost = models.IntegerField(default=0)
     tournaments_c4_won = models.IntegerField(default=0)
     tournaments_c4_lost = models.IntegerField(default=0)
+
+    @property
+    def is_authenticated(self):
+        return True

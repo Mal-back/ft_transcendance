@@ -63,7 +63,8 @@
     "addFriend": "Add Friend",
     "remove": "Remove",
     "leave": "Leave",
-    "activate2fa": "Activate 2FA"
+    "activate2fa": "Activate 2FA",
+    "deactivate2fa": "Deactivate 2FA"
   },
   "user": {
     "you": "You",
@@ -164,7 +165,8 @@
       "inviteGames": "Games Invites",
       "invite": "Invites",
       "auth": "Authentification",
-      "accountCreation": "Account Creation"
+      "accountCreation": "Account Creation",
+      "activationCode": "Activation code"
     },
     "message": {
       "over": "is over",
@@ -186,6 +188,9 @@
       "addYourself": "You can't add yourself as a friend",
       "inviteYou": "invites you to a game",
       "inviteYouTournament": "invites you to a tournament",
+      "2faActivationInfo": "A QR Code will be created, you need to scan it in your authentication application. Warning : If you want to unable 2FA, you need to disactiveit in your Transcendance account settings before removing it from your authentication application.",
+      "2faDeactivationInfo": "Are you sure you want to deactive 2FA ? You can reactivate it later, do not forget to suppress it from your authentication application.",
+      "scanQR": "Scan this QR code",
       "user_does_not_exist": "This user does not exist"
     }
   }
