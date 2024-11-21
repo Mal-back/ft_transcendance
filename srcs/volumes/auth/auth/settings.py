@@ -22,53 +22,58 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_AUTH_KEY')
+SECRET_KEY = os.getenv("DJANGO_AUTH_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG')
+DEBUG = os.getenv("DJANGO_DEBUG")
 
-ALLOWED_HOSTS = ['auth', 'localhost', 'http://localhost:8080', 'frontend', 'users', 'avatar_manager', os.getenv('HOSTNAME')]
+ALLOWED_HOSTS = [
+    "auth",
+    "localhost",
+    "http://localhost:8080",
+    "frontend",
+    "users",
+    "avatar_manager",
+    os.getenv("HOSTNAME"),
+]
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
 
 # settings.py
 CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8080',
+    "http://localhost:8080",
 ]
-
-
-
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'corsheaders',
-    'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
-    'auth_app.apps.AuthAppConfig',
-    'django.contrib.sites',
-    'django_otp',
-    'django_otp.plugins.otp_totp'
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "corsheaders",
+    "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
+    "auth_app.apps.AuthAppConfig",
+    "django.contrib.sites",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_otp.middleware.OTPMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_otp.middleware.OTPMiddleware",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -77,38 +82,38 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
 ]
 CORS_ALLOW_HEADERS = [
-    'content-type',
-    'x-csrftoken',
-    'authorization',
-    'accept',
-    'origin',
-    'user-agent',
-    'x-requested-with',
+    "content-type",
+    "x-csrftoken",
+    "authorization",
+    "accept",
+    "origin",
+    "user-agent",
+    "x-requested-with",
 ]
-ROOT_URLCONF = 'auth.urls'
+ROOT_URLCONF = "auth.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'maildev'  # Use 'maildev' if using Docker Compose
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "maildev"  # Use 'maildev' if using Docker Compose
 EMAIL_PORT = 1025
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = False
-DEFAULT_FROM_EMAIL = 'no-reply@transcendance.fr'  # Default "from" email
+DEFAULT_FROM_EMAIL = "no-reply@transcendance.fr"  # Default "from" email
 
 # TWO_FACTOR_AUTHENTICATION = True
 
@@ -116,19 +121,19 @@ DEFAULT_FROM_EMAIL = 'no-reply@transcendance.fr'  # Default "from" email
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('AUTH_DB_NAME'),
-        'USER': os.getenv('AUTH_DB_USER'),
-        'PASSWORD': os.getenv('AUTH_DB_PASSWORD'),
-        'HOST': os.getenv('AUTH_DB_HOST'),
-        'PORT': os.getenv('AUTH_DB_PORT'),
-        'OPTIONS' : {
-            'sslmode' : 'require',
-            'sslcert' : '/certs/auth_client.crt',
-            'sslkey' : '/certs/auth_client.key',
-            'sslrootcert' : '/certs/ca.crt',
-            }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("AUTH_DB_NAME"),
+        "USER": os.getenv("AUTH_DB_USER"),
+        "PASSWORD": os.getenv("AUTH_DB_PASSWORD"),
+        "HOST": os.getenv("AUTH_DB_HOST"),
+        "PORT": os.getenv("AUTH_DB_PORT"),
+        "OPTIONS": {
+            "sslmode": "require",
+            "sslcert": "/certs/auth_client.crt",
+            "sslkey": "/certs/auth_client.key",
+            "sslrootcert": "/certs/ca.crt",
+        },
     }
 }
 
@@ -136,70 +141,65 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = 'auth_app.CustomUser'
+AUTH_USER_MODEL = "auth_app.CustomUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 REST_FRAMEWORK = {
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            'auth_app.authentication.CustomJWTAuth',
-            ),
-        }
+    "DEFAULT_AUTHENTICATION_CLASSES": ("auth_app.authentication.CustomJWTAuth",),
+}
 
-def get_jwt_keys(key): 
-    with open(key, 'r') as keyfile :
+
+def get_jwt_keys(key):
+    with open(key, "r") as keyfile:
         return keyfile.read()
 
+
 SIMPLE_JWT = {
-            "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-            "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-            "ROTATE_REFRESH_TOKENS": True,
-            "BLACKLIST_AFTER_ROTATION": True,
-            "UPDATE_LAST_LOGIN": False,
-
-            "ALGORITHM": "RS512",
-            "SIGNING_KEY": get_jwt_keys('/certs/jwt_private.pem'),
-            "VERIFYING_KEY": get_jwt_keys('/certs/jwt_public.pem'),
-            "AUDIENCE": None,
-            "ISSUER": None,
-            "JSON_ENCODER": None,
-            "JWK_URL": None,
-            "LEEWAY": 0,
-
-            "AUTH_HEADER_TYPES": ("Bearer",),
-            "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-            "USER_ID_FIELD": "id",
-            "USER_ID_CLAIM": "user_id",
-            "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-
-            "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-            "TOKEN_TYPE_CLAIM": "token_type",
-            "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-
-            "JTI_CLAIM": "jti",
-
-            "TOKEN_OBTAIN_SERIALIZER": "auth_app.serializers.MyTokenObtainPairSerializer",
-        }
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": False,
+    "ALGORITHM": "RS512",
+    "SIGNING_KEY": get_jwt_keys("/certs/jwt_private.pem"),
+    "VERIFYING_KEY": get_jwt_keys("/certs/jwt_public.pem"),
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JSON_ENCODER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+    "JTI_CLAIM": "jti",
+    "TOKEN_OBTAIN_SERIALIZER": "auth_app.serializers.MyTokenObtainPairSerializer",
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -209,10 +209,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / 'staticRoot'
-STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticRoot"
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+APPEND_SLASH = False
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
