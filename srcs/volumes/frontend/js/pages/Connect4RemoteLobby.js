@@ -369,19 +369,20 @@ export default class extends AbstractView {
           game_type: "c4",
           invited_players: [
             "user2",
-            "user3",
-            "user4",
-            "user5",
-            "user6",
-            "user7",
-            "user8",
-            "user9",
-            "user10",
-            "user11",
-            "user12",
-            "user13",
-            "user14",
-            "user15",
+            "user1",
+            "user3"
+            // "user4",
+            // "user5",
+            // "user6",
+            // "user7",
+            // "user8",
+            // "user9",
+            // "user10",
+            // "user11",
+            // "user12",
+            // "user13",
+            // "user14",
+            // "user15",
           ],
         },
       );
@@ -417,7 +418,7 @@ export default class extends AbstractView {
       if (await this.handleStatus(response)) {
         data = await this.getDatafromRequest(response);
         if (data.count === 0) {
-          return "<p class='text-center'>" + this.lang.getTranslation(["tournament", "no_friends"])  + "</p>";
+          return "<p class='text-center'>" + this.lang.getTranslation(["tournament", "no_friends"]) + "</p>";
         }
       }
     } catch (error) {
@@ -672,8 +673,8 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         showModal(
-          this.lang.getTranslation(["title","tournament"]),
-          this.lang.getTranslation(["tournament","left_tournament"]),
+          this.lang.getTranslation(["title", "tournament"]),
+          this.lang.getTranslation(["tournament", "left_tournament"]),
         );
         navigateTo("/");
       }

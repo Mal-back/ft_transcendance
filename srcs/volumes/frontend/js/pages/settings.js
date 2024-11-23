@@ -182,7 +182,8 @@ export default class extends AbstractView {
             <div class="modal-body removeElem">
                 <form class="removeElem">
                     <div class="mb-3 removeElem">
-                        <button id="sendDataBtn" type="button" class="btn btn-success removeElem">
+                        <button type="button" class="btn btn-success removeElem" data-bs-toggle="modal"
+                            data-bs-target="#sendDataBtn">
                             ${this.lang.getTranslation(["button", "send"])} ${this.lang.getTranslation(["button", "data"])}
                         </button>
                     </div>
@@ -317,20 +318,28 @@ export default class extends AbstractView {
         </div>
     </div>
 </div>
-<div class="modal fade" id="downloadDataModal" tabindex="-1" aria-labelledby="downloadDataModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+<div class="modal fade" id="sendDataBtn" tabindex="-1" aria-labelledby="sendDataBtnLabel" aria-hidden="true">
+    <div class="modal-dialog modal-80 modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="downloadDataModalLabel">Click here to download your data</h5>
+                <h5 class="modal-title" id="sendDataBtnLabel">Send Data</h5>
             </div>
-            <div class="modal-body d-flex justify-content-center">
-                <div id="downloadDataButton"></div>
+            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                <div><h4>Your data will be sent to your email address. Are you sure?</h4></div>
+                <div>
+                <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
+                    ${this.lang.getTranslation(["title", "no"])}
+                </button>
+                <button id="sendDataButton" type="button" class="btn btn-success removeElem">
+                    ${this.lang.getTranslation(["title", "yes"])}
+                </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <div class="modal fade" id="confirmDeleteAccountModal" tabindex="-1" aria-labelledby="confirmDeleteAccountModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-dialog modal-80 modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="confirmDeleteAccountModalLabel">${this.lang.getTranslation(["button", "confirmAccountDeletion"])}</h5>
@@ -1063,11 +1072,15 @@ export default class extends AbstractView {
     try {
       console.log("COUCOU");
       const username = sessionStorage.getItem("username_transcendence");
-      const request = await this.makeRequest(`/api/auth/${username}`);
+      const request = await this.makeRequest("/api/auth/dump_data/", "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        this.createDownloadButton(data);
+        console.log("HERE DOWNLOADED", data);
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "auth"])} Send succesfully`,
+          `Sent Successfully, ${username}`,
+        );
       }
     } catch (error) {
       if (error instanceof CustomError) {
@@ -1188,11 +1201,6 @@ export default class extends AbstractView {
     if (saveLanguage)
       saveLanguage.addEventListener("click", this.handleSaveLanguage);
 
-    const sendDataBtn = document.querySelector("#sendDataBtn");
-    if (sendDataBtn) {
-      sendDataBtn.addEventListener("click", this.handleShowModalData);
-    }
-
     const deleteAccountButton = document.querySelector(
       "#confirmDeleteAccountBtn",
     );
@@ -1232,6 +1240,10 @@ export default class extends AbstractView {
     const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn")
     if (TermsOfUseButton)
       TermsOfUseButton.addEventListener("click", this.handleOpenTermsOfUse);
+    const SendDataEmail = document.querySelector('#sendDataButton');
+    if (SendDataEmail)
+      SendDataEmail.addEventListener("click", this.handleDownloadData);
+
   }
 
   handleShowEmailModal(ev) {
@@ -1299,5 +1311,8 @@ export default class extends AbstractView {
       PrivacyPolicyButton.removeEventListener("click", this.handleOpenPrivacyPolicy);
     if (TermsOfUseButton)
       TermsOfUseButton.removeEventListener("click", this.handleOpenTermsOfUse);
+    const SendDataEmail = document.querySelector('#sendDataButtons');
+    if (SendDataEmail)
+      SendDataEmail.removeEventListener("click", this.handleDownloadData);
   }
 }

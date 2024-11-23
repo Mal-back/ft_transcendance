@@ -266,7 +266,7 @@ export default class extends AbstractView {
         );
       }
     } catch (error) {
-		console.log("TTESSTTT");
+      console.log("TTESSTTT");
       this.handleCatch(error);
     }
   }
