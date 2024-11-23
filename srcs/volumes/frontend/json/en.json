@@ -36,7 +36,9 @@
     "tournamentGame": "Tournament Game",
     "2fa": "Two Factor Authentication",
     "remoteBattle": "Remote Battle",
-    "remoteTournament": "Remote Tournament"
+    "remoteTournament": "Remote Tournament",
+    "yes": "Yes",
+    "no": "No"
   },
   "button": {
     "close": "Close",
@@ -64,7 +66,8 @@
     "remove": "Remove",
     "leave": "Leave",
     "activate2fa": "Activate 2FA",
-    "deactivate2fa": "Deactivate 2FA"
+    "deactivate2fa": "Deactivate 2FA",
+    "confirmAccountDeletion": "Confirm Account Deletion"
   },
   "user": {
     "you": "You",
@@ -193,5 +196,15 @@
       "scanQR": "Scan this QR code",
       "user_does_not_exist": "This user does not exist"
     }
+  },
+  "policy": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms Of Use",
+    "legalMentions": "Legal Mentions",
+    "readAndAgree": "I have read and agree to the Privacy Policy and Terms of Use inside the",
+    "required": "Agreement Required",
+    "failedReadAndAgree": "You must read and agree to the Privacy Policy and Terms of Use before creating an account.",
+    "errorFetching": "Error Fetching",
+    "errorLoading": "Error Loading"
   }
 }

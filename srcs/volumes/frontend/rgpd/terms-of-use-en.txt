@@ -1,0 +1,50 @@
+Terms of Use
+Last updated: 23/11/2024
+
+Welcome to ft_transcendance! By accessing or using our website, you agree to the following Terms of Use. Please read them carefully.
+
+
+1. Acceptance of Terms
+
+By creating an account and using our website, you agree to comply with these Terms of Use. If you do not agree, please do not use our services.
+
+
+2. User Accounts
+
+    • Account Creation: To access certain features, you must create an account. You are required to provide a unique username, a secure password, a second password for confirmation, and a valid email address.
+    • Account Security: You are responsible for keeping your account information, including your passwords, secure. We recommend using strong passwords and enabling Two-Factor Authentication (2FA) for added security.
+    • Accuracy of Information: The information you provide must be accurate and up to date. Misrepresentation of your identity or account details may result in suspension or termination of your account.
+
+
+3. Privacy
+
+We collect and store your username, email address, and passwords to create your account, provide 2FA functionality, and keep a secure record of your account.
+We do not share, sell, or disclose your information to third parties, except as required by law or to improve the functionality and security of our website. For more details on our data practices, please refer to our Privacy Policy.
+
+
+4. Acceptable Use
+
+By using our website, you agree not to:
+
+    • Engage in any illegal activities, including hacking or attempting unauthorized access to accounts or servers.
+    • Post or share offensive, defamatory, or inappropriate content.
+    • Exploit bugs, vulnerabilities, or loopholes in the game or website features for unfair advantage.
+Violating these rules may result in account suspension or permanent banning.
+
+
+5. Intellectual Property
+All content, graphics, design, and code used in our games (such as Pong and Connect4) are the property of ft_transcendance or are licensed for use by ft_transcendance. You may not copy, distribute, or use this content without prior permission.
+
+
+6. Disclaimers
+
+Service Availability: Our website and services are provided "as is" and "as available." We do not guarantee uninterrupted access or error-free functionality.
+Limitation of Liability: ft_transcendance is not liable for any damages, including but not limited to lost data, resulting from your use of our website.
+
+
+7. Modifications to Terms
+We may update these Terms of Use periodically to reflect changes in our services or legal requirements. We will notify you of any significant changes by posting the updated terms on our website.
+
+
+8. Contact Us
+For any questions or concerns regarding these Terms of Use, please contact us at vlevy@student.42.fr.

@@ -1,0 +1,50 @@
+Conditions d'Utilisation
+Dernière mise à jour : 23/11/2024
+
+Bienvenue sur ft_transcendance ! En accédant à notre site web ou en l’utilisant, vous acceptez les présentes Conditions d’Utilisation. Veuillez les lire attentivement.
+
+
+1. Acceptation des Conditions
+
+En créant un compte et en utilisant notre site, vous acceptez de respecter ces Conditions d’Utilisation. Si vous n’êtes pas d’accord, veuillez ne pas utiliser nos services.
+
+
+2. Comptes Utilisateur
+
+    • Création de Compte : Pour accéder à certaines fonctionnalités, vous devez créer un compte. Il vous sera demandé de fournir un nom d'utilisateur unique, un mot de passe sécurisé, un second mot de passe pour confirmation, et une adresse e-mail valide.
+    • Sécurité du Compte : Vous êtes responsable de la sécurité des informations de votre compte, y compris vos mots de passe. Nous recommandons l’utilisation de mots de passe robustes et l’activation de l'authentification à deux facteurs (2FA) pour une sécurité accrue.
+    • Exactitude des Informations : Les informations fournies doivent être exactes et à jour. Une fausse déclaration de votre identité ou des informations de compte peut entraîner la suspension ou la suppression de votre compte.
+
+
+3. Confidentialité
+
+Nous collectons et stockons votre nom d’utilisateur, adresse e-mail, et mots de passe pour créer votre compte, fournir la fonctionnalité 2FA et maintenir un enregistrement sécurisé de votre compte.
+Nous ne partageons, ne vendons ni ne divulguons vos informations à des tiers, sauf si requis par la loi ou pour améliorer la fonctionnalité et la sécurité de notre site. Pour plus de détails sur nos pratiques en matière de données, veuillez consulter notre Politique de Confidentialité.
+
+
+4. Utilisation Acceptable
+
+En utilisant notre site, vous acceptez de ne pas :
+
+    • Participer à des activités illégales, y compris le piratage ou toute tentative d'accès non autorisé aux comptes ou serveurs.
+    • Publier ou partager du contenu offensant, diffamatoire ou inapproprié.
+    • Exploiter des failles, vulnérabilités ou failles dans les jeux ou fonctionnalités du site pour obtenir un avantage injuste.
+La violation de ces règles peut entraîner la suspension ou l'interdiction permanente de votre compte.
+
+
+5. Propriété Intellectuelle
+Tous les contenus, graphiques, design et codes utilisés dans nos jeux (tels que Pong et Puissance4) sont la propriété de ft_transcendance ou sont sous licence pour utilisation par ft_transcendance. Vous ne pouvez pas copier, distribuer ou utiliser ce contenu sans permission préalable.
+
+
+6. Déclarations de Non-Responsabilité
+
+Disponibilité du Service : Notre site et services sont fournis "en l'état" et "selon disponibilité". Nous ne garantissons pas un accès ininterrompu ni une fonctionnalité sans erreurs.
+Limitation de Responsabilité : ft_transcendance n'est pas responsable des dommages, y compris mais sans s'y limiter, à la perte de données, résultant de votre utilisation de notre site.
+
+
+7. Modifications des Conditions
+
+Nous pouvons mettre à jour ces Conditions d’Utilisation périodiquement pour refléter des changements dans nos services ou exigences légales. Nous vous informerons de tout changement important en publiant les conditions mises à jour sur notre site.
+
+8. Contactez-Nous
+Pour toute question ou préoccupation concernant ces Conditions d’Utilisation, veuillez nous contacter à vlevy@student.42.fr.

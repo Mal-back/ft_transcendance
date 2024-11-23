@@ -1,0 +1,102 @@
+Política de privacidad
+ft_transcendance
+
+ARTÍCULO 1: PREÁMBULO
+La presente política de privacidad tiene como objetivo informar a los usuarios del sitio:
+
+    • Sobre cómo se recogen sus datos personales. Se consideran datos personales toda información que permita identificar a un usuario. En este sentido, puede tratarse de: su nombre y apellidos, su edad, su dirección postal o de correo electrónico, su ubicación o su dirección IP (lista no exhaustiva);
+    • Sobre los derechos que tienen en relación con estos datos;
+    • Sobre la persona responsable del tratamiento de los datos personales recogidos y tratados;
+    • Sobre los destinatarios de estos datos personales;
+    • Sobre la política del sitio en materia de cookies.
+Esta política complementa los avisos legales y las Condiciones Generales de Uso.
+
+ARTÍCULO 2: PRINCIPIOS RELATIVOS A LA RECOLECCIÓN Y AL TRATAMIENTO DE LOS DATOS PERSONALES
+De acuerdo con el artículo 5 del Reglamento europeo 2016/679, los datos personales son:
+    • Tratados de manera lícita, leal y transparente en relación con la persona interesada;
+    • Recogidos para fines determinados (ver Artículo 3.1 de la presente), explícitos y legítimos, y no ser tratados posteriormente de manera incompatible con esos fines;
+    • Adecuados, pertinentes y limitados a lo que es necesario en función de los fines para los cuales son tratados;
+    • Exactos y, si es necesario, mantenidos actualizados. Se deben tomar todas las medidas razonables para que los datos personales que sean inexactos, en relación con los fines para los cuales son tratados, sean eliminados o rectificados sin demora;
+    • Conservados de forma que se permita la identificación de las personas interesadas durante un período que no exceda el necesario en función de los fines para los cuales son tratados;
+    • Tratados de manera que se garantice una seguridad adecuada de los datos recogidos, incluida la protección contra el tratamiento no autorizado o ilícito y contra la pérdida, destrucción o daños accidentales, mediante medidas técnicas u organizativas apropiadas.
+
+
+La persona interesada ha consentido al tratamiento de sus datos personales para uno o varios fines específicos;
+    • El interesado ha dado su consentimiento para el tratamiento de sus datos personales con uno o varios fines específicos;
+    • El tratamiento es necesario para la ejecución de un contrato en el que la persona interesada es parte o para la ejecución de medidas precontractuales adoptadas a petición de la misma;
+    • El tratamiento es necesario para el cumplimiento de una obligación legal a la que está sujeto el responsable del tratamiento;
+    • El tratamiento es necesario para salvaguardar los intereses vitales de la persona interesada o de otra persona física;
+    • El tratamiento es necesario para la ejecución de una misión de interés público o que se enmarca en el ejercicio de la autoridad pública conferida al responsable del tratamiento;
+    • El tratamiento es necesario para los fines de los intereses legítimos perseguidos por el responsable del tratamiento o por un tercero, salvo que prevalezcan los intereses o los derechos y libertades fundamentales de la persona interesada que requieren protección de los datos personales, en particular cuando la persona interesada sea un menor.
+
+ARTÍCULO 3: DATOS PERSONALES RECOGIDOS Y TRATADOS EN EL MARCO DE LA NAVEGACIÓN EN EL SITIO
+
+Artículo 3.1: Datos recogidos
+Los datos personales recogidos en el marco de nuestra actividad son los siguientes:
+- Nombre de usuario, dirección de correo electrónico.
+La recolección y el tratamiento de estos datos responden a la(s) finalidad(es) siguiente(s):
+- Gestión y seguridad de esta aplicación.
+
+Artículo 3.2: Modo de recolección de datos
+Cuando utiliza nuestro sitio, se recogen automáticamente los siguientes datos:
+- Ninguno.
+Otros datos personales son recogidos cuando usted realiza las siguientes operaciones en la plataforma:
+- Dirección de correo electrónico, nombre de usuario.
+
+
+Se conservan por el responsable del tratamiento en condiciones razonables de seguridad, durante un período de: 3 años.
+La empresa puede conservar ciertos datos personales más allá de los plazos mencionados anteriormente para cumplir con sus obligaciones legales o reglamentarias.
+
+Artículo 3.3: Alojamiento de los datos
+El sitio ft_transcendance está alojado por:
+Ecole 42 - Paris
+96, boulevqrd bessieres 75017 Paris
+vlevy@student.42.fr
+
+
+
+ARTÍCULO 4: RESPONSABLE DEL TRATAMIENTO DE LOS DATOS Y DELEGADO A LA PROTECCIÓN DE DATOS
+
+Artículo 4.1: El responsable del tratamiento de los datos
+Los datos personales son recogidos por ecole 42-Paris, association loi 1901 con un capital desconocido, cuyo número de registro es desconocido.
+El responsable del tratamiento de los datos personales puede ser contactado de la siguiente manera:
+Por correo a la dirección: 96, boulevard bessieres, Paris;
+Por correo electrónico: vlevy@student.42.fr.
+
+
+
+
+
+Artículo 4.2: El delegado a la protección de datos
+
+El delegado a la protección de datos de la empresa o del responsable es:
+
+vlevy@student.42.fr
+
+Si considera, tras contactarnos, que sus derechos “Informática y Libertades” no son respetados, puede enviar una información a la CNIL.
+
+ARTÍCULO 5: LOS DERECHOS DEL USUARIO EN MATERIA DE RECOLECCIÓN Y TRATAMIENTO DE DATOS
+Todo usuario afectado por el tratamiento de sus datos personales puede invocar los siguientes derechos, en aplicación del reglamento europeo 2016/679 y de la Ley de Informática y Libertades (Ley 78-17 del 6 de enero de 1978):
+    • Derecho de acceso, rectificación y derecho a la supresión de los datos (establecidos respectivamente en los artículos 15, 16 y 17 del RGPD);
+
+    • Derecho a la portabilidad de los datos (artículo 20 del RGPD);
+
+    • Derecho a la limitación (artículo 18 del RGPD) y a la oposición al tratamiento de los datos (artículo 21 del RGPD);
+
+    • Derecho a no ser objeto de una decisión basada exclusivamente en un procedimiento automatizado;
+
+    • Derecho a determinar el destino de los datos tras la muerte;
+
+    • Derecho a presentar una reclamación ante la autoridad de control competente (artículo 77 del RGPD).
+
+Para ejercer sus derechos, dirija su carta a ecole 42-Paris, 96, boulevard bessierres, Paris o por correo electrónico a vlevy@student.42.fr.
+A fin de que el responsable del tratamiento de datos pueda dar respuesta a su solicitud, el usuario puede estar obligado a proporcionarle cierta información como: su nombre y apellidos, su dirección de correo electrónico, así como su número de cuenta, de espacio personal o de abonado.
+Consulte el sitio cnil.fr para más información sobre sus derechos.
+
+
+ARTÍCULO 6: CONDICIONES DE MODIFICACIÓN DE LA POLÍTICA DE PRIVACIDAD
+
+El editor del sitio ft_transcendance se reserva el derecho de modificar la presente Política en cualquier momento para garantizar a los usuarios del sitio su conformidad con la legislación vigente.
+Las posibles modificaciones no tendrán incidencia en las compras realizadas anteriormente en el sitio, que seguirán sometidas a la Política vigente en el momento de la compra y tal como fue aceptada por el usuario al validar la compra.
+Se invita al usuario a tomar conocimiento de esta Política cada vez que utilice nuestros servicios, sin que sea necesario informarle formalmente.
+La presente política, publicada el 23/11/2024, ha sido actualizada el 23/11/2024.

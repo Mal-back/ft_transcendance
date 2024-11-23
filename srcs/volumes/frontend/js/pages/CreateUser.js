@@ -10,6 +10,8 @@ export default class extends AbstractView {
     this.handleInputUsername = this.handleInputUsername.bind(this);
     this.handleInputPassword = this.handleInputPassword.bind(this);
     this.handleInputMail = this.handleInputMail.bind(this);
+    this.handleOpenPrivacyPolicy = this.handleOpenPrivacyPolicy.bind(this);
+    this.handleOpenTermsOfUse = this.handleOpenTermsOfUse.bind(this);
   }
 
   async loadCss() {
@@ -19,14 +21,14 @@ export default class extends AbstractView {
   async makeUsers() {
     const user = "user";
     for (let index = 0; index < 26; index++) {
-      let username = `${user}${index}`;
-      await this.submitNewUser(
-        `${username}`,
-        `${username}@google.com`,
-        `${username}`,
-        `${username}`,
-      );
-      console.log(`${username} created`);
+      // let username = `${user}${index}`;
+      // await this.submitNewUser(
+      //   `${username}`,
+      //   `${username}@google.com`,
+      //   `${username}`,
+      //   `${username}`,
+      // );
+      // console.log(`${username} created`);
     }
   }
 
@@ -63,12 +65,79 @@ export default class extends AbstractView {
                         <div id="password2Error" class="removeElem"></div>
                     </div>
                     <br>
+                    <div class="removeElem form-check mb-3">
+                      <input class="removeElem form-check-input" type="checkbox" id="agreeToTerms" required>
+                      <label class="removeElem form-check-label" for="agreeToTerms">
+                        ${this.lang.getTranslation(["policy", "readAndAgree"])} <a href="#" data-bs-toggle="modal" data-bs-target="#legalMentions">${this.lang.getTranslation(["policy", "legalMentions"])}</a>.
+                      </label>
+                    </div>
                     <button id="createUserButton" type="submit" class="btn bg-silver removeElem">${this.lang.getTranslation(["title", "createProfile"])}</button>
-                    <br>
                     <br>
                 </form>
             </div>
         </div>
+      </div>
+      <div class="modal fade" id="legalMentions" tabindex="-1" aria-labelledby="legalMentionsLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content ">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="legalMentionsLabel">${this.lang.getTranslation(["policy", "legalMentions"])}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body d-flex justify-content-center">
+                      <!-- Buttons without data-bs-toggle and data-bs-target -->
+                      <button type="button" class="btn btn-danger white-txt" id="openPrivacyPolicyBtn"
+                          style="margin-right: 3px;">
+                          ${this.lang.getTranslation(["policy", "privacyPolicy"])}
+                      </button>
+                      <button type="button" class="btn btn-secondary white-txt" id="openTermsOfUseBtn">
+                      ${this.lang.getTranslation(["policy", "termsOfUse"])}
+                      </button>
+                      <br>
+                      <br>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "cancel"])}</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <!-- Privacy Policy Modal -->
+      <div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-80 modal-dialog-centered">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="privacyPolicyModalLabel">${this.lang.getTranslation(["policy", "privacyPolicy"])}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                      <!-- Using <pre> to preserve formatting -->
+                      <pre id="privacyPolicyContent" style="white-space: pre-wrap;">Loading...</pre>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "close"])}</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <!-- Terms of use modal -->
+      <div class="modal fade" id="termsOfUseModal" tabindex="-1" aria-labelledby="termsOfUseModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-80 modal-dialog-centered">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="termsOfUseModalLabel">${this.lang.getTranslation(["policy", "termsOfUse"])}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                      <!-- Using <pre> to preserve formatting -->
+                      <pre id="termsOfUseContent" style="white-space: pre-wrap;">Loading...</pre>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "close"])}</button>
+                  </div>
+              </div>
+          </div>
       </div>
             `;
   }
@@ -186,6 +255,14 @@ export default class extends AbstractView {
   async handleSubmitNewUser(ev) {
     ev.preventDefault();
     try {
+      const agreeToTermsCheckbox = document.querySelector("#agreeToTerms");
+      if (!agreeToTermsCheckbox.checked) {
+        showModal(
+          this.lang.getTranslation(["policy", "required"]),
+          this.lang.getTranslation(["policy", "failedReadAndAgree"])
+        );
+        return;
+      }
       const usernameInput = document.querySelector("#Username");
       const passwordInput = document.querySelector("#Password");
       const password2Input = document.querySelector("#Password-2");
@@ -238,11 +315,60 @@ export default class extends AbstractView {
     this.validateMail(mailInput);
   }
 
+  async handleOpenPrivacyPolicy(ev) {
+    ev.preventDefault();
+    console.log("HERE MATE")
+    try {
+      const myHeaders = new Headers();
+      const response = await fetch(`/rgpd/politique-${this.lang.getCurrentLanguage()}.txt`, {
+        method: "GET",
+        headers: myHeaders,
+      });
+      if (response.ok) {
+        const data = await response.text();
+        document.getElementById('privacyPolicyContent').textContent = data;
+      } else {
+        console.error('Error fetching the terms of use');
+        document.getElementById('privacyPolicyContent').textContent = `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
+      }
+    } catch (error) {
+      console.error('Error fetching the terms of use:', error);
+      document.getElementById('privacyPolicyContent').textContent = `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
+    }
+    const privacyPolicyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+    privacyPolicyModal.show();
+  }
+
+  async handleOpenTermsOfUse(ev) {
+    ev.preventDefault();
+    try {
+      const myHeaders = new Headers();
+      const response = await fetch(`/rgpd/terms-of-use-${this.lang.getCurrentLanguage()}.txt`, {
+        method: "GET",
+        headers: myHeaders,
+      });
+      if (response.ok) {
+        const data = await response.text();
+        document.getElementById('termsOfUseContent').textContent = data;
+      } else {
+        console.error('Error fetching the terms of use');
+        document.getElementById('termsOfUseContent').textContent = `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
+      }
+    } catch (error) {
+      console.error('Error fetching the terms of use:', error);
+      document.getElementById('termsOfUseContent').textContent = `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
+    }
+    const termsOfUseModal = new bootstrap.Modal(document.getElementById('termsOfUseModal'));
+    termsOfUseModal.show();
+  }
+
   async addEventListeners() {
     const button = document.querySelector("#createUserButton");
     const usernameInput = document.querySelector("#Username");
     const passwordInput = document.querySelector("#Password");
     const password2Input = document.querySelector("#Password-2");
+    const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
+    const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn")
     const mailInput = document.querySelector("#Mail");
     if (button) {
       button.addEventListener("click", this.handleSubmitNewUser);
@@ -251,6 +377,8 @@ export default class extends AbstractView {
     passwordInput.addEventListener("input", this.handleInputPassword);
     password2Input.addEventListener("input", this.handleInputPassword);
     mailInput.addEventListener("input", this.handleInputMail);
+    PrivacyPolicyButton.addEventListener("click", this.handleOpenPrivacyPolicy);
+    TermsOfUseButton.addEventListener("click", this.handleOpenTermsOfUse);
   }
 
   removeEventListeners() {
@@ -286,5 +414,11 @@ export default class extends AbstractView {
     if (password2Error) password2Error.innerHTML = "";
     const mailError = document.querySelector("#mailError");
     if (mailError) mailError.innerHTML = "";
+    const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
+    const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn")
+    if (PrivacyPolicyButton)
+      PrivacyPolicyButton.removeEventListener("click", this.handleOpenPrivacyPolicy);
+    if (TermsOfUseButton)
+      TermsOfUseButton.removeEventListener("click", this.handleOpenTermsOfUse);
   }
 }

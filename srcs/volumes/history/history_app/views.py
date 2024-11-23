@@ -71,7 +71,7 @@ class TournamentList(generics.ListAPIView):
     serializer_class = TournamentSerializer 
     queryset = Tournament.objects.all()
     permission_classes = [IsAuthOrAuthenticated]
-    serializer_class = MatchGetSerializer 
+    # serializer_class = MatchGetSerializer 
 
     def get_queryset(self):
         queryset = Tournament.objects.all() 

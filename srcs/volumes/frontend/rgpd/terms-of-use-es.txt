@@ -1,0 +1,50 @@
+Términos de Uso
+Última actualización: 23/11/2024
+
+¡Bienvenido a ft_transcendance ! Al acceder o utilizar nuestro sitio web, aceptas los siguientes Términos de Uso. Por favor, léelos cuidadosamente.
+
+
+1. Aceptación de los Términos
+
+Al crear una cuenta y utilizar nuestro sitio web, aceptas cumplir con estos Términos de Uso. Si no estás de acuerdo, por favor no utilices nuestros servicios.
+
+
+2. Cuentas de Usuario
+
+    • Creación de Cuenta: Para acceder a ciertas funciones, debes crear una cuenta. Se te pedirá un nombre de usuario único, una contraseña segura, una segunda contraseña para confirmación y una dirección de correo electrónico válida.
+    • Seguridad de la Cuenta: Eres responsable de mantener segura la información de tu cuenta, incluyendo tus contraseñas. Recomendamos utilizar contraseñas seguras y habilitar la Autenticación de Dos Factores (2FA) para mayor seguridad.
+    • Exactitud de la Información: La información que proporciones debe ser precisa y estar actualizada. La falsificación de tu identidad o detalles de cuenta puede resultar en la suspensión o terminación de tu cuenta.
+
+
+3. Privacidad
+
+Recopilamos y almacenamos tu nombre de usuario, dirección de correo electrónico y contraseñas para crear tu cuenta, proporcionar la funcionalidad de 2FA y mantener un registro seguro de tu cuenta.
+No compartimos, vendemos ni divulgamos tu información a terceros, excepto cuando sea requerido por ley o para mejorar la funcionalidad y seguridad de nuestro sitio web. Para más detalles sobre nuestras prácticas de datos, consulta nuestra Política de Privacidad.
+
+
+4. Uso Aceptable
+
+Al utilizar nuestro sitio web, aceptas no:
+
+    • Participar en actividades ilegales, incluyendo hackeo o intentos de acceso no autorizado a cuentas o servidores.
+    • Publicar o compartir contenido ofensivo, difamatorio o inapropiado.
+    • Explorar fallos, vulnerabilidades o fallos en los juegos o características del sitio para obtener ventajas injustas.
+La violación de estas reglas puede resultar en la suspensión o prohibición permanente de la cuenta.
+
+
+5. Propiedad Intelectual
+Todo el contenido, gráficos, diseño y código utilizados en nuestros juegos (como Pong y Conecta4) son propiedad de ft_transcendance o tienen licencia para su uso por ft_transcendance. No puedes copiar, distribuir o utilizar este contenido sin permiso previo.
+
+
+6. Descargos de Responsabilidad
+
+Disponibilidad del Servicio: Nuestro sitio web y servicios se proporcionan "tal cual" y "según disponibilidad". No garantizamos acceso ininterrumpido ni funcionalidad libre de errores.
+Limitación de Responsabilidad: ft_transcendance no es responsable de ningún daño, incluyendo pero no limitado a pérdida de datos, resultante de tu uso de nuestro sitio web.
+
+
+7. Modificaciones de los Términos
+
+Podemos actualizar estos Términos de Uso periódicamente para reflejar cambios en nuestros servicios o requisitos legales. Te notificaremos sobre cualquier cambio significativo publicando los términos actualizados en nuestro sitio web.
+
+8. Contáctanos
+Para cualquier pregunta o inquietud relacionada con estos Términos de Uso, por favor contáctanos en vlevy@student.42.fr.

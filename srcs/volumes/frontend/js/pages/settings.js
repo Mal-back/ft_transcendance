@@ -25,6 +25,8 @@ export default class extends AbstractView {
     this.handleSaveLanguage = this.handleSaveLanguage.bind(this);
     this.handleConfirm2FA = this.handleConfirm2FA.bind(this);
     this.handleDownloadData = this.handleDownloadData.bind(this);
+    this.handleOpenPrivacyPolicy = this.handleOpenPrivacyPolicy.bind(this);
+    this.handleOpenTermsOfUse = this.handleOpenTermsOfUse.bind(this);
   }
 
   async loadCss() {
@@ -41,7 +43,7 @@ export default class extends AbstractView {
     const defaultAvatar = await this.getDefaultAvatar(currentAvatar);
     const htmlContent = `
 <div class="background removeElem">
-    <div class="Profile container removeElem">
+    <div class="Profile container mt-4 mb-4 removeElem">
         <div class="container mt-4 removeElem">
             <h1 class="removeElem">${this.lang.getTranslation(["title", "settings"])}</h1>
             <form class="removeElem">
@@ -107,7 +109,11 @@ export default class extends AbstractView {
                         ${this.lang.getTranslation(["button", "change"])} ${this.lang.getTranslation(["input", "label", "language"])}
                     </button>
                 </div>
-
+                <div class="mb-3 removeElem">
+                    <button type="button" class="btn btn-danger white-txt removeElem" data-bs-toggle="modal" data-bs-target="#legalMentions">
+                        ${this.lang.getTranslation(["policy", "legalMentions"])}
+                    </button>
+                </div>
                 <!-- DATA HANDLER -->
                 <div class="mb-3 removeElem">
                     <button type="button" class="btn btn-info white-txt removeElem" data-bs-toggle="modal"
@@ -190,7 +196,7 @@ export default class extends AbstractView {
             </div>
             <div class="modal-footer removeElem">
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
-                     ${this.lang.getTranslation(["button", "close"])}
+                    ${this.lang.getTranslation(["button", "close"])}
                 </button>
             </div>
         </div>
@@ -327,24 +333,85 @@ export default class extends AbstractView {
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteAccountModalLabel">Confirm Account Deletion</h5>
+                <h5 class="modal-title" id="confirmDeleteAccountModalLabel">${this.lang.getTranslation(["button", "confirmAccountDeletion"])}</h5>
             </div>
             <div class="modal-body d-flex flex-column justify-content-center align-items-center">
                 <div><h4>Are you sure?</h4></div>
                 <br>
                 <div>
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
-                    No
+                    ${this.lang.getTranslation(["title", "no"])}
                 </button>
                 <button id="confirmDeleteAccountBtn" type="button" class="btn btn-success removeElem">
-                    Yes
+                    ${this.lang.getTranslation(["title", "yes"])}
                 </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="legalMentions" tabindex="-1" aria-labelledby="legalMentionsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="legalMentionsLabel">${this.lang.getTranslation(["policy", "legalMentions"])}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <!-- Buttons without data-bs-toggle and data-bs-target -->
+                <button type="button" class="btn btn-danger white-txt" id="openPrivacyPolicyBtn"
+                    style="margin-right: 3px;">
+                    ${this.lang.getTranslation(["policy", "privacyPolicy"])}
+                </button>
+                <button type="button" class="btn btn-secondary white-txt" id="openTermsOfUseBtn">
+                ${this.lang.getTranslation(["policy", "termsOfUse"])}
+                </button>
+                <br>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "cancel"])}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Privacy Policy Modal -->
+<div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-80 modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyPolicyModalLabel">${this.lang.getTranslation(["policy", "privacyPolicy"])}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                <!-- Using <pre> to preserve formatting -->
+                <pre id="privacyPolicyContent" style="white-space: pre-wrap;">Loading...</pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "close"])}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Terms of use modal -->
+<div class="modal fade" id="termsOfUseModal" tabindex="-1" aria-labelledby="termsOfUseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-80 modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsOfUseModalLabel">${this.lang.getTranslation(["policy", "termsOfUse"])}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                <!-- Using <pre> to preserve formatting -->
+                <pre id="termsOfUseContent" style="white-space: pre-wrap;">Loading...</pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.lang.getTranslation(["button", "close"])}</button>
+            </div>
+        </div>
+    </div>
+</div>
 `;
     // const previous = `<input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">`;
     return htmlContent;
@@ -377,23 +444,23 @@ export default class extends AbstractView {
 
   async is2faActivated() {
     try {
-        const username = sessionStorage.getItem("username_transcendence");
-        const request = await this.makeRequest(`api/auth/${username}/`, "GET");
-        const response = await fetch(request);
-        if (await this.handleStatus(response)) {
-          const data = await response.json();
-          console.log("data.two_fa_enabled = " + data.two_fa_enabled);
-          if (data.two_fa_enabled == false){
-            return false;
-          }
-          else {
-            return true;
-          }
+      const username = sessionStorage.getItem("username_transcendence");
+      const request = await this.makeRequest(`api/auth/${username}/`, "GET");
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        const data = await response.json();
+        console.log("data.two_fa_enabled = " + data.two_fa_enabled);
+        if (data.two_fa_enabled == false) {
+          return false;
         }
-      } catch (error) {
-        this.handleCatch(error);
-        return false;
+        else {
+          return true;
+        }
       }
+    } catch (error) {
+      this.handleCatch(error);
+      return false;
+    }
   }
 
   async getDefaultAvatar(currentAvatar) {
@@ -737,105 +804,105 @@ export default class extends AbstractView {
     qrCodeModal.show();
   }
 
-//   async handleConfirm2FA(ev) {
-//     ev.preventDefault();
-//     try {
-//       const username = sessionStorage.getItem("username_transcendence");
-//       const request = await this.makeRequest(
-//         `/api/auth/update/${username}`,
-//         "PATCH",
-//         {
-//           two_fa_enabled: true,
-//         },
-//       );
-//       const response = await fetch(request);
-//       if (await this.handleStatus(response)) {
-//         const data = await this.getDatafromRequest(response);
-//         console.log("handleConfirm2FA: data", data);
-//         this.showQrCodeModal(data.otp_uri);
-//       }
-//       const current2fa = await this.is2faActivated();
-//       console.log("Updated current2fa = " + current2fa);
-//       this.update2faButton(current2fa);
-//       this.update2faModal(current2fa);
-//     } catch (error) {
-//       if (error instanceof CustomError) {
-//         error.showModalCustom();
-//         navigateTo(error.redirect);
-//       } else {
-//         console.error("handleConfirm2FA:", error);
-//       }
-//     }
-//   }
+  //   async handleConfirm2FA(ev) {
+  //     ev.preventDefault();
+  //     try {
+  //       const username = sessionStorage.getItem("username_transcendence");
+  //       const request = await this.makeRequest(
+  //         `/api/auth/update/${username}`,
+  //         "PATCH",
+  //         {
+  //           two_fa_enabled: true,
+  //         },
+  //       );
+  //       const response = await fetch(request);
+  //       if (await this.handleStatus(response)) {
+  //         const data = await this.getDatafromRequest(response);
+  //         console.log("handleConfirm2FA: data", data);
+  //         this.showQrCodeModal(data.otp_uri);
+  //       }
+  //       const current2fa = await this.is2faActivated();
+  //       console.log("Updated current2fa = " + current2fa);
+  //       this.update2faButton(current2fa);
+  //       this.update2faModal(current2fa);
+  //     } catch (error) {
+  //       if (error instanceof CustomError) {
+  //         error.showModalCustom();
+  //         navigateTo(error.redirect);
+  //       } else {
+  //         console.error("handleConfirm2FA:", error);
+  //       }
+  //     }
+  //   }
 
-    async handleConfirm2FA(ev) {
-        ev.preventDefault();
-        try {
-            const current2fa = await this.is2faActivated();
-            console.log("Current 2FA state:", current2fa);
-            const username = sessionStorage.getItem("username_transcendence");
-            const request = await this.makeRequest(
-                `/api/auth/update/${username}/`,
-                "PATCH",
-                {
-                    two_fa_enabled: !current2fa, 
-                }
-            );
-            const response = await fetch(request);
-            if (await this.handleStatus(response)) {
-                const data = await this.getDatafromRequest(response);
-                console.log("handleConfirm2FA: data", data);
-                const handle2FAModal = document.querySelector("#handle2FA");
-                const handle2FA = bootstrap.Modal.getInstance(handle2FAModal);
-                handle2FA.hide();
-                if (!current2fa) {
-                    this.showQrCodeModal(data.otp_uri);
-                }
-                const updated2fa = !current2fa;
-                this.update2faButton(updated2fa);
-                this.update2faModal(updated2fa);
-            }
-        }catch (error) {
-            if (error instanceof CustomError) {
-                error.showModalCustom();
-                navigateTo(error.redirect);
-            } else {
-                console.error("handleConfirm2FA:", error);
-            }
+  async handleConfirm2FA(ev) {
+    ev.preventDefault();
+    try {
+      const current2fa = await this.is2faActivated();
+      console.log("Current 2FA state:", current2fa);
+      const username = sessionStorage.getItem("username_transcendence");
+      const request = await this.makeRequest(
+        `/api/auth/update/${username}/`,
+        "PATCH",
+        {
+          two_fa_enabled: !current2fa,
         }
+      );
+      const response = await fetch(request);
+      if (await this.handleStatus(response)) {
+        const data = await this.getDatafromRequest(response);
+        console.log("handleConfirm2FA: data", data);
+        const handle2FAModal = document.querySelector("#handle2FA");
+        const handle2FA = bootstrap.Modal.getInstance(handle2FAModal);
+        handle2FA.hide();
+        if (!current2fa) {
+          this.showQrCodeModal(data.otp_uri);
+        }
+        const updated2fa = !current2fa;
+        this.update2faButton(updated2fa);
+        this.update2faModal(updated2fa);
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleConfirm2FA:", error);
+      }
     }
+  }
 
-    async update2faButton(current2fa) {
-        const button = document.getElementById("2fa-label");
-        if (button) {
-            button.textContent = current2fa
-                ? this.lang.getTranslation(["button", "deactivate2fa"])
-                : this.lang.getTranslation(["button", "activate2fa"]);
-        }
+  async update2faButton(current2fa) {
+    const button = document.getElementById("2fa-label");
+    if (button) {
+      button.textContent = current2fa
+        ? this.lang.getTranslation(["button", "deactivate2fa"])
+        : this.lang.getTranslation(["button", "activate2fa"]);
     }
+  }
 
-    async update2faModal(current2fa) {
-        const modalBody = document.querySelector("#handle2FA .modal-body");
-        if (modalBody) {
-            modalBody.innerHTML = current2fa
-                ? this.lang.getTranslation(["modal", "message", "2faDeactivationInfo"])
-                : this.lang.getTranslation(["modal", "message", "2faActivationInfo"]);
-        }
-        const confirmButton = document.querySelector("#handle2FA #confirm-2FA");
-        if (confirmButton) {
-            confirmButton.textContent = current2fa
-                ? this.lang.getTranslation(["button", "deactivate2fa"])
-                : this.lang.getTranslation(["button", "activate2fa"]);
-        }
+  async update2faModal(current2fa) {
+    const modalBody = document.querySelector("#handle2FA .modal-body");
+    if (modalBody) {
+      modalBody.innerHTML = current2fa
+        ? this.lang.getTranslation(["modal", "message", "2faDeactivationInfo"])
+        : this.lang.getTranslation(["modal", "message", "2faActivationInfo"]);
     }
+    const confirmButton = document.querySelector("#handle2FA #confirm-2FA");
+    if (confirmButton) {
+      confirmButton.textContent = current2fa
+        ? this.lang.getTranslation(["button", "deactivate2fa"])
+        : this.lang.getTranslation(["button", "activate2fa"]);
+    }
+  }
 
-    handleInputMail(ev) {
-        ev.preventDefault();
-        const newMail = document.querySelector("#email-new");
-        const confirmMail = document.querySelector("#email-confirm");
-        this.validateMail(newMail);
-        this.validateConfirmMail(newMail, confirmMail);
-    }
+  handleInputMail(ev) {
+    ev.preventDefault();
+    const newMail = document.querySelector("#email-new");
+    const confirmMail = document.querySelector("#email-confirm");
+    this.validateMail(newMail);
+    this.validateConfirmMail(newMail, confirmMail);
+  }
   // const formData = new FormData();
   //     formData.append('image', file); // Append the file to the form data
   //
@@ -1021,6 +1088,53 @@ export default class extends AbstractView {
     downloadDataModal.show();
   }
 
+  async handleOpenPrivacyPolicy(ev) {
+    ev.preventDefault();
+    console.log("HERE MATE")
+    try {
+      const myHeaders = new Headers();
+      const response = await fetch(`/rgpd/politique-${this.lang.getCurrentLanguage()}.txt`, {
+        method: "GET",
+        headers: myHeaders,
+      });
+      if (response.ok) {
+        const data = await response.text();
+        document.getElementById('privacyPolicyContent').textContent = data;
+      } else {
+        console.error('Error fetching the terms of use');
+        document.getElementById('privacyPolicyContent').textContent = `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
+      }
+    } catch (error) {
+      console.error('Error fetching the terms of use:', error);
+      document.getElementById('privacyPolicyContent').textContent = `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
+    }
+    const privacyPolicyModal = new bootstrap.Modal(document.getElementById('privacyPolicyModal'));
+    privacyPolicyModal.show();
+  }
+
+  async handleOpenTermsOfUse(ev) {
+    ev.preventDefault();
+    try {
+      const myHeaders = new Headers();
+      const response = await fetch(`/rgpd/terms-of-use-${this.lang.getCurrentLanguage()}.txt`, {
+        method: "GET",
+        headers: myHeaders,
+      });
+      if (response.ok) {
+        const data = await response.text();
+        document.getElementById('termsOfUseContent').textContent = data;
+      } else {
+        console.error('Error fetching the terms of use');
+        document.getElementById('termsOfUseContent').textContent = `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
+      }
+    } catch (error) {
+      console.error('Error fetching the terms of use:', error);
+      document.getElementById('termsOfUseContent').textContent = `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
+    }
+    const termsOfUseModal = new bootstrap.Modal(document.getElementById('termsOfUseModal'));
+    termsOfUseModal.show();
+  }
+
   async addEventListeners() {
     const usernameInput = document.querySelector("#username-settings");
     if (usernameInput)
@@ -1110,6 +1224,14 @@ export default class extends AbstractView {
 
     const confirm2FA = document.querySelector("#confirm-2FA");
     if (confirm2FA) confirm2FA.addEventListener("click", this.handleConfirm2FA);
+
+    const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
+    if (PrivacyPolicyButton)
+      PrivacyPolicyButton.addEventListener("click", this.handleOpenPrivacyPolicy);
+
+    const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn")
+    if (TermsOfUseButton)
+      TermsOfUseButton.addEventListener("click", this.handleOpenTermsOfUse);
   }
 
   handleShowEmailModal(ev) {
@@ -1170,5 +1292,12 @@ export default class extends AbstractView {
     if (changeMailButton) {
       changeMailButton.removeEventListener("click", this.changeMail);
     }
+
+    const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
+    const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn")
+    if (PrivacyPolicyButton)
+      PrivacyPolicyButton.removeEventListener("click", this.handleOpenPrivacyPolicy);
+    if (TermsOfUseButton)
+      TermsOfUseButton.removeEventListener("click", this.handleOpenTermsOfUse);
   }
 }
