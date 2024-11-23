@@ -40,6 +40,7 @@ def send_get_requests(urls:dict, headers={}):
     data = {}
     for serviceName, url in urls.items():
         response = requests.get(url, headers=headers)
+        print(serviceName,response if response else "Nope")
         data.update({serviceName:response.json()})
     return data
 

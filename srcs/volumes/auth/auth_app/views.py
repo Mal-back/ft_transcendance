@@ -216,6 +216,7 @@ class MicroServiceError(APIException):
 class DumpPersonnalData(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
+        print("REQUEST RECEIVED =>", request)
         req_urls = {
                 'matchmaking_data' : f'http://matchmaking:8443/api/matchmaking/{request.user.username}/',
                 'users_data' : f'http://users:8443/api/users/{request.user.username}/',
