@@ -31,6 +31,7 @@ export default class extends AbstractView {
       const users = await this.getAllUsers();
       const [html, modalhtml] = this.getHTMLallUsers(users);
       const modalsBattleHistory = await this.getAllHistoryModals(users);
+      const next = this.nextPage ? "" : "disabled";
       const html_content = `
 <div class="removeElem background ">
     <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -78,7 +79,7 @@ export default class extends AbstractView {
                 <li class="removeElem page-item disabled" id="disablePrev">
                     <a class="removeElem page-link" tabindex="-1" aria-disabled="true" id="previousPageBtn">Previous</a>
                 </li>
-                <li class="removeElem page-item" id="disableNext">
+                <li class="removeElem page-item ${next}" id="disableNext">
                     <a class="removeElem page-link" id="nextPageBtn">Next</a>
                 </li>
             </ul>

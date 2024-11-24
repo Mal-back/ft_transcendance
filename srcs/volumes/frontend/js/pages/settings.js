@@ -985,8 +985,8 @@ export default class extends AbstractView {
     chosenImageUrl=${chosenImageUrl}`);
       if (currentImageUrl === chosenImageUrl) {
         showModal(
-          this.lang.getTranslation(["modal", "error"]),
-          this.lang.getTranslation(["settings", "Background", "already"]),
+          this.lang.getTranslation(["modal", "title", "error"]),
+          this.lang.getTranslation(["modal", "message", "profilePicChangeSame"]),
         );
         return;
       }
@@ -1003,13 +1003,15 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         showModal(
-          this.lang.getTranslation(["modal", "success"]),
-          this.lang.getTranslation(["settings", "Background", "changeSuccess"]),
+          this.lang.getTranslation(["modal", "title", "success"]),
+          this.lang.getTranslation(["modal", "message", "profilePicChangeSuccess"]),
         );
         navigateTo("/settings");
       }
-    } catch (error) { }
-    this.handleCatch(error);
+    } catch (error) {
+      this.handleCatch(error);
+    }
+
   }
 
   showFileUpload(ev) {

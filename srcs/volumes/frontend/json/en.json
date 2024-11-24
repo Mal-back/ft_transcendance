@@ -194,7 +194,9 @@
       "2faActivationInfo": "A QR Code will be created, you need to scan it in your authentication application. Warning : If you want to unable 2FA, you need to disactiveit in your Transcendance account settings before removing it from your authentication application.",
       "2faDeactivationInfo": "Are you sure you want to deactive 2FA ? You can reactivate it later, do not forget to suppress it from your authentication application.",
       "scanQR": "Scan this QR code",
-      "user_does_not_exist": "This user does not exist"
+      "user_does_not_exist": "This user does not exist",
+      "profilePicChangeSuccess": "You successfully changed your profile picture!",
+      "profilePicChangeSame": "You already have this set as your profile picture!"
     }
   },
   "policy": {

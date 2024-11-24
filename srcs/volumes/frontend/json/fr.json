@@ -6,9 +6,9 @@
     "start_tournament": "Commencer le tournoi",
     "cancel_tournament": "Annuler le tournoi",
     "friends_list": "Liste d'amis",
-    "no_friends": "Aucun Amis Trouvé",
+    "no_friends": "Aucun Ami Trouvé",
     "left_tournament": "Vous avez quitté le tournoi",
-    "kicked": "Desolé, vous avez été exclu"
+    "kicked": "Désolé, vous avez été exclu"
   },
   "title": {
     "home": "Accueil",
@@ -36,7 +36,9 @@
     "tournamentGame": "Partie de tournoi",
     "2fa": "Authentification à deux facteurs",
     "remoteBattle": "Parties en ligne",
-    "remoteTournament": "Tournois en ligne"
+    "remoteTournament": "Tournois en ligne",
+    "yes": "Oui",
+    "no": "Non"
   },
   "button": {
     "close": "Fermer",
@@ -52,7 +54,7 @@
     "show": "Afficher",
     "change": "Modifier",
     "chooseFile": "Choisir un fichier",
-    "upload": "Téléverser",
+    "upload": "Télécharger",
     "set": "Définir",
     "handle": "Gérer",
     "data": "Données",
@@ -64,7 +66,8 @@
     "remove": "Retirer",
     "leave": "Quitter",
     "activate2fa": "Activer le 2FA",
-    "deactivate2fa": "Désactiver le 2FA"
+    "deactivate2fa": "Désactiver le 2FA",
+    "confirmAccountDeletion": "Confirmer la suppression du compte"
   },
   "user": {
     "you": "Vous",
@@ -84,7 +87,6 @@
     "win": "Victoire",
     "wins": "Victoires",
     "won": "Gagné",
-    "invites": "Invitations",
     "loss": "Défaite",
     "lost": "Perdu",
     "play": "Jouer",
@@ -93,10 +95,12 @@
     "its": "C'est au tour de",
     "turn": " ",
     "match": "Match",
+    "onGoing": "En cours",
     "found": "Trouvé",
     "loadling": "Chargement",
     "inviteMatch": "Inviter à un match",
     "noInvite": "Pas d'invitations",
+    "invites": "Invitations",
     "player": "Joueur",
     "blue": "Bleu",
     "red": "Rouge",
@@ -187,10 +191,14 @@
       "addYourself": "Vous ne pouvez pas vous ajouter en tant qu'ami",
       "inviteYou": "vous a invité à une partie",
       "inviteYouTournament": "vous a invité à un tournoi",
-      "user_does_not_exist": "Cet utilisateur n'existe pas",
-      "2faActivationInfo": "Un QR Code va êre créé, vous devez l'entrer sur votre application d'authentification. Attention : Si vous voulez désactiver le 2FA, vous devez d'abord le désactiver dans les paramètres de votre compte Transcendance avant de l'enlever de votre application d'authentification.",
-      "2faDeactivationInfo": " Êtes-vous sûr de vouloir désactiver le 2FA ? Vous pourrez le réactiver plus tard, n'oubliez pas de le supprimer dans votre application d'authentification.",
-      "scanQR": "Scannez ce QR code"
+      "2faActivationInfo": "Un QR Code va être créé, vous devez le scanner avec votre application d'authentification. Attention : Si vous voulez désactiver le 2FA, vous devez d'abord le désactiver dans les paramètres de votre compte Transcendance avant de le supprimer de votre application d'authentification.",
+      "2faDeactivationInfo": "Êtes-vous sûr de vouloir désactiver le 2FA ? Vous pourrez le réactiver plus tard, n'oubliez pas de le supprimer dans votre application d'authentification.",
+      "scanQR": "Scannez ce QR code",
+      "profilePicChangeSuccess": "Vous avez changé votre photo de profil avec succès",
+      "selectValidPic": "Veuillez sélectionner une photo de profil valide",
+      "restart": "Redémarrez la page si vous ne voyez pas vos modifications.",
+      "2faActivationSuccess": "Vous avez activé l'authentification à deux facteurs avec succès.",
+      "2faDeactivationSuccess": "Vous avez désactivé l'authentification à deux facteurs avec succès."
     }
   }
 }
