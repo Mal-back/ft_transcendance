@@ -83,8 +83,11 @@ class PublicUserUpdate(APIView):
         new_username = request.data.get('username')
         instance.username = new_username
         if instance.profilePic != '/media/default_avatars/default_00.jpg':
-            instance.profilePic = instance.profilePic.replace(old_username, new_username)
+            old_path = instance.profilePic
+            new_path = new_username.join(old_path.rsplit(old_username, 1))
+            instance.profilePic = new_path
         instance.save()
+        print(f'{instance.profilePic}')
         return Response({'Ok':'Kr'}, status=status.HTTP_200_OK)
 
 

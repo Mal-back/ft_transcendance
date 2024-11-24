@@ -80,6 +80,7 @@ def rename_avatar(old_username:str, new_username:str):
             old_path = str(path)
             new_path = new_username.join(old_path.rsplit(old_username, 1))
             os.rename(old_path, new_path)
+            print(f'{new_path}')
             return True
     return False 
 
