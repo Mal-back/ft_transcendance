@@ -40,7 +40,7 @@ def send_get_requests(urls:dict, headers={}):
     data = {}
     for serviceName, url in urls.items():
         response = requests.get(url, headers=headers)
-        print(serviceName,response if response else "Nope")
+        print(serviceName,response.status_code)
         data.update({serviceName:response.json()})
     return data
 
@@ -67,7 +67,8 @@ def send_update_requests(old_username:str, urls:list, body={}, headers={}) -> bo
         body['username'] = old_username
         for url in successefull_elements:
             print(body)
-            rollback_url = url.replace(old_username, new_username) 
+            rollback_url = new_username.join(url.rsplit(old_username, 1))
+            print('rollback_url')
             send_request(url=rollback_url, method='patch', headers=headers, body=body)
         return False
     return True

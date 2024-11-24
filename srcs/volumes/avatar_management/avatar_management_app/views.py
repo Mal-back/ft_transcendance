@@ -78,7 +78,7 @@ def rename_avatar(old_username:str, new_username:str):
     for path in paths:
         if os.path.exists(path):
             old_path = str(path)
-            new_path = old_path.replace(old_username, new_username)
+            new_path = new_username.join(old_path.rsplit(old_username, 1))
             os.rename(old_path, new_path)
             return True
     return False 

@@ -52,4 +52,7 @@ class IsAuthenticated(permissions.BasePermission):
 
 class IsAuthOrAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated or is_ms(request, 'auth') 
+        if request.user:
+            print(f'request.user')
+            return request.user.is_authenticated 
+        return is_ms(request, 'auth') 
