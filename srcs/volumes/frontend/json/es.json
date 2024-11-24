@@ -97,7 +97,7 @@
     "match": "Partida",
     "onGoing": "En curso",
     "found": "Encontrado",
-    "loadling": "Cargando",
+    "loading": "Cargando",
     "inviteMatch": "Invitar a una Partida",
     "noInvite": "Sin Invitaciones",
     "invites": "Invitaciones",
@@ -121,9 +121,8 @@
     "nextMatch": "Próxima Partida"
   },
   "homePage": {
-    "title": "¡Bienvenido a Nuestro Pong!",
-    "descriptionHomeMessage": "¡Explora la profundidad del juego Pong, juega con amigos y personaliza tu perfil como desees!",
-    "descriptionHomeMessage2": "✨ ¡Diviértete! ✨"
+    "welcomeMessage": "¡Bienvenido a nuestro ft_transcendance!",
+    "haveFun": "✨ ¡Diviértete! ✨"
   },
   "input": {
     "label": {
@@ -203,7 +202,7 @@
     "privacyPolicy": "Política de Privacidad",
     "termsOfUse": "Términos de Uso",
     "legalMentions": "Avisos Legales",
-    "readAndAgree": "He leído y acepto la Política de Privacidad y los Términos de Uso dentro del",
+    "readAndAgree": "He leído y acepto la Política de Privacidad y los Términos de Uso dentro de los",
     "required": "Acuerdo Requerido",
     "failedReadAndAgree": "Debes leer y aceptar la Política de Privacidad y los Términos de Uso antes de crear una cuenta.",
     "errorFetching": "Error al Recuperar",

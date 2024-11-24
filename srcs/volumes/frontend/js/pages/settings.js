@@ -950,7 +950,7 @@ export default class extends AbstractView {
         const data = await this.getDatafromRequest(response);
         showModal(
           this.lang.getTranslation(["modal", "title", "success"]),
-          `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["user", "avatar"])} ${this.lang.getTranslation(["modal", "message", "changeSuccess"])} `,
+          `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["user", "avatar"])} ${this.lang.getTranslation(["modal", "message", "successChange"])} `,
         );
         navigateTo("/settings");
       }

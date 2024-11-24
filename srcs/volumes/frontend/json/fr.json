@@ -97,7 +97,7 @@
     "match": "Match",
     "onGoing": "En cours",
     "found": "Trouvé",
-    "loadling": "Chargement",
+    "loading": "Chargement",
     "inviteMatch": "Inviter à un match",
     "noInvite": "Pas d'invitations",
     "invites": "Invitations",
@@ -121,9 +121,8 @@
     "nextMatch": "Prochain match"
   },
   "homePage": {
-    "title": "Bienvenue sur notre Pong !",
-    "descriptionHomeMessage": "Explorez la profondeur du jeu Pong, jouez avec des amis et personnalisez votre profil à votre guise !",
-    "descriptionHomeMessage2": "✨ Amusez-vous bien ! ✨"
+    "welcomeMessage": "Bienvenue dans notre ft_transcendance !",
+    "haveFun": "✨ Amusez-vous bien ! ✨"
   },
   "input": {
     "label": {
@@ -200,5 +199,15 @@
       "2faActivationSuccess": "Vous avez activé l'authentification à deux facteurs avec succès.",
       "2faDeactivationSuccess": "Vous avez désactivé l'authentification à deux facteurs avec succès."
     }
+  },
+  "policy": {
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfUse": "Conditions d'utilisation",
+    "legalMentions": "Mentions légales",
+    "readAndAgree": "J'ai lu et j'accepte la Politique de confidentialité et les Conditions d'utilisation indiquées dans les",
+    "required": "Accord requis",
+    "failedReadAndAgree": "Vous devez lire et accepter la Politique de confidentialité et les Conditions d'utilisation avant de créer un compte.",
+    "errorFetching": "Erreur de récupération",
+    "errorLoading": "Erreur de chargement"
   }
 }

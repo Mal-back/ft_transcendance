@@ -7,19 +7,19 @@ export default class extends AbstractView {
     super();
   }
 
-  async loadCss() {}
+  async loadCss() { }
 
   async getHtml() {
     this.setTitle(this.lang.getTranslation(["title", "home"]));
     return `
-        <div class="background Home removeElem">
-          <div class="container removeElem">
-              <section class="home text-center p-5 removeElem">
-                  <h1 class="welcome removeElem">${this.lang.getTranslation(["title", "home"]).toUpperCase()}</h1>
-                  <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage"])}</p>
-                  <p class="welcome-msg removeElem">${this.lang.getTranslation(["homePage", "descriptionHomeMessage2"])}</p>
-              </section>
-          </div>
+        <div class="background removeElem d-flex  "style="margin-top:0;">
+            <div class="container text-center p-5 removeElem">
+                <div class="home text-center p-5" >
+                    <h1 class="mb-4 removeElem">${this.lang.getTranslation(["title", "home"]).toUpperCase()}</h1>
+                    <p class=" removeElem">${this.lang.getTranslation(["homePage", "welcomeMessage"])}</p>
+                    <p class=" removeElem">${this.lang.getTranslation(["homePage", "haveFun"])}</p>
+                </div>
+            </div>
         </div>
   `;
   }

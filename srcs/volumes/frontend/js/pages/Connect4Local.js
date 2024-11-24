@@ -148,7 +148,7 @@ export default class extends AbstractView {
                 </div>
                 <div class="m-3">
                         <button id="giveUpBtn" type="button" class="btn btn-danger" style="display: none;">${this.lang.getTranslation(["button", "giveUp"]).toUpperCase()}</button>
-                        <button id="startBtn" type="button" class="removeElem btn btn-success">${this.lang.getTranslation(["button", "start"]).toUpperCase()}</button>
+                        <button id="startBtn" type="button" class="removeElem btn btn-success">${this.lang.getTranslation(["game", "start"]).toUpperCase()}</button>
                         <button id="returnBtn" type="button" class="removeElem btn btn-success" style="display: none;">${this.lang.getTranslation(["button", "return"])}</button>
                 </div>
             </div>

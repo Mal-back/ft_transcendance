@@ -97,7 +97,7 @@
     "match": "Match",
     "onGoing": "Ongoing",
     "found": "Found",
-    "loadling": "Loading",
+    "loading": "Loading",
     "inviteMatch": "Invite to a Match",
     "noInvite": "No Invites",
     "invites": "Invites",
@@ -121,9 +121,8 @@
     "nextMatch": "Next Match"
   },
   "homePage": {
-    "title": "Welcome to Our Pong!",
-    "descriptionHomeMessage": "Explore the depth of the Pong game, play with friends, and personalize your profile as you desire!",
-    "descriptionHomeMessage2": "✨ Have fun! ✨"
+    "welcomeMessage": "Welcome to our ft_transcendance!",
+    "haveFun": "✨ Have fun! ✨"
   },
   "input": {
     "label": {
