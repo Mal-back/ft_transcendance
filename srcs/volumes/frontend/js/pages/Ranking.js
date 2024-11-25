@@ -534,7 +534,8 @@ export default class extends AbstractView {
       const user = await this.searchUser(name_to_find)
       const modalTry = document.getElementById(`${name_to_find}History`);
       if (modalTry) {
-        const myModal = new bootstrap.Modal(modalTry);
+        let myModal = bootstrap.Modal.getInstance(modalTry)
+        if (!myModal)   myModal = new bootstrap.Modal(modalTry);
         myModal.show();
       }
       else {
@@ -544,7 +545,8 @@ export default class extends AbstractView {
         let modals = document.getElementById("modalsRanking");
         modals.innerHTML += modalhtml + modalsBattleHistory;
         const modal = document.getElementById(`${name_to_find}History`);
-        const myModal = new bootstrap.Modal(modal);
+        let myModal = bootstrap.Modal.getInstance(modal)
+        if (!myModal)   myModal = new bootstrap.Modal(modal);
         myModal.show();
       }
     } catch (error) {

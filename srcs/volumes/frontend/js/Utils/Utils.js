@@ -1,3 +1,4 @@
+import CustomError from "./CustomError.js";
 import Language from "./Language.js";
 
 export function removeSessionStorage() {
@@ -5,6 +6,7 @@ export function removeSessionStorage() {
   sessionStorage.removeItem("accessJWT_transcendence");
   sessionStorage.removeItem("refreshJWT_transcendence");
   sessionStorage.removeItem("username_transcendence");
+  sessionStorage.removeItem("transcendence_game_id")
   removeTournamentStorage();
 }
 
@@ -102,19 +104,21 @@ export function showModalGameResult(
 export function getIpPortAdress() {
   const url = new URL(window.location.href);
 
-  // Regex for IP addresses or domain names with letters, numbers, hyphens, and dots
-  const validHostnamePattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+  const validHostnamePattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$|^localhost$/;
 
+  const lang = new Language();
   const hostname = url.hostname;
-  const port = url.port || (url.protocol === "https:" ? "443" : "80"); // Default ports if none specified
-
+  const port = url.port || (url.protocol === "https:" ? "443" : "80"); 
   if (validHostnamePattern.test(hostname)) {
     const hostAndPort = `${hostname}:${port}`;
-    console.log("Host and Port:", hostAndPort); // Output like "blob-54-f45.fr:8080"
+    console.log("Host and Port:", hostAndPort); 
     return hostAndPort;
   } else {
-    console.log("Invalid Hostname:", hostname);
-    return `${hostname}:${port}`;
+    throw new CustomError(
+      `${lang.getTranslation(["modal", "title", "error"])}`,
+      `${lang.getTranslation(["modal", "message", "invalidHost"])}`,
+      `/`
+    )
   }
 }
 
@@ -122,7 +126,7 @@ export function formateDate(dateString) {
   const date = new Date(dateString);
 
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const month = String(date.getMonth() + 1).padStart(2, "0"); 
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;

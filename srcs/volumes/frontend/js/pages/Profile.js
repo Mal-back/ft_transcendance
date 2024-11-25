@@ -22,7 +22,6 @@ export default class extends AbstractView {
 
   async loadUserData() {
     const username = sessionStorage.getItem("username_transcendence");
-    console.log("username = ", username);
     try {
       const request = await this.makeRequest(`/api/users/${username}/`, "GET");
       const response = await fetch(request);

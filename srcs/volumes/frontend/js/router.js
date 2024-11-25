@@ -106,7 +106,11 @@ const router = async () => {
     await view.addEventListeners();
   } catch (error) {
     if (error instanceof CustomError) {
-      console.error("error in view", error);
+      if (
+        error.modalTitle ==
+        view.lang.getTranslation(["modal", "title", "error"])
+      )
+        console.error("error in view", error);
       error.showModalCustom();
       navigateTo(error.redirect);
     } else {
@@ -142,14 +146,13 @@ window.addEventListener("popstate", async () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  addMainEventListeners();
   document.body.addEventListener("click", handleClick);
   router();
 });
 
 export function handleClick(e) {
-  console.info("Event");
   if (e.target.closest("[data-link]")) {
-    console.log("REDIRECT");
     e.preventDefault();
     if (!e.target.href) {
       const closestHref = e.target.closest("a");
@@ -182,72 +185,77 @@ function closeSidebar(sidebar) {
   }
 }
 
-document.addEventListener("click", (ev) => {
-  const sidebar = document.getElementById("sidebar");
-  const toggleButton = document.getElementById("toggleSidebar");
-  const isClickInsideSidebar = sidebar.contains(ev.target);
-  const isClickOnToggleButton = toggleButton.contains(ev.target);
+function addMainEventListeners() {
+  document.addEventListener("click", (ev) => {
+    const sidebar = document.getElementById("sidebar");
+    const toggleButton = document.getElementById("toggleSidebar");
+    const isClickInsideSidebar = sidebar.contains(ev.target);
+    const isClickOnToggleButton = toggleButton.contains(ev.target);
 
-  if (
-    !isClickInsideSidebar &&
-    !isClickOnToggleButton &&
-    sidebar.classList.contains("show")
-  )
-    closeSidebar(sidebar);
-});
+    if (
+      !isClickInsideSidebar &&
+      !isClickOnToggleButton &&
+      sidebar.classList.contains("show")
+    )
+      closeSidebar(sidebar);
+  });
 
-document.querySelector("#headerEnglish").addEventListener("click", (ev) => {
-  ev.preventDefault();
-  sessionStorage.setItem("transcendence_language", "en");
-  const currentUrl = new URL(window.location.href);
-  navigateTo(currentUrl.toString());
-});
+  document.querySelector("#headerEnglish").addEventListener("click", (ev) => {
+    ev.preventDefault();
+    sessionStorage.setItem("transcendence_language", "en");
+    const currentUrl = new URL(window.location.href);
+    navigateTo(currentUrl.toString());
+  });
 
-document.querySelector("#headerFrench").addEventListener("click", (ev) => {
-  ev.preventDefault();
-  sessionStorage.setItem("transcendence_language", "fr");
-  const currentUrl = new URL(window.location.href);
-  navigateTo(currentUrl.toString());
-});
+  document.querySelector("#headerFrench").addEventListener("click", (ev) => {
+    ev.preventDefault();
+    sessionStorage.setItem("transcendence_language", "fr");
+    const currentUrl = new URL(window.location.href);
+    navigateTo(currentUrl.toString());
+  });
 
-document.querySelector("#headerSpanish").addEventListener("click", (ev) => {
-  ev.preventDefault();
-  sessionStorage.setItem("transcendence_language", "es");
-  const currentUrl = new URL(window.location.href);
-  navigateTo(currentUrl.toString());
-});
+  document.querySelector("#headerSpanish").addEventListener("click", (ev) => {
+    ev.preventDefault();
+    sessionStorage.setItem("transcendence_language", "es");
+    const currentUrl = new URL(window.location.href);
+    navigateTo(currentUrl.toString());
+  });
 
-document.addEventListener("keydown", (ev) => {
-  const modal = document.querySelector("#alertModal");
-  if (modal.classList.contains("show")) {
-    const modalInstance = bootstrap.Modal.getInstance(modal);
-    modalInstance.hide();
-  }
-});
-
-document
-  .getElementById("buttonOnGoingGame")
-  .addEventListener("click", async (ev) => {
-    try {
-      ev.preventDefault();
-      const url = ev.currentTarget.dataset.redirectUrl;
-      if (url) {
-        if (ev.target.innerText == "CANCEL") {
-          const request = await view.makeRequest(url, "DELETE");
-          const response = await fetch(request);
-          if (view.handleStatus(response)) {
-            const divOnGoingGame = document.querySelector("#divOnGoingGame");
-            divOnGoingGame.style.display = "none";
-          }
-        } else navigateTo(url);
-        const friendModalDiv = document.querySelector("#inviteUserModal");
-        const modal = bootstrap.Modal.getInstance(friendModalDiv);
-        modal.hide();
-      }
-    } catch (error) {
-      if (error instanceof CustomError) {
-        showModal(error.title, error.message);
-        navigateTo(error.redirect);
-      }
+  document.addEventListener("keydown", (ev) => {
+    const modal = document.querySelector("#alertModal");
+    if (modal.classList.contains("show")) {
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      modalInstance.hide();
     }
   });
+
+  document
+    .getElementById("buttonOnGoingGame")
+    .addEventListener("click", async (ev) => {
+      try {
+        ev.preventDefault();
+        const url = ev.currentTarget.dataset.redirectUrl;
+        if (url) {
+          if (
+            ev.target.innerText ==
+            view.lang.getTranslation(["button", "cancel"]).toUpperCase()
+          ) {
+            const request = await view.makeRequest(url, "DELETE");
+            const response = await fetch(request);
+            if (view.handleStatus(response)) {
+              const divOnGoingGame = document.querySelector("#divOnGoingGame");
+              divOnGoingGame.style.display = "none";
+            }
+          } else navigateTo(url);
+          const friendModalDiv = document.querySelector("#inviteUserModal");
+          const modal = bootstrap.Modal.getInstance(friendModalDiv);
+          modal.hide();
+        }
+      } catch (error) {
+        if (error instanceof CustomError) {
+          showModal(error.title, error.message);
+          navigateTo(error.redirect);
+        }
+      }
+    });
+}

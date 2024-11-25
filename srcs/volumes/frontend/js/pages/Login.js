@@ -198,8 +198,8 @@ export default class extends AbstractView {
     try {
       if (!this.username || !this.password) {
         throw new CustomError(
-          "Error",
-          "must do the first part of the 2 factor authentification first",
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          `${this.lang.getTranslation(["modal", "message", "error2fa"])}`,
           "/login",
         );
       }
@@ -237,36 +237,44 @@ export default class extends AbstractView {
     const paswordForm = loginForm.querySelector("input[name='Password']").value;
 
     if (this.sanitizeInput([nameForm]) == false) {
-      console.log("Wrong input");
       return;
     }
     try {
-      // const usernameURIencoded = encodeURIComponent(nameForm);
-      console.log("login before make request");
       const request = await this.makeRequest("/api/auth/login/", "POST", {
         username: nameForm,
         password: paswordForm,
       });
       const response = await fetch(request);
-      console.log("Response: ", response);
-      if (await this.handleStatus(response)) {
-        const data = await response.json();
-        console.log("login: data:", data);
-        if (response.status == 202) {
-          this.username = nameForm;
-          this.password = paswordForm;
-          const twoFa = await this.twoFactorAuth();
-          return;
+      if (!response.ok) {
+        let dataError = await this.getDatafromRequest(response);
+        dataError = this.JSONtoModal(dataError);
+        if (dataError == "No active account found with the given credentials") {
+          dataError = this.lang.getTranslation([
+            "modal",
+            "message",
+            "noAccount",
+          ]);
         }
-        setSessionStorage(data, nameForm);
-        navigateTo("/");
         showModal(
-          `${this.lang.getTranslation(["modal", "title", "auth"])}`,
-          `${this.lang.getTranslation(["modal", "message", "welcome"])}, ${nameForm}`,
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          dataError,
         );
+        return;
       }
+      const data = await response.json();
+      if (response.status == 202) {
+        this.username = nameForm;
+        this.password = paswordForm;
+        await this.twoFactorAuth();
+        return;
+      }
+      setSessionStorage(data, nameForm);
+      navigateTo("/");
+      showModal(
+        `${this.lang.getTranslation(["modal", "title", "auth"])}`,
+        `${this.lang.getTranslation(["modal", "message", "welcome"])}, ${nameForm}`,
+      );
     } catch (error) {
-      console.log("TTESSTTT");
       this.handleCatch(error);
     }
   }
