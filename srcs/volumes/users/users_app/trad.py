@@ -72,7 +72,8 @@ trad = {
         "pk_error": "No pk",
         "invited_player_error": "Invited player does not exist",
         "header_info_error":"Invalid header info",
-        "token_expired" : "Token Expired"
+        "token_expired" : "Token Expired",
+        "already_friend" : "This user is already in your friendlist"
     },
 
     "fr": 
@@ -148,7 +149,8 @@ trad = {
         "pk_error": "Aucune pk",
         "invited_player_error": "Le joueur invité n'existe pas",
         "header_info_error": "Info header invalide",
-        "token_expired" : "Token Expiré"
+        "token_expired" : "Token Expiré",
+        "already_friend" : "Cet utilisateur est déjà dans votre liste d'amis",
     },
 
     "es": 
@@ -224,7 +226,8 @@ trad = {
         "pk_error": "No pk",
         "invited_player_error": "Jugador invitado no existe",
         "header_info_error":"Inválido Cabecera info",
-        "token_expired" : "Identificador Vencido"
+        "token_expired" : "Identificador Vencido",
+        "already_friend" : "Este usuario ya está en tu lista de amigos",
     }
 
 }

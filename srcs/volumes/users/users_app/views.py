@@ -160,7 +160,8 @@ class PublicUserAddFriend(APIView):
             message = translate(lang, "new_friend_not_exist_error")
             return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
         if user.friends.filter(username=friendusername).exists():
-            return Response(status=status.HTTP_304_NOT_MODIFIED)
+            message = translate(lang, "already_friend")
+            return Response({"error" : message}, status=status.HTTP_409_CONFLICT)
         if cur_friends is None:
             message = translate(lang, "field_not_found_error")
             return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)

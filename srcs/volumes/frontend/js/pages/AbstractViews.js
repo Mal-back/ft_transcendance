@@ -692,6 +692,7 @@ export default class AbstractViews {
       let value;
       if (!response.ok) {
         data = await this.getDatafromRequest(response);
+		console.error("ERROR", data);
         const key = Object.keys(data)[0];
         value = data[key];
         console.log("VALUE:", value);
