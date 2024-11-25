@@ -197,7 +197,8 @@
       "selectValidPic": "Veuillez sélectionner une photo de profil valide",
       "restart": "Redémarrez la page si vous ne voyez pas vos modifications.",
       "2faActivationSuccess": "Vous avez activé l'authentification à deux facteurs avec succès.",
-      "2faDeactivationSuccess": "Vous avez désactivé l'authentification à deux facteurs avec succès."
+      "2faDeactivationSuccess": "Vous avez désactivé l'authentification à deux facteurs avec succès.",
+	  "profilePicChangeSame": "Cette image est déjà votre photo de profil !"
     }
   },
   "policy": {
