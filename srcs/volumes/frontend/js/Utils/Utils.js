@@ -58,6 +58,7 @@ export function showModal(title, message) {
     modal = new bootstrap.Modal(modalId);
   }
   modal.show();
+
   modalId.querySelector(".btn-close").onclick = (ev) => {
     ev.preventDefault();
     closeModal();

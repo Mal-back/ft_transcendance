@@ -173,6 +173,7 @@
     },
     "message": {
       "over": "ha terminado",
+      "error2fa": "Primero debe completar su nombre de usuario y contraseña para la autenticación de dos factores",
       "clickNewTourn": "haz clic aquí si deseas iniciar otro torneo",
       "bye": "Adiós",
       "welcome": "Bienvenido",
@@ -183,6 +184,9 @@
       "successChange": "se cambió con éxito",
       "successDeleteAccount": "Tu cuenta se eliminó correctamente, todos los datos asociados están siendo anonimizados",
       "alreadyLog": "Ya has iniciado sesión",
+      "noAccount": "Nombre de usuario o contraseña inválidos",
+      "usernameTaken": "El nombre de usuario ya está en uso",
+      "fieldTooLong": "El campo es demasiado largo, máximo 150 caracteres",
       "accountCreation": "¡Tu nueva cuenta se creó con éxito!",
       "failTournament": "No se pudo recuperar la información del torneo",
       "wonTournament": "ganó el torneo",
