@@ -1057,13 +1057,35 @@ export default class extends AbstractView {
     }
   }
 
-  handleSaveLanguage(ev) {
+  async handleSaveLanguage(ev) {
     ev.preventDefault();
     const chosenLanguage = document.querySelector("#language").value;
+	const username = sessionStorage.getItem("username_transcendence");
+    try {
+      // await this.checkoldMail(oldMail);
+      const request = await this.makeRequest(
+        "/api/auth/update/" + username + "/",
+        "PATCH",
+        {
+          lang: chosenLanguage
+        },
+      );
+      const response = await fetch(request);
+	  console.log("language: ", response);
+      if (await this.handleStatus(response)) {
     if (chosenLanguage != sessionStorage.getItem("transcendence_language")) {
       sessionStorage.setItem("transcendence_language", chosenLanguage);
       navigateTo("/settings");
     }
+}
+  } catch (error) {
+	if (error instanceof CustomError) {
+		error.showModalCustom();
+		navigateTo(error.redirect)
+	} else {
+		console.error("handleSaveLanguage:", error)
+	}
+  }
   }
 
   async handleDeleteAccount(ev) {

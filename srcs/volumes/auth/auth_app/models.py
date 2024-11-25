@@ -5,8 +5,16 @@ import pyotp
 
 # Create your models here.
 
+LANGUAGE_CHOICES = [
+('en', 'English'),
+('es', 'Spanish'),
+('fr', 'French'),
+]
+
 class CustomUser(AbstractUser):
+ 
     two_fa_enabled = models.BooleanField(default=False)
+    lang = models.CharField(default="en", choices=LANGUAGE_CHOICES)
 #    otp_secret = models.CharField(max_length=32, blank=True, null=True)
     last_log = models.DateTimeField(default=now)
 

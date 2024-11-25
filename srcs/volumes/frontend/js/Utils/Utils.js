@@ -23,6 +23,11 @@ export function setSessionStorage(data, username) {
   sessionStorage.setItem("accessJWT_transcendence", data.access);
   // console.log("Setting new refreshJWT:", data.refresh);
   sessionStorage.setItem("refreshJWT_transcendence", data.refresh);
+  if (data.lang)
+	sessionStorage.setItem("transcendence_language", data.lang)
+else {
+	console.error("NO LANG")
+}
 }
 
 export function closeModal() {

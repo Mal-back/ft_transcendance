@@ -15,7 +15,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
     email = serializers.EmailField(required=True)
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password', 'password2', 'two_fa_enabled']
+        fields = ['username', 'email', 'password', 'password2', 'two_fa_enabled', 'lang']
         extra_kwargs = {
                     'password': {'write_only': True, 'style': {'input_type': 'password'}},
                     'password2': {'write_only': True, 'style': {'input_type': 'password'}},
@@ -61,16 +61,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
         return value
 
     def validate_password(self, value):
-        # if len(value) < 8:
-        #     raise ValidationError('Password should be 8 characters minimum')
-        # if not any(char.isdigit() for char in value):
-        #     raise ValidationError('Password should contain at least 1 digit')
-        # if not any(char.islower() for char in value):
-        #     raise ValidationError('Password should contain at least 1 lowercase letter')
-        # if not any(char.isupper() for char in value):
-        #     raise ValidationError('Password should contain at least 1 uppercase letter')
-        # if not any(not char.isalnum() for char in value):
-        #     raise ValidationError('Password should contain at least 1 symbol')
+        if len(value) < 8:
+            raise ValidationError('Password should be 8 characters minimum')
+        if not any(char.isdigit() for char in value):
+            raise ValidationError('Password should contain at least 1 digit')
+        if not any(char.islower() for char in value):
+            raise ValidationError('Password should contain at least 1 lowercase letter')
+        if not any(char.isupper() for char in value):
+            raise ValidationError('Password should contain at least 1 uppercase letter')
+        if not any(not char.isalnum() for char in value):
+            raise ValidationError('Password should contain at least 1 symbol')
         return value
 
 
