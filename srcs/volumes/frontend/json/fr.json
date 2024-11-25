@@ -139,6 +139,10 @@
     "error": {
       "empty": "est vide",
       "short": "est trop court",
+      "missingDigit": "Manque au moins un chiffre",
+      "missingLower": "Manque au moins une lettre minuscule",
+      "missingUpper": "Manque au moins une lettre majuscule",
+      "missingSymbol": "Manque au moins un caractère spécial",
       "weak": "est trop faible",
       "invalidChar": "contient des caractères invalides",
       "match": "ne correspond pas",

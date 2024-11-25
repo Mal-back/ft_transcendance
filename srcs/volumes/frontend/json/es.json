@@ -139,6 +139,10 @@
     "error": {
       "empty": "está vacío",
       "short": "es demasiado corto",
+      "missingDigit": "Falta al menos un dígito",
+      "missingLower": "Falta al menos una letra minúscula",
+      "missingUpper": "Falta al menos una letra mayúscula",
+      "missingSymbol": "Falta al menos un carácter especial",
       "weak": "es demasiado débil",
       "invalidChar": "contiene caracteres no válidos",
       "match": "no coincide",
