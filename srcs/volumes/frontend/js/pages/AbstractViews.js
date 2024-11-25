@@ -220,8 +220,6 @@ export default class AbstractViews {
       opponentInviteId.innerText = "";
       opponentInviteId.innerHTML = `${opponent}`;
       const ongoing = document.querySelector("#onGoingGameText");
-      // const translations = this.lang.getTranslation(["title.tournament", "title.rankedGame"]);
-      // ongoing.innerText = `${data.is_tournament_match ? translations["title.tournament"] : translations["title.rank"]} :`;
       ongoing.innerText = `${data.is_tournament_match ? this.lang.getTranslation(["title", "tournamentGame"]) : this.lang.getTranslation(["title", "rankedGame"])} :`;
       const request = await this.makeRequest(`/api/users/${opponent}`, "GET");
       const response = await fetch(request);
@@ -392,7 +390,7 @@ export default class AbstractViews {
           declineInviteUrl: item.decline_invite,
           opponentAvatar: opponent.profilePic,
           opponentStatus: opponent.is_online,
-          message: `${item.game_type} : ${opponentName} ${this.lang.getTranslation(["modal", "message", "inviteYou"])}`,
+          message: `${this.lang.getTranslation(["title", item.game_type])} : ${opponentName} ${this.lang.getTranslation(["modal", "message", "inviteYou"])}`,
         };
         console.log("invite", invite);
         AbstractViews.invitesArray.push(invite);
@@ -407,10 +405,8 @@ export default class AbstractViews {
     try {
       const request = await this.makeRequest(url, "PATCH");
       const response = await fetch(request);
-      console.log("inviteRequest: response", response);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        console.log("inviteRequest: response:ok:data", data);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
         const modalInvitesDiv = document.getElementById("inviteUserModal");
         const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
@@ -426,10 +422,7 @@ export default class AbstractViews {
     try {
       const request = await this.makeRequest(`${button.dataset.url}`, "PATCH");
       const response = await fetch(request);
-      console.log("handleTournamentInvites:", response);
       if (await this.handleStatus(response)) {
-        const data = await this.getDatafromRequest(response);
-        console.log("handleTournamentInvites:", data);
         const modalInvitesDiv = document.getElementById("inviteUserModal");
         const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
         modalInvitesElem.hide();
@@ -677,7 +670,6 @@ export default class AbstractViews {
     }
     myHeaders.append("lang", this.lang.getCurrentLanguage());
     if (boolJSON === true) {
-      console.log("manual header");
       myHeaders.append("Content-Type", "application/json");
     }
     // myHeaders.forEach((value, key) => {
@@ -692,9 +684,13 @@ export default class AbstractViews {
       let value;
       if (!response.ok) {
         data = await this.getDatafromRequest(response);
+        const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
         const key = Object.keys(data)[0];
         value = data[key];
         console.log("VALUE:", value);
+      } else 
+        value = `${response.status} ${response.statusText}`;
       }
       if (response.status == 401) {
         console.error("401 error:response:", response);
@@ -717,7 +713,6 @@ export default class AbstractViews {
       if (!response.ok) {
         if (response.status == 404) return false;
         console.error(`${response.status} error: response: `, response);
-        console.log("HERE");
         console.error("with json:", value);
         showModal(
           `${this.lang.getTranslation(["modal", "title", "error"])}`,
@@ -766,7 +761,6 @@ export default class AbstractViews {
       try {
         const responseText = await response.text();
         if (!responseText) {
-          console.log("JSON IS EMPTY");
           return "Empty response";
         }
         const dataJSON = JSON.parse(responseText);
@@ -805,8 +799,6 @@ export default class AbstractViews {
 
   async refreshToken(accessToken) {
     const refreshJWT = sessionStorage.getItem("refreshJWT_transcendence");
-    // console.log("refreshJWT before = ", refreshJWT);
-    // console.log("accessJWT before = ", accessToken);
     if (!refreshJWT) {
       removeSessionStorage();
       throw new CustomError(
@@ -880,7 +872,6 @@ export default class AbstractViews {
   }
 
   destroy() {
-    console.log("Destroy");
     this.removeInviteEventListeners();
     this.removeEventListeners();
     this.cleanModal();
