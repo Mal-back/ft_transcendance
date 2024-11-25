@@ -5,10 +5,6 @@ import logging
 from asgiref.sync import async_to_sync, sync_to_async
 from .models import PongRemoteGame
 from game_srcs.pong.Pong_remote import PongRemoteEngine
-from ms_client.ms_client import MicroServiceClient, RequestsFailed
-
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import UntypedToken
 import jwt
 from django.conf import settings
 
@@ -229,7 +225,6 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
  
  
 	async def auth(self, game_instance : PongRemoteGame) -> bool:
-		# Uncomment bellow to activate user authentication
 		try :
 			clear_token = jwt.decode(self.auth_key,
                             settings.SIMPLE_JWT['VERIFYING_KEY'],
@@ -241,11 +236,7 @@ class PongRemotePlayerConsumer(AsyncWebsocketConsumer):
 		except jwt.InvalidTokenError:
 			log.info("InvalidTokenError from authenticate user")
 			return False
-		self.username = clear_token.get('username')
-  
-		# For testing, send only username in auth_key, comment line below if you uncomment block above
-		# self.username = self.auth_key
-  
+		self.username = clear_token.get('username') 
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
 			game_instance.player_1_connected = True
@@ -358,29 +349,3 @@ class PongRemoteGameConsumer(SyncConsumer):
 			print("PongRemoteGameConsumer : Thread waited !")
 		except Exception:
 			print("PongRemoteGameConsumer : Error: Can not join thread " + str(game_id))
-  
-   
-	# def clean_game(self, event):
-	# 	game_id = event["game_id"]
-	# 	try:
-	# 		game_instance = PongRemoteGame.objects.get(game_id=game_id)
-	# 		game_instance.delete()
-	# 		print("PongRemoteGameConsumer : Cleaning game " + str(game_id))
-	# 	except:
-	# 		print("PongRemoteGameConsumer : Can not delete game " + str(game_id))
-
-
-	# def send_result(self, event):
-	# 	url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
-	# 	print("PongRemoteGameConsumer : Sending result to url : " + url)
-	# 	print("PongRemoteGameConsumer : End state = " + str(event["End_state"]))
-	# 	try: 
-	# 		sender = MicroServiceClient()
-	# 		sender.send_requests(
-	# 			urls=[url,],
-	# 			method='post',
-	# 			expected_status=[200],
-	# 			body=event["End_state"],
-	# 		)
-	# 	except RequestsFailed:
-	#    	 print("PongRemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])

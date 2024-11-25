@@ -7,7 +7,6 @@ from game.permissions import MatchmakingAuthenticated
 log = logging.getLogger(__name__)
 
 class C4RemoteGameCreate(APIView):
-    # Uncomment bellow to activate matchmaking application authentication
     permission_classes = [MatchmakingAuthenticated]
     
     def post(self, request, *args, **kwargs):

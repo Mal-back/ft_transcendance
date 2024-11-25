@@ -175,14 +175,6 @@ class C4RemoteEngine(threading.Thread):
             print("C4RemoteEngine : Can not send end state to group channel " + self.game_id)
         self.send_result(data)
         self.clean_game()
-        # try:
-        #     async_to_sync(self.channel_layer.send)("c4_remote_engine", {
-        #         "type" : "send.result",
-        #         "End_state" : data,
-        #         "game_id" : self.game_id,
-        #     })
-        # except Exception:
-        #     print("C4RemoteEngine : Can not send result to channel c4_remote_engine " + self.game_id)
 
 
     def clean_game(self):

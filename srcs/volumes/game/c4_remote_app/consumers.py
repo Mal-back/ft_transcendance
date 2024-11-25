@@ -5,10 +5,6 @@ import logging
 from asgiref.sync import async_to_sync, sync_to_async
 from .models import C4RemoteGame
 from game_srcs.c4.C4_remote import C4RemoteEngine
-from ms_client.ms_client import MicroServiceClient, RequestsFailed
-
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import UntypedToken
 import jwt
 from django.conf import settings
 
@@ -19,6 +15,7 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 		self.player = "None"
 		await self.accept()		
 		self.game_ended = False
+  
   
 	async def disconnect(self, code):
 		log.info("C4RemotePlayerConsumer : Remote player disconnected")
@@ -204,7 +201,6 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 
 	
 	async def auth(self, game_instance : C4RemoteGame) -> bool:
-		# Uncomment bellow to activate user authentication
 		try :
 			clear_token = jwt.decode(self.auth_key,
                             settings.SIMPLE_JWT['VERIFYING_KEY'],
@@ -217,10 +213,6 @@ class C4RemotePlayerConsumer(AsyncWebsocketConsumer):
 			log.info("C4RemotePlayerConsumer : InvalidTokenError from authenticate user")
 			return False
 		self.username = clear_token.get('username')
-  
-  		# For testing, send only username in auth_key
-		# self.username = self.auth_key
-  
 		if self.username == game_instance.player_1_name and game_instance.player_1_connected == False: #Need to auth there
 			self.player = "player_1"
 			game_instance.player_1_connected = True
@@ -327,32 +319,3 @@ class C4RemoteGameConsumer(SyncConsumer):
 			print("C4RemoteGameConsumer : Thread waited !")
 		except Exception:
 			print("C4RemoteGameConsumer : Can not join thread " + str(game_id))
-  
-   
-	# def clean_game(self, event):
-	# 	game_id = event["game_id"]
-	# 	try:
-	# 		game_instance = C4RemoteGame.objects.get(game_id=game_id)
-	# 		game_instance.delete()
-	# 		print("C4RemoteGameConsumer : Cleaning game " + str(game_id))
-	# 	except:
-	# 		print("C4RemoteGameConsumer : Can not delete game " + str(game_id))
-
-
-	# def send_result(self, event):
-	# 	url = f'http://matchmaking:8443/api/matchmaking/match/' + event["game_id"] + '/finished/'
-	# 	print("C4RemoteGameConsumer : Sending result to url : " + url)
-	# 	print("C4RemoteGameConsumer : End state = " + str(event["End_state"]))
-	# 	try: 
-	# 		sender = MicroServiceClient()
-	# 		sender.send_requests(
-	# 			urls=[url,],
-	# 			method='post',
-	# 			expected_status=[200],
-	# 			body=event["End_state"],
-	# 		)
-	# 	except RequestsFailed:
-	# 		print("C4RemoteGameConsumer : Error sending result to matchmaking application for game " + event["game_id"])
-
-
-

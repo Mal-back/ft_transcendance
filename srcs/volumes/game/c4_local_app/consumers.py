@@ -9,7 +9,6 @@ import uuid
 
 log = logging.getLogger(__name__)
 
-
 class C4LocalPlayerConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		try:
