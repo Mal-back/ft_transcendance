@@ -137,6 +137,7 @@ class UserUpdateView(generics.UpdateAPIView):
         
         if serializer.is_valid():
             new_username = serializer.validated_data.get('username', old_username)
+            print(request.data)
             if old_username != new_username:
                 
                 req_urls = [
@@ -189,13 +190,14 @@ class UserUpdateView(generics.UpdateAPIView):
                 }, status=status.HTTP_200_OK)
                 serializer.save()
                 return Response({'Ok': translate(lang, "update_success")}, status=status.HTTP_200_OK)
-            else:
-                message = translate(lang, "same_username")
+            elif "two_fa_enabled" in request.data:
+                message = translate(lang, "error_2fa_update")
                 return Response({"error" : message}, status=status.HTTP_409_CONFLICT)
-
+            serializer.save()
+            return Response({'Ok': translate(lang, "update_success")}, status=status.HTTP_200_OK)
         else:
-            message = translate(lang, "error_2fa_update")
-            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "invalid_data_error")
+            return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordUpdateView(generics.UpdateAPIView):

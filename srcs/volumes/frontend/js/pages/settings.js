@@ -321,10 +321,10 @@ export default class extends AbstractView {
     <div class="modal-dialog modal-80 modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="sendDataBtnLabel">Send Data</h5>
+                <h5 class="modal-title" id="sendDataBtnLabel">${this.lang.getTranslation(["title", "sendData"])}</h5>
             </div>
             <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                <div><h4>Your data will be sent to your email address. Are you sure?</h4></div>
+                <div><h4>${this.lang.getTranslation(["modal", "message", "sendDataConfirm"])}</h4></div>
                 <div>
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
                     ${this.lang.getTranslation(["title", "no"])}
@@ -344,7 +344,7 @@ export default class extends AbstractView {
                 <h5 class="modal-title" id="confirmDeleteAccountModalLabel">${this.lang.getTranslation(["button", "confirmAccountDeletion"])}</h5>
             </div>
             <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                <div><h4>Are you sure?</h4></div>
+                <div><h4>${this.lang.getTranslation(["modal", "message", "areYouSure"])}</h4></div>
                 <br>
                 <div>
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
@@ -1066,7 +1066,7 @@ export default class extends AbstractView {
             const response = await fetch(request);
             if (await this.handleStatus(response)) {
                 showModal(
-                    `${this.lang.getTranslation(["modal", "title", "sucess"])}`,
+                    `${this.lang.getTranslation(["modal", "title", "success"])}`,
                     `${this.lang.getTranslation(["modal", "message", "sendData"])}`,
                 );
             }

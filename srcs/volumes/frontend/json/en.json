@@ -38,7 +38,8 @@
     "remoteBattle": "Remote Battle",
     "remoteTournament": "Remote Tournament",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+	"sendData" : "Send data"
   },
   "button": {
     "close": "Close",
@@ -198,7 +199,9 @@
       "scanQR": "Scan this QR code",
       "user_does_not_exist": "This user does not exist",
       "profilePicChangeSuccess": "You successfully changed your profile picture!",
-      "profilePicChangeSame": "You already have this set as your profile picture!"
+      "profilePicChangeSame": "You already have this set as your profile picture!",
+	  "sendDataConfirm" : "Your data will be sent to your email address. Are you sure ?",
+	  "areYouSure" : "Are you sure ?"
     }
   },
   "policy": {
