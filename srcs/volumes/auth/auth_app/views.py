@@ -19,13 +19,6 @@ import json
 #######################
 from django.core.mail import send_mail
 from rest_framework_simplejwt.views import TokenObtainPairView
-import random
-from sendgrid.helpers.mail import Mail, Email, To, Content
-import string
-import sendgrid
-from django.conf import settings
-from datetime import datetime, timedelta
-import pyotp
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 
