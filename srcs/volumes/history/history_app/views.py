@@ -133,7 +133,7 @@ class RetrieveAll(APIView):
         tournaments = self.get_tournament_queryset()
 
         match_serializer = MatchGetSerializer(instance=matches, many=True, context={'request': request})
-        tournament_serializer = TournamentSerializer(instance=matches, many=True, context={'request': request})
+        tournament_serializer = TournamentSerializer(instance=tournaments, many=True, context={'request': request})
 
         return Response({'matches_data': match_serializer.data, 'tournaments_data':tournament_serializer.data}, status=status.HTTP_200_OK)
 
