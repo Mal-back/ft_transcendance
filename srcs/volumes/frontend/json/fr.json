@@ -172,9 +172,11 @@
     },
     "message": {
       "over": "est terminé",
+      "error2fa": "Voud devez d'abord renseigner notre nom d'utilisateur et mot de passe",
       "clickNewTourn": "cliquez ici si vous souhaitez démarrer un autre tournoi",
       "bye": "Au revoir",
       "welcome": "Bienvenue",
+      "invalidHost": "Adresse IP invalide",
       "notLog": "Vous n'êtes pas authentifié, veuillez vous connecter pour accéder à cette page",
       "failConnectServer": "Impossible de se connecter au serveur, veuillez réessayer plus tard",
       "serverLoading": "Le serveur a redémarré et a besoin de temps pour terminer l'initialisation, veuillez patienter un peu et réessayer",
@@ -182,6 +184,9 @@
       "successChange": "a été changé avec succès",
       "successDeleteAccount": "Votre compte a été supprimé avec succès, toutes les données associées sont en cours d'anonymisation",
       "alreadyLog": "Vous êtes déjà connecté",
+      "noAccount": "Nom d'utilisateur ou mot de passe incorrect",
+      "usernameTaken": "Ce nom d'utilisateur est déjà utilisé",
+      "fieldTooLong": "Donnée invalide, 150 caractères maximum",
       "accountCreation": "Votre nouveau compte a été créé avec succès !",
       "failTournament": "Échec de la récupération des informations du tournoi",
       "wonTournament": "a remporté le tournoi",
@@ -198,7 +203,7 @@
       "restart": "Redémarrez la page si vous ne voyez pas vos modifications.",
       "2faActivationSuccess": "Vous avez activé l'authentification à deux facteurs avec succès.",
       "2faDeactivationSuccess": "Vous avez désactivé l'authentification à deux facteurs avec succès.",
-	  "profilePicChangeSame": "Cette image est déjà votre photo de profil !"
+      "profilePicChangeSame": "Cette image est déjà votre photo de profil !"
     }
   },
   "policy": {

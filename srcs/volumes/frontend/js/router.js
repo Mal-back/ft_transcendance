@@ -226,6 +226,9 @@ function addMainEventListeners() {
     if (modal.classList.contains("show")) {
       const modalInstance = bootstrap.Modal.getInstance(modal);
       modalInstance.hide();
+      modal.setAttribute("inert", "true");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.focus();
     }
   });
 
@@ -250,6 +253,8 @@ function addMainEventListeners() {
           const friendModalDiv = document.querySelector("#inviteUserModal");
           const modal = bootstrap.Modal.getInstance(friendModalDiv);
           modal.hide();
+          friendModalDiv.setAttribute("inert", "true");
+          friendModalDiv.setAttribute("aria-hidden", "true");
         }
       } catch (error) {
         if (error instanceof CustomError) {
