@@ -138,6 +138,10 @@
     "error": {
       "empty": "is empty",
       "short": "is too short",
+      "missingDigit": "Missing at least one digit",
+      "missingLower": "Missing at least one lowercase letter",
+      "missingUpper": "Missing at lest one uppercase letter",
+      "missingSymbol": "Missing at least one special character",
       "weak": "is too weak",
       "invalidChar": "contains invalid characters",
       "match": "does not match",

@@ -4,38 +4,38 @@ import AbstractView from "./AbstractViews.js";
 import CustomError from "../Utils/CustomError.js";
 
 export default class extends AbstractView {
-    constructor() {
-        super();
-        this.handleSubmitNewUser = this.handleSubmitNewUser.bind(this);
-        this.handleInputUsername = this.handleInputUsername.bind(this);
-        this.handleInputPassword = this.handleInputPassword.bind(this);
-        this.handleInputMail = this.handleInputMail.bind(this);
-        this.handleOpenPrivacyPolicy = this.handleOpenPrivacyPolicy.bind(this);
-        this.handleOpenTermsOfUse = this.handleOpenTermsOfUse.bind(this);
-    }
+  constructor() {
+    super();
+    this.handleSubmitNewUser = this.handleSubmitNewUser.bind(this);
+    this.handleInputUsername = this.handleInputUsername.bind(this);
+    this.handleInputPassword = this.handleInputPassword.bind(this);
+    this.handleInputMail = this.handleInputMail.bind(this);
+    this.handleOpenPrivacyPolicy = this.handleOpenPrivacyPolicy.bind(this);
+    this.handleOpenTermsOfUse = this.handleOpenTermsOfUse.bind(this);
+  }
 
-    async loadCss() {
-        this.createPageCss("../css/create-user.css");
-    }
+  async loadCss() {
+    this.createPageCss("../css/create-user.css");
+  }
 
-    async makeUsers() {
-        const user = "user";
-        for (let index = 0; index < 4; index++) {
-            let username = `${user}${index}`;
-            await this.submitNewUser(
-                `${username}`,
-                `${username}@google.com`,
-                `${username}`,
-                `${username}`,
-            );
-            console.log(`${username} created`);
-        }
+  async makeUsers() {
+    const user = "user";
+    for (let index = 0; index < 4; index++) {
+      let username = `${user}${index}`;
+      await this.submitNewUser(
+        `${username}`,
+        `${username}@google.com`,
+        `${username}`,
+        `${username}`,
+      );
+      console.log(`${username} created`);
     }
+  }
 
-    async getHtml() {
-        await this.makeUsers();
-        this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
-        return `
+  async getHtml() {
+    await this.makeUsers();
+    this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
+    return `
       <div class="background createUser removeElem">
         <div class="p-5 bg-* removeElem">
             <div class="black-txt bg-form create-user-form p-4 removeElem">
@@ -140,324 +140,343 @@ export default class extends AbstractView {
           </div>
       </div>
             `;
-    }
+  }
 
-    async checkLogin() {
-        const username = sessionStorage.getItem("username_transcendence");
-        if (username) {
-            navigateTo("/");
-            throw new CustomError(
-                `${this.lang.getTranslation(["modal", "title", "error"])}`,
-                `${this.lang.getTranslation(["modal", "message", "alreadyLog"])}`,
-                "/",
-            );
-        }
+  async checkLogin() {
+    const username = sessionStorage.getItem("username_transcendence");
+    if (username) {
+      navigateTo("/");
+      throw new CustomError(
+        `${this.lang.getTranslation(["modal", "title", "error"])}`,
+        `${this.lang.getTranslation(["modal", "message", "alreadyLog"])}`,
+        "/",
+      );
+    }
+    return;
+  }
+
+  async errorModalSubmitNewUser(response) {
+    const data = await this.getDatafromRequest(response);
+    let message = this.JSONtoModal(data);
+    if (message == "A user with that username already exists.")
+      message = `${this.lang.getTranslation(["modal", "message", "usernameTaken"])}`;
+    if (message == "Ensure this field has no more than 150 characters.")
+      message = this.lang.getTranslation(["modal", "message", "fieldTooLong"]);
+    showModal(
+      `${this.lang.getTranslation(["modal", "title", "error"])}`,
+      message,
+    );
+  }
+
+  async submitNewUser(username, email, password, password2) {
+    try {
+      const request = await this.makeRequest("/api/auth/", "POST", {
+        username: encodeURIComponent(username),
+        password: password,
+        password2: password2,
+        email: email,
+        two_fa_enable: false,
+      });
+      const response = await fetch(request);
+      if (!response.ok) {
+        await this.errorModalSubmitNewUser(response);
         return;
-    }
+      }
 
-    async errorModalSubmitNewUser(response) {
-        const data = await this.getDatafromRequest(response);
-        let message = this.JSONtoModal(data);
-        if (message == "A user with that username already exists.")
-            message = `${this.lang.getTranslation(["modal", "message", "usernameTaken"])}`;
-        if (message == "Ensure this field has no more than 150 characters.")
-            message = this.lang.getTranslation(["modal", "message", "fieldTooLong"]);
+      showModal(
+        `${this.lang.getTranslation(["modal", "title", "accountCreation"])}`,
+        `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
+      );
+      console.log("");
+      navigateTo("/login");
+    } catch (error) {
+      this.handleCatch(error);
+    }
+  }
+
+  validateUsername(usernameInput) {
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#usernameError");
+    errorDiv.innerHTML = "";
+    if (usernameInput.value.trim() === "") {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+    } else if (!this.sanitizeInput(usernameInput.value)) {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
+    }
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
+  }
+
+  testPassword(password) {
+    if (!/\d/.test(password)) {
+      return `${this.lang.getTranslation(["input", "error", "missingDigit"])}`;
+    }
+    if (!/[a-z]/.test(password)) {
+      return `${this.lang.getTranslation(["input", "error", "missingLower"])}`;
+    }
+    if (!/[A-Z]/.test(password)) {
+      return `${this.lang.getTranslation(["input", "error", "missingUpper"])}`;
+    }
+    if (!/[^\w\s]/.test(password)) {
+      return `${this.lang.getTranslation(["input", "error", "missingSymbol"])}`;
+    }
+    return "";
+  }
+
+  validatePassword(passwordInput) {
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#passwordError");
+    errorDiv.innerHTML = "";
+    if (passwordInput.value.trim() === "") {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+    } else if (passwordInput.value.length < 8) {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "short"])}`;
+    } else {
+      errorMessage = this.testPassword(passwordInput.value);
+    }
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
+  }
+
+  validateMail(mailInput) {
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#mailError");
+    errorDiv.innerHTML = "";
+    if (mailInput.value.trim() === "") {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+    } else if (!this.sanitizeInput(mailInput.value)) {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
+    }
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
+  }
+
+  validatePasswordMatch(passwordInput, password2Input) {
+    let errorMessage = "";
+    const errorDiv = document.querySelector("#password2Error");
+    errorDiv.innerHTML = "";
+    if (passwordInput.value.trim() === "") {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
+    }
+    if (password2Input.value !== passwordInput.value) {
+      errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
+    }
+    if (errorMessage) {
+      errorDiv.textContent = errorMessage;
+      errorDiv.style.color = "red";
+      errorDiv.style.fontStyle = "italic";
+    }
+    errorDiv.classList.add("removeElem");
+    return errorMessage;
+  }
+
+  async handleSubmitNewUser(ev) {
+    ev.preventDefault();
+    try {
+      const agreeToTermsCheckbox = document.querySelector("#agreeToTerms");
+      if (!agreeToTermsCheckbox.checked) {
         showModal(
-            `${this.lang.getTranslation(["modal", "title", "error"])}`,
-            message,
+          this.lang.getTranslation(["policy", "required"]),
+          this.lang.getTranslation(["policy", "failedReadAndAgree"]),
         );
+        return;
+      }
+      const usernameInput = document.querySelector("#Username");
+      const passwordInput = document.querySelector("#Password");
+      const password2Input = document.querySelector("#Password-2");
+      const mailInput = document.querySelector("#Mail");
+
+      let isValid = true;
+
+      if (this.validateUsername(usernameInput)) isValid = false;
+      if (this.validateMail(mailInput)) isValid = false;
+      if (this.validatePassword(passwordInput)) isValid = false;
+      if (this.validatePasswordMatch(passwordInput, password2Input))
+        isValid = false;
+      console.log("VALID:", isValid);
+      if (!isValid) {
+        return;
+      }
+
+      await this.submitNewUser(
+        usernameInput.value,
+        mailInput.value,
+        passwordInput.value,
+        password2Input.value,
+      );
+    } catch (error) {
+      if (error instanceof CustomError) {
+        error.showModalCustom();
+        navigateTo(error.redirect);
+      } else {
+        console.error("handleSubmitNewUser:", error);
+      }
     }
+  }
 
-    async submitNewUser(username, email, password, password2) {
-        try {
-            const request = await this.makeRequest("/api/auth/", "POST", {
-                username: encodeURIComponent(username),
-                password: password,
-                password2: password2,
-                email: email,
-                two_fa_enable: false,
-            });
-            const response = await fetch(request);
-            if (!response.ok) {
-                await this.errorModalSubmitNewUser(response);
-                return;
-            }
+  handleInputUsername(ev) {
+    ev.preventDefault();
+    const usernameInput = document.querySelector("#Username");
+    this.validateUsername(usernameInput);
+  }
 
-            showModal(
-                `${this.lang.getTranslation(["modal", "title", "accountCreation"])}`,
-                `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
-            );
-            console.log("");
-            navigateTo("/login");
-        } catch (error) {
-            this.handleCatch(error);
-        }
+  handleInputPassword(ev) {
+    ev.preventDefault();
+    const passwordInput = document.querySelector("#Password");
+    this.validatePassword(passwordInput);
+    const password2Input = document.querySelector("#Password-2");
+    this.validatePasswordMatch(passwordInput, password2Input);
+  }
+
+  handleInputMail(ev) {
+    ev.preventDefault();
+    const mailInput = document.querySelector("#Mail");
+    this.validateMail(mailInput);
+  }
+
+  async handleOpenPrivacyPolicy(ev) {
+    ev.preventDefault();
+    try {
+      const myHeaders = new Headers();
+      const response = await fetch(
+        `/rgpd/politique-${this.lang.getCurrentLanguage()}.txt`,
+        {
+          method: "GET",
+          headers: myHeaders,
+        },
+      );
+      if (response.ok) {
+        const data = await response.text();
+        document.getElementById("privacyPolicyContent").textContent = data;
+      } else {
+        console.error("Error fetching the terms of use");
+        document.getElementById("privacyPolicyContent").textContent =
+          `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
+      }
+    } catch (error) {
+      console.error("Error fetching the terms of use:", error);
+      document.getElementById("privacyPolicyContent").textContent =
+        `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
     }
+    let privacyPolicyModal = bootstrap.Modal.getInstance(
+      document.getElementById("privacyPolicyModal"),
+    );
+    if (!privacyPolicyModal)
+      privacyPolicyModal = new bootstrap.Modal(
+        document.getElementById("privacyPolicyModal"),
+      );
+    privacyPolicyModal.show();
+  }
 
-    validateUsername(usernameInput) {
-        let errorMessage = "";
-        const errorDiv = document.querySelector("#usernameError");
-        errorDiv.innerHTML = "";
-        if (usernameInput.value.trim() === "") {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
-        } else if (!this.sanitizeInput(usernameInput.value)) {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
-        }
-        if (errorMessage) {
-            errorDiv.textContent = errorMessage;
-            errorDiv.style.color = "red";
-            errorDiv.style.fontStyle = "italic";
-        }
-        errorDiv.classList.add("removeElem");
-        return errorMessage;
+  async handleOpenTermsOfUse(ev) {
+    ev.preventDefault();
+    try {
+      const myHeaders = new Headers();
+      const response = await fetch(
+        `/rgpd/terms-of-use-${this.lang.getCurrentLanguage()}.txt`,
+        {
+          method: "GET",
+          headers: myHeaders,
+        },
+      );
+      if (response.ok) {
+        const data = await response.text();
+        document.getElementById("termsOfUseContent").textContent = data;
+      } else {
+        console.error("Error fetching the terms of use");
+        document.getElementById("termsOfUseContent").textContent =
+          `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
+      }
+    } catch (error) {
+      console.error("Error fetching the terms of use:", error);
+      document.getElementById("termsOfUseContent").textContent =
+        `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
     }
+    let termsOfUseModal = bootstrap.Modal.getInstance(
+      document.getElementById("termsOfUseModal"),
+    );
+    if (!termsOfUseModal)
+      termsOfUseModal = new bootstrap.Modal(
+        document.getElementById("termsOfUseModal"),
+      );
+    termsOfUseModal.show();
+  }
 
-    validatePassword(passwordInput) {
-        let errorMessage = "";
-        const errorDiv = document.querySelector("#passwordError");
-        errorDiv.innerHTML = "";
-        if (passwordInput.value.trim() === "") {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
-        } else if (passwordInput.value.length < 2) {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "short"])}`;
-        }
-        if (errorMessage) {
-            errorDiv.textContent = errorMessage;
-            errorDiv.style.color = "red";
-            errorDiv.style.fontStyle = "italic";
-        }
-        errorDiv.classList.add("removeElem");
-        return errorMessage;
+  async addEventListeners() {
+    const button = document.querySelector("#createUserButton");
+    const usernameInput = document.querySelector("#Username");
+    const passwordInput = document.querySelector("#Password");
+    const password2Input = document.querySelector("#Password-2");
+    const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
+    const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn");
+    const mailInput = document.querySelector("#Mail");
+    if (button) {
+      button.addEventListener("click", this.handleSubmitNewUser);
     }
+    usernameInput.addEventListener("input", this.handleInputUsername);
+    passwordInput.addEventListener("input", this.handleInputPassword);
+    password2Input.addEventListener("input", this.handleInputPassword);
+    mailInput.addEventListener("input", this.handleInputMail);
+    PrivacyPolicyButton.addEventListener("click", this.handleOpenPrivacyPolicy);
+    TermsOfUseButton.addEventListener("click", this.handleOpenTermsOfUse);
+  }
 
-    validateMail(mailInput) {
-        let errorMessage = "";
-        const errorDiv = document.querySelector("#mailError");
-        errorDiv.innerHTML = "";
-        if (mailInput.value.trim() === "") {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
-        } else if (!this.sanitizeInput(mailInput.value)) {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "email"])} ${this.lang.getTranslation(["input", "error", "invalidChar"])}`;
-        }
-        if (errorMessage) {
-            errorDiv.textContent = errorMessage;
-            errorDiv.style.color = "red";
-            errorDiv.style.fontStyle = "italic";
-        }
-        errorDiv.classList.add("removeElem");
-        return errorMessage;
+  removeEventListeners() {
+    const button = document.querySelector("#createUserButton");
+    if (button) {
+      button.removeEventListener("click", this.handleSubmitNewUser);
     }
-
-    validatePasswordMatch(passwordInput, password2Input) {
-        let errorMessage = "";
-        const errorDiv = document.querySelector("#password2Error");
-        errorDiv.innerHTML = "";
-        if (passwordInput.value.trim() === "") {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "empty"])}`;
-        }
-        if (password2Input.value !== passwordInput.value) {
-            errorMessage = `${this.lang.getTranslation(["input", "label", "password"])} ${this.lang.getTranslation(["input", "error", "match"])}`;
-        }
-        if (errorMessage) {
-            errorDiv.textContent = errorMessage;
-            errorDiv.style.color = "red";
-            errorDiv.style.fontStyle = "italic";
-        }
-        errorDiv.classList.add("removeElem");
-        return errorMessage;
+    const usernameInput = document.querySelector("#Username");
+    const passwordInput = document.querySelector("#Password");
+    const password2Input = document.querySelector("#Password-2");
+    const mailInput = document.querySelector("#Mail");
+    if (usernameInput) {
+      usernameInput.removeEventListener("input", this.handleInputUsername);
+      usernameInput.value = "";
     }
-
-    async handleSubmitNewUser(ev) {
-        ev.preventDefault();
-        try {
-            const agreeToTermsCheckbox = document.querySelector("#agreeToTerms");
-            if (!agreeToTermsCheckbox.checked) {
-                showModal(
-                    this.lang.getTranslation(["policy", "required"]),
-                    this.lang.getTranslation(["policy", "failedReadAndAgree"]),
-                );
-                return;
-            }
-            const usernameInput = document.querySelector("#Username");
-            const passwordInput = document.querySelector("#Password");
-            const password2Input = document.querySelector("#Password-2");
-            const mailInput = document.querySelector("#Mail");
-
-            let isValid = true;
-
-            if (this.validateUsername(usernameInput)) isValid = false;
-            if (this.validateMail(mailInput)) isValid = false;
-            if (this.validatePassword(passwordInput)) isValid = false;
-            if (this.validatePasswordMatch(passwordInput, password2Input))
-                isValid = false;
-            if (!isValid) {
-                return;
-            }
-
-            await this.submitNewUser(
-                usernameInput.value,
-                mailInput.value,
-                passwordInput.value,
-                password2Input.value,
-            );
-        } catch (error) {
-            if (error instanceof CustomError) {
-                error.showModalCustom();
-                navigateTo(error.redirect);
-            } else {
-                console.error("handleSubmitNewUser:", error);
-            }
-        }
+    if (passwordInput) {
+      passwordInput.value = "";
+      passwordInput.removeEventListener("input", this.handleInputPassword);
     }
-
-    handleInputUsername(ev) {
-        ev.preventDefault();
-        const usernameInput = document.querySelector("#Username");
-        this.validateUsername(usernameInput);
+    if (password2Input) {
+      password2Input.value = "";
+      password2Input.removeEventListener("input", this.handleInputPassword);
     }
-
-    handleInputPassword(ev) {
-        ev.preventDefault();
-        const passwordInput = document.querySelector("#Password");
-        this.validatePassword(passwordInput);
-        const password2Input = document.querySelector("#Password-2");
-        this.validatePasswordMatch(passwordInput, password2Input);
+    if (mailInput) {
+      mailInput.removeEventListener("input", this.handleInputMail);
+      mailInput.value = "";
     }
-
-    handleInputMail(ev) {
-        ev.preventDefault();
-        const mailInput = document.querySelector("#Mail");
-        this.validateMail(mailInput);
-    }
-
-    async handleOpenPrivacyPolicy(ev) {
-        ev.preventDefault();
-        try {
-            const myHeaders = new Headers();
-            const response = await fetch(
-                `/rgpd/politique-${this.lang.getCurrentLanguage()}.txt`,
-                {
-                    method: "GET",
-                    headers: myHeaders,
-                },
-            );
-            if (response.ok) {
-                const data = await response.text();
-                document.getElementById("privacyPolicyContent").textContent = data;
-            } else {
-                console.error("Error fetching the terms of use");
-                document.getElementById("privacyPolicyContent").textContent =
-                    `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
-            }
-        } catch (error) {
-            console.error("Error fetching the terms of use:", error);
-            document.getElementById("privacyPolicyContent").textContent =
-                `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "privacyPolicy"])}`;
-        }
-        let privacyPolicyModal = bootstrap.Modal.getInstance(
-            document.getElementById("privacyPolicyModal"),
-        );
-        if (!privacyPolicyModal)
-            privacyPolicyModal = new bootstrap.Modal(
-                document.getElementById("privacyPolicyModal"),
-            );
-        privacyPolicyModal.show();
-    }
-
-    async handleOpenTermsOfUse(ev) {
-        ev.preventDefault();
-        try {
-            const myHeaders = new Headers();
-            const response = await fetch(
-                `/rgpd/terms-of-use-${this.lang.getCurrentLanguage()}.txt`,
-                {
-                    method: "GET",
-                    headers: myHeaders,
-                },
-            );
-            if (response.ok) {
-                const data = await response.text();
-                document.getElementById("termsOfUseContent").textContent = data;
-            } else {
-                console.error("Error fetching the terms of use");
-                document.getElementById("termsOfUseContent").textContent =
-                    `${this.lang.getTranslation(["policy", "errorFetching"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
-            }
-        } catch (error) {
-            console.error("Error fetching the terms of use:", error);
-            document.getElementById("termsOfUseContent").textContent =
-                `${this.lang.getTranslation(["policy", "errorLoading"])} ${this.lang.getTranslation(["policy", "termsOfUse"])}`;
-        }
-        let termsOfUseModal = bootstrap.Modal.getInstance(
-            document.getElementById("termsOfUseModal"),
-        );
-        if (!termsOfUseModal)
-            termsOfUseModal = new bootstrap.Modal(
-                document.getElementById("termsOfUseModal"),
-            );
-        termsOfUseModal.show();
-    }
-
-    async addEventListeners() {
-        const button = document.querySelector("#createUserButton");
-        const usernameInput = document.querySelector("#Username");
-        const passwordInput = document.querySelector("#Password");
-        const password2Input = document.querySelector("#Password-2");
-        const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
-        const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn");
-        const mailInput = document.querySelector("#Mail");
-        if (button) {
-            button.addEventListener("click", this.handleSubmitNewUser);
-        }
-        usernameInput.addEventListener("input", this.handleInputUsername);
-        passwordInput.addEventListener("input", this.handleInputPassword);
-        password2Input.addEventListener("input", this.handleInputPassword);
-        mailInput.addEventListener("input", this.handleInputMail);
-        PrivacyPolicyButton.addEventListener("click", this.handleOpenPrivacyPolicy);
-        TermsOfUseButton.addEventListener("click", this.handleOpenTermsOfUse);
-    }
-
-    removeEventListeners() {
-        const button = document.querySelector("#createUserButton");
-        if (button) {
-            button.removeEventListener("click", this.handleSubmitNewUser);
-        }
-        const usernameInput = document.querySelector("#Username");
-        const passwordInput = document.querySelector("#Password");
-        const password2Input = document.querySelector("#Password-2");
-        const mailInput = document.querySelector("#Mail");
-        if (usernameInput) {
-            usernameInput.removeEventListener("input", this.handleInputUsername);
-            usernameInput.value = "";
-        }
-        if (passwordInput) {
-            passwordInput.value = "";
-            passwordInput.removeEventListener("input", this.handleInputPassword);
-        }
-        if (password2Input) {
-            password2Input.value = "";
-            password2Input.removeEventListener("input", this.handleInputPassword);
-        }
-        if (mailInput) {
-            mailInput.removeEventListener("input", this.handleInputMail);
-            mailInput.value = "";
-        }
-        const usernameError = document.querySelector("#usernameError");
-        if (usernameError) usernameError.innerHTML = "";
-        const passwordError = document.querySelector("#passwordError");
-        if (passwordError) passwordError.innerHTML = "";
-        const password2Error = document.querySelector("#password2Error");
-        if (password2Error) password2Error.innerHTML = "";
-        const mailError = document.querySelector("#mailError");
-        if (mailError) mailError.innerHTML = "";
-        const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
-        const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn");
-        if (PrivacyPolicyButton)
-            PrivacyPolicyButton.removeEventListener(
-                "click",
-                this.handleOpenPrivacyPolicy,
-            );
-        if (TermsOfUseButton)
-            TermsOfUseButton.removeEventListener("click", this.handleOpenTermsOfUse);
-    }
+    const usernameError = document.querySelector("#usernameError");
+    if (usernameError) usernameError.innerHTML = "";
+    const passwordError = document.querySelector("#passwordError");
+    if (passwordError) passwordError.innerHTML = "";
+    const password2Error = document.querySelector("#password2Error");
+    if (password2Error) password2Error.innerHTML = "";
+    const mailError = document.querySelector("#mailError");
+    if (mailError) mailError.innerHTML = "";
+    const PrivacyPolicyButton = document.querySelector("#openPrivacyPolicyBtn");
+    const TermsOfUseButton = document.querySelector("#openTermsOfUseBtn");
+    if (PrivacyPolicyButton)
+      PrivacyPolicyButton.removeEventListener(
+        "click",
+        this.handleOpenPrivacyPolicy,
+      );
+    if (TermsOfUseButton)
+      TermsOfUseButton.removeEventListener("click", this.handleOpenTermsOfUse);
+  }
 }
