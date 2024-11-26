@@ -150,7 +150,7 @@ class UserUpdateView(generics.UpdateAPIView):
                 ]
                 if send_update_requests(old_username, req_urls, body={'username': new_username, 'old_username': old_username, 'new_username': new_username}) == False:
                     message = translate(lang, "update_username_error_in_game")
-                    return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
                 serializer.save()
                 token = MyTokenObtainPairSerializer.get_token(user)
                 access_token = str(token.access_token)
