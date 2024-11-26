@@ -34,6 +34,7 @@ ARTICLE 3 : DONNÉES À CARACTÈRE PERSONNEL COLLECTÉES ET TRAITÉES DANS LE CA
 Article 3.1 : Données collectées  
 Les données personnelles collectées dans le cadre de notre activité sont les suivantes :  
 - Nom d'utilisateur, adresse e-mail.
+
 La collecte et le traitement de ces données répond à la (aux) finalité(s) suivante(s) :  
 - Gestion de et securisation de la presente application.
 

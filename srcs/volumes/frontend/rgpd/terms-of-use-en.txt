@@ -12,6 +12,7 @@ By creating an account and using our website, you agree to comply with these Ter
 2. User Accounts
 
     • Account Creation: To access certain features, you must create an account. You are required to provide a unique username, a secure password, a second password for confirmation, and a valid email address.
+    • Account Username: Your username is publicly visible and helps identify you within our platform. To protect your privacy, you are encouraged to use a pseudonym if you do not wish to reveal your real identity. If you want to anonymize or change your username, you can update it in your account settings. Alternatively, you can delete your account, which will remove all associated personal data in accordance with our Privacy Policy and GDPR guidelines.
     • Account Security: You are responsible for keeping your account information, including your passwords, secure. We recommend using strong passwords and enabling Two-Factor Authentication (2FA) for added security.
     • Accuracy of Information: The information you provide must be accurate and up to date. Misrepresentation of your identity or account details may result in suspension or termination of your account.
 

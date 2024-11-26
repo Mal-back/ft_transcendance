@@ -12,6 +12,7 @@ En créant un compte et en utilisant notre site, vous acceptez de respecter ces 
 2. Comptes Utilisateur
 
     • Création de Compte : Pour accéder à certaines fonctionnalités, vous devez créer un compte. Il vous sera demandé de fournir un nom d'utilisateur unique, un mot de passe sécurisé, un second mot de passe pour confirmation, et une adresse e-mail valide.
+    • Nom d'utilisateur du compte : Votre nom d'utilisateur est visible publiquement et permet de vous identifier sur notre plateforme. Pour protéger votre vie privée, il est recommandé d'utiliser un pseudonyme si vous ne souhaitez pas révéler votre véritable identité. Si vous souhaitez anonymiser ou modifier votre nom d'utilisateur, vous pouvez le mettre à jour dans les paramètres de votre compte. Alternativement, vous pouvez supprimer votre compte, ce qui effacera toutes les données personnelles associées conformément à notre politique de confidentialité et aux directives du RGPD.
     • Sécurité du Compte : Vous êtes responsable de la sécurité des informations de votre compte, y compris vos mots de passe. Nous recommandons l’utilisation de mots de passe robustes et l’activation de l'authentification à deux facteurs (2FA) pour une sécurité accrue.
     • Exactitude des Informations : Les informations fournies doivent être exactes et à jour. Une fausse déclaration de votre identité ou des informations de compte peut entraîner la suspension ou la suppression de votre compte.
 

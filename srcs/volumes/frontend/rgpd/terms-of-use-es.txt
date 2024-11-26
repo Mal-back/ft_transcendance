@@ -12,6 +12,7 @@ Al crear una cuenta y utilizar nuestro sitio web, aceptas cumplir con estos Tér
 2. Cuentas de Usuario
 
     • Creación de Cuenta: Para acceder a ciertas funciones, debes crear una cuenta. Se te pedirá un nombre de usuario único, una contraseña segura, una segunda contraseña para confirmación y una dirección de correo electrónico válida.
+    • Nombre de usuario de la cuenta: Tu nombre de usuario es visible públicamente y ayuda a identificarte en nuestra plataforma. Para proteger tu privacidad, se recomienda usar un seudónimo si no deseas revelar tu verdadera identidad. Si deseas anonimizar o cambiar tu nombre de usuario, puedes actualizarlo en la configuración de tu cuenta. Alternativamente, puedes eliminar tu cuenta, lo que eliminará todos los datos personales asociados de acuerdo con nuestra Política de Privacidad y las directrices del RGPD.
     • Seguridad de la Cuenta: Eres responsable de mantener segura la información de tu cuenta, incluyendo tus contraseñas. Recomendamos utilizar contraseñas seguras y habilitar la Autenticación de Dos Factores (2FA) para mayor seguridad.
     • Exactitud de la Información: La información que proporciones debe ser precisa y estar actualizada. La falsificación de tu identidad o detalles de cuenta puede resultar en la suspensión o terminación de tu cuenta.
 
