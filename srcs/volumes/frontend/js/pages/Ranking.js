@@ -465,6 +465,7 @@ export default class extends AbstractView {
         if (error instanceof CustomError) {
           error.showModalCustom();
           navigateTo(error.redirect);
+          return;
         } else {
           console.error("handleNextPage", error);
         }
@@ -493,6 +494,7 @@ export default class extends AbstractView {
         if (error instanceof CustomError) {
           error.showModalCustom();
           navigateTo(error.redirect);
+          return;
         } else {
           console.error("handlePrevousPage", error);
         }

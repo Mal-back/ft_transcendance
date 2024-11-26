@@ -250,8 +250,6 @@ document
         const friendModalDiv = document.querySelector("#inviteUserModal");
         const modal = bootstrap.Modal.getInstance(friendModalDiv);
         modal.hide();
-        friendModalDiv.setAttribute("inert", "true");
-        friendModalDiv.setAttribute("aria-hidden", "true");
       }
     } catch (error) {
       if (error instanceof CustomError) {

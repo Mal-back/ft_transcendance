@@ -11,7 +11,6 @@ export default class AbstractViews {
   static invitesArray = [];
   static invitesTournament = [];
   static pollingInterval = null;
-  static debug = 0;
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
@@ -53,24 +52,9 @@ export default class AbstractViews {
   }
 
   removeInviteEventListeners() {
-    try {
-      const inviteModalEl = document.getElementById("inviteUserModal");
-
-      if (inviteModalEl) {
-        const inviteModal = bootstrap.Modal.getInstance(inviteModalEl);
-
-        if (inviteModal) {
-          inviteModal.dispose();
-        }
-        inviteModalEl.classList.remove("show");
-        inviteModalEl.style.display = "none";
-        inviteModalEl.removeAttribute("data-bs-backdrop");
-        inviteModalEl.removeAttribute("data-bs-keyboard");
-        inviteModalEl.removeAttribute("data-bs-dismiss");
-      }
-    } catch (error) {
-      console.error("WTF");
-    }
+    const inviteList = document.getElementById("inviteList");
+    inviteList.removeEventListener("click", this.handleInvites);
+    document.removeEventListener("beforeunload", this.clearPollingInterval);
   }
 
   createPageCss(refCss) {
@@ -424,12 +408,8 @@ export default class AbstractViews {
         const data = await this.getDatafromRequest(response);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
         const modalInvitesDiv = document.getElementById("inviteUserModal");
-        modalInvitesDiv.classList.remove("show");
-        modalInvitesDiv.style.display = "none";
-        const backdrop = document.querySelector(".modal-backdrop");
-        if (backdrop) {
-          backdrop.remove();
-        }
+        const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        modalInvitesElem.hide();
         navigateTo(`/${game}?connection=remote`);
       }
     } catch (error) {
@@ -441,18 +421,10 @@ export default class AbstractViews {
     try {
       const request = await this.makeRequest(`${button.dataset.url}`, "PATCH");
       const response = await fetch(request);
-      console.trace();
-      AbstractViews.debug++;
-      console.log("AbstractViews.debug: ", AbstractViews.debug);
       if (await this.handleStatus(response)) {
-        console.log("HEREEEEEEEEE");
         const modalInvitesDiv = document.getElementById("inviteUserModal");
-        modalInvitesDiv.classList.remove("show");
-        modalInvitesDiv.style.display = "none";
-        const backdrop = document.querySelector(".modal-backdrop");
-        if (backdrop) {
-          backdrop.remove();
-        }
+        const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        modalInvitesElem.hide();
         if (button.dataset.action == "accept")
           navigateTo(`/${button.dataset.game}-remote-lobby`);
       }
