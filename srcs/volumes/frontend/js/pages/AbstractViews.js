@@ -11,6 +11,7 @@ export default class AbstractViews {
   static invitesArray = [];
   static invitesTournament = [];
   static pollingInterval = null;
+  static debug = 0;
 
   constructor() {
     this.populatesInvites = this.populatesInvites.bind(this);
@@ -423,10 +424,12 @@ export default class AbstractViews {
         const data = await this.getDatafromRequest(response);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
         const modalInvitesDiv = document.getElementById("inviteUserModal");
-        let modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
-        if (!modalInvitesElem)
-          modalInvitesElem = new bootstrap.Modal(modalInvitesDiv);
-        modalInvitesElem.hide();
+        modalInvitesDiv.classList.remove("show");
+        modalInvitesDiv.style.display = "none";
+        const backdrop = document.querySelector(".modal-backdrop");
+        if (backdrop) {
+          backdrop.remove();
+        }
         navigateTo(`/${game}?connection=remote`);
       }
     } catch (error) {
@@ -438,12 +441,18 @@ export default class AbstractViews {
     try {
       const request = await this.makeRequest(`${button.dataset.url}`, "PATCH");
       const response = await fetch(request);
+      console.trace();
+      AbstractViews.debug++;
+      console.log("AbstractViews.debug: ", AbstractViews.debug);
       if (await this.handleStatus(response)) {
+        console.log("HEREEEEEEEEE");
         const modalInvitesDiv = document.getElementById("inviteUserModal");
-        let modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
-        if (!modalInvitesElem)
-          modalInvitesElem = new bootstrap.Modal.getInstance(modalInvitesDiv);
-        modalInvitesElem.hide();
+        modalInvitesDiv.classList.remove("show");
+        modalInvitesDiv.style.display = "none";
+        const backdrop = document.querySelector(".modal-backdrop");
+        if (backdrop) {
+          backdrop.remove();
+        }
         if (button.dataset.action == "accept")
           navigateTo(`/${button.dataset.game}-remote-lobby`);
       }

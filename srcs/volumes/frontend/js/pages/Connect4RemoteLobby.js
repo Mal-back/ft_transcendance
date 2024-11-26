@@ -360,9 +360,9 @@ export default class extends AbstractView {
         {
           game_type: "c4",
           invited_players: [
-            "user2",
-            "user1",
-            "user3",
+            // "user2",
+            // "user1",
+            // "user3",
             // "user4",
             // "user5",
             // "user6",

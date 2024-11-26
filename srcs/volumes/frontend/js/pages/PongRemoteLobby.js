@@ -187,6 +187,10 @@ export default class extends AbstractView {
 
   async createPlayerDivConfirmed(dataPlayer, leaveUrl, owner) {
     try {
+      if (leaveUrl == undefined) {
+        console.trace();
+        console.error("WTF: ", leaveUrl)
+      }
       const data = await this.getUserInfo(dataPlayer.username);
       const playerAvatar = `background-image: url('${data.profilePic}');`;
       const username = sessionStorage.getItem("username_transcendence");
@@ -246,10 +250,7 @@ export default class extends AbstractView {
   }
 
   async fillConfirmedPlayers(confirmed_players_profiles, leaveUrl, owner) {
-    console.log(
-      "fillConfirmedPlayers:confirmed_players_profiles",
-      confirmed_players_profiles,
-    );
+
     if (!confirmed_players_profiles || confirmed_players_profiles.length === 0)
       return;
     const split = owner.split("/");
@@ -279,7 +280,6 @@ export default class extends AbstractView {
     try {
       const playerDivs = await Promise.all(
         invited_players_profiles.map(async (player) => {
-          console.log("Player:", player);
           return await this.createPlayerDivPending(player);
         }),
       );
@@ -339,7 +339,7 @@ export default class extends AbstractView {
       }
       if (response.status == 403) {
         const data = await this.getDatafromRequest(response);
-        throw new CustomError("Error", this.JSONtoModal(data), "/");
+        throw new CustomError(`${this.lang.getTranslation(["modal", "title", "error"])}`, this.JSONtoModal(data), "/");
       }
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
@@ -368,9 +368,9 @@ export default class extends AbstractView {
         {
           game_type: "pong",
           invited_players: [
-            "user1",
-            "user2",
-            "user3",
+            // "user1",
+            // "user2",
+            // "user3",
             // "user4",
             // "user5",
             // "user6",
