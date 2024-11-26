@@ -54,10 +54,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer) :
         if 'israel' in value.lower():
             message = translate(lang, "free_palestine")
             raise ValidationError(message)
-        if CustomUser.objects.filter(email=value).exists():
-            lang = self.context.get('request').headers.get('lang')
-            message = translate(lang, "username_taken_error")
-            raise serializers.ValidationError(message)
         for char in value:
             if char not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_':
                 message = translate(lang, "invalid_characters_in_username_error")
