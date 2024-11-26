@@ -57,6 +57,7 @@ export function showModal(title, message) {
 
   modalTitleElement.textContent = title;
   errorMessageElement.innerHTML = message;
+  console.log("Message:", message);
   const modalId = document.getElementById("alertModal");
   let modal = bootstrap.Modal.getInstance(modalId);
   if (!modal) {

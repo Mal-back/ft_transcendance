@@ -752,7 +752,7 @@ export default class AbstractViews {
           return message;
         }
       })
-      .join("<br>");
+      .join("");
     return messagesJoin;
   }
 
