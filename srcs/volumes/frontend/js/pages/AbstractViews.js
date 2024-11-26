@@ -744,6 +744,7 @@ export default class AbstractViews {
   }
 
   JSONtoModal(data) {
+    if (typeof data === "string") return data;
     const messagesJoin = Object.entries(data)
       .map(([field, message]) => {
         if (Array.isArray(message)) {
@@ -752,7 +753,7 @@ export default class AbstractViews {
           return message;
         }
       })
-      .join("");
+      .join("<br>");
     return messagesJoin;
   }
 

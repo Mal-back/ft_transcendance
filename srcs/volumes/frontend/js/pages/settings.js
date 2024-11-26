@@ -421,7 +421,6 @@ export default class extends AbstractView {
     </div>
 </div>
 `;
-    // const previous = `<input type="file" class="form-control removeElem" accept="image/*" id="uploadProfileBackground">`;
     return htmlContent;
   }
 
@@ -569,7 +568,6 @@ export default class extends AbstractView {
   async changeMail(newMail) {
     const username = sessionStorage.getItem("username_transcendence");
     try {
-      // await this.checkoldMail(oldMail);
       const request = await this.makeRequest(
         "/api/auth/update/" + username + "/",
         "PATCH",
@@ -619,7 +617,6 @@ export default class extends AbstractView {
     document.getElementById(
       "currentProfileBackgroundPreview",
     ).style.backgroundImage = `url(${imagePath})`;
-    // Deselect other images
     let images = document.querySelectorAll(".img-fluid");
     images.forEach((img) => img.classList.remove("border-success"));
     element.classList.add("border-success");
@@ -778,7 +775,6 @@ export default class extends AbstractView {
       if (this.validatePassword(newPass)) isValid = false;
       if (this.validatePasswordMatch(newPass, confirmPass)) isValid = false;
       if (!isValid) return;
-      // 500 ERROR ?
       await this.changePassword(
         oldPass.value,
         newPass.value,
@@ -830,37 +826,6 @@ export default class extends AbstractView {
     if (!qrCodeModal) qrCodeModal = new bootstrap.Modal(qrCodeModalDiv);
     qrCodeModal.show();
   }
-
-  //   async handleConfirm2FA(ev) {
-  //     ev.preventDefault();
-  //     try {
-  //       const username = sessionStorage.getItem("username_transcendence");
-  //       const request = await this.makeRequest(
-  //         `/api/auth/update/${username}`,
-  //         "PATCH",
-  //         {
-  //           two_fa_enabled: true,
-  //         },
-  //       );
-  //       const response = await fetch(request);
-  //       if (await this.handleStatus(response)) {
-  //         const data = await this.getDatafromRequest(response);
-  //         console.log("handleConfirm2FA: data", data);
-  //         this.showQrCodeModal(data.otp_uri);
-  //       }
-  //       const current2fa = await this.is2faActivated();
-  //       console.log("Updated current2fa = " + current2fa);
-  //       this.update2faButton(current2fa);
-  //       this.update2faModal(current2fa);
-  //     } catch (error) {
-  //       if (error instanceof CustomError) {
-  //         error.showModalCustom();
-  //         navigateTo(error.redirect);
-  //       } else {
-  //         console.error("handleConfirm2FA:", error);
-  //       }
-  //     }
-  //   }
 
   async handleConfirm2FA(ev) {
     ev.preventDefault();
@@ -933,27 +898,8 @@ export default class extends AbstractView {
     this.validateMail(newMail);
     this.validateConfirmMail(newMail, confirmMail);
   }
-  // const formData = new FormData();
-  //     formData.append('image', file); // Append the file to the form data
-  //
-  //     try {
-  //         // Make a POST request to the API
-  //         const response = await fetch('https://your-api-endpoint.com/upload', {
-  //             method: 'POST',
-  //             body: formData, // Send the FormData object with the file
-  //         });
-  //
-  //         if (response.ok) {
-  //             const result = await response.json();
-  //             alert('Image uploaded successfully!');
-  //             console.log(result); // Handle the response from the server
-  //         } else {
-  //             alert('Failed to upload image!');
-  //             console.error(response.statusText);
-  //         }
   async handleUploadAvatar(ev) {
     ev.preventDefault();
-    // if (this.validateAvatar()) return;
     try {
       const fileInput = document.getElementById("uploadProfileBackground");
       const file = fileInput.files[0]; // Get the selected file
