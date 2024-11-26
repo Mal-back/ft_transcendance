@@ -111,7 +111,7 @@ const router = async () => {
         view.lang.getTranslation(["modal", "title", "error"])
       )
         console.error("error in view", error);
-      error.showModalCustom();
+      if (error.modalTitle != "redirect") error.showModalCustom();
       navigateTo(error.redirect);
     } else {
       console.error("error in view", error);
@@ -226,8 +226,6 @@ document.addEventListener("keydown", (ev) => {
   if (modal.classList.contains("show")) {
     const modalInstance = bootstrap.Modal.getInstance(modal);
     modalInstance.hide();
-    modal.setAttribute("inert", "true");
-    modal.setAttribute("aria-hidden", "true");
   }
 });
 

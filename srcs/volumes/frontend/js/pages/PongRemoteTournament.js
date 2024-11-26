@@ -33,7 +33,7 @@ export default class extends AbstractView {
     try {
       html_loaded = await this.actualizeTournament();
       if (html_loaded == undefined) {
-        throw new CustomError("Tournament", "No current Tournament", "/");
+        throw new CustomError(`${this.lang.getTranslation(["title", "tournament"])}`, `${this.lang.getTranslation(["tournament", "no_tournament"])}`, "/");
       }
     } catch (error) {
       this.handleCatch(error);
@@ -51,7 +51,7 @@ export default class extends AbstractView {
       <div class="d-flex align-items-center justify-content-center mt-2">
         <button id="nextRoundBtn" type="button" class="btn btn-light white-txt btn-lg bg-midnightblue custom-button" style="display: none;">
           Next Round</button>
-        <button type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-2" data-bs-toggle="modal" style="display: ${this.isFinished ? "none" : "block"}"
+        <button id="showNextMatchButton" type="button" class="btn btn-light white-txt btn-lg bg-red custom-button ms-2" data-bs-toggle="modal" style="display: ${this.isFinished ? "none" : "block"}"
               data-bs-target="#current-round-modal">${this.lang.getTranslation(["game", "nextMatch"])}</button>
       </div>
     </div>
@@ -85,7 +85,7 @@ export default class extends AbstractView {
 
   getTitle() {
     const title = this.isFinished
-      ? `Tournament is over!`
+      ? `${this.lang.getTranslation(["title", "tournament"])} ${this.lang.getTranslation(["modal", "message", "over"])}!`
       : `${this.lang.getTranslation(["title", "pong"]).toUpperCase()}-${this.lang.getTranslation(["title", "local"]).toUpperCase()}-${this.lang.getTranslation(["title", "tournament"]).toUpperCase()}</h1>`;
     return title;
   }
@@ -144,7 +144,7 @@ export default class extends AbstractView {
   }
 
   getRoundDiv(round) {
-    let html = `<div><h5 class="text-decoration-underline" style="margin-bottom:0;">Matches: </h5></div><div class="tournament-creation list-group ranking">`;
+    let html = `<div><h5 class="text-decoration-underline" style="margin-bottom:0;">Matchs: </h5></div><div class="tournament-creation list-group ranking">`;
     console.log(round);
     round.forEach((element) => {
       console.log(element);
@@ -175,24 +175,23 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      console.log("TOURNAMENT:", response);
       if (response.status == 403) {
         const data = await this.getDatafromRequest(response);
-        throw new CustomError("Error", this.JSONtoModal(data), "/");
+        throw new CustomError(`${this.lang.getTranslation(["modal", "title", "error"])}`, this.JSONtoModal(data), "/");
       }
       if (await this.handleStatus(response)) {
         let data = await this.getDatafromRequest(response);
-        console.log("data:", data);
         if (data.final_ranking) {
           this.isFinished = true;
           const players = await this.createPlayersDiv(data.final_ranking);
-          return { players, roundTitle: "Finished", round: "<h5>The tournament is over</h5>" };
+          const showNextMatchButton = document.querySelector("#showNextMatchButton");
+          showNextMatchButton.style.display = "none";
+          return { players, roundTitle: `${this.lang.getTranslation(["tournament", "finished"])}`, round: "" };
         }
         if (response.status == 204 || data.status != "in_progress")
           return undefined;
         const players = await this.createPlayersDiv(data.players_order);
         const roundTitle = ` Round ${data.round_number}:`;
-        console.log("data.round_schedule = ", data.rounds_schedule);
         const round = this.getRoundDiv(
           data.rounds_schedule[data.round_number - 1],
         );
@@ -217,8 +216,6 @@ export default class extends AbstractView {
         this.clearTournamentInterval();
       }
       const playersDiv = document.querySelector("#playersTournament");
-      console.log("playersDiv:", playersDiv);
-      console.log("Interval: ", this.refreshInterval);
       if (playersDiv) {
         playersDiv.innerHTML = "";
         playersDiv.innerHTML = data.players;
@@ -252,9 +249,6 @@ export default class extends AbstractView {
       const error = await this.refreshTournament();
       if (!error) countError = 0;
       else {
-        console.error("setUpdateTournament:error", error);
-        console.error("countError", countError);
-
         countError++;
       }
       if (countError == 5) {

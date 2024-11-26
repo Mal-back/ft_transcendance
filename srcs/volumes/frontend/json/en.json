@@ -3,11 +3,14 @@
     "invite_player": "Invite Player",
     "pending_invites": "Pending Invites",
     "players": "Players",
+    "finished": "Finished",
     "start_tournament": "Start Tournament",
     "cancel_tournament": "Cancel Tournament",
+    "canceled": "Sorry, the tournament was canceled",
     "friends_list": "Friends List",
     "no_friends": "No Friends Found",
     "left_tournament": "You left the tournament",
+    "no_tournament": "No current Tournament",
     "kicked": "Sorry, you were kicked"
   },
   "title": {
@@ -24,6 +27,7 @@
     "matchmaking": "Matchmaking",
     "remote": "Remote",
     "tournament": "Tournament",
+    "globalR": "Global Ranking",
     "ranking": "Ranking",
     "notif": "Notifications",
     "createUser": "Create User",

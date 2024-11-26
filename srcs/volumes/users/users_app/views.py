@@ -56,7 +56,7 @@ class PublicUserList(generics.ListAPIView):
         ]
         order_by = self.request.query_params.get("order_by")
         if order_by in allowed_order_fields:
-            return PublicUser.objects.all().order_by(order_by)
+            return PublicUser.objects.all().exclude(username='deleted_account').order_by(order_by)
         return queryset
 
 

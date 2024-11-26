@@ -344,7 +344,7 @@ export default class Pong {
           break;
         }
         case "ArrowUp": {
-          if (this.mode == "remote") return;
+          if (this.connection == "remote") return;
           ev.preventDefault();
           if (!this.player2.upPressed) {
             this.player2.upPressed = true;
@@ -354,7 +354,7 @@ export default class Pong {
           break;
         }
         case "ArrowDown": {
-          if (this.mode == "remote") return;
+          if (this.connection == "remote") return;
           ev.preventDefault();
           if (!this.player2.downPressed) {
             this.player2.downPressed = true;

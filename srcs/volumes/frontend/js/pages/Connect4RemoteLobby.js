@@ -217,7 +217,6 @@ export default class extends AbstractView {
 
   async createOwnerDiv(ownerName) {
     try {
-      console.log("createOwnerDiv: ownerName", ownerName);
       const data = await this.getUserInfo(ownerName);
       const playerAvatar = `background-image: url('${data.profilePic}');`;
       try {
@@ -225,7 +224,7 @@ export default class extends AbstractView {
           const startBtn = document.querySelector("#startTournamentBtn");
           startBtn.style.display = `block`;
         }
-      } catch (error) { }
+      } catch (error) {}
 
       let OwnerButton = `<button class="btn btn-sm btn-warning ms-auto"><i class="bi bi-trophy"></i></button>`;
       return `
@@ -246,10 +245,6 @@ export default class extends AbstractView {
   }
 
   async fillConfirmedPlayers(confirmed_players_profiles, leaveUrl, owner) {
-    console.log(
-      "fillConfirmedPlayers:confirmed_players_profiles",
-      confirmed_players_profiles,
-    );
     if (!confirmed_players_profiles || confirmed_players_profiles.length === 0)
       return;
     const split = owner.split("/");
@@ -279,7 +274,6 @@ export default class extends AbstractView {
     try {
       const playerDivs = await Promise.all(
         invited_players_profiles.map(async (player) => {
-          console.log("Player:", player);
           return await this.createPlayerDivPending(player);
         }),
       );
@@ -333,7 +327,6 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      console.log("checkTournament: response:", response);
       if (response.status == 204) {
         return undefined;
       }
@@ -350,7 +343,6 @@ export default class extends AbstractView {
             "/c4-remote-tournament",
           );
         }
-        console.log("checkTournament: data:", data);
         const htmlContent = await this.fillTournamentInvites(data);
         return htmlContent;
       }
@@ -370,7 +362,7 @@ export default class extends AbstractView {
           invited_players: [
             "user2",
             "user1",
-            "user3"
+            "user3",
             // "user4",
             // "user5",
             // "user6",
@@ -388,14 +380,12 @@ export default class extends AbstractView {
       );
 
       const response = await fetch(request);
-      console.log("createTournament:response:", response);
       const data = await this.getDatafromRequest(response);
       if (response.ok) {
-        console.log("createTournament:data:", data);
         return true;
       } else {
         throw new CustomError(
-          "Error",
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
           this.JSONtoModal(data),
           "/c4-remote-menu",
         );
@@ -418,7 +408,11 @@ export default class extends AbstractView {
       if (await this.handleStatus(response)) {
         data = await this.getDatafromRequest(response);
         if (data.count === 0) {
-          return "<p class='text-center'>" + this.lang.getTranslation(["tournament", "no_friends"]) + "</p>";
+          return (
+            "<p class='text-center'>" +
+            this.lang.getTranslation(["tournament", "no_friends"]) +
+            "</p>"
+          );
         }
       }
     } catch (error) {

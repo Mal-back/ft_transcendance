@@ -698,7 +698,7 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         this.clearLobbyInterval();
-        showModal("Tournament", "Tournament canceled");
+        showModal(`${this.lang.getTranslation(["title", "tournament"])}`, `${this.lang.getTranslation(["tournament", "canceled"])}`);
         navigateTo("/pong-remote-menu");
       }
     } catch (error) {

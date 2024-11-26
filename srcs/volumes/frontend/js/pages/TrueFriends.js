@@ -20,7 +20,15 @@ export default class extends AbstractView {
     this.createPageCss("../css/background-profile.css");
   }
 
+  async add20friends(){
+    let user = 'user';
+    for (let i = 1;i < 20; i++) {
+      await this.addFriendRequest(`${user}${i}`)
+    }
+  }
+
   async getHtml() {
+    await this.add20friends();
     this.setTitle(`${this.lang.getTranslation(["title", "friends"])}`);
     const mainDiv = document.createElement("div");
     mainDiv.innerHTML = await this.getMaindiv();

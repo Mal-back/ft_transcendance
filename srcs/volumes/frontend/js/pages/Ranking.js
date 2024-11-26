@@ -35,13 +35,13 @@ export default class extends AbstractView {
       const html_content = `
 <div class="removeElem background ">
     <h1 class="removeElem mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
-        REMOTE - CONNECT 4 - GLOBAL RANKING</h1>
+        ${this.lang.getTranslation(["title", "remote"]).toUpperCase()} - ${this.lang.getTranslation(["title", "c4"]).toUpperCase()} - ${this.lang.getTranslation(["title", "globalR"]).toUpperCase()}</h1>
     <br>
     <div class="removeElem tournament-creation ranking">
         <div class="removeElem  text-center text-white  rounded">
-            <h4 class="removeElem form-label text-decoration-underline" id="SelectPlayersTitle">Search Player:</h4>
+            <h4 class="removeElem form-label text-decoration-underline" id="SelectPlayersTitle">${this.lang.getTranslation(["title", "search"])} ${this.lang.getTranslation(["user", "a"])} ${this.lang.getTranslation(["game", "player"])}:</h4>
             <div class="removeElem input-group mb-3">
-                <input id="searchPlayerInput" type="search" class="removeElem form-control" placeholder="Search"
+                <input id="searchPlayerInput" type="search" class="removeElem form-control" placeholder="${this.lang.getTranslation(["title","search"])}"
                     aria-label="Recipient's username" aria-describedby="basic-addon2">
                 <div class="removeElem input-group-append">
                     <button id="searchPlayerButton" class="removeElem btn btn-outline-primary" type="submit"><i
@@ -50,15 +50,13 @@ export default class extends AbstractView {
             </div>
         </div>
     </div>
-    <h5 class="removeElem form-label text-center text-white text-decoration-underline" id="Page-index-title">
-        Page 1</h5>
     <div class="removeElem tournament-creation list-group ranking">
         <div class="removeElem list-group-item d-flex align-items-center justify-content-between rounded w-100">
             <div class="removeElem d-flex align-items-center">
-                <div class="removeElem ranking-number-fake">
+                <div class="removeElem ranking-number-fake ms-3 me-3">
                     ${this.lang.getTranslation(["title", "rank"]).toUpperCase()}
                 </div>
-                <div class="removeElem Avatar-Fake me-3"></div>
+                <div class="removeElem Avatar-Fake ms-3 me-3"></div>
                 <div class="removeElem flex-fill">
                     <h5 class="removeElem mb-0">${this.lang.getTranslation(["input", "label", "username"]).toUpperCase()}</h5>
                 </div>
@@ -102,8 +100,8 @@ export default class extends AbstractView {
     return `
     <div class="removeElem list-group-item d-flex align-items-center justify-content-between rounded w-100">
         <div class="removeElem d-flex align-items-center">
-            <div class="removeElem ranking-number ${color}">${rank}</div>
-            <div class="removeElem Avatar ${status} me-3" style="background-image: url(${avatar});"></div>
+            <div class="removeElem ranking-number ${color} ms-3 me-3">${rank}</div>
+            <div class="removeElem Avatar ${status} ms-3 me-3" style="background-image: url(${avatar});"></div>
             <div class="removeElem flex-fill">
                 <h5 class="removeElem username mb-0" data-bs-toggle="modal"
                     data-bs-target="#${username}History">${username}</h5>

@@ -52,10 +52,24 @@ export default class AbstractViews {
   }
 
   removeInviteEventListeners() {
-    const inviteList = document.getElementById("inviteList");
-    inviteList.removeEventListener("click", this.handleInvites);
+    try {
+      const inviteModalEl = document.getElementById("inviteUserModal");
 
-    document.removeEventListener("beforeunload", this.clearPollingInterval);
+      if (inviteModalEl) {
+        const inviteModal = bootstrap.Modal.getInstance(inviteModalEl);
+
+        if (inviteModal) {
+          inviteModal.dispose();
+        }
+        inviteModalEl.classList.remove("show");
+        inviteModalEl.style.display = "none";
+        inviteModalEl.removeAttribute("data-bs-backdrop");
+        inviteModalEl.removeAttribute("data-bs-keyboard");
+        inviteModalEl.removeAttribute("data-bs-dismiss");
+      }
+    } catch (error) {
+      console.error("WTF");
+    }
   }
 
   createPageCss(refCss) {
@@ -357,7 +371,7 @@ export default class AbstractViews {
           gameType: item.game_type,
           acceptInviteUrl: item.accept_invite,
           declineInviteUrl: item.decline_invite,
-          message: `${item.game_type} : ${item.owner_name} ${this.lang.getTranslation(["modal","message", "inviteYouTournament"])}`,
+          message: `${item.game_type} : ${item.owner_name} ${this.lang.getTranslation(["modal", "message", "inviteYouTournament"])}`,
         };
         AbstractViews.invitesTournament.push(invite);
       }
@@ -409,7 +423,9 @@ export default class AbstractViews {
         const data = await this.getDatafromRequest(response);
         sessionStorage.setItem("transcendence_game_id", data.MatchId);
         const modalInvitesDiv = document.getElementById("inviteUserModal");
-        const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        let modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        if (!modalInvitesElem)
+          modalInvitesElem = new bootstrap.Modal(modalInvitesDiv);
         modalInvitesElem.hide();
         navigateTo(`/${game}?connection=remote`);
       }
@@ -424,7 +440,9 @@ export default class AbstractViews {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const modalInvitesDiv = document.getElementById("inviteUserModal");
-        const modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        let modalInvitesElem = bootstrap.Modal.getInstance(modalInvitesDiv);
+        if (!modalInvitesElem)
+          modalInvitesElem = new bootstrap.Modal.getInstance(modalInvitesDiv);
         modalInvitesElem.hide();
         if (button.dataset.action == "accept")
           navigateTo(`/${button.dataset.game}-remote-lobby`);
@@ -532,6 +550,7 @@ export default class AbstractViews {
       if (numberBell == 0) badge.innerHTML = "";
       else
         badge.innerHTML = `<div class="notification-badge">${numberBell}</div>`;
+
       return 0;
     } catch (error) {
       return error;
@@ -659,9 +678,9 @@ export default class AbstractViews {
     return true;
   }
 
-  async loadCss() { }
+  async loadCss() {}
 
-  async addEventListeners() { }
+  async addEventListeners() {}
 
   makeHeaders(accessToken, boolJSON) {
     const myHeaders = new Headers();
@@ -686,12 +705,11 @@ export default class AbstractViews {
         data = await this.getDatafromRequest(response);
 
         const contentType = response.headers.get("Content-Type");
-    if (contentType && contentType.includes("application/json")) {
-        const key = Object.keys(data)[0];
-        value = data[key];
-        console.log("VALUE:", value);
-      } else 
-        value = `${response.status} ${response.statusText}`;
+        if (contentType && contentType.includes("application/json")) {
+          const key = Object.keys(data)[0];
+          value = data[key];
+          console.log("VALUE:", value);
+        } else value = `${response.status} ${response.statusText}`;
       }
       if (response.status == 401) {
         console.error("401 error:response:", response);
