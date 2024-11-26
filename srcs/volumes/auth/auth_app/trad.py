@@ -79,7 +79,8 @@ trad = {
         "username_otp_required" : "Username and otp are required",
         "2fa_is_activated" :  "2FA is enabled. Please enter the code from your authentication application",
         "error_2fa_update" : "Error updating two factor authentication",
-        "same_username" : "This username is already your username"
+        "same_username" : "This username is already your username",
+        "username_taken_error" : "This username is already taken"
     },
 
     "fr": 
@@ -162,7 +163,8 @@ trad = {
         "username_otp_required" : "Le nom d'utilisateur et le code d'activation sont requis",
         "2fa_is_activated" :  "Le 2FA est activé. Veuillez entrer le code de votre application d'authentification",
         "error_2fa_update" : "Erreur survenue durant la mise à jour de l'authentification à deux facteur",
-        "same_username" : "Ce nom d'utilisateur est déjà votre nom d'utilisateur"
+        "same_username" : "Ce nom d'utilisateur est déjà votre nom d'utilisateur",
+        "username_taken_error" : "Ce nom d'utilisateur est déjà pris"
     },
 
     "es": 
@@ -245,7 +247,8 @@ trad = {
         "username_otp_required" : "Se requiere nombre de usuario y código de autenticación",
         "2fa_is_activated" :  "La autenticación en dos pasos (2FA) está habilitada. Por favor, ingrese el código de su aplicación de autenticación.",
         "error_2fa_update" : "Error al actualizar la autenticación de dos factores",
-        "same_username" : "Este nombre de usuario ya es tu nombre de usuario"
+        "same_username" : "Este nombre de usuario ya es tu nombre de usuario",
+        "username_taken_error" : "Este nombre de usuario ya está en uso"
     }
 
 }
