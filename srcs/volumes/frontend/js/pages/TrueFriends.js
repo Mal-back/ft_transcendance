@@ -125,6 +125,7 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         data = await response.json();
+        console.log("friends data:", data);
         if (data.count === 0) {
           return this.noFriendDiv();
         }
@@ -144,6 +145,7 @@ export default class extends AbstractView {
     let nextPage = data.next;
     try {
       while (nextPage) {
+        console.log("NEXT PAGE:", nextPage);
         const request = await this.makeRequest(nextPage, "GET");
         const response = await fetch(request);
         if (await this.handleStatus(response)) {
@@ -161,7 +163,7 @@ export default class extends AbstractView {
     } catch (error) {
       this.handleCatch(error);
     }
-    return `<div class="list-group removeElem" id="friendList">${friendList.innerHTML}</div>`;
+    return `<div class="friends-scroll list-group removeElem" id="friendList">${friendList.innerHTML}</div>`;
   }
 
   createFriendElement(friendJson) {
@@ -173,7 +175,7 @@ export default class extends AbstractView {
     console.log("AVATAR:", friendAvatar);
 
     return `
-      <div class="list-group-item d-flex align-items-center mb3 rounded removeElem">
+      <div class="list-group-item d-flex align-items-center mb-1 rounded removeElem">
         <div class="removeElem rounded-circle Avatar ${friendStatus} me-3" style="${friendAvatar}" alt="Avatar"></div>
         <div class="flex-fill removeElem">
           <h5 class="mb-0 removeElem">${friendJson.username}</h5>
