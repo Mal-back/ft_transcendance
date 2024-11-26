@@ -220,47 +220,45 @@ function addMainEventListeners() {
     const currentUrl = new URL(window.location.href);
     navigateTo(currentUrl.toString());
   });
+}
+document.addEventListener("keydown", (ev) => {
+  const modal = document.querySelector("#alertModal");
+  if (modal.classList.contains("show")) {
+    const modalInstance = bootstrap.Modal.getInstance(modal);
+    modalInstance.hide();
+    modal.setAttribute("inert", "true");
+    modal.setAttribute("aria-hidden", "true");
+  }
+});
 
-  document.addEventListener("keydown", (ev) => {
-    const modal = document.querySelector("#alertModal");
-    if (modal.classList.contains("show")) {
-      const modalInstance = bootstrap.Modal.getInstance(modal);
-      modalInstance.hide();
-      modal.setAttribute("inert", "true");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.focus();
+document
+  .getElementById("buttonOnGoingGame")
+  .addEventListener("click", async (ev) => {
+    try {
+      ev.preventDefault();
+      const url = ev.currentTarget.dataset.redirectUrl;
+      if (url) {
+        if (
+          ev.target.innerText ==
+          view.lang.getTranslation(["button", "cancel"]).toUpperCase()
+        ) {
+          const request = await view.makeRequest(url, "DELETE");
+          const response = await fetch(request);
+          if (view.handleStatus(response)) {
+            const divOnGoingGame = document.querySelector("#divOnGoingGame");
+            divOnGoingGame.style.display = "none";
+          }
+        } else navigateTo(url);
+        const friendModalDiv = document.querySelector("#inviteUserModal");
+        const modal = bootstrap.Modal.getInstance(friendModalDiv);
+        modal.hide();
+        friendModalDiv.setAttribute("inert", "true");
+        friendModalDiv.setAttribute("aria-hidden", "true");
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        showModal(error.title, error.message);
+        navigateTo(error.redirect);
+      }
     }
   });
-
-  document
-    .getElementById("buttonOnGoingGame")
-    .addEventListener("click", async (ev) => {
-      try {
-        ev.preventDefault();
-        const url = ev.currentTarget.dataset.redirectUrl;
-        if (url) {
-          if (
-            ev.target.innerText ==
-            view.lang.getTranslation(["button", "cancel"]).toUpperCase()
-          ) {
-            const request = await view.makeRequest(url, "DELETE");
-            const response = await fetch(request);
-            if (view.handleStatus(response)) {
-              const divOnGoingGame = document.querySelector("#divOnGoingGame");
-              divOnGoingGame.style.display = "none";
-            }
-          } else navigateTo(url);
-          const friendModalDiv = document.querySelector("#inviteUserModal");
-          const modal = bootstrap.Modal.getInstance(friendModalDiv);
-          modal.hide();
-          friendModalDiv.setAttribute("inert", "true");
-          friendModalDiv.setAttribute("aria-hidden", "true");
-        }
-      } catch (error) {
-        if (error instanceof CustomError) {
-          showModal(error.title, error.message);
-          navigateTo(error.redirect);
-        }
-      }
-    });
-}
