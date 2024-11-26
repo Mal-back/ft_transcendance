@@ -38,7 +38,8 @@
     "remoteBattle": "Parties en ligne",
     "remoteTournament": "Tournois en ligne",
     "yes": "Oui",
-    "no": "Non"
+    "no": "Non",
+	"sendData" : "Envoyer les données"
   },
   "button": {
     "close": "Fermer",
@@ -199,6 +200,7 @@
       "addYourself": "Vous ne pouvez pas vous ajouter en tant qu'ami",
       "inviteYou": "vous a invité à une partie",
       "inviteYouTournament": "vous a invité à un tournoi",
+	  "sendData": "Vos informations personnelles ont été envoyées à votre e-mail",
       "2faActivationInfo": "Un QR Code va être créé, vous devez le scanner avec votre application d'authentification. Attention : Si vous voulez désactiver le 2FA, vous devez d'abord le désactiver dans les paramètres de votre compte Transcendance avant de le supprimer de votre application d'authentification.",
       "2faDeactivationInfo": "Êtes-vous sûr de vouloir désactiver le 2FA ? Vous pourrez le réactiver plus tard, n'oubliez pas de le supprimer dans votre application d'authentification.",
       "scanQR": "Scannez ce QR code",
@@ -207,7 +209,10 @@
       "restart": "Redémarrez la page si vous ne voyez pas vos modifications.",
       "2faActivationSuccess": "Vous avez activé l'authentification à deux facteurs avec succès.",
       "2faDeactivationSuccess": "Vous avez désactivé l'authentification à deux facteurs avec succès.",
-      "profilePicChangeSame": "Cette image est déjà votre photo de profil !"
+	  "profilePicChangeSame": "Cette image est déjà votre photo de profil !",
+	  "sendDataConfirm" : "Vos données seront envoyées à votre adresse e-mail. Êtes-vous sûr ?",
+	  "areYouSure" : "Etes-vous certain ?"
+
     }
   },
   "policy": {

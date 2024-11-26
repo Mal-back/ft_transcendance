@@ -214,6 +214,7 @@ export default class extends AbstractView {
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
         setSessionStorage(data, this.username);
+		await this.lang.fetchJSONLanguage()
         navigateTo("/");
         showModal(
           `${this.lang.getTranslation(["modal", "title", "auth"])}`,
@@ -262,6 +263,7 @@ export default class extends AbstractView {
         return;
       }
       const data = await response.json();
+	  console.log("LOGIN data: ", data)
       if (response.status == 202) {
         this.username = nameForm;
         this.password = paswordForm;
@@ -269,6 +271,7 @@ export default class extends AbstractView {
         return;
       }
       setSessionStorage(data, nameForm);
+	  await this.lang.fetchJSONLanguage()
       navigateTo("/");
       showModal(
         `${this.lang.getTranslation(["modal", "title", "auth"])}`,

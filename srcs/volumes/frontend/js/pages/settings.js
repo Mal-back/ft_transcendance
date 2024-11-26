@@ -321,10 +321,10 @@ export default class extends AbstractView {
     <div class="modal-dialog modal-80 modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="sendDataBtnLabel">Send Data</h5>
+                <h5 class="modal-title" id="sendDataBtnLabel">${this.lang.getTranslation(["title", "sendData"])}</h5>
             </div>
             <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                <div><h4>Your data will be sent to your email address. Are you sure?</h4></div>
+                <div><h4>${this.lang.getTranslation(["modal", "message", "sendDataConfirm"])}</h4></div>
                 <div>
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
                     ${this.lang.getTranslation(["title", "no"])}
@@ -344,7 +344,7 @@ export default class extends AbstractView {
                 <h5 class="modal-title" id="confirmDeleteAccountModalLabel">${this.lang.getTranslation(["button", "confirmAccountDeletion"])}</h5>
             </div>
             <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-                <div><h4>Are you sure?</h4></div>
+                <div><h4>${this.lang.getTranslation(["modal", "message", "areYouSure"])}</h4></div>
                 <br>
                 <div>
                 <button type="button" class="btn btn-secondary removeElem" data-bs-dismiss="modal">
@@ -1057,13 +1057,35 @@ export default class extends AbstractView {
     }
   }
 
-  handleSaveLanguage(ev) {
+  async handleSaveLanguage(ev) {
     ev.preventDefault();
     const chosenLanguage = document.querySelector("#language").value;
+	const username = sessionStorage.getItem("username_transcendence");
+    try {
+      // await this.checkoldMail(oldMail);
+      const request = await this.makeRequest(
+        "/api/auth/update/" + username + "/",
+        "PATCH",
+        {
+          lang: chosenLanguage
+        },
+      );
+      const response = await fetch(request);
+	  console.log("language: ", response);
+      if (await this.handleStatus(response)) {
     if (chosenLanguage != sessionStorage.getItem("transcendence_language")) {
       sessionStorage.setItem("transcendence_language", chosenLanguage);
       navigateTo("/settings");
     }
+}
+  } catch (error) {
+	if (error instanceof CustomError) {
+		error.showModalCustom();
+		navigateTo(error.redirect)
+	} else {
+		console.error("handleSaveLanguage:", error)
+	}
+  }
   }
 
   async handleDeleteAccount(ev) {

@@ -19,13 +19,6 @@ import json
 #######################
 from django.core.mail import send_mail
 from rest_framework_simplejwt.views import TokenObtainPairView
-import random
-from sendgrid.helpers.mail import Mail, Email, To, Content
-import string
-import sendgrid
-from django.conf import settings
-from datetime import datetime, timedelta
-import pyotp
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 
@@ -45,7 +38,15 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             return Response({
                 'message': translate(lang, "2fa_is_activated")
             }, status=status.HTTP_202_ACCEPTED)
-        return super().post(request, *args, **kwargs)
+        token = MyTokenObtainPairSerializer.get_token(user)
+        access_token = str(token.access_token)
+        refresh_token = str(token)
+        return Response({
+            "access": access_token,
+            "refresh": refresh_token,
+            "lang" : user.lang
+        }, status=status.HTTP_200_OK)
+        # return super().post(request, *args, **kwargs)
     
 class OTPValidationView(APIView):
 
@@ -70,7 +71,8 @@ class OTPValidationView(APIView):
             return Response({
                 "message": translate(lang, "valid_otp"),
                 "access": access_token,
-                "refresh": refresh_token
+                "refresh": refresh_token,
+                "lang" : user.lang
             }, status=status.HTTP_200_OK)
         return Response({"message": translate(lang, "invalid_otp")}, status=status.HTTP_400_BAD_REQUEST)
 ###################################################
@@ -137,6 +139,7 @@ class UserUpdateView(generics.UpdateAPIView):
         
         if serializer.is_valid():
             new_username = serializer.validated_data.get('username', old_username)
+            print(request.data)
             if old_username != new_username:
                 
                 req_urls = [
@@ -147,7 +150,7 @@ class UserUpdateView(generics.UpdateAPIView):
                 ]
                 if send_update_requests(old_username, req_urls, body={'username': new_username, 'old_username': old_username, 'new_username': new_username}) == False:
                     message = translate(lang, "update_username_error_in_game")
-                    return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
                 serializer.save()
                 token = MyTokenObtainPairSerializer.get_token(user)
                 access_token = str(token.access_token)
@@ -189,13 +192,14 @@ class UserUpdateView(generics.UpdateAPIView):
                 }, status=status.HTTP_200_OK)
                 serializer.save()
                 return Response({'Ok': translate(lang, "update_success")}, status=status.HTTP_200_OK)
-            else:
-                message = translate(lang, "same_username")
+            elif "two_fa_enabled" in request.data:
+                message = translate(lang, "error_2fa_update")
                 return Response({"error" : message}, status=status.HTTP_409_CONFLICT)
-
+            serializer.save()
+            return Response({'Ok': translate(lang, "update_success")}, status=status.HTTP_200_OK)
         else:
-            message = translate(lang, "error_2fa_update")
-            return Response({'Error': message}, status=status.HTTP_409_CONFLICT)
+            message = translate(lang, "invalid_data_error")
+            return Response({'Error': message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordUpdateView(generics.UpdateAPIView):

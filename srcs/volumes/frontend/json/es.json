@@ -38,7 +38,8 @@
     "remoteBattle": "Batalla Remota",
     "remoteTournament": "Torneo Remoto",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+	"sendData" : "Enviar datos"
   },
   "button": {
     "close": "Cerrar",
@@ -197,13 +198,16 @@
       "lostGame": "Mejor suerte la próxima vez",
       "addYourself": "No puedes agregarte a ti mismo como amigo",
       "inviteYou": "te invita a un juego",
+	  "sendData": "Su información personal ha sido enviada a su correo electrónico",
       "inviteYouTournament": "te invita a un torneo",
       "2faActivationInfo": "Se creará un código QR, debes escanearlo en tu aplicación de autenticación. Advertencia: Si deseas desactivar el 2FA, primero debes desactivarlo en la configuración de tu cuenta de Transcendance antes de eliminarlo de tu aplicación de autenticación.",
       "2faDeactivationInfo": "¿Estás seguro de que deseas desactivar el 2FA? Puedes volver a activarlo más tarde, no olvides eliminarlo de tu aplicación de autenticación.",
       "scanQR": "Escanea este código QR",
       "user_does_not_exist": "Este usuario no existe",
       "profilePicChangeSuccess": "¡Cambiaste tu foto de perfil con éxito!",
-      "profilePicChangeSame": "¡Ya tienes esta foto como tu foto de perfil!"
+      "profilePicChangeSame": "¡Ya tienes esta foto como tu foto de perfil!",
+	  "sendDataConfirm" : "Sus datos serán enviados a su dirección de correo electrónico. ¿Está seguro?",
+	  "areYouSure" : "¿Está seguro?"
     }
   },
   "policy": {
