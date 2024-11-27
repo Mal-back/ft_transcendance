@@ -20,12 +20,12 @@ export default class extends AbstractView {
     this.createPageCss("../css/background-profile.css");
   }
 
-  async add20friends(){
-    let user = 'user';
-    for (let i = 1;i < 20; i++) {
-      await this.addFriendRequest(`${user}${i}`)
-    }
-  }
+  // async add20friends(){
+  // let user = 'user';
+  // for (let i = 1;i < 20; i++) {
+  // await this.addFriendRequest(`${user}${i}`)
+  // }
+  // }
 
   async getHtml() {
     // await this.add20friends();

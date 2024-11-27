@@ -3,11 +3,14 @@
     "invite_player": "Inviter un Joueur",
     "pending_invites": "Invitations en cours",
     "players": "Joueurs",
+    "finished": "Terminé",
     "start_tournament": "Commencer le tournoi",
     "cancel_tournament": "Annuler le tournoi",
+    "canceled": "Désolé, le tournoi a été annulé",
     "friends_list": "Liste d'amis",
     "no_friends": "Aucun Ami Trouvé",
     "left_tournament": "Vous avez quitté le tournoi",
+    "no_tournament": "Aucun tournoi en cours",
     "kicked": "Désolé, vous avez été exclu"
   },
   "title": {
@@ -31,7 +34,6 @@
     "createProfile": "Créer un nouveau profil",
     "mode": "Mode",
     "rank": "Rang",
-    "search": "Chercher",
     "played": "Jouées",
     "gamesPlayed": "Parties Jouées",
     "rankedGame": "Partie classée",
@@ -41,7 +43,8 @@
     "remoteTournament": "Tournois en ligne",
     "yes": "Oui",
     "no": "Non",
-	"sendData" : "Envoyer les données"
+    "sendData": "Envoyer les données",
+    "search": "Chercher"
   },
   "button": {
     "close": "Fermer",
@@ -75,7 +78,6 @@
   "user": {
     "you": "Vous",
     "is": "est",
-    "a": "a",
     "your": "Votre",
     "account": "Compte",
     "avatar": "Avatar",
@@ -84,7 +86,8 @@
     "pleaseFriend": "Veuillez ajouter des amis",
     "choose": "Choisissez votre avatar",
     "orUpload": "Ou téléversez le vôtre",
-    "selectAvatar": "Sélectionnez ou téléversez votre avatar de profil"
+    "selectAvatar": "Sélectionnez ou téléversez votre avatar de profil",
+    "a": "un"
   },
   "game": {
     "label": "Jeu",
@@ -190,6 +193,7 @@
       "serverLoading": "Le serveur a redémarré et a besoin de temps pour terminer l'initialisation, veuillez patienter un peu et réessayer",
       "authError": "Erreur d'authentification, veuillez vous reconnecter",
       "successChange": "a été changé avec succès",
+      "sendData": "Vos informations personnelles ont été envoyées à votre e-mail",
       "successDeleteAccount": "Votre compte a été supprimé avec succès, toutes les données associées sont en cours d'anonymisation",
       "alreadyLog": "Vous êtes déjà connecté",
       "noAccount": "Nom d'utilisateur ou mot de passe incorrect",
@@ -203,19 +207,14 @@
       "addYourself": "Vous ne pouvez pas vous ajouter en tant qu'ami",
       "inviteYou": "vous a invité à une partie",
       "inviteYouTournament": "vous a invité à un tournoi",
-	  "sendData": "Vos informations personnelles ont été envoyées à votre e-mail",
       "2faActivationInfo": "Un QR Code va être créé, vous devez le scanner avec votre application d'authentification. Attention : Si vous voulez désactiver le 2FA, vous devez d'abord le désactiver dans les paramètres de votre compte Transcendance avant de le supprimer de votre application d'authentification.",
       "2faDeactivationInfo": "Êtes-vous sûr de vouloir désactiver le 2FA ? Vous pourrez le réactiver plus tard, n'oubliez pas de le supprimer dans votre application d'authentification.",
       "scanQR": "Scannez ce QR code",
+      "user_does_not_exist": "Cet utilisateur n'existe pas",
       "profilePicChangeSuccess": "Vous avez changé votre photo de profil avec succès",
-      "selectValidPic": "Veuillez sélectionner une photo de profil valide",
-      "restart": "Redémarrez la page si vous ne voyez pas vos modifications.",
-      "2faActivationSuccess": "Vous avez activé l'authentification à deux facteurs avec succès.",
-      "2faDeactivationSuccess": "Vous avez désactivé l'authentification à deux facteurs avec succès.",
-	  "profilePicChangeSame": "Cette image est déjà votre photo de profil !",
-	  "sendDataConfirm" : "Vos données seront envoyées à votre adresse e-mail. Êtes-vous sûr ?",
-	  "areYouSure" : "Etes-vous certain ?"
-
+      "profilePicChangeSame": "Cette image est déjà votre photo de profil !",
+      "sendDataConfirm": "Vos données seront envoyées à votre adresse e-mail. Êtes-vous sûr ?",
+      "areYouSure": "Etes-vous certain ?"
     }
   },
   "policy": {

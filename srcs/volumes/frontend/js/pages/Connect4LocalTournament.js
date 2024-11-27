@@ -245,7 +245,7 @@ export default class extends AbstractView {
       this.getNextRound();
     if (this.tournament.round.current >= this.tournament.round.max) {
       showModal(
-        `${this.lang.getTranslation(["moda", "title", "congrats"])}`,
+        `${this.lang.getTranslation(["modal", "title", "congrats"])}`,
         `${this.getPlayerByRank(1).name} ${this.lang.getTranslation(["modal", "message", "wonTournament"])}`,
       );
       sessionStorage.removeItem("tournament_transcendence_local");
