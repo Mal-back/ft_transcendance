@@ -42,7 +42,7 @@ export default class extends AbstractView {
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-green custom-button"
             id="PongRemotePlayButton">${this.lang.getTranslation(["game", "play"]).toUpperCase()}</button>
           <br>
-          <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-maroon custom-button" data-bs-toggle="modal" data-bs-target="#loading-modal"
+          <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-maroon custom-button"
             id="PongMatchmakingButton">${this.lang.getTranslation(["title", "matchmaking"]).toUpperCase()}</button>
           <br>
           <button type="button" class="removeElem btn btn-light white-txt btn-lg bg-midnightblue custom-button"
@@ -255,12 +255,21 @@ export default class extends AbstractView {
         { game_type: "pong" },
       );
       const response = await fetch(request);
-      if (await this.handleStatus(response)) {
-        if (response.status == 204) return true;
-        const data = await this.getDatafromRequest(response);
+      if (response.ok) {
         return true;
       }
-      return false;
+      const data = await this.getDatafromRequest(response);
+      const contentType = response.headers.get("Content-Type");
+      if (contentType && contentType.includes("application/json")) {
+        const key = Object.keys(data)[0];
+        let value = data[key];
+        if (value == "You're in the matchmaking queue") return true;
+        showModal(
+          `${this.lang.getTranslation(["modal", "title", "error"])}`,
+          value,
+        );
+        return false;
+      }
     } catch (error) {
       this.handleCatch(error);
       return false;
@@ -271,7 +280,7 @@ export default class extends AbstractView {
     ev.preventDefault();
     try {
       const modalMatchmakingDiv = document.querySelector("#loading-modal");
-      const modalMatchmaking = bootstrap.Modal.getInstance(modalMatchmakingDiv);
+      let modalMatchmaking = bootstrap.Modal.getInstance(modalMatchmakingDiv);
       if (!modalMatchmaking) {
         modalMatchmaking = new bootstrap.Modal(modalMatchmakingDiv, {
           backdop: "static",
@@ -281,8 +290,10 @@ export default class extends AbstractView {
         modalMatchmaking._config.backdrop = "static";
         modalMatchmaking._config.keyboard = false;
       }
+      if ((await this.joinMatchmakingQueue()) == false) {
+        return;
+      }
       modalMatchmaking.show();
-      if ((await this.joinMatchmakingQueue()) == false) return;
     } catch (error) {
       if (error instanceof CustomError) {
         error.showModalCustom();
@@ -313,10 +324,7 @@ export default class extends AbstractView {
         "DELETE",
       );
       const response = await fetch(request);
-      console.log("leaveMatchmakingQueue: response", response);
       if (await this.handleStatus(response)) {
-        const data = await this.getDatafromRequest(response);
-        console.log("leaveMatchmakingQueue: data", data);
       }
     } catch (error) {
       this.handleCatch(error);

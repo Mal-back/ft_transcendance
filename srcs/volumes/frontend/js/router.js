@@ -229,6 +229,41 @@ document.addEventListener("keydown", (ev) => {
   }
 });
 
+// Add event listeners for the Bootstrap modal events
+document.getElementById('inviteUserModal').addEventListener('shown.bs.modal', function () {
+  // Ensure modal is not hidden from assistive technology
+  // this.setAttribute('aria-hidden', 'false');
+  this.removeAttribute('aria-hidden');
+
+
+  // Optional: Hide other parts of the page
+  // document.getElementById('mainContent').setAttribute('aria-hidden', 'true');
+});
+
+document.getElementById('inviteUserModal').addEventListener('hidden.bs.modal', function () {
+
+  // this.setAttribute('aria-hidden', 'true');
+  this.removeAttribute('aria-hidden');
+  // Revert aria-hidden on other parts of the page
+  // document.getElementById('mainContent').setAttribute('aria-hidden', 'false');
+});
+
+document.getElementById('alertModal').addEventListener('shown.bs.modal', function () {
+  // Ensure modal is not hidden from assistive technology
+  // this.setAttribute('aria-hidden', 'false');
+  this.removeAttribute('aria-hidden');
+
+  // Optional: Hide other parts of the page
+  // document.getElementById('mainContent').setAttribute('aria-hidden', 'true');
+});
+
+document.getElementById('alertModal').addEventListener('hidden.bs.modal', function () {
+  // this.setAttribute('aria-hidden', 'true');
+  this.removeAttribute('aria-hidden');
+  // Revert aria-hidden on other parts of the page
+  // document.getElementById('mainContent').setAttribute('aria-hidden', 'false');
+});
+
 document
   .getElementById("buttonOnGoingGame")
   .addEventListener("click", async (ev) => {
