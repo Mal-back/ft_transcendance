@@ -148,19 +148,6 @@ window.addEventListener("popstate", async () => {
 document.addEventListener("DOMContentLoaded", () => {
   addMainEventListeners();
   document.body.addEventListener("click", handleClick);
-  const originalConsoleError = console.error;
-
-  console.error = function (message, ...optionalParams) {
-    if (
-      typeof message === "string" &&
-      message.includes(
-        "Blocked aria-hidden on an element because its descendant retained focus",
-      )
-    ) {
-      return;
-    }
-    originalConsoleError.call(console, message, ...optionalParams);
-  };
   router();
 });
 
@@ -245,25 +232,41 @@ document.addEventListener("keydown", (ev) => {
 document
   .getElementById("inviteUserModal")
   .addEventListener("shown.bs.modal", function () {
+    console.log("show modal invite");
     this.removeAttribute("aria-hidden");
+    this.removeAttribute("inert"); // Restore interaction
+    this.removeAttribute("aria-hidden");
+    this.focus();
   });
 
 document
   .getElementById("inviteUserModal")
   .addEventListener("hidden.bs.modal", function () {
+    document.body.focus();
+    console.log("hide modal invite");
     this.removeAttribute("aria-hidden");
+    this.setAttribute("inert", ""); // Prevent interaction
+    this.setAttribute("aria-hidden", "true");
   });
 
 document
   .getElementById("alertModal")
   .addEventListener("shown.bs.modal", function () {
+    console.log("Show modal alert");
     this.removeAttribute("aria-hidden");
+    this.removeAttribute("inert"); // Restore interaction
+    this.removeAttribute("aria-hidden");
+    this.focus();
   });
 
 document
   .getElementById("alertModal")
   .addEventListener("hidden.bs.modal", function () {
+    document.body.focus();
+    console.log("hide modal alert");
     this.removeAttribute("aria-hidden");
+    this.setAttribute("inert", ""); // Prevent interaction
+    this.setAttribute("aria-hidden", "true");
   });
 
 document

@@ -1,5 +1,6 @@
 import { navigateTo } from "../router.js";
 import {
+    getIpPortAdress,
   removeSessionStorage,
   setSessionStorage,
   showModal,
@@ -491,7 +492,7 @@ export default class AbstractViews {
     try {
       const onGoingGame = document.querySelector("#divOnGoingGame");
       let boolGame = 0;
-      const request = await this.makeRequest("api/matchmaking/invites", "GET");
+      const request = await this.makeRequest("/api/matchmaking/invites/", "GET");
       const response = await fetch(request);
       if (response.status == 403) {
         const data = await this.getDatafromRequest(response);
@@ -774,8 +775,28 @@ export default class AbstractViews {
       return `${response.status} ${response.statusText}`;
     }
   }
+  removeIPAndPort(url) {
+  try {
+    // Check if the URL starts with a protocol; if not, prepend a default one
+    if (!/^https?:\/\//i.test(url)) {
+        return url
+    }
+
+    const parsedUrl = new URL(url);
+    const { pathname, search, hash } = parsedUrl;
+    return pathname + search + hash;
+  } catch (error) {
+    console.error("Invalid URL:", url);
+    return url;
+  }
+}
 
   async makeRequest(url, myMethod = "GET", myBody = null, boolImage = false) {
+    console.log("URL BEFORE:", url)
+    url = this.removeIPAndPort(url);
+    console.log("URL MIDDLE:", url)
+    url = `https://${getIpPortAdress()}${url}`
+    console.log("URL AFTER:", url)
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {

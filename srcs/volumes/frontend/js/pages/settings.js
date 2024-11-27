@@ -436,7 +436,7 @@ export default class extends AbstractView {
   async getCurrentAvatar() {
     try {
       const username = sessionStorage.getItem("username_transcendence");
-      const request = await this.makeRequest(`api/users/${username}/`, "GET");
+      const request = await this.makeRequest(`/api/users/${username}/`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
@@ -452,7 +452,7 @@ export default class extends AbstractView {
   async is2faActivated() {
     try {
       const username = sessionStorage.getItem("username_transcendence");
-      const request = await this.makeRequest(`api/auth/${username}/`, "GET");
+      const request = await this.makeRequest(`/api/auth/${username}/`, "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
@@ -473,7 +473,7 @@ export default class extends AbstractView {
     try {
       const defaultAvatarMainDiv = document.createElement("div");
       defaultAvatarMainDiv.classList.add("removeElem", "row");
-      const request = await this.makeRequest("api/avatars/", "GET");
+      const request = await this.makeRequest("/api/avatars/", "GET");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();

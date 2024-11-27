@@ -1,6 +1,7 @@
 import { navigateTo } from "../router.js";
 import AbstractView from "./AbstractViews.js";
 import {
+    getIpPortAdress,
   removeSessionStorage,
   setSessionStorage,
   showModal,
