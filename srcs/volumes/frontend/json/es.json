@@ -8,7 +8,10 @@
     "friends_list": "Lista de Amigos",
     "no_friends": "No se Encontraron Amigos",
     "left_tournament": "Saliste del torneo",
-    "kicked": "Lo sentimos, fuiste expulsado"
+    "kicked": "Lo sentimos, fuiste expulsado",
+    "finish": "Finalizado",
+    "canceled": "Lo sentimos, el torneo fue cancelado",
+    "no_tournament": "No hay torneo actual"
   },
   "title": {
     "home": "Inicio",
@@ -40,7 +43,8 @@
     "remoteTournament": "Torneo Remoto",
     "yes": "Sí",
     "no": "No",
-	"sendData" : "Enviar datos"
+    "sendData": "Enviar datos",
+    "search": "Buscar"
   },
   "button": {
     "close": "Cerrar",
@@ -82,7 +86,8 @@
     "pleaseFriend": "Por favor, añade amigos",
     "choose": "Elige tu Avatar",
     "orUpload": "O Subir el Tuyo",
-    "selectAvatar": "Selecciona o Sube tu Avatar de Perfil"
+    "selectAvatar": "Selecciona o Sube tu Avatar de Perfil",
+    "a": "a un"
   },
   "game": {
     "label": "Juego",
@@ -199,7 +204,7 @@
       "lostGame": "Mejor suerte la próxima vez",
       "addYourself": "No puedes agregarte a ti mismo como amigo",
       "inviteYou": "te invita a un juego",
-	  "sendData": "Su información personal ha sido enviada a su correo electrónico",
+      "sendData": "Su información personal ha sido enviada a su correo electrónico",
       "inviteYouTournament": "te invita a un torneo",
       "2faActivationInfo": "Se creará un código QR, debes escanearlo en tu aplicación de autenticación. Advertencia: Si deseas desactivar el 2FA, primero debes desactivarlo en la configuración de tu cuenta de Transcendance antes de eliminarlo de tu aplicación de autenticación.",
       "2faDeactivationInfo": "¿Estás seguro de que deseas desactivar el 2FA? Puedes volver a activarlo más tarde, no olvides eliminarlo de tu aplicación de autenticación.",
@@ -207,8 +212,9 @@
       "user_does_not_exist": "Este usuario no existe",
       "profilePicChangeSuccess": "¡Cambiaste tu foto de perfil con éxito!",
       "profilePicChangeSame": "¡Ya tienes esta foto como tu foto de perfil!",
-	  "sendDataConfirm" : "Sus datos serán enviados a su dirección de correo electrónico. ¿Está seguro?",
-	  "areYouSure" : "¿Está seguro?"
+      "sendDataConfirm": "Sus datos serán enviados a su dirección de correo electrónico. ¿Está seguro?",
+      "areYouSure": "¿Está seguro?",
+      "invalidHost": "Dirección IP no válida"
     }
   },
   "policy": {

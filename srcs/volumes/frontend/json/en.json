@@ -43,7 +43,8 @@
     "remoteTournament": "Remote Tournament",
     "yes": "Yes",
     "no": "No",
-	"sendData" : "Send data"
+    "sendData": "Send data",
+    "search": "Search"
   },
   "button": {
     "close": "Close",
@@ -85,7 +86,8 @@
     "pleaseFriend": "Please add Friends",
     "choose": "Choose your Avatar",
     "orUpload": "Or Upload your own",
-    "selectAvatar": "Select or Upload your profile Avatar"
+    "selectAvatar": "Select or Upload your profile Avatar",
+    "a": "a"
   },
   "game": {
     "label": "Game",
@@ -211,8 +213,8 @@
       "user_does_not_exist": "This user does not exist",
       "profilePicChangeSuccess": "You successfully changed your profile picture!",
       "profilePicChangeSame": "You already have this set as your profile picture!",
-	  "sendDataConfirm" : "Your data will be sent to your email address. Are you sure ?",
-	  "areYouSure" : "Are you sure ?"
+      "sendDataConfirm": "Your data will be sent to your email address. Are you sure ?",
+      "areYouSure": "Are you sure ?"
     }
   },
   "policy": {

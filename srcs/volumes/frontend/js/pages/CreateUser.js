@@ -18,22 +18,22 @@ export default class extends AbstractView {
         this.createPageCss("../css/create-user.css");
     }
 
-    async makeUsers() {
-        const user = "user";
-        for (let index = 0; index < 20; index++) {
-            let username = `${user}${index}`;
-            await this.submitNewUser(
-                `${username}`,
-                `${username}@google.com`,
-                `Bonjour${username}+`,
-                `Bonjour${username}+`,
-            );
-            console.log(`${username} created`);
-        }
-    }
+    // async makeUsers() {
+    //     const user = "user";
+    //     for (let index = 0; index < 20; index++) {
+    //         let username = `${user}${index}`;
+    //         await this.submitNewUser(
+    //             `${username}`,
+    //             `${username}@google.com`,
+    //             `Bonjour${username}+`,
+    //             `Bonjour${username}+`,
+    //         );
+    //         console.log(`${username} created`);
+    //     }
+    // }
 
     async getHtml() {
-        await this.makeUsers();
+        // await this.makeUsers();
         this.setTitle(`${this.lang.getTranslation(["title", "createProfile"])}`);
         return `
       <div class="background createUser removeElem">

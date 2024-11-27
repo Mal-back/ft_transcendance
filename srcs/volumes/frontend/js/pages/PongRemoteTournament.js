@@ -33,7 +33,7 @@ export default class extends AbstractView {
     try {
       html_loaded = await this.actualizeTournament();
       if (html_loaded == undefined) {
-        throw new CustomError(`${this.lang.getTranslation(["title", "tournament"])}`, `${this.lang.getTranslation(["tournament", "no_tournament"])}`, "/");
+        throw new CustomError(this.lang.getTranslation(["title", "tournament"]), this.lang.getCurrentLanguage(["tournament", "no_tournament"]), "/");
       }
     } catch (error) {
       this.handleCatch(error);
