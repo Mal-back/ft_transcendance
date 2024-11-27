@@ -99,7 +99,6 @@ export default class extends AbstractView {
       );
       if (mode == "tournament") this.pong.setBackground();
       if (mode == "tournament" && connection == "local") {
-        console.log("tournament mode");
         const tournament = sessionStorage.getItem(
           "tournament_transcendence_local",
         );

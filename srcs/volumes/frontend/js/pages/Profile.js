@@ -27,7 +27,6 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const userData = await response.json();
-        console.log("userData", userData);
         return userData;
       }
       return null;
@@ -89,7 +88,6 @@ export default class extends AbstractView {
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
         const data = await this.getDatafromRequest(mainResponse);
-        console.log("matchHistory: data:", data);
 
         let matchesArray = data.results;
         const matchesHTMLArray = await Promise.all(
@@ -129,7 +127,6 @@ export default class extends AbstractView {
     try {
       const color = "bg-midnightblue";
       const rank = data.final_ranking.findIndex(user => user.username === userData.username) + 1;
-      console.log("getRank =>", data.final_ranking)
       const total_ranks = data.final_ranking.length;
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
@@ -403,9 +400,5 @@ export default class extends AbstractView {
     if (button) {
       button.removeEventListener("click", this.handleSettingButton)
     }
-    // document.querySelectorAll('[data-link="view"]').forEach((button) => {
-    //   console.info("removing event click on button : " + button.innerText);
-    //   button.removeEventListener("click", this.handleClick);
-    // });
   }
 }

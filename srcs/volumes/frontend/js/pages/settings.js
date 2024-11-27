@@ -38,7 +38,6 @@ export default class extends AbstractView {
     this.setTitle(`${this.lang.getTranslation(["title", "settings"])}`);
     const currentAvatar = await this.getCurrentAvatar();
     const current2fa = await this.is2faActivated();
-    console.log("current2fa = " + current2fa);
     const defaultAvatar = await this.getDefaultAvatar(currentAvatar);
     const htmlContent = `
 <div class="background removeElem">
@@ -456,7 +455,6 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await response.json();
-        console.log("data.two_fa_enabled = " + data.two_fa_enabled);
         if (data.two_fa_enabled == false) {
           return false;
         } else {
@@ -515,7 +513,6 @@ export default class extends AbstractView {
           `${this.lang.getTranslation(["user", "your"])} ${this.lang.getTranslation(["input", "label", "username"])} ${this.lang.getTranslation(["modal", "message", "successChange"])}`,
         );
         sessionStorage.setItem("username_transcendence", newUsername);
-        console.log("response", response);
         const data = await response.json();
         setSessionStorage(data, newUsername);
       }
@@ -831,7 +828,6 @@ export default class extends AbstractView {
     ev.preventDefault();
     try {
       const current2fa = await this.is2faActivated();
-      console.log("Current 2FA state:", current2fa);
       const username = sessionStorage.getItem("username_transcendence");
       const request = await this.makeRequest(
         `/api/auth/update/${username}/`,
@@ -843,7 +839,6 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        console.log("handleConfirm2FA: data", data);
         const handle2FAModal = document.querySelector("#handle2FA");
         const handle2FA = bootstrap.Modal.getInstance(handle2FAModal);
         handle2FA.hide();
@@ -948,8 +943,6 @@ export default class extends AbstractView {
         "#currentProfileBackground",
       );
       const currentImageUrl = this.getUrlImage(currentProfile);
-      console.log(`currentImageUrl=${currentImageUrl}
-    chosenImageUrl=${chosenImageUrl}`);
       if (currentImageUrl === chosenImageUrl) {
         showModal(
           this.lang.getTranslation(["modal", "title", "error"]),
@@ -962,10 +955,6 @@ export default class extends AbstractView {
         return;
       }
       const username = sessionStorage.getItem("username_transcendence");
-      console.log(
-        "body request:",
-        JSON.stringify(`{profile_pic: ${chosenImageUrl}}`),
-      );
       const request = await this.makeRequest(
         `/api/users/${username}/default_pic/`,
         "PATCH",
@@ -1017,7 +1006,6 @@ export default class extends AbstractView {
         },
       );
       const response = await fetch(request);
-	  console.log("language: ", response);
       if (await this.handleStatus(response)) {
     if (chosenLanguage != sessionStorage.getItem("transcendence_language")) {
       sessionStorage.setItem("transcendence_language", chosenLanguage);
@@ -1054,7 +1042,7 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         showModal(
-          `${this.lang.getTranslation(["modal", "title", "sucess"])}`,
+          `${this.lang.getTranslation(["modal", "title", "success"])}`,
           `${this.lang.getTranslation(["modal", "message", "sendData"])}`,
         );
       }
@@ -1079,7 +1067,6 @@ export default class extends AbstractView {
 
   async handleOpenPrivacyPolicy(ev) {
     ev.preventDefault();
-    console.log("HERE MATE");
     try {
       const myHeaders = new Headers();
       const response = await fetch(
@@ -1241,7 +1228,6 @@ export default class extends AbstractView {
   handleShowEmailModal(ev) {
     ev.preventDefault();
     const modalId = document.getElementById("handleEmail");
-    console.log(modalId);
     let inviteModal = bootstrap.Modal.getInstance(modalId);
     if (!inviteModal) inviteModal = new bootstrap.Modal(modalId);
     inviteModal.show();

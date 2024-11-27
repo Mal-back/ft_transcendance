@@ -178,7 +178,6 @@ export default class extends AbstractView {
         };
         return acc;
       }, {});
-      console.log(players);
       return players;
     }
 

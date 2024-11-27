@@ -84,14 +84,12 @@ export default class AbstractViews {
         styleSheet.ownerNode &&
         styleSheet.ownerNode.classList.contains("page-css")
       ) {
-        console.log(`remove .page-css: ${styleSheet}`);
         styleSheet.ownerNode.remove();
         styleSheet = null;
       }
     }
 
     document.querySelectorAll(".page-css").forEach((e) => {
-      console.log("removing: ", e);
       e.href = null;
       e.parentNode.removeChild(e);
       e = null;
@@ -175,7 +173,6 @@ export default class AbstractViews {
       !AbstractViews.invitesArray.length &&
       !AbstractViews.invitesTournament.length
     ) {
-      console.log("INVITES is empty");
       inviteList.innerHTML = ``;
       return;
     }
@@ -184,7 +181,6 @@ export default class AbstractViews {
       this.populateSimpleGameInvite(invite, inviteList);
     });
 
-    console.log("HERE");
     AbstractViews.invitesTournament.forEach((invite) => {
       this.populatesTournamentInvite(invite, inviteList);
     });
@@ -338,7 +334,6 @@ export default class AbstractViews {
   }
 
   async createsTournamentInvites(data) {
-    console.log("TOURNAMENT_INVITE DATA:", data);
     AbstractViews.invitesTournament = [];
     try {
       let bool = 0;
@@ -361,7 +356,6 @@ export default class AbstractViews {
         };
         AbstractViews.invitesTournament.push(invite);
       }
-      console.log(AbstractViews.invitesTournament);
       return bool;
     } catch (error) {
       this.handleCatch(error);
@@ -369,7 +363,6 @@ export default class AbstractViews {
   }
   async createInvites(data, username) {
     if (!data || data.length == 0) return 0;
-    console.log(data);
     try {
       let count = 0;
       for (const item of data) {
@@ -392,7 +385,6 @@ export default class AbstractViews {
           opponentStatus: opponent.is_online,
           message: `${this.lang.getTranslation(["title", item.game_type])} : ${opponentName} ${this.lang.getTranslation(["modal", "message", "inviteYou"])}`,
         };
-        console.log("invite", invite);
         AbstractViews.invitesArray.push(invite);
       }
       return count;
@@ -469,7 +461,6 @@ export default class AbstractViews {
     AbstractViews.invitesTournament = [];
     try {
       if (!data || data.length == 0) return 0;
-      console.log(data);
       let bool = 0;
       bool = await this.createsTournamentInvites(data);
       return bool;
@@ -500,7 +491,6 @@ export default class AbstractViews {
       }
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        // console.log("Invites: ", data);
         if (response.status == 204) {
           this.clearInvites();
           return 0;
@@ -544,7 +534,6 @@ export default class AbstractViews {
     if (!AbstractViews.pollingInterval) {
       AbstractViews.pollingInterval = setInterval(async () => {
         const error = await this.fetchNotifications();
-        // console.log("startNotificationPolling: error: ", error);
         if (!error) errorCount = 0;
         if (error instanceof CustomError) {
           errorCount++;
@@ -564,7 +553,6 @@ export default class AbstractViews {
   }
 
   loginToLogout() {
-    console.log("LOGIN");
     const username = sessionStorage.getItem("username_transcendence");
     const accessToken = sessionStorage.getItem("accessJWT_transcendence");
     const refreshToken = sessionStorage.getItem("refreshJWT_transcendence");
@@ -792,11 +780,8 @@ export default class AbstractViews {
 }
 
   async makeRequest(url, myMethod = "GET", myBody = null, boolImage = false) {
-    console.log("URL BEFORE:", url)
     url = this.removeIPAndPort(url);
-    console.log("URL MIDDLE:", url)
     url = `https://${getIpPortAdress()}${url}`
-    console.log("URL AFTER:", url)
     const username = sessionStorage.getItem("username_transcendence");
     let accessToken = null;
     if (username) {

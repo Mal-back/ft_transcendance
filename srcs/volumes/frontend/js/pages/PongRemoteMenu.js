@@ -447,7 +447,6 @@ export default class extends AbstractView {
   }
 
   destroy() {
-    console.log("Destroy");
     if (this.matchMakingInterval) {
       clearInterval(this.matchMakingInterval);
       this.matchMakingInterval = null;

@@ -139,7 +139,6 @@ export default class extends AbstractView {
       const user_info = await this.getUserInfo(username)
       data.push(user_info)
     }
-    console.log("All users =>", data);
     return data
   }
 
@@ -153,9 +152,7 @@ export default class extends AbstractView {
       if (data == null) {
         throw new Error(`fail to get info on ${user}`);
       }
-      console.log("data", data)
       let playersArray = data.results;
-      console.log("players", playersArray);
       this.previousPage = data.previous;
       this.nextPage = data.next;
       return await this.getAllUserData(playersArray)
@@ -174,9 +171,7 @@ export default class extends AbstractView {
       if (data == null) {
         throw new Error(`fail to get info on ${user}`);
       }
-      console.log("data", data)
       let playersArray = data.results;
-      console.log("players", playersArray);
       this.previousPage = data.previous;
       this.nextPage = data.next;
       return await this.getAllUserData(playersArray)
@@ -232,7 +227,6 @@ export default class extends AbstractView {
     try {
       const color = "bg-midnightblue";
       const rank = data.final_ranking.findIndex(user => user.username === userData.username) + 1;
-      console.log("getRank =>", data.final_ranking)
       const total_ranks = data.final_ranking.length;
       return `
   <div class="${color} text-white text-center px-3 py-1 mb-1 rounded">
@@ -266,7 +260,6 @@ export default class extends AbstractView {
       const mainResponse = await fetch(mainRequest);
       if (await this.handleStatus(mainResponse)) {
         const data = await this.getDatafromRequest(mainResponse);
-        // console.log("matchHistory: data:", data);
 
         let matchesArray = data.results;
         const matchesHTMLArray = await Promise.all(
@@ -349,8 +342,6 @@ export default class extends AbstractView {
       for (let index = 0; index < users.length; index++) {
         const user = users[index];
         if (user.username == "user0") {
-          console.log("DATA USER1", user)
-          console.log("WR single games =>", user.single_games_c4_win_rate * 100, user.single_games_pong_win_rate * 100)
         }
 
         let singleGamesC4 = user.single_games_c4_win_rate * 100;
@@ -391,9 +382,7 @@ export default class extends AbstractView {
 
   getUserChooseHistoryModal(username) {
     const battleHistory =
-      this.lang.getTranslation(["game", "battle"]) +
-      " " +
-      this.lang.getTranslation(["game", "history"]);
+      this.lang.getTranslation(["game", "gameHistory"])
     return `
     <div class="modal fade" id="${username}History" tabindex="-1" aria-labelledby="${username}HistoryLabel"
         aria-hidden="true">
@@ -410,12 +399,12 @@ export default class extends AbstractView {
                     data-bs-toggle="modal"
                     data-bs-target="#pongBattleHistoryModal${username}"
                         style="margin-right: 3px;">
-                        ${this.lang.getTranslation(["title", "pong"])} ${this.lang.getTranslation(["game", "history"])}
+                        ${this.lang.getTranslation(["title", "pong"])} : ${this.lang.getTranslation(["game", "history"])}
                     </button>
                     <button type="button" class="btn btn-secondary white-txt" 
                     data-bs-toggle="modal"
                     data-bs-target="#connect4BattleHistoryModal${username}">
-                        ${this.lang.getTranslation(["title", "c4"])} ${this.lang.getTranslation(["game", "history"])}
+                        ${this.lang.getTranslation(["title", "c4"])} : ${this.lang.getTranslation(["game", "history"])}
                     </button>
                 </div>
                 <div class="modal-footer">
@@ -438,8 +427,6 @@ export default class extends AbstractView {
       const status = data[index].is_online ? "status-online" : "status-offline";
       const html = this.getHTMLforUser(userRank, username, avatar, total, status)
       usersHTML += html;
-      if (username == "user1")
-        console.log("What's inside?", data[index])
       const htmlModal = this.getUserChooseHistoryModal(username);
       usersModal += htmlModal;
     }
@@ -447,7 +434,6 @@ export default class extends AbstractView {
   }
 
   async handleNextPage() {
-    console.log("next!")
     if (this.nextPage) {
       try {
         this.rank += 1;
@@ -460,7 +446,6 @@ export default class extends AbstractView {
         let modals = document.getElementById("modalsRanking");
         modals.innerHTML = "";
         modals.innerHTML = modalhtml + history;
-        // console.log("ENDHTML =>", history);
       } catch (error) {
         if (error instanceof CustomError) {
           error.showModalCustom();
@@ -476,14 +461,12 @@ export default class extends AbstractView {
   }
 
   async handlePreviousPage() {
-    console.log("previous!")
     if (this.previousPage) {
       try {
         this.rank -= 1;
         const data = await this.getUsers(this.previousPage);
         const [html, modalhtml] = this.getHTMLallUsers(data);
         const history = await this.getAllHistoryModals(data);
-        // console.log("ENDHTML =>", html);
         let ranking = document.getElementById("rankingUsers");
         ranking.innerHTML = "";
         ranking.innerHTML = html;
@@ -539,7 +522,6 @@ export default class extends AbstractView {
         myModal.show();
       }
       else {
-        // console.log("idiot")
         const [, modalhtml] = this.getHTMLallUsers([user]);
         const modalsBattleHistory = await this.getAllHistoryModals([user]);
         let modals = document.getElementById("modalsRanking");
@@ -590,28 +572,26 @@ export default class extends AbstractView {
     const singleGames = rmBattles !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmBattles}%</div>` : ""
     const tournamentGames = rmTournaments !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmTournaments}%</div>` : ""
     const battleHistory =
-      this.lang.getTranslation(["game", "battle"]) +
-      " " +
-      this.lang.getTranslation(["game", "history"]);
+      this.lang.getTranslation(["game", "gameHistory"])
     return `
 <div class="modal fade" id="connect4BattleHistoryModal${username}" tabindex="-1"
     aria-labelledby="connect4BattleHistoryModal${username}Label" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">${this.lang.getTranslation(["title", "c4"])} ${battleHistory}</h5>
+                <h5 class="modal-title">${this.lang.getTranslation(["title", "c4"])} : ${battleHistory}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body overflow-auto" style="max-height: 60vh;">
                 <div class="row justify-content-center align-items-start">
                     <div class="col-6">
-                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteBattle"])} :</h5>
                         <div class="box bg-light history">
                             ${remoteBattlesC4}
                         </div>
                     </div>
                     <div class="col-6">
-                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteTournament"])} :</h5>
                         <div class="box bg-light history">
                             ${remoteTournamentsC4}
                         </div>
@@ -639,28 +619,26 @@ export default class extends AbstractView {
     const singleGames = rmBattles !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmBattles}%</div>` : ""
     const tournamentGames = rmTournaments !== undefined ? `<div class="text-center">${this.lang.getTranslation(["game", "winRate"])}: ${rmTournaments}%</div>` : ""
     const battleHistory =
-      this.lang.getTranslation(["game", "battle"]) +
-      " " +
-      this.lang.getTranslation(["game", "history"]);
+      this.lang.getTranslation(["game", "gameHistory"]) 
     return `
 <div class="modal fade" id="pongBattleHistoryModal${username}" tabindex="-1"
     aria-labelledby="pongBattleHistoryModal${username}Label" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-80 modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">${this.lang.getTranslation(["title", "pong"])} ${battleHistory}</h5>
+                <h5 class="modal-title">${this.lang.getTranslation(["title", "pong"])} : ${battleHistory}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body overflow-auto" style="max-height: 70vh;">
                 <div class="row justify-content-center align-items-start">
                     <div class="col-6">
-                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["game", "battle"])}:</h5>
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteBattle"])} :</h5>
                         <div class="box bg-light history">
                             ${remoteBattlesPong}
                         </div>
                     </div>
                     <div class="col-6">
-                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remote"])} ${this.lang.getTranslation(["title", "tournament"])}:</h5>
+                        <h5 class="text-center mb-3">${this.lang.getTranslation(["title", "remoteTournament"])} :</h5>
                         <div class="box bg-light history">
                             <!-- match div -->
                             ${remoteTournamentsPong}

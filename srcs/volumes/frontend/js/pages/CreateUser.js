@@ -189,7 +189,6 @@ export default class extends AbstractView {
 
     async errorModalSubmitNewUser(response) {
         const data = await this.getDatafromRequest(response);
-        console.log("DATA:", data);
         let message = this.JSONtoModal(data);
         showModal(
             `${this.lang.getTranslation(["modal", "title", "error"])}`,
@@ -216,7 +215,6 @@ export default class extends AbstractView {
                 `${this.lang.getTranslation(["modal", "title", "accountCreation"])}`,
                 `${this.lang.getTranslation(["modal", "message", "accountCreation"])}`,
             );
-            console.log("");
             navigateTo("/login");
         } catch (error) {
             this.handleCatch(error);
@@ -337,7 +335,6 @@ export default class extends AbstractView {
             if (this.validatePassword(passwordInput)) isValid = false;
             if (this.validatePasswordMatch(passwordInput, password2Input))
                 isValid = false;
-            console.log("VALID:", isValid);
             if (!isValid) {
                 return;
             }

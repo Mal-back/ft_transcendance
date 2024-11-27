@@ -83,7 +83,6 @@ export default class extends AbstractView {
 
   cleanInputs() {
     const usernameInput = document.querySelector("#usernameInput");
-    console.log("usernameInput:", usernameInput);
     const passwordInput = document.querySelector("#passwordInput");
     if (passwordInput) passwordInput.value = "";
     const usernameInputError = document.querySelector("#loginUsernameError");
@@ -232,7 +231,6 @@ export default class extends AbstractView {
   }
 
   async login() {
-    console.log("login");
     const loginForm = document.querySelector("#loginForm");
     const nameForm = loginForm.querySelector("input[name='Username']").value;
     const paswordForm = loginForm.querySelector("input[name='Password']").value;
@@ -263,7 +261,6 @@ export default class extends AbstractView {
         return;
       }
       const data = await response.json();
-	  console.log("LOGIN data: ", data)
       if (response.status == 202) {
         this.username = nameForm;
         this.password = paswordForm;

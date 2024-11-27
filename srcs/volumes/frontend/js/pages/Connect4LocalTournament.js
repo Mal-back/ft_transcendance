@@ -105,7 +105,6 @@ export default class extends AbstractView {
   }
 
   getNextMatch() {
-    console.log(this.tournament.round.currentMatch);
     if (this.tournament.round.current == this.tournament.round.max) {
       return `<h4> <strong>${this.lang.getTranslation(["title", "tournament"])} ${this.lang.getTranslation(["modal", "message", "over"])}</strong></h4>
               <br>

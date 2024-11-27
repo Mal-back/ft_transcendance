@@ -91,7 +91,6 @@ export default class extends AbstractView {
   checkUnique(playerName) {
     let count = 0;
     this.playerInputs.forEach((input) => {
-      console.log(`${input.value} vs ${playerName}`);
       if (input.value == playerName) count++;
     });
     return count == 1;
@@ -179,7 +178,6 @@ export default class extends AbstractView {
         };
         return acc;
       }, {});
-      console.log(players);
       return players;
     }
 

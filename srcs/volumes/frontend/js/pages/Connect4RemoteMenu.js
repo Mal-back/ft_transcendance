@@ -280,7 +280,7 @@ export default class extends AbstractView {
     ev.preventDefault();
     try {
       const modalMatchmakingDiv = document.querySelector("#loading-modal");
-      const modalMatchmaking = bootstrap.Modal.getInstance(modalMatchmakingDiv);
+      let modalMatchmaking = bootstrap.Modal.getInstance(modalMatchmakingDiv);
       if (!modalMatchmaking) {
         modalMatchmaking = new bootstrap.Modal(modalMatchmakingDiv, {
           backdop: "static",

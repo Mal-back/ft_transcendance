@@ -39,7 +39,6 @@ export default class extends AbstractView {
             this.handleCatch(error);
         }
         const title = this.getTitle();
-        console.log("BODY =>", html_loaded.roundTitle, html_loaded.round)
         return `
     <div class="background" style="background-image:url('../img/forest.png');">
       <h1 class="mt-20 text-center white-txt text-decoration-underline" id="GameTitle">
@@ -145,9 +144,7 @@ export default class extends AbstractView {
 
     getRoundDiv(round) {
         let html = `<div><h5 class="text-decoration-underline" style="margin-bottom:0;">Matches: </h5></div><div class="tournament-creation list-group ranking">`;
-        console.log(round);
         round.forEach((element) => {
-            console.log(element);
             html += `<div><span style="color:blue;">${element[0]}</span> vs <span style="color:red;">${element[1]}</span></div>`;
         });
         html += `</div>`
@@ -155,13 +152,11 @@ export default class extends AbstractView {
     }
 
     updateNextRound(urlNextRound) {
-        console.log("OWNER");
         try {
             const nextRoundBtn = document.querySelector("#nextRoundBtn");
             if (urlNextRound == null) {
                 nextRoundBtn.style.dispay = "none";
             } else {
-                console.log("BLOCK");
                 nextRoundBtn.style.display = "block";
                 nextRoundBtn.dataset.redirectUrl = `${urlNextRound}`;
             }
@@ -175,14 +170,12 @@ export default class extends AbstractView {
                 "GET",
             );
             const response = await fetch(request);
-            console.log("TOURNAMENT:", response);
             if (response.status == 403) {
                 const data = await this.getDatafromRequest(response);
                 throw new CustomError("Error", this.JSONtoModal(data), "/");
             }
             if (await this.handleStatus(response)) {
                 let data = await this.getDatafromRequest(response);
-                console.log("data:", data);
                 if (data.final_ranking) {
                     this.isFinished = true;
                     const players = await this.createPlayersDiv(data.final_ranking);
@@ -192,7 +185,6 @@ export default class extends AbstractView {
                     return undefined;
                 const players = await this.createPlayersDiv(data.players_order);
                 const roundTitle = ` Round ${data.round_number}:`;
-                console.log("data.round_schedule = ", data.rounds_schedule);
                 const round = this.getRoundDiv(
                     data.rounds_schedule[data.round_number - 1],
                 );
@@ -217,8 +209,6 @@ export default class extends AbstractView {
                 this.clearTournamentInterval();
             }
             const playersDiv = document.querySelector("#playersTournament");
-            console.log("playersDiv:", playersDiv);
-            console.log("Interval: ", this.refreshInterval);
             if (playersDiv) {
                 playersDiv.innerHTML = "";
                 playersDiv.innerHTML = data.players;

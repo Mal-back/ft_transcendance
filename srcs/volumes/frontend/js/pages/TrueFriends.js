@@ -134,7 +134,6 @@ export default class extends AbstractView {
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         data = await response.json();
-        console.log("friends data:", data);
         if (data.count === 0) {
           return this.noFriendDiv();
         }
@@ -154,7 +153,6 @@ export default class extends AbstractView {
     let nextPage = data.next;
     try {
       while (nextPage) {
-        console.log("NEXT PAGE:", nextPage);
         const request = await this.makeRequest(nextPage, "GET");
         const response = await fetch(request);
         if (await this.handleStatus(response)) {
@@ -176,12 +174,10 @@ export default class extends AbstractView {
   }
 
   createFriendElement(friendJson) {
-    console.log("Friend:", friendJson);
     const friendStatus = friendJson.is_online
       ? "status-online"
       : "status-offline";
     const friendAvatar = `background-image: url('${friendJson.profilePic}');`;
-    console.log("AVATAR:", friendAvatar);
 
     return `
       <div class="list-group-item d-flex align-items-center mb-1 rounded removeElem">
@@ -205,7 +201,6 @@ export default class extends AbstractView {
   }
 
   createFriendModal(friendJson) {
-    console.log(friendJson);
     const modalId = `modal${friendJson.username}`;
     const modalStatus = friendJson.is_online
       ? "status-online"
@@ -250,7 +245,6 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
-        console.log("response:", response);
         navigateTo("/friends");
       }
     } catch (error) {

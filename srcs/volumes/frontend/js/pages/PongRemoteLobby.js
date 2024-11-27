@@ -333,7 +333,6 @@ export default class extends AbstractView {
         "GET",
       );
       const response = await fetch(request);
-      console.log("checkTournament: response:", response);
       if (response.status == 204) {
         return undefined;
       }
@@ -350,7 +349,6 @@ export default class extends AbstractView {
             "/pong-remote-tournament",
           );
         }
-        console.log("checkTournament: data:", data);
         const htmlContent = await this.fillTournamentInvites(data);
         return htmlContent;
       }
@@ -368,30 +366,13 @@ export default class extends AbstractView {
         {
           game_type: "pong",
           invited_players: [
-            // "user1",
-            // "user2",
-            // "user3",
-            // "user4",
-            // "user5",
-            // "user6",
-            // "user7",
-            // "user8",
-            // "user9",
-            // "user10",
-            // "user11",
-            // "user12",
-            // "user13",
-            // "user14",
-            // "user15",
           ],
         },
       );
 
       const response = await fetch(request);
-      console.log("createTournament:response:", response);
       const data = await this.getDatafromRequest(response);
       if (response.ok) {
-        console.log("createTournament:data:", data);
         return true;
       } else {
         throw new CustomError(

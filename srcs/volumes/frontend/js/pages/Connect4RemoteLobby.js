@@ -548,10 +548,8 @@ export default class extends AbstractView {
         { invited_players: [`${username}`] },
       );
       const response = await fetch(request);
-      console.log("invitePlayerTournament: response", response);
       if (await this.handleStatus(response)) {
         const data = await this.getDatafromRequest(response);
-        console.log("invitePlayerTournament: data: ", data);
       }
     } catch (error) {
       this.handleCatch(error);
@@ -608,7 +606,6 @@ export default class extends AbstractView {
   }
 
   async handleRemovePlayer(ev) {
-    console.log("Remove Player");
     ev.preventDefault();
     try {
       const listItem = ev.target.closest(".list-group-item");
@@ -623,7 +620,6 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
-        console.log(`Player ${username} removed from tournament`);
       }
     } catch (error) {
       if (error instanceof CustomError) {
@@ -644,7 +640,6 @@ export default class extends AbstractView {
       );
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
-        console.log("Success");
         navigateTo("/c4-remote-tournament");
       }
     } catch (error) {

@@ -38,7 +38,6 @@ export default class extends AbstractView {
     } catch (error) {
       this.handleCatch(error);
     }
-    console.log("BODY =>", html_loaded.roundTitle, html_loaded.round)
     const title = this.getTitle();
     return `
     <div class="background" style="background-image:url('../img/ow.jpg');">
@@ -145,9 +144,7 @@ export default class extends AbstractView {
 
   getRoundDiv(round) {
     let html = `<div><h5 class="text-decoration-underline" style="margin-bottom:0;">Matchs: </h5></div><div class="tournament-creation list-group ranking">`;
-    console.log(round);
     round.forEach((element) => {
-      console.log(element);
       html += `<div><span style="color:blue;">${element[0]}</span> vs <span style="color:red;">${element[1]}</span></div>`;
     });
     html += `</div>`
@@ -155,13 +152,11 @@ export default class extends AbstractView {
   }
 
   updateNextRound(urlNextRound) {
-    console.log("OWNER");
     try {
       const nextRoundBtn = document.querySelector("#nextRoundBtn");
       if (urlNextRound == null) {
         nextRoundBtn.style.dispay = "none";
       } else {
-        console.log("BLOCK");
         nextRoundBtn.style.display = "block";
         nextRoundBtn.dataset.redirectUrl = `${urlNextRound}`;
       }

@@ -16,7 +16,6 @@ import PongRemoteLobby from "./pages/PongRemoteLobby.js";
 import PongRemoteTournament from "./pages/PongRemoteTournament.js";
 import PongLocalTournament from "./pages/PongLocalTournament.js";
 
-// import Puissance4 Local
 import Connect4Local from "./pages/Connect4Local.js";
 import Connect4Menu from "./pages/Connect4Mode.js";
 import Connect4LocalMenu from "./pages/Connect4LocalMenu.js";
@@ -51,7 +50,6 @@ const router = async () => {
     { path: "/settings", view: Settings },
     { path: "/friends", view: Friends },
     { path: "/rankings", view: Ranking },
-    // { path: "/pong", view: Pong },
     { path: "/pong", view: PongLocal },
     { path: "/pong-menu", view: PongMenu },
     { path: "/pong-local-menu", view: PongLocalMenu },
@@ -60,8 +58,6 @@ const router = async () => {
     { path: "/pong-remote-lobby", view: PongRemoteLobby },
     { path: "/pong-remote-tournament", view: PongRemoteTournament },
     { path: "/pong-local-tournament", view: PongLocalTournament },
-
-    //PUISSANCE 4 routes
     { path: "/c4", view: Connect4Local },
     { path: "/c4-menu", view: Connect4Menu },
     { path: "/c4-local-menu", view: Connect4LocalMenu },
@@ -111,7 +107,7 @@ const router = async () => {
         view.lang.getTranslation(["modal", "title", "error"])
       )
         console.error("error in view", error);
-      if (error.modalTitle != "redirect") error.showModalCustom();
+      if (error.modalTitle != "Redirect") error.showModalCustom();
       navigateTo(error.redirect);
     } else {
       console.error("error in view", error);
@@ -119,20 +115,15 @@ const router = async () => {
     }
   }
 
-  // Function to print all CSS links on the page
   function printAllCssLinks() {
-    // Select all <link> elements with rel="stylesheet"
     console.log("PRINT CSS");
     const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
 
-    // Loop through each <link> element
     cssLinks.forEach((link) => {
-      // Print the href attribute (URL of the stylesheet) to the console
       console.log(link.href);
     });
   }
 
-  // Call the function to print all CSS links
 
   // print all html
   // printAllCssLinks();
@@ -232,9 +223,8 @@ document.addEventListener("keydown", (ev) => {
 document
   .getElementById("inviteUserModal")
   .addEventListener("shown.bs.modal", function () {
-    console.log("show modal invite");
     this.removeAttribute("aria-hidden");
-    this.removeAttribute("inert"); // Restore interaction
+    this.removeAttribute("inert");
     this.removeAttribute("aria-hidden");
     this.focus();
   });
@@ -243,18 +233,16 @@ document
   .getElementById("inviteUserModal")
   .addEventListener("hidden.bs.modal", function () {
     document.body.focus();
-    console.log("hide modal invite");
     this.removeAttribute("aria-hidden");
-    this.setAttribute("inert", ""); // Prevent interaction
+    this.setAttribute("inert", "");
     this.setAttribute("aria-hidden", "true");
   });
 
 document
   .getElementById("alertModal")
   .addEventListener("shown.bs.modal", function () {
-    console.log("Show modal alert");
     this.removeAttribute("aria-hidden");
-    this.removeAttribute("inert"); // Restore interaction
+    this.removeAttribute("inert");
     this.removeAttribute("aria-hidden");
     this.focus();
   });
@@ -263,9 +251,8 @@ document
   .getElementById("alertModal")
   .addEventListener("hidden.bs.modal", function () {
     document.body.focus();
-    console.log("hide modal alert");
     this.removeAttribute("aria-hidden");
-    this.setAttribute("inert", ""); // Prevent interaction
+    this.setAttribute("inert", "");
     this.setAttribute("aria-hidden", "true");
   });
 
