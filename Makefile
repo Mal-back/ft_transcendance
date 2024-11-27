@@ -52,6 +52,8 @@ clean_docker:
 
 clean : clean_migration clean_docker
 
+certs:
+	bash env_setup.sh
 
 prune : down clean
 	echo "y" | docker system prune -a
