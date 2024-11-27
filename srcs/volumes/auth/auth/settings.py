@@ -30,7 +30,7 @@ DEBUG = os.getenv("DJANGO_DEBUG")
 ALLOWED_HOSTS = [
     "auth",
     "localhost",
-    "https://localhost:8080",
+    "http://localhost:8080",
     "frontend",
     "users",
     "avatar_manager",

@@ -28,7 +28,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    await this.add20friends();
+    // await this.add20friends();
     this.setTitle(`${this.lang.getTranslation(["title", "friends"])}`);
     const mainDiv = document.createElement("div");
     mainDiv.innerHTML = await this.getMaindiv();

@@ -659,11 +659,13 @@ export default class extends AbstractView {
 
   async handleLeavePlayer(ev) {
     ev.preventDefault();
+    let url = ev.target.dataset.leaveurl;
     try {
-      const request = await this.makeRequest(
-        ev.target.dataset.leaveurl,
-        "PATCH",
-      );
+      if (!ev.target.dataset.leaveurl) {
+        const button = ev.target.closest(".leavePlayer");
+        url = button.getAttribute("data-leaveurl");
+      }
+      const request = await this.makeRequest(url, "PATCH");
       const response = await fetch(request);
       if (await this.handleStatus(response)) {
         showModal(

@@ -188,8 +188,8 @@ export default class extends AbstractView {
   async createPlayerDivConfirmed(dataPlayer, leaveUrl, owner) {
     try {
       if (leaveUrl == undefined) {
-        console.trace();
-        console.error("WTF: ", leaveUrl)
+        if (this.owner== false && !leaveUrl)
+          debugger;
       }
       const data = await this.getUserInfo(dataPlayer.username);
       const playerAvatar = `background-image: url('${data.profilePic}');`;
@@ -665,9 +665,14 @@ export default class extends AbstractView {
 
   async handleLeavePlayer(ev) {
     ev.preventDefault();
+    let url = ev.target.dataset.leaveurl;
     try {
+      if (!ev.target.dataset.leaveurl) {
+        const button = ev.target.closest('.leavePlayer');
+        url =  button.getAttribute('data-leaveurl');
+      }
       const request = await this.makeRequest(
-        ev.target.dataset.leaveurl,
+        url,
         "PATCH",
       );
       const response = await fetch(request);
